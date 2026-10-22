@@ -22,6 +22,34 @@ items:
 
 The [complete example](examples/minimal/README.md) includes real Go source and a valid lock file. Larger repositories can split items into included files, and tools can declare links with `@req` comments in code. Start with the example and [scope](scope.md) to evaluate the format; use the Core draft and conformance suite when implementing it.
 
+## How the entities connect
+
+This illustrative graph uses the default profile. Each arrow points from a detail to the purpose it serves:
+
+```mermaid
+flowchart LR
+    subgraph ostfItems["OSTF items"]
+        need["Need"]
+        requirement["Requirement"]
+        design["Design"]
+        risk["Risk"]
+        verification["Verification item"]
+    end
+    subgraph sourceAnchors["Source tree anchors"]
+        fn["Function"]
+        runnerTest["Runner test"]
+    end
+
+    requirement -->|refines| need
+    design -->|refines| requirement
+    requirement -->|controls| risk
+    verification -->|verifies| requirement
+    fn -->|implements| design
+    runnerTest -->|verifies| requirement
+```
+
+An item's `code` or `tests` field declares the link in YAML, but the relationship points from the source anchor to the item. `trace.lock` records endpoint fingerprints for stamped links; an Analyzer compares them with the selected source tree to report `valid`, `suspect`, `unstamped` or `broken`. The [Core draft](draft/core.md#relationships-and-identities-in-code) defines the link rules.
+
 ## Read the draft
 
 | Document | Purpose |
