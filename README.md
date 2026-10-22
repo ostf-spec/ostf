@@ -21,13 +21,14 @@ The schemas use the `https://ostf.dev/draft/0.1/` identifier namespace. Validati
 
 ## Run the standalone draft checks
 
-With Python 3.10 or newer:
+With Python 3.10 or newer and Go 1.27.2:
 
 ```sh
 python3 conformance/run.py
+go test ./...
 ```
 
-The script creates an ignored virtual environment, installs exact hash-pinned dependencies and runs the 107 non-schema cases through the independent-code Python prototype. The 18 structural schema fixtures are published for implementers but are not yet executed by this standalone runner. The prototype and zztrace reference implementation share project authorship; their agreement is not independent-party qualification. See the [suite details](conformance/README.md) before making a conformance claim.
+The Python script creates an ignored virtual environment, installs exact hash-pinned dependencies and runs 107 non-schema cases through the independent-code prototype. The standalone Go test runs 18 structural schema fixtures with a local-only resolver; it does not import zztrace. The prototype and zztrace reference implementation share project authorship; their agreement is not independent-party qualification. See the [suite details](conformance/README.md) before making a conformance claim.
 
 ## Participate
 

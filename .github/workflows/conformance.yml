@@ -14,3 +14,12 @@ jobs:
           python-version: '3.12'
       - name: Run standalone draft checks
         run: python3 conformance/run.py
+  schema-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+      - name: Check structural schema fixtures
+        run: go test ./...

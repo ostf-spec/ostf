@@ -5,10 +5,11 @@ Suite 0.1.3 targets wire version 0.1 and document revision 0.10. It is a bounded
 
 ## Run the standalone prototype
 
-From this repository's root, with Python 3.10 or newer:
+From this repository's root, with Python 3.10 or newer and Go 1.27.2:
 
 ```sh
 python3 conformance/run.py
+go test ./...
 ```
 
 The bootstrap script creates `.venv/`, installs the exact versions and release hashes in [requirements.txt](requirements.txt), then runs the Python checks. PyYAML, tree-sitter, tree-sitter-go and rfc8785 are development dependencies. The script needs PyPI or a prepared wheel cache on first run. It does not call zztrace or use Go modules.
@@ -31,7 +32,7 @@ The reader performs no network access, Git invocation or subprocess call. It exi
 | [repositories.json](repositories.json) | 69 | Small trees with item, document, link, tag and state expectations |
 | [schema-cases.json](schema-cases.json) | 18 | Structural root, item, profile and proposed snapshot shape cases |
 
-The standalone Python prototype runs 107 non-schema cases and checks the requirement mappings in [suite.json](suite.json), plus four unsupported-feature guards. The 18 schema fixtures were exercised by the zztrace Go reference before extraction; this repository publishes them without claiming that the standalone runner executes them. Schema shape alone is insufficient for Core conformance.
+The standalone Python prototype runs 107 non-schema cases and checks the requirement mappings in [suite.json](suite.json), plus four unsupported-feature guards. The Go test at the repository root runs all 18 structural schema fixtures with references resolved only from the local `schema/` directory. Schema shape alone is insufficient for Core conformance.
 
 The fixed token bytes follow the [Go annex](../draft/go.md); their hashes use SHA-256. The initial item and repository expectations were computed with a separate Python projection and RFC 8785 library, then compared with zztrace. Committed expectations are fixed inputs to this suite. They are not an independent oracle for untested behavior. A changed expectation requires contract review.
 
