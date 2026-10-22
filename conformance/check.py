@@ -69,6 +69,15 @@ def check():
             assert result.get(field) == expected, f"{case['id']}: {field}\ngot {result.get(field)}\nexpected {expected}"
     counts["repositoryCases"] = len(load("repositories.json"))
 
+    example = HERE.parent / "examples/minimal"
+    files = {name: (example / name).read_text() for name in ("trace.yaml", "trace.lock", "math.go", "math_test.go")}
+    result = reader.analyze(files)
+    assert result["errorCodes"] == [] and result["warningCodes"] == [], "worked example diagnostics"
+    assert [(link["source"], link["state"]) for link in result["links"]] == [
+        ("math.go#Add", "valid"), ("math_test.go#TestAdd", "valid")
+    ], "worked example links"
+    counts["workedExample"] = 1
+
     # Fail visibly for unsupported features, rather than reporting a false pass.
     unsupported = [
         {"trace.yaml": 'ostf: "0.1"\nprofile: iec62304\nitems: []\n'},

@@ -18,7 +18,7 @@ The Open Software Traceability Format (OSTF) proposes one small, open format for
 - a lock file of fingerprints that shows which links were rechecked after either end changed;
 - an origin on every Core link, distinguishing declarations, code tags and imports. A later recovery extension would identify reconstructed links.
 
-OSTF serializes to plain text files against a source tree, typically versioned in Git; tools may use databases internally. A small core serves any team that lets an agent change code. Optional modules add what regulated industries need. Mappings to ReqIF and OSLC are planned, each stating what it loses. A link that the lock file shows as rechecked has unchanged inputs; that does not make the code correct, approved, tested or compliant. This paper explains the problem, what OSTF standardizes and what it leaves to tools, how it serves coding agents, how the same format carries a safety standard's trace, and how we propose to take it from draft to standard.
+OSTF serializes to plain text files against a source tree, typically versioned in Git; tools may use databases internally. A small core serves any team that lets an agent change code. Planned modules would add what regulated industries need. Mappings to ReqIF and OSLC are planned, each stating what it loses. A link that the lock file shows as rechecked has unchanged inputs; that does not make the code correct, approved, tested or compliant. This paper explains the problem, what OSTF standardizes and what it leaves to tools, how it serves coding agents, how the same format could carry a safety standard's trace, and how we propose to take it from draft to standard.
 
 ## 1. Agents change code faster than anyone can trace it
 
@@ -60,7 +60,7 @@ For teams, the result is lock-in to one tool's syntax. For agents, it is one con
 
 ## 3. OSTF in one example
 
-A payments service must not refund more than the original order, and refunds above a daily limit per account need a second approval. The team keeps the rule in its repository, linked to the risk it controls.
+A payments service must not refund more than the original order, and refunds above a daily limit per account need a second approval. The team keeps the rule in its repository, linked to the risk it controls. The excerpts below illustrate the relationships; they are not a complete runnable repository. For exact files and stamps, see the [worked example](examples/minimal/README.md).
 
 The items, in `trace.yaml`:
 
@@ -83,7 +83,7 @@ items:
     code: [config/limits.yaml]
 ```
 
-In the `default` profile, a risk is anything that can cause harm or loss: a security breach or a financial loss as much as an injury. Profiles for safety work add hazards, hazardous situations and harms in their ISO 14971 sense. The code and its test carry a tag with the requirement ID, never its text:
+In the `default` profile, a risk is anything that can cause harm or loss: a security breach or a financial loss as much as an injury. Profiles for safety work add hazards, hazardous situations and harms in their ISO 14971 sense. An abbreviated code excerpt shows how the function and test carry a tag with the requirement ID, never its text:
 
 ```go
 // checkRefundLimit rejects a refund above the order total or the daily limit.
@@ -94,14 +94,14 @@ func checkRefundLimit(r Refund, acct Account) error {
 func TestRefundLimit(t *testing.T) {
 ```
 
-The lock file records what both ends of each link looked like when someone last rechecked it:
+The lock file records what both ends of each link looked like when someone last rechecked it. This abbreviated line illustrates the fields; its short hashes are not valid stamps:
 
 ```
 trace.lock 1
 payments/refund.go#checkRefundLimit implements R-REFUND-LIMIT source.sig=go1:Q2xi source.body=go1:8b1c target=f1:3f9a
 ```
 
-From these files alone, a conforming Analyzer can tell an agent or a reviewer:
+In this scenario, a conforming Analyzer could tell an agent or a reviewer:
 
 - `checkRefundLimit` implements `R-REFUND-LIMIT`, which controls `RISK-REFUND-ABUSE`, so the function carries a risk control and deserves more care than a helper.
 - If someone edits the body of `checkRefundLimit`, the risk-relevant link becomes suspect until someone rechecks it and updates the lock file. A tool can use the linked test to plan verification.
@@ -134,7 +134,7 @@ From these files alone, a conforming Analyzer can tell an agent or a reviewer:
 
 Mappings to ReqIF and OSLC are informative, outside Core: each says which links map exactly, which only under conditions, and which are lost.
 
-**Modules** are optional, versioned separately and claimed separately:
+**Planned modules** would be optional, separately versioned and claimed only when qualified:
 
 | Module | Covers |
 | --- | --- |
@@ -161,15 +161,15 @@ Tools compete on all of these, and should.
 MCP gives agents a standard way to ask tools questions. OSTF is the shared answer to what those questions are about. The two complement each other, but a format adds things an API cannot:
 
 - **The requirement is where the agent is already reading.** Agents read the files they change. A tag above a function puts the requirement ID in front of the agent without a lookup.
-- **The same data for every tool.** An API, even a local MCP server, answers for the tool behind it. A format gives every tool the same data: the same commit gives the same answer from any of them, offline, in CI, on a laptop or in an air-gapped environment.
-- **Mistakes fail loudly.** An unknown ID in a tag is an error. An agent that invents a requirement ID fails the check in CI.
+- **The same data for every tool.** An API, even a local MCP server, answers for the tool behind it. A shared format lets tools that implement the same version and annexes evaluate the same commit offline, in CI, on a laptop or in an air-gapped environment.
+- **Mistakes fail loudly.** An unknown ID in a tag is an error. With an OSTF check in CI, an agent that invents a requirement ID fails the check.
 - **Trace changes travel with code changes.** The agent edits the requirement, its links and the code in one pull request, and the reviewer sees all of it together.
 - **Recovered links need an explicit record.** In existing code, agents can propose links for a person to confirm. Research shows why confirmation matters: one 2025 study measured LLM recovery of requirement-to-code links at an F1 score between 0.24 and 0.53 [20]. The proposed recovery extension would label confirmed links `recovered`; it is not part of Core 1.0.
 - **One convention for every agent.** An agent that learns OSTF once can work in any repository that uses it, whichever tool the team runs.
 
 ## 7. The same format under a safety standard
 
-Teams that must prove traceability to an auditor use the same core and switch on the Risk and Architecture modules through a profile. An infusion pump shows the shape. Its dose limit is a risk control from the risk analysis, and the system requirement refines a local risk control:
+Future Risk and Architecture modules would let teams express an industry-specific trace through a profile. The following infusion-pump sketch shows the intended shape. Those modules are not qualified in the current draft, and this excerpt is not valid Core 0.1 input:
 
 ```yaml
 profile: iec62304
@@ -200,9 +200,9 @@ items:
     verifies: [{to: RC-07-1, role: effectiveness}]
 ```
 
-With the code and test tagged `@req R-DOSE-LIMIT` as in section 3, the files carry the trace that IEC 62304 clause 7.3.3 and FDA reviewers ask for [1][3]:
+With code and tests tagged `@req R-DOSE-LIMIT` as in section 3, such a future module could express relationships relevant to IEC 62304 clause 7.3.3 and FDA software submissions [1][3]:
 
-| Element | In OSTF |
+| Element | In the proposed modules |
 | --- | --- |
 | Hazardous situation | A `hazardous-situation` item, with the hazard it arises from and the harm it results in |
 | Software item | A `software-item` with its paths and safety class |

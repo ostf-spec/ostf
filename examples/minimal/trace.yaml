@@ -1,0 +1,6 @@
+ostf: "0.1"
+items:
+  - id: R-ADD
+    text: Add two values.
+    code: [math.go#Add]
+    tests: [math_test.go#TestAdd]

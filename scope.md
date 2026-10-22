@@ -19,8 +19,8 @@ Core data supports the first five questions from the repository alone, offline a
 
 | Layer | What it is | Status |
 | --- | --- | --- |
-| **OSTF Core** | Files, local identity, items, profiles, links, code anchors and tags, declared/tagged/imported origins, fingerprints and the lock file | The standard. Producers write it; Consumers and Analyzers read it |
-| **Modules** | Optional parts, each versioned on its own. In 1.0: Risk, Architecture and integrity | Standardized with Core, claimed separately |
+| **OSTF Core** | Files, local identity, items, profiles, links, code anchors and tags, declared/tagged/imported origins, fingerprints and the lock file | Draft common contract. Producers write it; Consumers and Analyzers read it |
+| **Modules** | Planned optional parts, each versioned on its own: Risk, Architecture and integrity | Separate specifications and conformance claims are planned; none are qualified in this draft |
 | **Deferred extensions** | Referenced items and snapshots, recovered links and records, `@req-none` exclusions | Proposals outside Core 1.0 and its conformance claims |
 | **Tools** | Analyses, commands, MCP tools, import and sync adapters, documents, change policy, approvals, signatures and baselines | Not standardized. This is where tools compete |
 
@@ -31,6 +31,8 @@ Conformance is at the serialized file boundary. A tool backed by a database may 
 A second rule follows from the first: **Core has no industry in it.** The `default` profile serves any team that lets an agent change code. Domain profiles, such as one for IEC 62304, add types, links and rules on top, and the vocabulary they need lives in the modules.
 
 ## OSTF Core
+
+The TRF IDs below record zztrace provenance only. The rules needed to implement this draft are in the OSTF documents here.
 
 | Part | Content | Original zztrace IDs |
 | --- | --- | --- |
@@ -110,16 +112,16 @@ The current [suite 0.1.3](conformance/suite.json) is a bounded draft subset. It 
 
 Rules the set follows:
 
-- **Precedence.** The schemas are normative. Where the schema and the text disagree, the text wins, and the disagreement is a defect to fix in the next patch release.
+- **Precedence.** Schemas define structural constraints, while Core text controls semantics. Where the schema and text disagree, the text wins, and the disagreement is a defect to fix in the next patch release.
 - **Normative language.** "Shall", "should" and "may" follow [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119) and ISO/IEC Directives, Part 2. Examples and notes are never normative.
 - **Normative references** are limited to what the text depends on: YAML 1.2, RFC 8785 (JSON Canonicalization Scheme), SHA-256 (FIPS 180-4), base64url (RFC 4648), Semantic Versioning 2.0.0, and the terms vocabulary below.
 - **Every requirement carries an `OSTF-` ID** that is never reused, and every test in the conformance suite names the IDs it exercises.
 
 ## Terms and definitions
 
-Borrow before inventing. Terms that exist in ISO/IEC/IEEE 24765 (the software and systems engineering vocabulary, free online) are taken from there and cited. OSTF defines only its own concepts. Writing the definitions is standard-text work; this is the list and its sources.
+Borrow before inventing. This working vocabulary distinguishes existing engineering terms from OSTF-specific terms. Exact source citations and definitions for borrowed terms remain terms-annex work before 1.0.
 
-**Borrowed, cited from ISO/IEC/IEEE 24765 unless noted:**
+**Existing engineering terms (sources noted where applicable):**
 
 | Term | Note |
 | --- | --- |

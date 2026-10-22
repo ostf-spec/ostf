@@ -1,16 +1,34 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-OSTF is a working draft of an open interchange format for requirements, risks, code anchors, tests and link freshness. It serializes plain text files against a source tree. Tools may store and serve the same graph in a database. A fresh link means its fingerprinted inputs have not changed since a recorded recheck; it does not establish correctness, approval, test execution or compliance.
+OSTF gives tools a shared way to answer three questions about a source tree: why does this code exist, which tests verify a requirement, and which links need another review? It records requirements and their links to code and tests in plain text files. Tools may store and serve the same graph in a database; OSTF specifies the files they exchange.
 
 **Status:** public working draft, document revision 0.10, wire version `ostf: "0.1"`, conformance suite 0.1.3. This is a review draft. It is not OSTF 1.0, a certification program or a claim of full Core conformance.
+
+## What it looks like
+
+A small repository can declare its items and links in `trace.yaml`:
+
+```yaml
+ostf: "0.1"
+items:
+  - id: R-ADD
+    text: Add two values.
+    code: [math.go#Add]
+    tests: [math_test.go#TestAdd]
+```
+
+`math.go#Add` names a Go function that implements `R-ADD`; `math_test.go#TestAdd` names a test that verifies it. Paths are relative to the source tree. A separate `trace.lock` records the fingerprints present when each link was rechecked. A matching stamp means those inputs have not changed under the draft's fingerprint rules. It does not establish that the test passed or the code is correct.
+
+The [complete example](examples/minimal/README.md) includes real Go source and a valid lock file. Larger repositories can split items into included files, and tools can declare links with `@req` comments in code. Start with the example and [scope](scope.md) to evaluate the format; use the Core draft and conformance suite when implementing it.
 
 ## Read the draft
 
 | Document | Purpose |
 | --- | --- |
-| [Core contract](draft/core.md) | Normative draft requirements `OSTF-001` through `OSTF-023` |
+| [Example](examples/minimal/README.md) | A complete source tree with two valid links |
 | [Scope](scope.md) | Core, optional modules, deferred extensions and tool boundaries |
+| [Core contract](draft/core.md) | Versioned draft rules, deferred proposals and release gates with stable `OSTF-` IDs |
 | [Go language annex](draft/go.md) and [Go runner annex](draft/go-tests.md) | Symbol, token and test identities |
 | [Schemas](schema/) and [lock grammar](draft/trace-lock.ebnf) | Structural entry points and exact lock syntax |
 | [Conformance suite](conformance/README.md) | Fixed vectors, a standalone Python prototype and declared limits |
@@ -26,6 +44,7 @@ With Python 3.10 or newer and Go 1.27.2:
 ```sh
 python3 conformance/run.py
 go test ./...
+(cd examples/minimal && go test ./...)
 ```
 
 The Python script creates an ignored virtual environment, installs exact hash-pinned dependencies and runs 107 non-schema cases through the independent-code prototype. The standalone Go test runs 18 structural schema fixtures with a local-only resolver; it does not import zztrace. The prototype and zztrace reference implementation share project authorship; their agreement is not independent-party qualification. See the [suite details](conformance/README.md) before making a conformance claim.
