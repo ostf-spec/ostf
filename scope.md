@@ -1,6 +1,6 @@
 # OSTF scope: the common capability
 
-Status: working draft for public review, document revision 0.10, reviewed 2026-10-22. Wire version 0.1, conformance suite 0.1.3. OSTF was drawn from version 2 of the zztrace trace format. This page decides which parts become Core, optional modules or tools. The [draft contract](draft/core.md), [annexes](draft/go.md), [schemas](schema/) and [suite](conformance/README.md) now exist; the [support map](draft/support.md) explicitly limits their executable coverage. This is not full Core conformance or a 1.0 standard.
+Status: working draft prepared for public review, document revision 0.10, reviewed 2026-10-22. Wire version 0.1, conformance suite 0.1.3. OSTF was drawn from version 2 of the zztrace trace format. This page decides which parts become Core, optional modules or tools. The [draft contract](draft/core.md), [annexes](draft/go.md), [schemas](schema/) and [suite](conformance/README.md) now exist; the [support map](draft/support.md) explicitly limits their executable coverage. This is not full Core conformance or a 1.0 standard.
 
 ## The capability
 

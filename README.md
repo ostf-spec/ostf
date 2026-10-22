@@ -32,7 +32,7 @@ The Python script creates an ignored virtual environment, installs exact hash-pi
 
 ## Participate
 
-Review the [Core contract](draft/core.md), try the fixtures with another implementation and report ambiguities through GitHub issues. The draft remains 0.x until the [independent implementation and two-organization adoption gates](scope.md#versioning) are met. `ostf.dev` is reserved for the standard; this repository is the draft's current public home.
+Review the [Core contract](draft/core.md) and try the fixtures with another implementation. Once the repository is public, report ambiguities through GitHub issues. The draft remains 0.x until the [independent implementation and two-organization adoption gates](scope.md#versioning) are met. `ostf.dev` is reserved for the standard; this repository is prepared as the draft's public home.
 
 ## License
 

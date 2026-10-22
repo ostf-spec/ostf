@@ -2,7 +2,7 @@
 
 **Why coding agents need to know why code exists, and a proposal for a shared format that tells them**
 
-White paper, draft 0.8, project status reconciled 2026-10-22. For public review. OSTF remains a 0.x proposal; its bounded executable draft and current limits are in the [support map](draft/support.md).
+White paper, draft 0.8, project status reconciled 2026-10-22. Prepared for public review. OSTF remains a 0.x proposal; its bounded executable draft and current limits are in the [support map](draft/support.md).
 
 ## Summary
 
@@ -235,7 +235,7 @@ Each began as a working format with an open specification and a reference implem
 | --- | --- |
 | 0. Draft | This paper, [scope](scope.md) and draft contract were prepared for review. Name and publication checks are tracked separately from the technical contract |
 | 1. Working format, bounded internal increment present | zztrace has real-project evidence, and the draft has structural schemas, a lock grammar, Go annexes and suite 0.1.3. A separately structured Python prototype agrees on the exercised cases; shared authorship and incomplete Core coverage remain explicit. Comparative agent trials are optional research, not performed results |
-| 2. Public draft (0.x) | This specification is published under open licenses for review. A converter to and from StrictDoc or Doorstop, with a loss report, remains planned |
+| 2. Public draft (0.x) | Publish this specification under open licenses for review. A converter to and from StrictDoc or Doorstop, with a loss report, remains planned |
 | 3. Second implementation and 1.0 | At least one independent tool that computes fingerprints and link states itself passes the conformance suite, and two organizations have used the format on real changes. Only then is 1.0 frozen. The specification changes only through public review |
 | 4. Neutral home | A foundation holds the name and the specification. Candidates include the Linux Foundation's ELISA project, which already works on requirements for safety-critical Linux, the Eclipse Foundation, and OASIS |
 

@@ -22,7 +22,7 @@ To analyze a directory with the installed environment:
 
 The reader performs no network access, Git invocation or subprocess call. It exits 0 for the bounded common checks passing, 1 for recognized format or semantic errors, and 2 for unsupported constructs. A passing result does not mean the whole Core contract or a product graph check passed.
 
-## Published fixtures
+## Fixture set
 
 | File | Cases | Purpose |
 | --- | ---: | --- |
