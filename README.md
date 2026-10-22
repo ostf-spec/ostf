@@ -3,7 +3,7 @@
 
 OSTF is a working draft of an open interchange format for requirements, risks, code anchors, tests and link freshness. It serializes plain text files against a source tree. Tools may store and serve the same graph in a database. A fresh link means its fingerprinted inputs have not changed since a recorded recheck; it does not establish correctness, approval, test execution or compliance.
 
-**Status:** document revision 0.10, wire version `ostf: "0.1"`, conformance suite 0.1.3. This is a review draft. It is not OSTF 1.0, a certification program or a claim of full Core conformance.
+**Status:** public working draft, document revision 0.10, wire version `ostf: "0.1"`, conformance suite 0.1.3. This is a review draft. It is not OSTF 1.0, a certification program or a claim of full Core conformance.
 
 ## Read the draft
 
@@ -32,7 +32,7 @@ The Python script creates an ignored virtual environment, installs exact hash-pi
 
 ## Participate
 
-Review the [Core contract](draft/core.md) and try the fixtures with another implementation. Once the repository is public, report ambiguities through GitHub issues. The draft remains 0.x until the [independent implementation and two-organization adoption gates](scope.md#versioning) are met. `ostf.dev` is reserved for the standard; this repository is prepared as the draft's public home.
+Review the [Core contract](draft/core.md) and try the fixtures with another implementation. Report ambiguities through GitHub issues. The draft remains 0.x until the [independent implementation and two-organization adoption gates](scope.md#versioning) are met. `ostf.dev` is reserved for the standard; this repository is the draft's public home. A preliminary trademark search remains separate work; publication is not a claim of name clearance.
 
 ## License
 
