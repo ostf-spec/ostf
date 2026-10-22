@@ -1,0 +1,385 @@
+[
+  {
+    "id": "schema-root-valid",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "code": [
+            "main.go#Run"
+          ]
+        }
+      ],
+      "x-note": {
+        "any": true
+      }
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-root-unknown",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "itmes": []
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-root-version",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": []
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-root-status",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "status": "approved"
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-root-anchor",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "tests": [
+            {
+              "ref": "main_test.go#TestRun",
+              "role": "effectiveness"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-item-valid",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "item-file.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "document": {
+        "id": "SRS",
+        "title": "SRS",
+        "kind": "srs"
+      },
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "refines": [
+            "N-A"
+          ]
+        }
+      ]
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-item-missing",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "item-file.schema.json",
+    "input": {
+      "ostf": "0.1"
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-item-id",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "item-file.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": [
+        {
+          "id": "123"
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-profile-valid",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "profile.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "extends": "default",
+      "types": {
+        "requirement": {
+          "attributes": {
+            "limit": {
+              "type": "number",
+              "meaning": true
+            }
+          }
+        }
+      },
+      "fingerprints": {
+        "bodyChange": "all"
+      }
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-profile-attribute",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "profile.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "types": {
+        "requirement": {
+          "attributes": {
+            "limit": {
+              "type": "decimal"
+            }
+          }
+        }
+      }
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-profile-unknown",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "profile.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "extneds": "default"
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-snapshot-proposed",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "snapshot.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "snapshot": {
+        "source": "jama",
+        "retrieved": "2026-10-19T00:00:00Z",
+        "adapter": "fixture@1"
+      },
+      "items": [
+        {
+          "id": "jama:123",
+          "type": "requirement",
+          "text": "A",
+          "nativeId": "123",
+          "hash": "f1:abc",
+          "title": "A"
+        }
+      ]
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-snapshot-local-id",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "snapshot.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "snapshot": {
+        "source": "jama",
+        "retrieved": "2026-10-19T00:00:00Z",
+        "adapter": "fixture@1"
+      },
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "text": "A",
+          "nativeId": "123",
+          "hash": "f1:abc",
+          "title": "A"
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-snapshot-code",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "snapshot.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "snapshot": {
+        "source": "jama",
+        "retrieved": "2026-10-19T00:00:00Z",
+        "adapter": "fixture@1"
+      },
+      "items": [
+        {
+          "id": "jama:123",
+          "type": "requirement",
+          "text": "A",
+          "nativeId": "123",
+          "hash": "f1:abc",
+          "title": "A",
+          "code": [
+            "main.go#Run"
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-snapshot-owners",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "snapshot.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "snapshot": {
+        "source": "jama",
+        "retrieved": "2026-10-19T00:00:00Z",
+        "adapter": "fixture@1"
+      },
+      "items": [
+        {
+          "id": "jama:123",
+          "type": "requirement",
+          "text": "A",
+          "nativeId": "123",
+          "hash": "f1:abc",
+          "title": "A",
+          "owners": [
+            "team"
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-type-meaning-rejected",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "profile.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "extends": "default",
+      "types": {
+        "requirement": {
+          "attributes": {
+            "limit": {
+              "type": "number",
+              "meaning": true
+            }
+          },
+          "meaning": [
+            "title",
+            "text"
+          ]
+        }
+      },
+      "fingerprints": {
+        "bodyChange": "all"
+      }
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-nested-extension-rejected",
+    "requirements": [
+      "OSTF-005",
+      "OSTF-021"
+    ],
+    "schema": "profile.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "extends": "default",
+      "types": {
+        "requirement": {
+          "attributes": {
+            "limit": {
+              "type": "number",
+              "meaning": true
+            }
+          },
+          "x-note": "extra"
+        }
+      },
+      "fingerprints": {
+        "bodyChange": "all"
+      }
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-anchor-empty-symbol",
+    "requirements": [
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "code": [
+            "main.go#"
+          ]
+        }
+      ]
+    },
+    "valid": false
+  }
+]

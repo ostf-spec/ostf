@@ -1,0 +1,33 @@
+(* SPDX-License-Identifier: Apache-2.0 *)
+(* OSTF-015. Draft 0.1 reader grammar. LF or CRLF line endings are accepted. *)
+lock        = "trace.lock 1", [ newline, { [ entry ], newline }, [ entry ] ] ;
+entry       = value, " ", link_name, " ", value, { " ", pair } ;
+pair        = key, "=", value ;
+key         = attribute_name | "source" | "source.sig" | "source.body" | "target" ;
+link_name   = lower, { lower | digit | "_" } ;
+attribute_name = letter, { letter | digit } ;
+value       = { safe_byte | escape } ;
+escape      = "%", hex, hex ;
+newline     = "\n" | "\r\n" ;
+letter      = lower | upper ;
+lower       = "a" ... "z" ;
+upper       = "A" ... "Z" ;
+digit       = "0" ... "9" ;
+hex         = digit | "A" ... "F" | "a" ... "f" ;
+safe_byte   = ? UTF-8 byte except ASCII <= 0x20, "=", "%", and DEL 0x7f ? ;
+
+(* Semantic constraints:
+ * Link and attribute names have at most 48 ASCII characters.
+ * A field key may occur only once in an entry.
+ * A link identity is decoded source/type/target plus decoded attributes sorted
+ * by attribute name. Fingerprints do not enter that identity.
+ * Duplicate identities are LOCK_DUPLICATE; malformed syntax is LOCK_INVALID.
+ * Readers accept percent hex in either case and unsorted lines/pairs.
+ * Readers reject unescaped '=', control bytes and invalid UTF-8 after decoding.
+ * Canonical writers use uppercase hex over UTF-8 bytes, escaping ASCII <=0x20,
+ * '=', '%', and DEL. Attribute pairs precede fingerprints, sorted by key.
+ * Fingerprint order is source, source.sig, source.body, target; absent keys
+ * are omitted. Entire entry lines are sorted by their UTF-8 bytes.
+ * The canonical file ends in LF. Empty lines carry no entries.
+ * Fingerprint algorithm prefixes are opaque. Unknown ones yield unstamped.
+ *)

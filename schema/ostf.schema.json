@@ -1,0 +1,672 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ostf.dev/draft/0.1/ostf.schema.json",
+  "$comment": "SPDX-License-Identifier: Apache-2.0. Unpublished draft. Structural validation requires semantic checks. Schema IDs use ostf.dev; local resolution is required and no network fetch is implied.",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}$"
+    },
+    "alias": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^\\S(?:[^\\r\\n]*\\S)?$"
+    },
+    "anchor": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^\\r\\n#]+(#[^\\r\\n]{1,512})?$",
+      "$comment": "The 512-byte UTF-8 symbol limit and clean repository path require semantic validation."
+    },
+    "document": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "title": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    },
+    "linkEntry": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "to": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "to"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "anchorEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/anchor"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "ref": {
+              "$ref": "#/$defs/anchor"
+            }
+          },
+          "required": [
+            "ref"
+          ],
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "properties": {
+        "import": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "sourceId": {
+          "type": "string"
+        },
+        "importedHash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "import"
+      ],
+      "additionalProperties": false
+    },
+    "attribute": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "enum": [
+            "string",
+            "text",
+            "number",
+            "bool",
+            "date",
+            "enum",
+            "list",
+            "risk-estimate"
+          ]
+        },
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "meaning": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "attributes": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9]{0,47}$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/attribute"
+      }
+    },
+    "type": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "textOptional": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "linkType": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "to": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inverse": {
+          "type": "string"
+        },
+        "acyclic": {
+          "type": "boolean"
+        },
+        "suspect": {
+          "enum": [
+            "source",
+            "target",
+            "both"
+          ]
+        },
+        "attributes": {
+          "$ref": "#/$defs/attributes"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,47}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "accepted",
+            "obsolete"
+          ]
+        },
+        "section": {
+          "type": "string"
+        },
+        "rationale": {
+          "type": "string"
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/alias"
+          }
+        },
+        "derived": {
+          "type": "boolean"
+        },
+        "attributes": {
+          "type": "object"
+        },
+        "provenance": {
+          "$ref": "#/$defs/provenance"
+        },
+        "justifications": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rule": {
+                "type": "string"
+              },
+              "reason": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "rule",
+              "reason"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "owners": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "code": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/anchorEntry"
+          }
+        },
+        "tests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/anchorEntry"
+          }
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/linkEntry"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "propertyNames": {
+        "anyOf": [
+          {
+            "enum": [
+              "id",
+              "type",
+              "title",
+              "text",
+              "status",
+              "section",
+              "rationale",
+              "aliases",
+              "derived",
+              "attributes",
+              "provenance",
+              "justifications",
+              "owners",
+              "code",
+              "tests"
+            ]
+          },
+          {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$"
+          },
+          {
+            "pattern": "^x-"
+          }
+        ]
+      }
+    },
+    "itemFile": {
+      "type": "object",
+      "properties": {
+        "ostf": {
+          "const": "0.1"
+        },
+        "document": {
+          "$ref": "#/$defs/document"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item"
+          }
+        }
+      },
+      "required": [
+        "ostf",
+        "items"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    },
+    "root": {
+      "type": "object",
+      "properties": {
+        "ostf": {
+          "const": "0.1"
+        },
+        "profile": {
+          "type": "string"
+        },
+        "include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/item"
+          }
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "enum": [
+                "yaml",
+                "tags",
+                "both"
+              ]
+            },
+            "keyword": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "code": {
+          "type": "object",
+          "properties": {
+            "sources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "exclude": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "tests": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "justified": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ref": {
+                    "type": "string"
+                  },
+                  "reason": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ref",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "policy": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "imports": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "external": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      },
+      "required": [
+        "ostf"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "ostf": {
+          "const": "0.1"
+        },
+        "extends": {
+          "type": "string"
+        },
+        "types": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9-]{0,47}$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/type"
+          }
+        },
+        "links": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/linkType"
+          }
+        },
+        "fingerprints": {
+          "type": "object",
+          "properties": {
+            "bodyChange": {
+              "enum": [
+                "risk-relevant",
+                "all",
+                "none"
+              ]
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "coverage": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "riskMatrix": {
+          "type": "object"
+        },
+        "integrity": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "idSuffix": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "ostf"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    },
+    "snapshotItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,31}:[A-Za-z0-9][A-Za-z0-9._/-]{0,127}$"
+        },
+        "type": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]{0,47}$"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "object"
+        },
+        "nativeId": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "hash": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "title",
+        "text",
+        "nativeId",
+        "hash"
+      ],
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "$ref": "#/$defs/linkEntry"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "propertyNames": {
+        "anyOf": [
+          {
+            "enum": [
+              "id",
+              "type",
+              "title",
+              "text",
+              "attributes",
+              "nativeId",
+              "revision",
+              "url",
+              "hash"
+            ]
+          },
+          {
+            "pattern": "^[a-z][a-z0-9_]{0,47}$"
+          },
+          {
+            "pattern": "^x-"
+          }
+        ],
+        "not": {
+          "enum": [
+            "status",
+            "section",
+            "rationale",
+            "aliases",
+            "derived",
+            "provenance",
+            "justifications",
+            "owners",
+            "code",
+            "tests"
+          ]
+        }
+      }
+    },
+    "snapshot": {
+      "type": "object",
+      "properties": {
+        "ostf": {
+          "const": "0.1"
+        },
+        "snapshot": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "retrieved": {
+              "type": "string"
+            },
+            "baseline": {
+              "type": "string"
+            },
+            "adapter": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "source",
+            "retrieved",
+            "adapter"
+          ],
+          "additionalProperties": false
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/snapshotItem"
+          }
+        }
+      },
+      "required": [
+        "ostf",
+        "snapshot",
+        "items"
+      ],
+      "additionalProperties": false,
+      "patternProperties": {
+        "^x-": {}
+      }
+    }
+  }
+}

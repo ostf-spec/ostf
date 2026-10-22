@@ -1,0 +1,16 @@
+name: Draft conformance checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-fixtures:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+      - name: Run standalone draft checks
+        run: python3 conformance/run.py

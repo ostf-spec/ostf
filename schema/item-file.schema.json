@@ -1,0 +1,6 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ostf.dev/draft/0.1/item-file.schema.json",
+  "$comment": "SPDX-License-Identifier: Apache-2.0. Draft structural entry schema. Snapshot semantics are proposed, not implemented.",
+  "$ref": "ostf.schema.json#/$defs/itemFile"
+}
