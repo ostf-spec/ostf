@@ -1,3 +1,4 @@
+<!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: The Open Software Traceability Format
 
 **Why coding agents need to know why code exists, and a proposal for a shared format that tells them**
@@ -280,7 +281,7 @@ The questions we most want answered:
 19. Ketryx, MCP announcement: https://www.ketryx.com/press-release/ketryx-announces-mcp
 20. LiSSA, retrieval-augmented traceability link recovery (ICSE 2025): https://publikationen.bibliothek.kit.edu/1000179816/164563088
 21. GitHub Spec Kit: https://github.com/github/spec-kit; Microsoft for Developers, Diving into spec-driven development with GitHub Spec Kit (2025): https://devblogs.microsoft.com/blog/spec-driven-development-spec-kit
-22. Kiro, specs concepts, requirements-first feature specs and correctness: https://kiro.dev/docs/specs/concepts, https://kiro.dev/docs/specs/feature-specs/requirements-first/, https://kiro.dev/docs/specs/correctness/
+22. Kiro, feature specs, requirements-first workflow and correctness: https://kiro.dev/docs/specs/feature-specs/, https://kiro.dev/docs/specs/feature-specs/requirements-first/, https://kiro.dev/docs/specs/correctness/
 23. Mindfold, Trellis: https://github.com/mindfold-ai/Trellis
 24. Eclipse TSF, trudag usage and STPA schema: https://pages.eclipse.dev/eclipse/tsf/tsf/tools/usage.html, https://pages.eclipse.dev/eclipse/tsf/tsf/extensions/stpa/schema.html
 25. reqstool client: https://github.com/reqstool/reqstool-client
