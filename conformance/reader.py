@@ -585,7 +585,7 @@ def main():
         if path.is_file() and ".git" not in path.relative_to(root).parts and path.suffix in {".yaml", ".go", ".lock"}:
             if path.stat().st_size > MAX_FILE_BYTES:
                 raise SystemExit("input exceeds 8 MiB")
-            files[path.relative_to(root).as_posix()] = path.read_text()
+            files[path.relative_to(root).as_posix()] = path.read_text(encoding="utf-8")
     result = analyze(files)
     print(json.dumps(result, ensure_ascii=False, sort_keys=True, indent=2))
     return 2 if "unsupported" in result else 1 if result.get("errorCodes") else 0
