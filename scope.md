@@ -64,7 +64,7 @@ The following deferred proposals do not add obligations to a Core 1.0 Producer, 
 
 | Proposal | Content | Original zztrace IDs |
 | --- | --- | --- |
-| C9. External and onboarding | Referenced-item ownership, `alias:native` identities, external declarations, read-only snapshots, links into snapshots and integrity checks | TRF-011, TRF-080, TRF-084 to TRF-087 |
+| C9. External and onboarding | Referenced-item ownership, `alias:native` identities, external declarations, read-only snapshots, links into snapshots and integrity checks. See the [external-item design proposal](draft/external.md) | TRF-011, TRF-080, TRF-084 to TRF-087 |
 | Recovery | `asserted`/`recovered` origins and accepted recovery records, including link, origin, decision, evidence and rejected proposals | TRF-045, TRF-046 |
 | Tag exclusions and formats | `@req-none` and alternative tag keywords | TRF-057, TRF-058 |
 | Coverage rules | Declared rules per type, the link path language, built-in checks, justifications | TRF-100 to TRF-104 |
@@ -79,7 +79,7 @@ The following deferred proposals do not add obligations to a Core 1.0 Producer, 
 - **Adapters:** sync with Jama, Polarion, DOORS, codebeamer or Jira, and import mapping files. A future external-item extension may standardize the snapshots and provenance they write.
 - **Documents:** generated specifications, trace matrices and design history files.
 - **Change policy:** locks, owner groups and allow, warn, approve or deny decisions (TRF-140 to TRF-149). Not in OSTF 1.0. The `policy` key is reserved so zztrace can keep its policy in the same files. Revisit once the T3 model has real use. Publishing the policy file format would not give away the engine that decides, much as CODEOWNERS is a public format read by many tools.
-- **Evidence:** test results, baselines, approvals and signatures (plan phase T6). A later module may define how results bind to a test identity, a commit and a fingerprint.
+- **Evidence:** test results, baselines, approvals and signatures (plan phase T6). The [evidence-reference design proposal](draft/evidence.md) identifies portable run and artifact data for a possible optional module. Execution, approvals and release decisions remain tool and process behavior.
 
 ## Conformance
 
@@ -110,6 +110,7 @@ The current [suite 0.1.3](conformance/suite.json) is a bounded draft subset. It 
 | **Conformance suite** | Initial bounded draft subset now present | [Suite 0.1.3](conformance/README.md), with requirement mappings and fixed positive/negative expectations. Complete error-code/construct coverage and independent-party qualification remain 1.0 gates |
 | **Mappings** | Informative, outside Core conformance | ReqIF and OSLC mappings, each link marked exact, conditional or unsupported, with what is lost in each direction. Assurance-case mappings come later |
 | **Rationale and examples** | Informative | Why the decisions were made, worked examples, migration from other tools' formats |
+| **Extension design proposals** | Exploratory, no conformance claim | [External items](draft/external.md) and [evidence references](draft/evidence.md), stress-tested by the [change-impact workflow](examples/change-impact.md). Schemas and executable vectors follow only after their identity and digest rules are settled |
 
 Rules the set follows:
 
