@@ -22,6 +22,8 @@ items:
 
 The [minimal example](examples/minimal/README.md) includes real Go source and a valid lock file. The [payment retry scenario](examples/payment-retry/README.md) shows a coding agent's change in a more realistic service with a requirement, implementing method, regression test and two valid lock stamps. Larger repositories can split items into included files, and tools can declare links with `@req` comments in code. Start with an example and [scope](scope.md) to evaluate the format; use the Core draft and conformance suite when implementing it.
 
+The informative [change-impact workflow](examples/change-impact.md) tests a limit of those stamps: a constructor can change while the linked method and test do not. It maps what Core supplies, what a dependency analyzer and CI supply, and which external-item and evidence-reference contracts remain proposals.
+
 ## How the entities connect
 
 This illustrative graph uses the default profile. Each arrow points from a detail to the purpose it serves:
@@ -56,12 +58,14 @@ An item's `code` or `tests` field declares the link in YAML, but the relationshi
 | --- | --- |
 | [Minimal example](examples/minimal/README.md) | A small source tree with two valid links |
 | [Payment retry scenario](examples/payment-retry/README.md) | A runnable agentic change with requirement, implementation, test and lock stamps |
+| [Change-impact workflow](examples/change-impact.md) | Informative PR and helper-change scenario with current and proposed capability boundaries |
 | [Scope](scope.md) | Core, optional modules, deferred extensions and tool boundaries |
 | [Core contract](draft/core.md) | Versioned draft rules, deferred proposals and release gates with stable `OSTF-` IDs |
 | [Go language annex](draft/go.md) and [Go runner annex](draft/go-tests.md) | Symbol, token and test identities |
 | [Schemas](schema/) and [lock grammar](draft/trace-lock.ebnf) | Structural entry points and exact lock syntax |
 | [Conformance suite](conformance/README.md) | Fixed vectors, a standalone Python prototype and declared limits |
 | [Support map](draft/support.md) | Implemented, proposed and unqualified behavior |
+| [External-item](draft/external.md) and [evidence-reference](draft/evidence.md) proposals | Interoperability questions to settle before optional extension claims |
 | [White paper](white-paper.md) | Rationale and invitation to review |
 
 The schemas use the `https://ostf.dev/draft/0.1/` identifier namespace. Validation resolves schema references from this repository; the namespace does not require a network fetch. The format's first implementation is zztrace, but its commands, permissions and internal storage are outside OSTF.
