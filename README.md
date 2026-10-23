@@ -20,7 +20,7 @@ items:
 
 `math.go#Add` names a Go function that implements `R-ADD`; `math_test.go#TestAdd` names a test that verifies it. Paths are relative to the source tree. A separate `trace.lock` records the fingerprints present when each link was rechecked. A matching stamp means those inputs have not changed under the draft's fingerprint rules. It does not establish that the test passed or the code is correct.
 
-The [complete example](examples/minimal/README.md) includes real Go source and a valid lock file. Larger repositories can split items into included files, and tools can declare links with `@req` comments in code. Start with the example and [scope](scope.md) to evaluate the format; use the Core draft and conformance suite when implementing it.
+The [minimal example](examples/minimal/README.md) includes real Go source and a valid lock file. The [payment retry scenario](examples/payment-retry/README.md) shows a coding agent's change in a more realistic service with a requirement, implementing method, regression test and two valid lock stamps. Larger repositories can split items into included files, and tools can declare links with `@req` comments in code. Start with an example and [scope](scope.md) to evaluate the format; use the Core draft and conformance suite when implementing it.
 
 ## How the entities connect
 
@@ -54,7 +54,8 @@ An item's `code` or `tests` field declares the link in YAML, but the relationshi
 
 | Document | Purpose |
 | --- | --- |
-| [Example](examples/minimal/README.md) | A complete source tree with two valid links |
+| [Minimal example](examples/minimal/README.md) | A small source tree with two valid links |
+| [Payment retry scenario](examples/payment-retry/README.md) | A runnable agentic change with requirement, implementation, test and lock stamps |
 | [Scope](scope.md) | Core, optional modules, deferred extensions and tool boundaries |
 | [Core contract](draft/core.md) | Versioned draft rules, deferred proposals and release gates with stable `OSTF-` IDs |
 | [Go language annex](draft/go.md) and [Go runner annex](draft/go-tests.md) | Symbol, token and test identities |
@@ -73,6 +74,7 @@ With Python 3.10 or newer and Go 1.27.2:
 python3 conformance/run.py
 go test ./...
 (cd examples/minimal && go test ./...)
+(cd examples/payment-retry && go test ./...)
 ```
 
 The Python script creates an ignored virtual environment, installs exact hash-pinned dependencies and runs 107 non-schema cases through the independent-code prototype. The standalone Go test runs 18 structural schema fixtures with a local-only resolver; it does not import zztrace. The prototype and zztrace reference implementation share project authorship; their agreement is not independent-party qualification. See the [suite details](conformance/README.md) before making a conformance claim.

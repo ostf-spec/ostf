@@ -1,0 +1,12 @@
+ostf: "0.1"
+items:
+  - id: R-PAY-RETRY
+    text: >-
+      A retry with the same
+      idempotency key must return
+      the first result without
+      creating a second charge.
+    code:
+      - pay/charge.go#Service.Charge
+    tests:
+      - pay/retry_test.go#TestSameKey

@@ -1,0 +1,3 @@
+trace.lock 1
+pay/charge.go#Service.Charge implements R-PAY-RETRY source.sig=go1:GG87juikRDlVftpE_jZHF2al2weX0dAt3ZmIU_ZidfE source.body=go1:MfpzrEnIbxC9-F2ceyJo8KmJK3bn9Dz7epTGGLfzL74 target=f1:-fGQUood7K-GLzAggMrvAssxMIAPcM3ycdApkoOLpMM
+pay/retry_test.go#TestSameKey verifies R-PAY-RETRY source.sig=go1:_PmiaDAotvo0s5ssFx2RprAxwz7kqA_I2J6bNTV0S-o source.body=go1:cLispQ3oZD14geKaGl_LTywx-UYd2d2pXXfRsEBWoCs target=f1:-fGQUood7K-GLzAggMrvAssxMIAPcM3ycdApkoOLpMM
