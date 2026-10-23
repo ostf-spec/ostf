@@ -78,6 +78,17 @@ def check():
     ], "worked example links"
     counts["workedExample"] = 1
 
+    scenario = HERE.parent / "examples/payment-retry"
+    names = ("trace.yaml", "trace.lock", "pay/charge.go", "pay/retry_test.go")
+    files = {name: (scenario / name).read_text() for name in names}
+    result = reader.analyze(files)
+    assert result["errorCodes"] == [] and result["warningCodes"] == [], "payment retry diagnostics"
+    assert [(link["source"], link["state"]) for link in result["links"]] == [
+        ("pay/charge.go#Service.Charge", "valid"),
+        ("pay/retry_test.go#TestSameKey", "valid"),
+    ], "payment retry links"
+    counts["paymentRetryExample"] = 1
+
     # Fail visibly for unsupported features, rather than reporting a false pass.
     unsupported = [
         {"trace.yaml": 'ostf: "0.1"\nprofile: iec62304\nitems: []\n'},
