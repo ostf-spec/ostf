@@ -67,6 +67,8 @@ An item's `code` or `tests` field declares the link in YAML, but the relationshi
 | [PR impact mapping](examples/pr-impact.md) | A real 11-file Git change mapped from individual lines through anchors to OSTF items |
 | [Change-impact workflow](examples/change-impact.md) | Informative PR and helper-change scenario with current and proposed capability boundaries |
 | [Scope](scope.md) | Core, optional modules, deferred extensions and tool boundaries |
+| [Draft 0.3 specification](draft/0.3/ostf.md) | From-scratch simplified contract, candidate text for 1.0, with [schemas](draft/0.3/schema/), [lock grammar](draft/0.3/trace-lock.abnf), a [runnable example](draft/0.3/example/README.md), [fixtures](draft/0.3/fixtures/README.md) and an [agent-readiness plan](draft/0.3/plan-agent-readiness.md) |
+| [Draft refactoring plan](draft/refactor-plan.md) | Superseded by the draft 0.3 specification; kept as the record of the agent-context platform direction that was considered and not taken |
 | [Core contract](draft/core.md) | Versioned draft rules, deferred proposals and release gates with stable `OSTF-` IDs |
 | [Go language annex](draft/go.md) and [Go runner annex](draft/go-tests.md) | Symbol, token and test identities |
 | [Schemas](schema/) and [lock grammar](draft/trace-lock.ebnf) | Structural entry points and exact lock syntax |

@@ -1,0 +1,27 @@
+ostf: "0.3"
+sources:
+  jira:
+    url: "https://example.atlassian.net/browse/{id}"
+items:
+  - id: N-REFUNDS
+    type: need
+    text: Customers get refunds quickly without the business losing money to abuse.
+  - id: RISK-REFUND-ABUSE
+    type: risk
+    text: A compromised account or a mistaken operator drains funds through refunds.
+  - id: R-REFUND-LIMIT
+    title: Refund limit
+    text: >-
+      A refund must not exceed the original order, and refunds above the
+      daily limit for an account need a second approval.
+    refines: [N-REFUNDS]
+    controls: [RISK-REFUND-ABUSE]
+    code: [refund.go#CheckRefundLimit]
+    tests: [refund_test.go#TestRefundLimit]
+  - id: PAY-123
+    external: jira:PAY-123
+    revision: "7"
+    title: Idempotent retry
+    text: >-
+      A retry with the same idempotency key returns the first result
+      without creating a second charge.

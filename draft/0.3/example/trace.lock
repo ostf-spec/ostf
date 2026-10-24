@@ -1,0 +1,7 @@
+trace.lock 1
+R-REFUND-LIMIT controls RISK-REFUND-ABUSE source=f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM target=f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0
+R-REFUND-LIMIT refines N-REFUNDS source=f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM target=f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs
+charge.go#Service.Charge implements PAY-123 source.sig=go1:yldS4_vemVDMKn7G-adDXben29GTlgflD-sWIKU__pw source.body=go1:X9pRD_jYNxXNuDK-wrPKPY0gu_Gqk_a8Vu2eEnaSDfY target=f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw
+charge_test.go#TestChargeRetry verifies PAY-123 source.sig=go1:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0 source.body=go1:jmSIQcdKpuVppckGyyGo6ZsSudyupeGNZYs_GNVMhmU target=f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw
+refund.go#CheckRefundLimit implements R-REFUND-LIMIT source.sig=go1:Sk2hoKJ7XFGtX9rBO9ArLtwl3XP4w3ZIm0-_Jecg1Yo source.body=go1:VXEjsjADENIh9OdVqZYTEuMWc2SHggjHcLvKnzCEDGc target=f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM
+refund_test.go#TestRefundLimit verifies R-REFUND-LIMIT source.sig=go1:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY source.body=go1:XNzVhKa7AERnwx1OHXnQq7kY160VCxW5UR3cDbMfriY target=f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM

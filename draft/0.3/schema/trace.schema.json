@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ostf.dev/draft/0.3/trace.schema.json",
+  "$comment": "SPDX-License-Identifier: Apache-2.0. OSTF 0.3 working draft, OSTF-106. Structural shape of trace.yaml and included item files. Resolve identifiers locally; the rules in ostf.md also apply. Keys not listed under properties must be link types of the selected vocabulary; the reader checks their names semantically.",
+  "title": "OSTF trace file (root or included item file)",
+  "type": "object",
+  "properties": {
+    "ostf": { "const": "0.3" },
+    "profile": { "$ref": "#/$defs/path" },
+    "include": { "type": "array", "items": { "$ref": "#/$defs/path" } },
+    "tags": { "type": "boolean", "default": true, "$comment": "Tags are on unless false (OSTF-133)." },
+    "sources": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,31}$" },
+      "additionalProperties": { "$ref": "#/$defs/source" }
+    },
+    "items": { "type": "array", "items": { "$ref": "#/$defs/item" } }
+  },
+  "required": ["ostf"],
+  "patternProperties": { "^x-": {} },
+  "additionalProperties": false,
+  "$defs": {
+    "path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[^/\\\\\\r\\n][^\\\\\\r\\n]*$",
+      "$comment": "Relative slash path. Empty, '.' and '..' components are rejected semantically (OSTF-105)."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}$"
+    },
+    "alias": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^\\S(?:[^\\r\\n]*\\S)?$",
+      "$comment": "The 512-byte limit and the control-character rule are checked semantically (OSTF-110)."
+    },
+    "reference": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512,
+      "pattern": "^\\S(?:[^\\r\\n]*\\S)?$",
+      "$comment": "An item ID or alias."
+    },
+    "anchor": {
+      "type": "string",
+      "pattern": "^[^/\\\\\\r\\n#][^\\\\\\r\\n#]*(#[^\\r\\n]+)?$",
+      "$comment": "path or path#symbol. Symbol meaning comes from the language annex (OSTF-132)."
+    },
+    "externalId": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]{0,31}:[^\\s\\x00-\\x1f\\x7f]+$",
+      "$comment": "alias:native-id (OSTF-113)."
+    },
+    "attributeValue": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "array", "items": { "type": "string" } }
+      ]
+    },
+    "attributes": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[A-Za-z][A-Za-z0-9]{0,47}$" },
+      "additionalProperties": { "$ref": "#/$defs/attributeValue" }
+    },
+    "linkEntry": {
+      "anyOf": [
+        { "$ref": "#/$defs/reference" },
+        {
+          "type": "object",
+          "properties": { "to": { "$ref": "#/$defs/reference" } },
+          "required": ["to"],
+          "additionalProperties": { "type": "string" }
+        }
+      ]
+    },
+    "linkList": { "type": "array", "items": { "$ref": "#/$defs/linkEntry" } },
+    "anchorEntry": {
+      "anyOf": [
+        { "$ref": "#/$defs/anchor" },
+        {
+          "type": "object",
+          "properties": { "ref": { "$ref": "#/$defs/anchor" } },
+          "required": ["ref"],
+          "additionalProperties": { "type": "string" }
+        }
+      ]
+    },
+    "anchorList": { "type": "array", "items": { "$ref": "#/$defs/anchorEntry" } },
+    "source": {
+      "type": "object",
+      "properties": {
+        "url": { "type": "string", "minLength": 1, "$comment": "Display template; {id} is replaced by the percent-encoded native ID." }
+      },
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,47}$" },
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "status": { "enum": ["draft", "accepted", "obsolete"] },
+        "section": { "type": "string" },
+        "rationale": { "type": "string" },
+        "aliases": { "type": "array", "items": { "$ref": "#/$defs/alias" } },
+        "attributes": { "$ref": "#/$defs/attributes" },
+        "external": { "$ref": "#/$defs/externalId" },
+        "revision": { "type": "string", "minLength": 1 },
+        "code": { "$ref": "#/$defs/anchorList" },
+        "tests": { "$ref": "#/$defs/anchorList" }
+      },
+      "required": ["id"],
+      "dependentRequired": { "revision": ["external"] },
+      "if": { "required": ["external"] },
+      "else": { "required": ["text"] },
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": { "$ref": "#/$defs/linkList" }
+    }
+  }
+}
