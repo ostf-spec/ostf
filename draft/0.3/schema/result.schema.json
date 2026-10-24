@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ostf.dev/draft/0.3/result.schema.json",
+  "$comment": "SPDX-License-Identifier: Apache-2.0. OSTF 0.3 working draft, Annex C.2 and C.3. Shape of a result: a conformance result, or the json output of check, context and stamp (Annex I). Sort orders, omission rules and comparison rules are in ostf.md.",
+  "title": "OSTF result",
+  "type": "object",
+  "properties": {
+    "ostf": { "const": "0.3" },
+    "context": { "type": "string", "minLength": 1, "$comment": "Present only in a context result: TARGET as given (Annex I.3)." },
+    "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
+    "items": { "type": "array", "items": { "$ref": "#/$defs/item" } },
+    "links": { "type": "array", "items": { "$ref": "#/$defs/link" } },
+    "impact": { "$ref": "#/$defs/impact" }
+  },
+  "required": ["ostf", "diagnostics", "items", "links"],
+  "patternProperties": { "^x-": {} },
+  "additionalProperties": false,
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9._-]{0,127}$" },
+    "anchor": {
+      "type": "string",
+      "pattern": "^[^/\\\\\\r\\n#][^\\\\\\r\\n#]*(#[^\\r\\n]+)?$"
+    },
+    "fingerprint": { "type": "string", "pattern": "^[a-z][a-z0-9]*:[A-Za-z0-9_-]{43}$" },
+    "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
+    "identities": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1, "$comment": "Link identity: canonical lock line without fingerprint pairs (Annex I.2)." }
+    },
+    "diagnostic": {
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_.-]*$" },
+        "severity": { "enum": ["error", "warning", "info"] },
+        "file": { "type": "string" },
+        "subject": { "type": "string" },
+        "message": { "type": "string" },
+        "hint": { "type": "string" }
+      },
+      "required": ["code", "severity"],
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    },
+    "item": {
+      "type": "object",
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,47}$" },
+        "status": { "enum": ["draft", "accepted", "obsolete"] },
+        "riskRelevant": { "type": "boolean" },
+        "fingerprint": { "$ref": "#/$defs/fingerprint" },
+        "title": { "type": "string" },
+        "text": { "type": "string" },
+        "rationale": { "type": "string" },
+        "external": { "type": "string" },
+        "revision": { "type": "string" }
+      },
+      "required": ["id", "type", "status", "riskRelevant"],
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    },
+    "link": {
+      "type": "object",
+      "properties": {
+        "source": { "type": "string", "minLength": 1, "$comment": "An item ID or an anchor." },
+        "type": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,47}$" },
+        "target": { "$ref": "#/$defs/id" },
+        "attributes": { "type": "object", "additionalProperties": { "type": "string" } },
+        "origin": { "enum": ["declared", "tagged"] },
+        "fingerprints": {
+          "type": "object",
+          "properties": {
+            "source": { "$ref": "#/$defs/fingerprint" },
+            "source.sig": { "$ref": "#/$defs/fingerprint" },
+            "source.body": { "$ref": "#/$defs/fingerprint" },
+            "target": { "$ref": "#/$defs/fingerprint" }
+          },
+          "additionalProperties": false
+        },
+        "state": { "enum": ["valid", "suspect", "unstamped", "broken"] },
+        "reasons": {
+          "type": "array",
+          "items": { "enum": ["LINK_BROKEN", "LINK_UNSTAMPED", "UNKNOWN_ALGORITHM", "ITEM_CHANGED", "SIGNATURE_CHANGED", "BODY_CHANGED"] }
+        }
+      },
+      "required": ["source", "type", "target", "attributes", "origin"],
+      "dependentRequired": { "state": ["reasons"], "reasons": ["state"] },
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    },
+    "impact": {
+      "type": "object",
+      "properties": {
+        "base": { "type": "string", "minLength": 1 },
+        "coverage": { "const": "direct" },
+        "changed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "anchor": { "$ref": "#/$defs/anchor" },
+              "items": { "$ref": "#/$defs/ids" }
+            },
+            "required": ["anchor", "items"],
+            "additionalProperties": false
+          }
+        },
+        "items": {
+          "type": "object",
+          "properties": {
+            "added": { "$ref": "#/$defs/ids" },
+            "changed": { "$ref": "#/$defs/ids" },
+            "removed": { "$ref": "#/$defs/ids" }
+          },
+          "required": ["added", "changed", "removed"],
+          "additionalProperties": false
+        },
+        "links": {
+          "type": "object",
+          "properties": {
+            "added": { "$ref": "#/$defs/identities" },
+            "removed": { "$ref": "#/$defs/identities" }
+          },
+          "required": ["added", "removed"],
+          "additionalProperties": false
+        },
+        "tests": { "type": "array", "items": { "$ref": "#/$defs/anchor" } }
+      },
+      "required": ["base", "coverage", "changed", "items", "links", "tests"],
+      "patternProperties": { "^x-": {} },
+      "additionalProperties": false
+    }
+  }
+}

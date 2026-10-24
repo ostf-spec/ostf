@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: Apache-2.0
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability privately
+    url: https://github.com/ostf-spec/ostf/security/advisories/new
+    about: Use GitHub private reporting for security issues in repository tools or files.

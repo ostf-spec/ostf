@@ -1,0 +1,3 @@
+trace.lock 1
+math.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE
+math_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE

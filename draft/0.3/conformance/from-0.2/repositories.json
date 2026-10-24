@@ -1,0 +1,2224 @@
+[
+  {
+    "id": "repository-valid",
+    "requirements": [
+      "OSTF-002",
+      "OSTF-007",
+      "OSTF-009",
+      "OSTF-011",
+      "OSTF-012",
+      "OSTF-016",
+      "OSTF-019"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "formatting-and-comments",
+    "requirements": [
+      "OSTF-014",
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\n// docs\nfunc Add(a,b int)int { /* hi */ return a + b // end\n}\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "item-changed",
+    "requirements": [
+      "OSTF-013",
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add values safely.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:QrdWpi8sfpMG2Vaytwf96MUQK6jBLhUlPo2Glgw2aMs"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:QrdWpi8sfpMG2Vaytwf96MUQK6jBLhUlPo2Glgw2aMs",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "suspect",
+          "reasons": [
+            "ITEM_CHANGED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:QrdWpi8sfpMG2Vaytwf96MUQK6jBLhUlPo2Glgw2aMs",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "suspect",
+          "reasons": [
+            "ITEM_CHANGED"
+          ],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "nonrisk-body-valid",
+    "requirements": [
+      "OSTF-017",
+      "OSTF-019"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "signature-changed",
+    "requirements": [
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int64) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:UWOrvYYTnTTnaVQ4lZJwvrAdFnlNxA8WvcdGcPcWzx4",
+            "source.body": "go1:dVQdz0h2t62ZDT-nvv_AN3HY0Hk1rsRoiF1YRLuotVU"
+          },
+          "state": "suspect",
+          "reasons": [
+            "SIGNATURE_CHANGED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "no-lock",
+    "requirements": [
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "unstamped",
+    "requirements": [
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "unstamped",
+          "reasons": [
+            "LINK_UNSTAMPED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "unstamped",
+          "reasons": [
+            "LINK_UNSTAMPED"
+          ],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "unknown-algorithm",
+    "requirements": [
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=future1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=future1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "unstamped",
+          "reasons": [
+            "UNKNOWN_ALGORITHM"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "unstamped",
+          "reasons": [
+            "UNKNOWN_ALGORITHM"
+          ],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "broken-symbol",
+    "requirements": [
+      "OSTF-011",
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Other(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "BROKEN_LINK"
+      ],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {},
+          "state": "broken",
+          "reasons": [
+            "LINK_BROKEN"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "broken-file",
+    "requirements": [
+      "OSTF-011",
+      "OSTF-016"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "BROKEN_LINK"
+      ],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {},
+          "state": "broken",
+          "reasons": [
+            "LINK_BROKEN"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "risk-body-suspect",
+    "requirements": [
+      "OSTF-017",
+      "OSTF-018"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    controls: [RISK-X]\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n  - id: RISK-X\n    type: risk\n    text: Incorrect arithmetic.\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nR-ADD controls RISK-X source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        },
+        {
+          "id": "RISK-X",
+          "type": "risk",
+          "fingerprint": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-ADD",
+          "type": "controls",
+          "target": "RISK-X",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc",
+            "source": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+          },
+          "state": "suspect",
+          "reasons": [
+            "BODY_CHANGED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "inherited-risk-body",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-018"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    refines: [RC-PARENT]\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n  - id: RC-PARENT\n    text: Control arithmetic.\n    controls: [RISK-X]\n  - id: RISK-X\n    type: risk\n    text: Incorrect arithmetic.\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nR-ADD refines RC-PARENT source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc\nRC-PARENT controls RISK-X source=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        },
+        {
+          "id": "RC-PARENT",
+          "type": "requirement",
+          "fingerprint": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc"
+        },
+        {
+          "id": "RISK-X",
+          "type": "risk",
+          "fingerprint": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-ADD",
+          "type": "refines",
+          "target": "RC-PARENT",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc",
+            "source": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "RC-PARENT",
+          "type": "controls",
+          "target": "RISK-X",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc",
+            "source": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+          },
+          "state": "suspect",
+          "reasons": [
+            "BODY_CHANGED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "included-items",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [trace/*.yaml]\nitems: []\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+      "trace/requirements.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tag-alias",
+    "requirements": [
+      "OSTF-006",
+      "OSTF-010",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: both}\nitems:\n  - id: R-ADD\n    aliases: [123/legacy]\n    text: Add two values.\n    code: []\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\n// @req 123/legacy\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "tagged"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tag-yaml-deduplicate",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: both}\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\n// @req R-ADD\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tag-unknown-id",
+    "requirements": [
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: both}\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { // @req UNKNOWN\n return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "TAG_UNKNOWN_ID"
+      ]
+    }
+  },
+  {
+    "id": "tag-unbound",
+    "requirements": [
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: both}\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n\n// @req R-ADD\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "TAG_UNBOUND"
+      ]
+    }
+  },
+  {
+    "id": "opaque-extension-reserved",
+    "requirements": [
+      "OSTF-001",
+      "OSTF-005"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nx-example: {note: preserved and ignored}\nexternal: []\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "custom-meaning-profile",
+    "requirements": [
+      "OSTF-003",
+      "OSTF-008",
+      "OSTF-013",
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - id: R-ADD\n    attributes: {limit: 4.5, enabled: true, label: yes}\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number, meaning: true}\n      enabled: {type: bool, meaning: true}\n      label: {type: string}\nfingerprints: {bodyChange: all}\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+          },
+          "state": "suspect",
+          "reasons": [
+            "BODY_CHANGED"
+          ],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "unknown-version",
+    "requirements": [
+      "OSTF-002"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems: []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "duplicate-yaml-key",
+    "requirements": [
+      "OSTF-003"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: []\nitems: []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "yaml-anchor",
+    "requirements": [
+      "OSTF-003"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: &x []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "yaml-alias",
+    "requirements": [
+      "OSTF-003"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: *x\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "yaml-custom-tag",
+    "requirements": [
+      "OSTF-003"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: !other []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "yaml-two-documents",
+    "requirements": [
+      "OSTF-003"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: []\n---\nitems: []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "unknown-root-key",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitmes: []\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "case-colliding-ids",
+    "requirements": [
+      "OSTF-006"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A}, {id: r-a, text: B}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "DUPLICATE_ID"
+      ]
+    }
+  },
+  {
+    "id": "missing-target",
+    "requirements": [
+      "OSTF-009"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, refines: [MISSING]}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "UNKNOWN_TARGET"
+      ]
+    }
+  },
+  {
+    "id": "self-link",
+    "requirements": [
+      "OSTF-009"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, refines: [R-A]}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "SELF_LINK"
+      ]
+    }
+  },
+  {
+    "id": "refinement-cycle",
+    "requirements": [
+      "OSTF-009"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, refines: [R-B]}, {id: R-B, text: B, refines: [R-A]}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_CYCLE"
+      ]
+    }
+  },
+  {
+    "id": "unknown-type",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, type: mystery, text: A}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "UNKNOWN_TYPE"
+      ]
+    }
+  },
+  {
+    "id": "invalid-status",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, status: approved}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_STATUS"
+      ]
+    }
+  },
+  {
+    "id": "derived-without-rationale",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, derived: true}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "DERIVED_WITHOUT_RATIONALE"
+      ]
+    }
+  },
+  {
+    "id": "wrong-endpoint",
+    "requirements": [
+      "OSTF-009"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, controls: [R-B]}, {id: R-B, text: B}]\n",
+      "trace.lock": "trace.lock 1\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_NOT_ALLOWED"
+      ]
+    }
+  },
+  {
+    "id": "include-exact-root",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [items.yaml]\nitems: []\n",
+      "items.yaml": "ostf: \"0.2\"\nitems: [{id: R-ADD, text: Add two values.}]\n",
+      "sub/items.yaml": "ostf: \"0.2\"\nitems: [{id: R-ADD, text: Add two values.}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": []
+    }
+  },
+  {
+    "id": "include-glob-root",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [trace/*.yaml]\nitems: []\n",
+      "trace/a.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: Add two values.}]\n",
+      "trace/b.yaml": "ostf: \"0.2\"\nitems: [{id: R-B, text: Add two values.}]\n",
+      "sub/trace/a.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: Add two values.}]\n",
+      "trace/sub/b.yaml": "ostf: \"0.2\"\nitems: [{id: R-B, text: Add two values.}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        },
+        {
+          "id": "R-B",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": []
+    }
+  },
+  {
+    "id": "yaml-code-wrong-endpoint",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: RISK-A\n    type: risk\n    text: Hazard\n    code: [logic.go#Run]\n",
+      "logic.go": "package sample\nfunc Run() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_NOT_ALLOWED"
+      ]
+    }
+  },
+  {
+    "id": "yaml-tests-wrong-endpoint",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: RISK-A\n    type: risk\n    text: Hazard\n    tests: [logic_test.go#TestRun]\n",
+      "logic_test.go": "package sample\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_NOT_ALLOWED"
+      ]
+    }
+  },
+  {
+    "id": "tag-code-wrong-endpoint",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: tags}\nitems:\n  - id: RISK-A\n    type: risk\n    text: Hazard\n",
+      "logic.go": "package sample\n// @req RISK-A\nfunc Run() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_NOT_ALLOWED"
+      ]
+    }
+  },
+  {
+    "id": "tag-tests-wrong-endpoint",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: tags}\nitems:\n  - id: RISK-A\n    type: risk\n    text: Hazard\n",
+      "logic_test.go": "package sample\n// @req RISK-A\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "LINK_NOT_ALLOWED"
+      ]
+    }
+  },
+  {
+    "id": "valid-test-anchor-role",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [{ref: math_test.go#TestAdd, role: effectiveness}]\n",
+      "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+      "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ADD",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
+        }
+      ],
+      "links": [
+        {
+          "source": "math.go#Add",
+          "type": "implements",
+          "target": "R-ADD",
+          "attributes": {},
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+            "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+          },
+          "state": "valid",
+          "reasons": [],
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "attributes": {
+            "role": "effectiveness"
+          },
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "state": "unstamped",
+          "reasons": [
+            "LINK_UNSTAMPED"
+          ],
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "yaml-test-invalid-role",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A\n    tests: [{ref: logic_test.go#TestRun, role: unknown}]\n",
+      "logic.go": "package sample\nfunc Run() {}\n",
+      "logic_test.go": "package sample\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "yaml-test-unknown-attribute",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A\n    tests: [{ref: logic_test.go#TestRun, unknown: value}]\n",
+      "logic.go": "package sample\nfunc Run() {}\n",
+      "logic_test.go": "package sample\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "yaml-code-invalid-role",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A\n    code: [{ref: logic.go#Run, role: effectiveness}]\n",
+      "logic.go": "package sample\nfunc Run() {}\n",
+      "logic_test.go": "package sample\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "tag-test-invalid-role",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: tags}\nitems:\n  - id: R-A\n    text: A\n",
+      "logic.go": "package sample\nfunc Run() {}\n",
+      "logic_test.go": "package sample\n// @req R-A role=unknown\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "tag-yaml-distinct-roles",
+    "requirements": [
+      "OSTF-009",
+      "OSTF-011",
+      "OSTF-015"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: both}\nitems:\n  - id: R-ADD\n    text: Add two values.\n    tests: [math_test.go#TestAdd]\n",
+      "math_test.go": "package sample\nimport \"testing\"\n// @req R-ADD role=effectiveness\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "links": [
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "attributes": {},
+          "origin": "declared"
+        },
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "attributes": {
+            "role": "effectiveness"
+          },
+          "origin": "tagged"
+        }
+      ]
+    }
+  },
+  {
+    "id": "profile-type-meaning-rejected",
+    "requirements": [
+      "OSTF-005",
+      "OSTF-008"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems: []\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes:\n  requirement:\n    meaning: [title, text]\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "profile-nested-extension-rejected",
+    "requirements": [
+      "OSTF-005",
+      "OSTF-008"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems: []\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes:\n  requirement:\n    x-note: extra\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "yaml-test-custom-link-attribute",
+    "requirements": [
+      "OSTF-008",
+      "OSTF-009",
+      "OSTF-011",
+      "OSTF-015"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - id: R-ADD\n    text: Add two values.\n    tests: [{ref: math_test.go#TestAdd, note: reviewed}]\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\nlinks:\n  verifies:\n    attributes:\n      note: {type: string}\n",
+      "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "links": [
+        {
+          "source": "math_test.go#TestAdd",
+          "type": "verifies",
+          "target": "R-ADD",
+          "fingerprints": {
+            "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+            "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+            "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+          },
+          "attributes": {
+            "note": "reviewed"
+          },
+          "origin": "declared"
+        }
+      ]
+    }
+  },
+  {
+    "id": "tag-empty-role",
+    "requirements": [
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: tags}\nitems: [{id: R-A, text: A}]\n",
+      "logic_test.go": "package sample\n// @req R-A role=\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "tag-duplicate-role",
+    "requirements": [
+      "OSTF-011"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nlinks: {source: tags}\nitems: [{id: R-A, text: A}]\n",
+      "logic_test.go": "package sample\n// @req R-A role=invalid role=effectiveness\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "include-recursive",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/**/*.yaml\"]\nitems: []\n",
+      "trace/first.yaml": "ostf: \"0.2\"\nitems: [{id: R-FIRST, text: First}]\n",
+      "trace/deep/second.yaml": "ostf: \"0.2\"\nitems: [{id: R-SECOND, text: Second}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-FIRST",
+          "type": "requirement",
+          "fingerprint": "f1:I2fKy8EUmrkzNiRHVWEQp3VxJKSsSf3WDrW3RC2hSKU"
+        },
+        {
+          "id": "R-SECOND",
+          "type": "requirement",
+          "fingerprint": "f1:yXof7JMmnv8DLCg_jkX0aHil25r9S1Cwyz97P72BSlI"
+        }
+      ],
+      "links": [],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "include-empty",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/**/*.yaml\"]\nitems: []\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [],
+      "links": [],
+      "warningCodes": [
+        "INCLUDE_EMPTY"
+      ]
+    }
+  },
+  {
+    "id": "document-valid",
+    "requirements": [
+      "OSTF-004",
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/*.yaml\"]\nitems: []\n",
+      "trace/one.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-ONE, title: First, kind: srs}\nitems: [{id: R-ONE, text: One}]\n",
+      "trace/two.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-TWO, title: Second, kind: srs}\nitems: [{id: R-TWO, text: Two}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ONE",
+          "type": "requirement",
+          "fingerprint": "f1:SeIiYvnsKV8v3irSjcwQ-aKDTGvmMai1qcurD2nh-KU"
+        },
+        {
+          "id": "R-TWO",
+          "type": "requirement",
+          "fingerprint": "f1:6STi6vtEwgHUrtBSaoKwuxB2h3Tz3jK2b_kDq6b4hhE"
+        }
+      ],
+      "links": [],
+      "warningCodes": [],
+      "documents": [
+        {
+          "id": "DOC-ONE",
+          "title": "First",
+          "kind": "srs",
+          "file": "trace/one.yaml",
+          "items": [
+            "R-ONE"
+          ]
+        },
+        {
+          "id": "DOC-TWO",
+          "title": "Second",
+          "kind": "srs",
+          "file": "trace/two.yaml",
+          "items": [
+            "R-TWO"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "document-duplicate-id",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/*.yaml\"]\nitems: []\n",
+      "trace/one.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-ONE, title: First, kind: srs}\nitems: []\n",
+      "trace/two.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-ONE, title: Second, kind: srs}\nitems: []\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "document-missing-kind",
+    "requirements": [
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/*.yaml\"]\nitems: []\n",
+      "trace/one.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-ONE, title: First}\nitems: []\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  },
+  {
+    "id": "obsolete-target",
+    "requirements": [
+      "OSTF-007",
+      "OSTF-009"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A\n    refines: [R-OLD]\n  - id: R-OLD\n    text: Old\n    status: obsolete\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+        },
+        {
+          "id": "R-OLD",
+          "type": "requirement",
+          "fingerprint": "f1:1iHkGnA5hb30rnypaBe8Y0l0c6oGi8W6HTxREQCuxS0"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-A",
+          "type": "refines",
+          "target": "R-OLD",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:1iHkGnA5hb30rnypaBe8Y0l0c6oGi8W6HTxREQCuxS0",
+            "source": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+          }
+        }
+      ],
+      "warningCodes": [
+        "OBSOLETE_TARGET"
+      ]
+    }
+  },
+  {
+    "id": "attributes-date-list",
+    "requirements": [
+      "OSTF-008",
+      "OSTF-013"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - id: R-A\n    text: A\n    attributes: {due: \"2026-10-22\", labels: [alpha, beta]}\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes:\n  requirement:\n    attributes:\n      due: {type: date, meaning: true}\n      labels: {type: list, meaning: true}\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:u7vIH0EEHxGxOgHE4O6LG6iKxgfsWVtP8tnJ1tVi0KI"
+        }
+      ],
+      "links": [],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "attribute-invalid-date",
+    "requirements": [
+      "OSTF-008"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems: [{id: R-A, text: A, attributes: {due: \"2026-02-30\"}}]\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes: {requirement: {attributes: {due: {type: date}}}}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "attribute-invalid-list",
+    "requirements": [
+      "OSTF-008"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems: [{id: R-A, text: A, attributes: {labels: [alpha, 3]}}]\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes: {requirement: {attributes: {labels: {type: list}}}}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "go-subtest-anchor",
+    "requirements": [
+      "OSTF-012",
+      "OSTF-014"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, tests: [main_test.go#TestRun/child]}]\n",
+      "main_test.go": "package sample\nimport \"testing\"\nfunc TestRun(t *testing.T) { t.Run(\"child\", func(t *testing.T) {}) }\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+        }
+      ],
+      "links": [
+        {
+          "source": "main_test.go#TestRun/child",
+          "type": "verifies",
+          "target": "R-A",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk",
+            "source.sig": "go1:eSTTLKHPHn3v9w-03ckN6C1lT3wuGKLxHfnL76UYNSg",
+            "source.body": "go1:vg_ijE_73NkLLHsl65ypgaBKeNdpRgUa94QycCA6UEY"
+          }
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "suspect-source-source-changed",
+    "requirements": [
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - {id: R-A, text: A changed, refines: [R-B]}\n  - {id: R-B, text: B}\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\nlinks: {refines: {suspect: source}}\n",
+      "trace.lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:40jVXF66EuBGJ5ULIUtQ7_pyk0kFFYh7N7BgAwTxuUE"
+        },
+        {
+          "id": "R-B",
+          "type": "requirement",
+          "fingerprint": "f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-A",
+          "type": "refines",
+          "target": "R-B",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s",
+            "source": "f1:40jVXF66EuBGJ5ULIUtQ7_pyk0kFFYh7N7BgAwTxuUE"
+          },
+          "state": "suspect",
+          "reasons": [
+            "ITEM_CHANGED"
+          ]
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "suspect-source-target-changed",
+    "requirements": [
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - {id: R-A, text: A, refines: [R-B]}\n  - {id: R-B, text: B changed}\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\nlinks: {refines: {suspect: source}}\n",
+      "trace.lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+        },
+        {
+          "id": "R-B",
+          "type": "requirement",
+          "fingerprint": "f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-A",
+          "type": "refines",
+          "target": "R-B",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI",
+            "source": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+          },
+          "state": "valid",
+          "reasons": []
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "suspect-target-source-changed",
+    "requirements": [
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - {id: R-A, text: A changed, refines: [R-B]}\n  - {id: R-B, text: B}\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\nlinks: {refines: {suspect: target}}\n",
+      "trace.lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:40jVXF66EuBGJ5ULIUtQ7_pyk0kFFYh7N7BgAwTxuUE"
+        },
+        {
+          "id": "R-B",
+          "type": "requirement",
+          "fingerprint": "f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-A",
+          "type": "refines",
+          "target": "R-B",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s",
+            "source": "f1:40jVXF66EuBGJ5ULIUtQ7_pyk0kFFYh7N7BgAwTxuUE"
+          },
+          "state": "valid",
+          "reasons": []
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "suspect-target-target-changed",
+    "requirements": [
+      "OSTF-017"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems:\n  - {id: R-A, text: A, refines: [R-B]}\n  - {id: R-B, text: B changed}\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\nlinks: {refines: {suspect: target}}\n",
+      "trace.lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:PThkPKrXS43xorYVoaLepjH_zTVjjwgSYCBT9si7E5s\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+        },
+        {
+          "id": "R-B",
+          "type": "requirement",
+          "fingerprint": "f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI"
+        }
+      ],
+      "links": [
+        {
+          "source": "R-A",
+          "type": "refines",
+          "target": "R-B",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {
+            "target": "f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI",
+            "source": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+          },
+          "state": "suspect",
+          "reasons": [
+            "ITEM_CHANGED"
+          ]
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "document-extension",
+    "requirements": [
+      "OSTF-005",
+      "OSTF-007"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/*.yaml\"]\nitems: []\n",
+      "trace/one.yaml": "ostf: \"0.2\"\ndocument: {id: DOC-ONE, title: First, kind: srs, x-note: {owner: qa}}\nitems: [{id: R-ONE, text: One}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ONE",
+          "type": "requirement",
+          "fingerprint": "f1:SeIiYvnsKV8v3irSjcwQ-aKDTGvmMai1qcurD2nh-KU"
+        }
+      ],
+      "links": [],
+      "warningCodes": [],
+      "documents": [
+        {
+          "id": "DOC-ONE",
+          "title": "First",
+          "kind": "srs",
+          "file": "trace/one.yaml",
+          "items": [
+            "R-ONE"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "id": "go-subtest-missing-parent",
+    "requirements": [
+      "OSTF-012"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems: [{id: R-A, text: A, tests: [main_test.go#TestMissing/child]}]\n",
+      "main_test.go": "package sample\nfunc TestRun() {}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "BROKEN_LINK"
+      ],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
+        }
+      ],
+      "links": [
+        {
+          "source": "main_test.go#TestMissing/child",
+          "type": "verifies",
+          "target": "R-A",
+          "attributes": {},
+          "origin": "declared",
+          "fingerprints": {}
+        }
+      ],
+      "warningCodes": []
+    }
+  },
+  {
+    "id": "include-recursive-overlap",
+    "requirements": [
+      "OSTF-004"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\ninclude: [\"trace/**/*.yaml\", \"trace/one.yaml\"]\nitems: []\n",
+      "trace/one.yaml": "ostf: \"0.2\"\nitems: [{id: R-ONE, text: One}]\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-ONE",
+          "type": "requirement",
+          "fingerprint": "f1:SeIiYvnsKV8v3irSjcwQ-aKDTGvmMai1qcurD2nh-KU"
+        }
+      ],
+      "links": [],
+      "warningCodes": [
+        "INCLUDE_EMPTY"
+      ]
+    }
+  },
+  {
+    "id": "attribute-compact-date-rejected",
+    "requirements": [
+      "OSTF-008"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nprofile: profile.yaml\nitems: [{id: R-A, text: A, attributes: {due: \"20261022\"}}]\n",
+      "profile.yaml": "ostf: \"0.2\"\nextends: default\ntypes: {requirement: {attributes: {due: {type: date}}}}\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_ATTRIBUTE"
+      ]
+    }
+  },
+  {
+    "id": "observability-refs",
+    "requirements": [
+      "OSTF-024",
+      "OSTF-005"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    x-ticket: PAY-123\n    text: Add two values.\n    logs:\n      - label: Synthetic log\n        ref: logs/retry-example.log\n        trace_id: \"0123456789abcdef0123456789abcdef\"\n        span_id: \"0123456789abcdef\"\n    otel:\n      - label: Synthetic retry span\n        trace_id: \"0123456789abcdef0123456789abcdef\"\n        span_id: \"0123456789abcdef\"\n"
+    },
+    "expect": {
+      "errorCodes": [],
+      "items": [
+        {
+          "id": "R-A",
+          "type": "requirement",
+          "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "ref": "logs/retry-example.log",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "x-ticket": "PAY-123"
+        }
+      ]
+    }
+  },
+  {
+    "id": "observability-bad-trace-id",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: Add two values.\n    logs:\n      - label: Synthetic log\n        ref: logs/retry-example.log\n        trace_id: \"00000000000000000000000000000000\"\n        span_id: \"0123456789abcdef\"\n    otel:\n      - label: Synthetic retry span\n        trace_id: \"00000000000000000000000000000000\"\n        span_id: \"0123456789abcdef\"\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_OBSERVABILITY"
+      ]
+    }
+  },
+  {
+    "id": "observability-log-span-without-trace",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: Add two values.\n    logs:\n      - label: Synthetic log\n        ref: logs/retry-example.log\n        span_id: \"0123456789abcdef\"\n    otel:\n      - label: Synthetic retry span\n        trace_id: \"0123456789abcdef0123456789abcdef\"\n        span_id: \"0123456789abcdef\"\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "INVALID_OBSERVABILITY"
+      ]
+    }
+  },
+  {
+    "id": "old-version-rejected",
+    "requirements": [
+      "OSTF-002"
+    ],
+    "files": {
+      "trace.yaml": "ostf: \"0.1\"\nitems: []\n"
+    },
+    "expect": {
+      "errorCodes": [
+        "FORMAT_INVALID"
+      ]
+    }
+  }
+]

@@ -1,0 +1,292 @@
+{
+  "suiteVersion": "0.2.0",
+  "wireVersion": "0.2",
+  "license": "Apache-2.0",
+  "claim": "bounded-draft-subset",
+  "files": [
+    "item-vectors.json",
+    "code-vectors.json",
+    "lock-vectors.json",
+    "repositories.json",
+    "schema-cases.json"
+  ],
+  "requirements": {
+    "OSTF-001": {
+      "cases": [
+        "opaque-extension-reserved"
+      ]
+    },
+    "OSTF-002": {
+      "cases": [
+        "repository-valid",
+        "unknown-version",
+        "old-version-rejected",
+        "schema-root-old-version"
+      ]
+    },
+    "OSTF-003": {
+      "cases": [
+        "custom-meaning-profile",
+        "duplicate-yaml-key",
+        "yaml-anchor",
+        "yaml-alias",
+        "yaml-custom-tag",
+        "yaml-two-documents"
+      ]
+    },
+    "OSTF-004": {
+      "cases": [
+        "included-items",
+        "include-exact-root",
+        "include-glob-root",
+        "include-recursive",
+        "include-empty",
+        "document-valid",
+        "include-recursive-overlap"
+      ]
+    },
+    "OSTF-005": {
+      "cases": [
+        "opaque-extension-reserved",
+        "schema-nested-extension-rejected",
+        "profile-type-meaning-rejected",
+        "profile-nested-extension-rejected",
+        "document-extension",
+        "observability-refs"
+      ]
+    },
+    "OSTF-006": {
+      "cases": [
+        "tag-alias",
+        "case-colliding-ids"
+      ]
+    },
+    "OSTF-007": {
+      "cases": [
+        "repository-valid",
+        "unknown-root-key",
+        "unknown-type",
+        "invalid-status",
+        "derived-without-rationale",
+        "document-valid",
+        "document-duplicate-id",
+        "document-missing-kind",
+        "obsolete-target",
+        "document-extension"
+      ]
+    },
+    "OSTF-008": {
+      "cases": [
+        "custom-meaning-profile",
+        "profile-type-meaning-rejected",
+        "profile-nested-extension-rejected",
+        "yaml-test-custom-link-attribute",
+        "attributes-date-list",
+        "attribute-invalid-date",
+        "attribute-invalid-list",
+        "attribute-compact-date-rejected"
+      ]
+    },
+    "OSTF-009": {
+      "cases": [
+        "repository-valid",
+        "inherited-risk-body",
+        "tag-yaml-deduplicate",
+        "missing-target",
+        "self-link",
+        "refinement-cycle",
+        "wrong-endpoint",
+        "yaml-code-wrong-endpoint",
+        "yaml-tests-wrong-endpoint",
+        "tag-code-wrong-endpoint",
+        "tag-tests-wrong-endpoint",
+        "valid-test-anchor-role",
+        "yaml-test-invalid-role",
+        "yaml-test-unknown-attribute",
+        "yaml-code-invalid-role",
+        "tag-test-invalid-role",
+        "tag-yaml-distinct-roles",
+        "yaml-test-custom-link-attribute",
+        "obsolete-target"
+      ]
+    },
+    "OSTF-010": {
+      "cases": [
+        "tag-alias"
+      ]
+    },
+    "OSTF-011": {
+      "cases": [
+        "repository-valid",
+        "broken-symbol",
+        "broken-file",
+        "tag-alias",
+        "tag-yaml-deduplicate",
+        "tag-unknown-id",
+        "tag-unbound",
+        "yaml-code-wrong-endpoint",
+        "yaml-tests-wrong-endpoint",
+        "tag-code-wrong-endpoint",
+        "tag-tests-wrong-endpoint",
+        "valid-test-anchor-role",
+        "yaml-test-invalid-role",
+        "yaml-test-unknown-attribute",
+        "yaml-code-invalid-role",
+        "tag-test-invalid-role",
+        "tag-yaml-distinct-roles",
+        "yaml-test-custom-link-attribute",
+        "tag-empty-role",
+        "tag-duplicate-role"
+      ]
+    },
+    "OSTF-012": {
+      "cases": [
+        "repository-valid",
+        "go-subtest-anchor",
+        "go-subtest-missing-parent"
+      ]
+    },
+    "OSTF-013": {
+      "cases": [
+        "item-basic",
+        "item-normalized",
+        "item-meaning",
+        "item-numbers",
+        "item-unicode",
+        "item-changed",
+        "custom-meaning-profile",
+        "attributes-date-list",
+        "item-observability-excluded"
+      ]
+    },
+    "OSTF-014": {
+      "cases": [
+        "go-function",
+        "go-comments",
+        "go-whole",
+        "go-explicit-semicolon",
+        "go-pointer-method",
+        "go-bare-method",
+        "go-generic-method",
+        "go-type",
+        "go-type-group",
+        "go-const",
+        "go-const-group",
+        "go-var-group",
+        "go-multi-name",
+        "go-unicode",
+        "go-literals",
+        "go-raw-cr",
+        "go-result-struct",
+        "go-bare-multiple",
+        "formatting-and-comments",
+        "go-subtest-anchor",
+        "go-generic-receiver-pair",
+        "go-interface-func-signature",
+        "go-block-comment-newline"
+      ]
+    },
+    "OSTF-015": {
+      "cases": [
+        "lock-empty",
+        "lock-percent",
+        "lock-crlf",
+        "lock-bad-header",
+        "lock-bad-escape",
+        "lock-bad-spacing",
+        "lock-repeat-field",
+        "lock-duplicate",
+        "lock-unknown-algorithm",
+        "lock-attribute-order",
+        "tag-yaml-distinct-roles",
+        "lock-unescaped-equals",
+        "lock-invalid-percent-utf8",
+        "yaml-test-custom-link-attribute"
+      ]
+    },
+    "OSTF-016": {
+      "cases": [
+        "repository-valid",
+        "formatting-and-comments",
+        "no-lock",
+        "unstamped",
+        "unknown-algorithm",
+        "broken-symbol",
+        "broken-file"
+      ]
+    },
+    "OSTF-017": {
+      "cases": [
+        "item-changed",
+        "nonrisk-body-valid",
+        "signature-changed",
+        "risk-body-suspect",
+        "custom-meaning-profile",
+        "suspect-source-source-changed",
+        "suspect-source-target-changed",
+        "suspect-target-source-changed",
+        "suspect-target-target-changed"
+      ]
+    },
+    "OSTF-018": {
+      "cases": [
+        "risk-body-suspect",
+        "inherited-risk-body"
+      ]
+    },
+    "OSTF-019": {
+      "cases": [
+        "repository-valid",
+        "nonrisk-body-valid"
+      ]
+    },
+    "OSTF-020": {
+      "cases": [],
+      "disposition": "Deferred extension outside Core 1.0. Only snapshot shape validation is exercised; external resolution and integrity are unqualified."
+    },
+    "OSTF-021": {
+      "cases": [
+        "schema-root-valid",
+        "schema-root-unknown",
+        "schema-root-version",
+        "schema-root-status",
+        "schema-root-anchor",
+        "schema-item-valid",
+        "schema-item-missing",
+        "schema-item-id",
+        "schema-profile-valid",
+        "schema-profile-attribute",
+        "schema-profile-unknown",
+        "schema-snapshot-proposed",
+        "schema-snapshot-local-id",
+        "schema-snapshot-code",
+        "schema-snapshot-owners",
+        "schema-type-meaning-rejected",
+        "schema-nested-extension-rejected",
+        "schema-anchor-empty-symbol",
+        "schema-root-old-version"
+      ]
+    },
+    "OSTF-022": {
+      "cases": [],
+      "disposition": "A claim/process requirement. This suite is a bounded subset and does not certify a full conformance class."
+    },
+    "OSTF-023": {
+      "cases": [],
+      "disposition": "External independent maintenance and two-organization adoption are not demonstrated by local tests."
+    },
+    "OSTF-024": {
+      "cases": [
+        "item-observability-excluded",
+        "schema-observability-valid",
+        "schema-otel-zero-id",
+        "schema-otel-uppercase-id",
+        "schema-log-span-without-trace",
+        "schema-log-missing-ref",
+        "observability-refs",
+        "observability-bad-trace-id",
+        "observability-log-span-without-trace"
+      ]
+    }
+  }
+}
