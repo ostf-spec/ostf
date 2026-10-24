@@ -122,6 +122,18 @@ Measured on paper: the Annex J rendering of `context refund.go#CheckRefundLimit`
 
 **Rows moved.** Freshness 2 to 9, Feedback 0 to 9, Reason 6 to 9, Write 8 to 9, Portable 7 to 9, Mark proposed 8 to 10, Few tokens 8 to 9.
 
+**5.1 Progress, 2026-10-24.** Step 2a is done. [conformance/reader.py](conformance/reader.py) reads wire 0.3 as a Go Analyzer with `check` and `context`, reproduces the expected outputs byte for byte, passes the 39 vectors of 0.2 unchanged, and runs `check` on 10 000 files in about 0.6 seconds. [cases.json](conformance/cases.json) holds 49 check cases, 11 context cases and 2 projection vectors with hand-written expectations, and [check.py](conformance/check.py) also drives the command line; CI runs it.
+
+Writing the port exposed gaps where two readers could disagree, and a second independent review found 17 defects in the reader and in the first round of fixes. All are closed without a new key or requirement:
+
+- Validation is per item and per link instead of stopping the whole file on one bad item (OSTF-150), and the item read later loses a collision (OSTF-110, OSTF-113).
+- Names resolve exactly, case included (OSTF-110); undeclared link attributes are rejected (OSTF-134).
+- The f1 attribute rules are restated to match 0.2 (OSTF-140). The 0.3 text had silently changed them, which would have broken the rule that hashes never change.
+- `PARSE_ERROR` has a defined scope (OSTF-141); lock entries compare key by key (OSTF-144); a broken link stays in the graph (OSTF-151); included files are read as one set in path order (OSTF-102).
+- Context results keep lock diagnostics (I.3), result links sort by identity (C.2), and the rendering shows every link from TARGET (Annex J).
+
+Remaining in Phase 2: 2b converts the 112 cases of 0.2 and maps every case to its requirement; 2c adds `stamp`, `check --base` with `impact`, and SARIF; 2d moves zztrace to wire 0.3. Known reader limits: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse; reads are not hardened against a tree that changes during a run.
+
 ## 6. Phase 3: make 80 percent honest
 
 **Goal.** The languages most agents edit have normative annexes, so the use-case claim holds outside Go.

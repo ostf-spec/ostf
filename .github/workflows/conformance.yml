@@ -19,6 +19,8 @@ jobs:
           python-version: '3.12'
       - name: Run standalone draft checks
         run: python3 conformance/run.py
+      - name: Run draft 0.3 reader checks
+        run: .venv/bin/python draft/0.3/conformance/check.py
   schema-fixtures:
     runs-on: ubuntu-latest
     timeout-minutes: 15
