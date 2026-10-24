@@ -1,4 +1,4 @@
-ostf: "0.1"
+ostf: "0.2"
 items:
   - id: R-ADD
     text: Add two values.

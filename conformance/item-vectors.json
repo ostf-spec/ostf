@@ -131,14 +131,46 @@
     ],
     "item": {
       "id": "R-U",
-      "text": "Café and 😀."
+      "text": "Caf\u00e9 and \ud83d\ude00."
     },
     "types": {
       "requirement": {
         "attributes": {}
       }
     },
-    "canonical": "{\"text\":\"Café and 😀.\",\"type\":\"requirement\"}",
+    "canonical": "{\"text\":\"Caf\u00e9 and \ud83d\ude00.\",\"type\":\"requirement\"}",
     "fingerprint": "f1:qMeo7teTp-RVnj7zWwB7xdvr-mtNX7_K2fBgBDi3tMM"
+  },
+  {
+    "id": "item-observability-excluded",
+    "requirements": [
+      "OSTF-013",
+      "OSTF-024"
+    ],
+    "item": {
+      "id": "R-A",
+      "text": "Add two values.",
+      "logs": [
+        {
+          "label": "Synthetic log",
+          "ref": "logs/retry-example.log",
+          "trace_id": "0123456789abcdef0123456789abcdef"
+        }
+      ],
+      "otel": [
+        {
+          "label": "Synthetic retry span",
+          "trace_id": "0123456789abcdef0123456789abcdef",
+          "span_id": "0123456789abcdef"
+        }
+      ]
+    },
+    "types": {
+      "requirement": {
+        "attributes": {}
+      }
+    },
+    "canonical": "{\"text\":\"Add two values.\",\"type\":\"requirement\"}",
+    "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
   }
 ]

@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Go runner annex: identities
 
-Document revision 0.5, wire version 0.1, 2026-10-19. Draft annex for OSTF-012. Go test identity is the runner's reported test name, including slash-separated subtest components. See the official [testing package](https://pkg.go.dev/testing#hdr-Subtests_and_Sub_benchmarks).
+Document revision 0.5, wire version 0.2, 2026-10-19. Draft annex for OSTF-012. Go test identity is the runner's reported test name, including slash-separated subtest components. See the official [testing package](https://pkg.go.dev/testing#hdr-Subtests_and_Sub_benchmarks).
 
 An anchor `path/pump_test.go#TestLimit` names the top-level declaration. `TestLimit/over_max` names the Go runner identity below that declaration. The reference locator binds a subtest identity to the top-level function for source location and fingerprinting; it does not infer that a dynamically named subtest executed. A freshness check of that anchor therefore fingerprints the declaration, while report binding requires the exact runner identity. Both readers qualify this source binding for a fixed subtest anchor, including a missing parent declaration.
 

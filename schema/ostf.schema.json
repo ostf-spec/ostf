@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://ostf.dev/draft/0.1/ostf.schema.json",
+  "$id": "https://ostf.dev/draft/0.2/ostf.schema.json",
   "$comment": "SPDX-License-Identifier: Apache-2.0. Unpublished draft. Structural validation requires semantic checks. Schema IDs use ostf.dev; local resolution is required and no network fetch is implied.",
   "$defs": {
     "id": {
@@ -83,6 +83,39 @@
           }
         }
       ]
+    },
+    "traceId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$",
+      "not": { "const": "00000000000000000000000000000000" }
+    },
+    "spanId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{16}$",
+      "not": { "const": "0000000000000000" }
+    },
+    "logReference": {
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "trace_id": { "$ref": "#/$defs/traceId" },
+        "span_id": { "$ref": "#/$defs/spanId" }
+      },
+      "required": ["label", "ref"],
+      "dependentRequired": { "span_id": ["trace_id"] },
+      "additionalProperties": false
+    },
+    "otelReference": {
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "minLength": 1 },
+        "trace_id": { "$ref": "#/$defs/traceId" },
+        "span_id": { "$ref": "#/$defs/spanId" },
+        "url": { "type": "string", "minLength": 1 }
+      },
+      "required": ["label", "trace_id"],
+      "additionalProperties": false
     },
     "provenance": {
       "type": "object",
@@ -278,6 +311,18 @@
           "items": {
             "$ref": "#/$defs/anchorEntry"
           }
+        },
+        "logs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/logReference"
+          }
+        },
+        "otel": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/otelReference"
+          }
         }
       },
       "required": [
@@ -310,7 +355,9 @@
               "justifications",
               "owners",
               "code",
-              "tests"
+              "tests",
+              "logs",
+              "otel"
             ]
           },
           {
@@ -326,7 +373,7 @@
       "type": "object",
       "properties": {
         "ostf": {
-          "const": "0.1"
+          "const": "0.2"
         },
         "document": {
           "$ref": "#/$defs/document"
@@ -351,7 +398,7 @@
       "type": "object",
       "properties": {
         "ostf": {
-          "const": "0.1"
+          "const": "0.2"
         },
         "profile": {
           "type": "string"
@@ -464,7 +511,7 @@
       "type": "object",
       "properties": {
         "ostf": {
-          "const": "0.1"
+          "const": "0.2"
         },
         "extends": {
           "type": "string"
@@ -626,7 +673,7 @@
       "type": "object",
       "properties": {
         "ostf": {
-          "const": "0.1"
+          "const": "0.2"
         },
         "snapshot": {
           "type": "object",

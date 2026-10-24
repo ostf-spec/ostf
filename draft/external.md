@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # External-item interchange: design proposal
 
-Status: exploratory extension outside OSTF Core 0.1 and every current conformance claim. This page identifies the data that a Jira, Jama or similar adapter would need to exchange. It does not authorize a reader to resolve external items or claim that a snapshot is approved.
+Status: exploratory extension outside OSTF Core 0.2 and every current conformance claim. This page identifies the data that a Jira, Jama or similar adapter would need to exchange. It does not authorize a reader to resolve external items or claim that a snapshot is approved.
 
 ## Interchange problem
 

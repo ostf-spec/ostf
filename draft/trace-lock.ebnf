@@ -1,5 +1,5 @@
 (* SPDX-License-Identifier: Apache-2.0 *)
-(* OSTF-015. Draft 0.1 reader grammar. LF or CRLF line endings are accepted. *)
+(* OSTF-015. Draft 0.2 reader grammar. LF or CRLF line endings are accepted. *)
 lock        = "trace.lock 1", [ newline, { [ entry ], newline }, [ entry ] ] ;
 entry       = value, " ", link_name, " ", value, { " ", pair } ;
 pair        = key, "=", value ;

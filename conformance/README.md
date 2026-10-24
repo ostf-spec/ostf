@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF draft conformance fixtures
 
-Suite 0.1.3 targets wire version 0.1 and document revision 0.10. It is a bounded draft suite, not certification or a full Producer, Consumer or Analyzer claim. The [support map](../draft/support.md) applies to every result.
+Suite 0.2.0 targets wire version 0.2 and document revision 0.11. It is a bounded draft suite, not certification or a full Producer, Consumer or Analyzer claim. The [support map](../draft/support.md) applies to every result.
 
 ## Run the standalone prototype
 
@@ -26,15 +26,15 @@ The reader performs no network access, Git invocation or subprocess call. It exi
 
 | File | Cases | Purpose |
 | --- | ---: | --- |
-| [item-vectors.json](item-vectors.json) | 5 | `f1` meaning projection and canonical bytes/hashes |
+| [item-vectors.json](item-vectors.json) | 6 | `f1` meaning projection and canonical bytes/hashes |
 | [code-vectors.json](code-vectors.json) | 21 | Go token streams, signatures, bodies and `go1` hashes |
 | [lock-vectors.json](lock-vectors.json) | 12 | Lock grammar, escaping, ordering and rejection cases |
-| [repositories.json](repositories.json) | 69 | Small trees with item, document, link, tag and state expectations |
-| [schema-cases.json](schema-cases.json) | 18 | Structural root, item, profile and proposed snapshot shape cases |
+| [repositories.json](repositories.json) | 73 | Small trees with item, document, link, tag and state expectations |
+| [schema-cases.json](schema-cases.json) | 24 | Structural root, item, profile and proposed snapshot shape cases |
 
-The standalone Python prototype runs 107 non-schema cases and checks the requirement mappings in [suite.json](suite.json), plus four unsupported-feature guards. It also checks the [minimal example](../examples/minimal/README.md) and [payment retry scenario](../examples/payment-retry/README.md) for two valid links and no diagnostics each. The Go test at the repository root runs all 18 structural schema fixtures with references resolved only from the local `schema/` directory; each example's Go test runs from its own module. Schema shape alone is insufficient for Core conformance.
+The standalone Python prototype runs 112 non-schema cases and checks the requirement mappings in [suite.json](suite.json), plus four unsupported-feature guards. It also checks the [minimal example](../examples/minimal/README.md) and [payment retry scenario](../examples/payment-retry/README.md) for two valid links and no diagnostics each. The Go test at the repository root runs all 24 structural schema fixtures with references resolved only from the local `schema/` directory; each example's Go test runs from its own module. Schema shape alone is insufficient for Core conformance.
 
-The fixed token bytes follow the [Go annex](../draft/go.md); their hashes use SHA-256. The initial item and repository expectations were computed with a separate Python projection and RFC 8785 library, then compared with zztrace. Committed expectations are fixed inputs to this suite. They are not an independent oracle for untested behavior. A changed expectation requires contract review.
+The fixed token bytes follow the [Go annex](../draft/go.md); their hashes use SHA-256. The initial item and repository expectations were computed with a separate Python projection and RFC 8785 library, then compared with zztrace on the earlier wire draft. The 0.2 observability cases have schema and Python-prototype coverage only. Committed expectations are fixed inputs to this suite. They are not an independent oracle for untested behavior. A changed expectation requires contract review.
 
 ## Independence and limits
 
