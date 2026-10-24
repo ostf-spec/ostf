@@ -1,6 +1,7 @@
-ostf: "0.1"
+ostf: "0.2"
 items:
   - id: R-PAY-RETRY
+    x-ticket: PAY-123
     text: >-
       A retry with the same
       idempotency key must return
@@ -10,3 +11,13 @@ items:
       - pay/charge.go#Service.Charge
     tests:
       - pay/retry_test.go#TestSameKey
+    logs:
+      - label: Synthetic retry log
+        ref: logs/retry-example.log
+        trace_id: "0123456789abcdef0123456789abcdef"
+        span_id: "0123456789abcdef"
+    otel:
+      - label: Synthetic retry request
+        trace_id: "0123456789abcdef0123456789abcdef"
+        span_id: "0123456789abcdef"
+        url: https://github.com/ostf-spec/ostf/blob/main/examples/payment-retry/otel/retry-trace.json

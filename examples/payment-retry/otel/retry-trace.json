@@ -1,0 +1,30 @@
+{
+  "resourceSpans": [
+    {
+      "resource": {
+        "attributes": [
+          { "key": "service.name", "value": { "stringValue": "ostf-payment-retry-example" } },
+          { "key": "ostf.synthetic", "value": { "boolValue": true } }
+        ]
+      },
+      "scopeSpans": [
+        {
+          "scope": { "name": "ostf.synthetic.example" },
+          "spans": [
+            {
+              "traceId": "0123456789abcdef0123456789abcdef",
+              "spanId": "0123456789abcdef",
+              "name": "payment retry (synthetic)",
+              "startTimeUnixNano": "1792756800000000000",
+              "endTimeUnixNano": "1792756801000000000",
+              "kind": 1,
+              "attributes": [
+                { "key": "ostf.requirement.id", "value": { "stringValue": "R-PAY-RETRY" } }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

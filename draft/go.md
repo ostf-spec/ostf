@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Go language annex: go1
 
-Document revision 0.5, wire version 0.1, 2026-10-19. Draft annex for OSTF-011 and OSTF-014. References: the [Go specification, lexical elements](https://go.dev/ref/spec#Lexical_elements), [function declarations](https://go.dev/ref/spec#Function_declarations) and [declarations](https://go.dev/ref/spec#Declarations_and_scope). These links define language syntax; the rules below define the trace projection.
+Document revision 0.5, wire version 0.2, 2026-10-19. Draft annex for OSTF-011 and OSTF-014. References: the [Go specification, lexical elements](https://go.dev/ref/spec#Lexical_elements), [function declarations](https://go.dev/ref/spec#Function_declarations) and [declarations](https://go.dev/ref/spec#Declarations_and_scope). These links define language syntax; the rules below define the trace projection.
 
 ## Symbol binding
 

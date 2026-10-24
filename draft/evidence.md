@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Evidence references: design proposal
 
-Status: exploratory optional module outside OSTF Core 0.1 and every current conformance claim. The format currently names tests and checks link freshness; it does not say that a test ran or passed. This proposal addresses only portable references to execution evidence. It does not standardize CI behavior, approval or release authority.
+Status: exploratory optional module outside OSTF Core 0.2 and every current conformance claim. Core can name tests, logs and OpenTelemetry traces and check link freshness; those references do not say that a test ran or passed. This proposal addresses portable, baseline-bound execution evidence. It does not standardize CI behavior, approval or release authority.
 
 ## Interchange problem
 
@@ -23,7 +23,7 @@ An evidence digest checks bytes, not the producer's identity or the quality of a
 
 ## Decisions before a schema and conformance cases
 
-1. Choose the record identity and module version independently of Core's `ostf: "0.1"` wire version.
+1. Choose the record identity and module version independently of Core's `ostf: "0.2"` wire version.
 2. Define source-view and trace-input digests so producers using Git SHA-1, Git SHA-256 or a materialized tree can report equivalent evidence without ambiguity.
 3. Define outcome vocabulary and aggregation for retries, parameterized tests and partially executed suites.
 4. Define which artifact digests are required, how restricted URLs are represented, and what an offline consumer can validate.

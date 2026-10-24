@@ -20,7 +20,7 @@ def check():
     for name, version in re.findall(r"^([A-Za-z0-9_-]+)==([^\s]+)", (HERE / "requirements.txt").read_text(), re.MULTILINE):
         assert importlib.metadata.version(name) == version, f"unexpected installed tool version: {name}"
     suite = load("suite.json")
-    assert suite["suiteVersion"] == "0.1.3" and suite["wireVersion"] == "0.1"
+    assert suite["suiteVersion"] == "0.2.0" and suite["wireVersion"] == "0.2"
     all_cases = [case for name in suite["files"] for case in load(name)]
     ids = [case["id"] for case in all_cases]
     assert len(set(ids)) == len(ids), "duplicate conformance case ID"
@@ -91,10 +91,10 @@ def check():
 
     # Fail visibly for unsupported features, rather than reporting a false pass.
     unsupported = [
-        {"trace.yaml": 'ostf: "0.1"\nprofile: iec62304\nitems: []\n'},
-        {"trace.yaml": 'ostf: "0.1"\nitems: [{id: R-A, text: A, code: [main.ts#Run]}]\n', "main.ts": "function Run() {}"},
-        {"trace.yaml": 'ostf: "0.1"\nprofile: profile.yaml\nitems: []\n', "profile.yaml": 'ostf: "0.1"\nextends: default\nriskMatrix: {}\n'},
-        {"trace.yaml": 'ostf: "0.1"\nprofile: profile.yaml\nitems: []\n', "profile.yaml": 'ostf: "0.1"\nextends: default\nintegrity: {}\n'},
+        {"trace.yaml": 'ostf: "0.2"\nprofile: iec62304\nitems: []\n'},
+        {"trace.yaml": 'ostf: "0.2"\nitems: [{id: R-A, text: A, code: [main.ts#Run]}]\n', "main.ts": "function Run() {}"},
+        {"trace.yaml": 'ostf: "0.2"\nprofile: profile.yaml\nitems: []\n', "profile.yaml": 'ostf: "0.2"\nextends: default\nriskMatrix: {}\n'},
+        {"trace.yaml": 'ostf: "0.2"\nprofile: profile.yaml\nitems: []\n', "profile.yaml": 'ostf: "0.2"\nextends: default\nintegrity: {}\n'},
     ]
     for files in unsupported:
         assert "unsupported" in reader.analyze(files), "unsupported construct silently passed"

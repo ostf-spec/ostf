@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF scope: the common capability
 
-Status: public working draft for review, document revision 0.10, reviewed 2026-10-22. Wire version 0.1, conformance suite 0.1.3. OSTF was drawn from version 2 of the zztrace trace format. This page decides which parts become Core, optional modules or tools. The [draft contract](draft/core.md), [annexes](draft/go.md), [schemas](schema/) and [suite](conformance/README.md) now exist; the [support map](draft/support.md) explicitly limits their executable coverage. This is not full Core conformance or a 1.0 standard.
+Status: public working draft for review, document revision 0.11, reviewed 2026-10-23. Wire version 0.2, conformance suite 0.2.0. OSTF was drawn from version 2 of the zztrace trace format. This page decides which parts become Core, optional modules or tools. The [draft contract](draft/core.md), [annexes](draft/go.md), [schemas](schema/) and [suite](conformance/README.md) now exist; the [support map](draft/support.md) explicitly limits their executable coverage. This is not full Core conformance or a 1.0 standard.
 
 ## The capability
 
@@ -11,7 +11,7 @@ Core data supports the first five questions from the repository alone, offline a
 
 1. **Why does this code exist?** From a function or test to the items it implements or verifies.
 2. **What carries this requirement?** From an item to its parents, children, code and tests.
-3. **What does this change touch?** From changed symbols to the items linked to them and the tests linked to those items. The analysis is a tool's job; the data that makes it possible is OSTF's.
+3. **What does this change touch?** From changed Git locations to enclosing symbols, then to all linked items and their tests. A PR may span many files and items. Direct mapping and indirect dependency analysis are tool behavior; OSTF supplies anchors and links. See the [PR mapping example](examples/pr-impact.md).
 4. **Which links are stale?** Whether each link was rechecked after its requirement or its code changed.
 5. **Where did this link come from?** Declared with an item, tagged in code, or imported. A deferred recovery extension would distinguish later reconstruction.
 6. **What lives elsewhere?** A deferred external-item extension would identify items owned by another system, such as Jama, DOORS or a risk spreadsheet, and the revision the repository last saw.
@@ -20,7 +20,7 @@ Core data supports the first five questions from the repository alone, offline a
 
 | Layer | What it is | Status |
 | --- | --- | --- |
-| **OSTF Core** | Files, local identity, items, profiles, links, code anchors and tags, declared/tagged/imported origins, fingerprints and the lock file | Draft common contract. Producers write it; Consumers and Analyzers read it |
+| **OSTF Core** | Files, local identity, items, profiles, links, code anchors and tags, log and OpenTelemetry references, declared/tagged/imported origins, fingerprints and the lock file | Draft common contract. Producers write it; Consumers and Analyzers read it |
 | **Modules** | Planned optional parts, each versioned on its own: Risk, Architecture and integrity | Separate specifications and conformance claims are planned; none are qualified in this draft |
 | **Deferred extensions** | Referenced items and snapshots, recovered links and records, `@req-none` exclusions | Proposals outside Core 1.0 and its conformance claims |
 | **Tools** | Analyses, commands, MCP tools, import and sync adapters, documents, change policy, approvals, signatures and baselines | Not standardized. This is where tools compete |
@@ -46,6 +46,7 @@ The TRF IDs below record zztrace provenance only. The rules needed to implement 
 | C7. Origins | `declared`, `tagged` and `imported`, reported separately from freshness | TRF-045 (those origins) |
 | C8. Fingerprints and the lock file | Item fingerprints with their JSON projection, code signature and body fingerprints over tokens, the `trace.lock` line format with its escaping, the four link states and their order, suspect rules, risk relevance. A valid link has unchanged inputs; it is not a claim that the code is correct | TRF-064, TRF-090 to TRF-095 |
 | C11. Verification | `verifies` roles (implementation, effectiveness) and methods (test, inspection, analysis, review), verification items | TRF-070, TRF-071 |
+| C12. Observability references | Optional labeled log references and OpenTelemetry trace/span IDs on items, separate from executed evidence | New in draft 0.2 |
 
 The C9 and C10 labels are retained below for traceability to earlier scope drafts; they are outside Core 1.0.
 
@@ -93,7 +94,7 @@ A tool claims a conformance class for Core, then each module it supports, for ex
 
 A Consumer of a tree with enabled tags does not claim its file-declared links are the complete graph until an Analyzer binds those tags. Each link-state result uses one selected source-tree view for the OSTF files, lock and referenced source bytes. A public conformance suite makes the classes testable: fixture repositories with expected results, covering valid and invalid files with their error codes, anchors and tags with their bindings, and lock files with their link states. Core codes include `TAG_UNKNOWN_ID`, `TAG_UNBOUND` and `ITEM_CHANGED`. `SNAPSHOT_EDITED` belongs to the deferred external-item proposal.
 
-The current [suite 0.1.3](conformance/suite.json) is a bounded draft subset. It exercises the current Go common contract with fixed expected bytes/hashes and two separately structured implementations. Schema-shape tests for proposed snapshots do not implement snapshot reading or integrity. The Python prototype shares this project's authorship, so it is independent code rather than independent-party qualification. The [support map](draft/support.md) is part of every result's claim boundary.
+The current [suite 0.2.0](conformance/suite.json) is a bounded draft subset. It exercises the Go common contract with fixed expected bytes/hashes in the standalone Python prototype. The 0.2 observability references are also covered by schema and prototype cases; zztrace does not yet read wire 0.2. Schema-shape tests for proposed snapshots do not implement snapshot reading or integrity. The Python prototype shares this project's authorship, so it is independent code rather than independent-party qualification. The [support map](draft/support.md) is part of every result's claim boundary.
 
 ## Document set
 
@@ -107,7 +108,7 @@ The current [suite 0.1.3](conformance/suite.json) is a bounded draft subset. It 
 | **Runner annexes** | Draft Go identity annex now present | [Go runner identities](draft/go-tests.md). The independent prototype qualifies fixed top-level and subtest source-binding cases |
 | **Module specifications** | Planned normative drafts, claimed separately when qualified | Risk, Architecture and integrity; each with its own terms, model, schema fragment and error codes |
 | **Profiles** | Normative data | `default` ships with Core. Domain profiles such as `iec62304` ship with their module and name the standard editions they follow |
-| **Conformance suite** | Initial bounded draft subset now present | [Suite 0.1.3](conformance/README.md), with requirement mappings and fixed positive/negative expectations. Complete error-code/construct coverage and independent-party qualification remain 1.0 gates |
+| **Conformance suite** | Initial bounded draft subset now present | [Suite 0.2.0](conformance/README.md), with requirement mappings and fixed positive/negative expectations. Complete error-code/construct coverage and independent-party qualification remain 1.0 gates |
 | **Mappings** | Informative, outside Core conformance | ReqIF and OSLC mappings, each link marked exact, conditional or unsupported, with what is lost in each direction. Assurance-case mappings come later |
 | **Rationale and examples** | Informative | Why the decisions were made, worked examples, migration from other tools' formats |
 | **Extension design proposals** | Exploratory, no conformance claim | [External items](draft/external.md) and [evidence references](draft/evidence.md), stress-tested by the [change-impact workflow](examples/change-impact.md). Schemas and executable vectors follow only after their identity and digest rules are settled |
@@ -166,14 +167,14 @@ Decided 2026-10-17: the Core term is `risk`, and `hazard` is used only in its IS
 
 OSTF was extracted from the zztrace format. The items below record completed separation work and remaining interoperability work; the Core contract and schemas in this repository define the draft.
 
-1. **Self-identification.** Done in TRF-007. A file says which standard it follows, as `openapi: 3.1.0` does: `ostf: "0.1"` while the format is a draft, `ostf: "1.0"` once it is published, in place of `schemaVersion: 2`. zztrace keeps reading `schemaVersion: 1`.
+1. **Self-identification.** Done in TRF-007. A file says which standard it follows, as `openapi: 3.1.0` does: `ostf: "0.2"` while the format is a draft, `ostf: "1.0"` once it is published, in place of `schemaVersion: 2`. zztrace keeps reading `schemaVersion: 1`.
 2. **Modules a reader does not implement.** Done in TRF-004. Strict reading still rejects unknown keys, so typos fail, but module keys, at the top level and on items, are reserved: a reader accepts them, may ignore them, and says it did.
 3. **Tool extensions.** Done in TRF-004. Keys starting with `x-` (for example `x-zztrace`) hold tool-specific data. Other tools keep them and ignore them, and they never enter a fingerprint.
 4. **Symbol paths per language.** A [Go draft annex](draft/go.md) now exists. Later annexes must settle other languages independently; product locator support alone does not make an interoperable annex.
 5. **Test identity per runner.** A [Go identity draft](draft/go-tests.md) now exists. Broader runner annexes and dynamic subtest execution evidence remain open.
 6. **Code fingerprint algorithms.** Fixed [token/hash vectors](conformance/code-vectors.json) now exercise go1 through the Go reference and independent-code Python parser. Unknown algorithms remain unstamped with UNKNOWN_ALGORITHM. Full independent-party and grammar-wide qualification remains open; ts1 is still product behavior without a normative draft annex.
 7. **JSON Schema and lock grammar.** Draft root/item/profile/snapshot [schemas](schema/) and the [grammar](draft/trace-lock.ebnf) now exist. Snapshot shape is proposed, not working external-system semantics.
-8. **Its own IDs.** [OSTF-001 through OSTF-023](draft/core.md) now map to the TRF areas. The [suite index](conformance/suite.json) maps executable cases and records non-executable/proposed gates. The original zztrace working specification remains separate from this draft.
+8. **Its own IDs.** [OSTF-001 through OSTF-024](draft/core.md) now map to the TRF areas. The [suite index](conformance/suite.json) maps executable cases and records non-executable/proposed gates. The original zztrace working specification remains separate from this draft.
 
 ## Versioning
 

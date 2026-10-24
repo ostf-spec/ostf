@@ -29,8 +29,10 @@ ITEM_ID = re.compile(r"[A-Za-z][A-Za-z0-9._-]{0,127}\Z")
 TYPE_NAME = re.compile(r"[a-z][a-z0-9-]{0,47}\Z")
 LINK_NAME = re.compile(r"[a-z][a-z0-9_]{0,47}\Z")
 ATTRIBUTE_NAME = re.compile(r"[a-zA-Z][a-zA-Z0-9]{0,47}\Z")
+TRACE_ID = re.compile(r"[0-9a-f]{32}\Z")
+SPAN_ID = re.compile(r"[0-9a-f]{16}\Z")
 FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
-ITEM_FIELDS = set("id type title text status section rationale aliases derived attributes provenance justifications owners code tests".split())
+ITEM_FIELDS = set("id type title text status section rationale aliases derived attributes provenance justifications owners code tests logs otel".split())
 ROOT_FIELDS = set("ostf profile include code links imports external policy items".split())
 PROFILE_FIELDS = set("ostf extends types links coverage riskMatrix integrity idSuffix fingerprints policy".split())
 LITERALS = {"interpreted_string_literal", "raw_string_literal", "rune_literal", "int_literal", "float_literal", "imaginary_literal"}
@@ -79,8 +81,8 @@ def read_yaml(text):
         if isinstance(event, yaml.events.AliasEvent) or getattr(event, "anchor", None) or getattr(event, "tag", None):
             raise ValueError("aliases, anchors and explicit tags are outside the safe subset")
     value = yaml.load(text, Loader=SafeCoreLoader)
-    if not isinstance(value, dict) or value.get("ostf") != "0.1":
-        raise ValueError("expected mapping with ostf: 0.1")
+    if not isinstance(value, dict) or value.get("ostf") != "0.2":
+        raise ValueError("expected mapping with ostf: 0.2")
     return value
 
 
@@ -130,6 +132,33 @@ def item_projection(item, types):
     if attributes:
         fields["attributes"] = attributes
     return rfc8785.dumps(fields)
+
+
+def valid_observability(item):
+    def identifier(value, pattern):
+        return isinstance(value, str) and bool(pattern.fullmatch(value)) and any(c != "0" for c in value)
+
+    for field, required, allowed in (
+        ("logs", {"label", "ref"}, {"label", "ref", "trace_id", "span_id"}),
+        ("otel", {"label", "trace_id"}, {"label", "trace_id", "span_id", "url"}),
+    ):
+        entries = item.get(field, [])
+        if not isinstance(entries, list):
+            return False
+        for entry in entries:
+            if not isinstance(entry, dict) or not required <= set(entry) or set(entry) - allowed:
+                return False
+            if not isinstance(entry["label"], str) or not entry["label"].strip():
+                return False
+            if field == "logs" and (not isinstance(entry["ref"], str) or not entry["ref"].strip()):
+                return False
+            if "url" in entry and (not isinstance(entry["url"], str) or not entry["url"].strip()):
+                return False
+            if "trace_id" in entry and not identifier(entry["trace_id"], TRACE_ID):
+                return False
+            if "span_id" in entry and ("trace_id" not in entry or not identifier(entry["span_id"], SPAN_ID)):
+                return False
+    return True
 
 
 def _token_bytes(node, source, start, end):
@@ -417,6 +446,8 @@ def _analyze(files):
                 errors.append("DERIVED_WITHOUT_RATIONALE")
             if not check_attributes(profile["types"][item["type"]].get("attributes", {}), item.get("attributes", {})):
                 errors.append("INVALID_ATTRIBUTE")
+            if not valid_observability(item):
+                errors.append("INVALID_OBSERVABILITY")
     if errors:
         return {"errorCodes": sorted(set(errors))}
 
@@ -564,7 +595,16 @@ def _analyze(files):
             row["state"] = "broken" if broken else "unstamped" if reasons and reasons[0] in {"LINK_UNSTAMPED", "UNKNOWN_ALGORITHM"} else "suspect" if reasons else "valid"
             row["reasons"] = reasons
         result_links.append(row)
-    result = {"errorCodes": sorted(set(errors + lock_errors)), "items": [{"id": identity, "type": items[identity]["type"], "fingerprint": hashes[identity]} for identity in sorted(items)], "links": result_links}
+    result_items = []
+    for identity in sorted(items):
+        row = {"id": identity, "type": items[identity]["type"], "fingerprint": hashes[identity]}
+        for field in ("logs", "otel"):
+            if field in items[identity]:
+                row[field] = items[identity][field]
+        for field in sorted(key for key in items[identity] if key.startswith("x-")):
+            row[field] = items[identity][field]
+        result_items.append(row)
+    result = {"errorCodes": sorted(set(errors + lock_errors)), "items": result_items, "links": result_links}
     result["warningCodes"] = sorted(set(warnings))
     result["documents"] = document_rows
     if skipped:

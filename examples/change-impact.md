@@ -3,6 +3,8 @@
 
 This is an informative follow-on to the runnable [payment retry example](payment-retry/README.md). It is a proposed workflow, not another executable OSTF fixture. It shows what the current format can say and where other tools must contribute.
 
+For a real multi-file Git diff and its direct line-to-anchor-to-item mapping, see the [PR #2 impact example](pr-impact.md).
+
 In the runnable tree, `R-PAY-RETRY` links to `pay/charge.go#Service.Charge` and `pay/retry_test.go#TestSameKey`. Now imagine a later pull request changes `NewService` so that it no longer initializes the receipts map. `Service.Charge` and `TestSameKey` remain byte-for-byte unchanged. A charge can panic when it tries to store a receipt.
 
 The existing `trace.lock` entries can still report **valid** for those two links. Their endpoint fingerprints do not cover `NewService`. Under [OSTF-019](../draft/core.md#meaning-and-freshness), valid means scoped link freshness, not unchanged behavior, a passing test or release approval.

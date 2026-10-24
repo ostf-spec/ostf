@@ -1,17 +1,19 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Draft support and claim limits
 
-Status reviewed 2026-10-22. Document revision 0.10; serialized format 0.1; conformance suite 0.1.3, including shared reader regression cases. No OSTF 1.0 claim is made.
+Status reviewed 2026-10-23. Document revision 0.11; serialized format 0.2; conformance suite 0.2.0, including shared reader regression cases. No OSTF 1.0 claim is made.
 
 | Area | zztrace | Independent-code Python prototype | Qualification |
 | --- | --- | --- | --- |
-| Safe files, IDs, aliases, default profile and typed links | Implemented | Bounded Go/default/custom-profile subset, recursive includes and document headers | Shared draft fixtures, including overlapping globs and duplicate document IDs |
+| Safe files, IDs, aliases, default profile and typed links | Implemented for the earlier draft; wire 0.2 pending | Bounded Go/default/custom-profile subset, recursive includes and document headers | Shared draft fixtures, including overlapping globs and duplicate document IDs |
 | Meaning attributes and f1 | Implemented | RFC 8785 library and own projection | Fixed canonical bytes and hashes |
 | Go token fingerprints and symbols | Standard Go parser/scanner | Separate tree-sitter parser and token projection | Fixed code vectors; not an exhaustive grammar suite |
 | Go tags | Implemented | Function/type/value and whole-file cases | Shared binding fixtures |
 | Code/test anchor attributes | Validates endpoint types and declared attributes; preserves them in lock identity and export | Validates endpoint types and attributes against the selected link specification | Shared YAML/tag rejection and distinct-role fixtures; broader profile combinations remain unqualified |
 | Lock parse and four states | Implemented | Own parser, state and risk traversal | Shared positive/negative/state fixtures |
 | Go runner identity | Top-level and subtest support | Top-level and fixed subtest source binding | Shared parent/missing-parent fixtures; execution evidence remains separate |
+| Labeled `logs` and `otel` references | Not implemented for wire 0.2 | Structural and semantic checks; preserved in prototype output | References only, not execution evidence or log integrity |
+| PR diff-to-anchor impact | Tool-specific; not assessed here | Not implemented | [Informative Git example](../examples/pr-impact.md); no Core report format or completeness claim |
 | TypeScript/JavaScript | Exact locators, tags, ts1 and selected runners | Unsupported | Product tests; not a draft normative language annex |
 | Generic languages | Estimated locations and lf1 | Whole files only | No exact-symbol conformance claim |
 | Referenced snapshots | Declared external block skipped | Unsupported, reported skipped | Deferred extension; structural schema only |

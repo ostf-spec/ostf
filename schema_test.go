@@ -26,7 +26,7 @@ func TestSchemaFixtures(t *testing.T) {
 		t.Fatal(err)
 	}
 	load := func(uri *url.URL) (*jsonschema.Schema, error) {
-		if uri.Scheme != "https" || uri.Host != "ostf.dev" || filepath.Dir(uri.Path) != "/draft/0.1" {
+		if uri.Scheme != "https" || uri.Host != "ostf.dev" || filepath.Dir(uri.Path) != "/draft/0.2" {
 			return nil, fmt.Errorf("schema reference is outside the local draft: %s", uri)
 		}
 		data, err := os.ReadFile(filepath.Join("schema", filepath.Base(uri.Path)))
@@ -41,7 +41,7 @@ func TestSchemaFixtures(t *testing.T) {
 	}
 	for _, c := range cases {
 		t.Run(c.ID, func(t *testing.T) {
-			uri, err := url.Parse("https://ostf.dev/draft/0.1/" + c.Schema)
+			uri, err := url.Parse("https://ostf.dev/draft/0.2/" + c.Schema)
 			if err != nil {
 				t.Fatal(err)
 			}

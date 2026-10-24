@@ -6,7 +6,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "items": [
         {
           "id": "R-A",
@@ -29,7 +29,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "itmes": []
     },
     "valid": false
@@ -41,7 +41,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.2",
+      "ostf": "0.3",
       "items": []
     },
     "valid": false
@@ -53,7 +53,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "items": [
         {
           "id": "R-A",
@@ -71,7 +71,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "items": [
         {
           "id": "R-A",
@@ -94,7 +94,7 @@
     ],
     "schema": "item-file.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "document": {
         "id": "SRS",
         "title": "SRS",
@@ -119,7 +119,7 @@
     ],
     "schema": "item-file.schema.json",
     "input": {
-      "ostf": "0.1"
+      "ostf": "0.2"
     },
     "valid": false
   },
@@ -130,7 +130,7 @@
     ],
     "schema": "item-file.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "items": [
         {
           "id": "123"
@@ -146,7 +146,7 @@
     ],
     "schema": "profile.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "extends": "default",
       "types": {
         "requirement": {
@@ -171,7 +171,7 @@
     ],
     "schema": "profile.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "types": {
         "requirement": {
           "attributes": {
@@ -191,7 +191,7 @@
     ],
     "schema": "profile.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "extneds": "default"
     },
     "valid": false
@@ -203,7 +203,7 @@
     ],
     "schema": "snapshot.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "snapshot": {
         "source": "jama",
         "retrieved": "2026-10-19T00:00:00Z",
@@ -229,7 +229,7 @@
     ],
     "schema": "snapshot.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "snapshot": {
         "source": "jama",
         "retrieved": "2026-10-19T00:00:00Z",
@@ -255,7 +255,7 @@
     ],
     "schema": "snapshot.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "snapshot": {
         "source": "jama",
         "retrieved": "2026-10-19T00:00:00Z",
@@ -284,7 +284,7 @@
     ],
     "schema": "snapshot.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "snapshot": {
         "source": "jama",
         "retrieved": "2026-10-19T00:00:00Z",
@@ -313,7 +313,7 @@
     ],
     "schema": "profile.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "extends": "default",
       "types": {
         "requirement": {
@@ -343,7 +343,7 @@
     ],
     "schema": "profile.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "extends": "default",
       "types": {
         "requirement": {
@@ -369,7 +369,7 @@
     ],
     "schema": "root.schema.json",
     "input": {
-      "ostf": "0.1",
+      "ostf": "0.2",
       "items": [
         {
           "id": "R-A",
@@ -379,6 +379,177 @@
           ]
         }
       ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-observability-valid",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "ref": "logs/retry-example.log",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": true
+  },
+  {
+    "id": "schema-otel-zero-id",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "ref": "logs/retry-example.log",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "00000000000000000000000000000000",
+              "span_id": "0123456789abcdef"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-otel-uppercase-id",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "ref": "logs/retry-example.log",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "0123456789ABCDEF0123456789ABCDEF",
+              "span_id": "0123456789abcdef"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-log-span-without-trace",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "ref": "logs/retry-example.log",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-log-missing-ref",
+    "requirements": [
+      "OSTF-024"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.2",
+      "items": [
+        {
+          "id": "R-A",
+          "text": "A",
+          "logs": [
+            {
+              "label": "Synthetic log",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ],
+          "otel": [
+            {
+              "label": "Synthetic retry span",
+              "trace_id": "0123456789abcdef0123456789abcdef",
+              "span_id": "0123456789abcdef"
+            }
+          ]
+        }
+      ]
+    },
+    "valid": false
+  },
+  {
+    "id": "schema-root-old-version",
+    "requirements": [
+      "OSTF-002",
+      "OSTF-021"
+    ],
+    "schema": "root.schema.json",
+    "input": {
+      "ostf": "0.1",
+      "items": []
     },
     "valid": false
   }
