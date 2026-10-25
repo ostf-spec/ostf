@@ -135,7 +135,7 @@ def check():
     # Stamping every link of the example from no lock rebuilds its lock, tagged and item links included (Annex I.4).
     unlocked = {path: value for path, value in edited.items() if path != "trace.lock"} | {"refund.go": example.files["refund.go"]}
     result, text = reader.stamp(reader.Analysis(unlocked), sorted(example.links))
-    assert text == example.files["trace.lock"].decode() and len(result["links"]) == 6, "example lock from stamp"
+    assert text == example.files["trace.lock"].decode() and len(result["links"]) == 8, "example lock from stamp"
     counts["exampleOutputs"] = 5
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))

@@ -17,6 +17,13 @@
       "fingerprint": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
     },
     {
+      "id": "R-DATA-AT-REST",
+      "type": "requirement",
+      "status": "accepted",
+      "riskRelevant": false,
+      "fingerprint": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
+    },
+    {
       "id": "R-REFUND-LIMIT",
       "type": "requirement",
       "status": "accepted",
@@ -29,6 +36,13 @@
       "status": "accepted",
       "riskRelevant": false,
       "fingerprint": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
+    },
+    {
+      "id": "V-ENCRYPTION-REVIEW",
+      "type": "verification",
+      "status": "accepted",
+      "riskRelevant": false,
+      "fingerprint": "f1:gzikKGMTSX3Ncx82gUYdKsELgCJY-kS-AgUbwH4nelo"
     }
   ],
   "links": [
@@ -59,6 +73,19 @@
       "reasons": []
     },
     {
+      "source": "V-ENCRYPTION-REVIEW",
+      "type": "verifies",
+      "target": "R-DATA-AT-REST",
+      "attributes": {},
+      "origin": "declared",
+      "fingerprints": {
+        "source": "f1:gzikKGMTSX3Ncx82gUYdKsELgCJY-kS-AgUbwH4nelo",
+        "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
+      },
+      "state": "valid",
+      "reasons": []
+    },
+    {
       "source": "charge.go#Service.Charge",
       "type": "implements",
       "target": "PAY-123",
@@ -82,6 +109,19 @@
         "source.sig": "go1:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0",
         "source.body": "go1:jmSIQcdKpuVppckGyyGo6ZsSudyupeGNZYs_GNVMhmU",
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
+      },
+      "state": "valid",
+      "reasons": []
+    },
+    {
+      "source": "deploy/database.tf",
+      "type": "implements",
+      "target": "R-DATA-AT-REST",
+      "attributes": {},
+      "origin": "declared",
+      "fingerprints": {
+        "source.sig": "lf1:tG3FA3jnS89z9QX07SrkOGGysS02vzQfu_3ZPoiDqNI",
+        "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
       },
       "state": "valid",
       "reasons": []

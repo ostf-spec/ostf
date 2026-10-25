@@ -18,6 +18,8 @@ items:
 
 `math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. A tool that rechecks a link writes the fingerprints of both ends to `trace.lock`; when the requirement text or the function body changes, the link becomes `suspect` until someone rechecks it. A valid link means only that its inputs did not change. It does not mean the test passed or the code is correct.
 
+Under the default, every edit to a linked function's body makes its link suspect, a renamed variable or a new log line included, and `check` then fails until someone rechecks and stamps the link. The recheck costs one `context` call, but a team that stamps without reading gets a lock that says nothing. Two things keep that in view: `stamp` takes named links only and has no option to restamp everything, and a profile can set `fingerprints.bodyChange: risk` so that body edits are rechecked only for code that controls a declared risk (OSTF-144).
+
 ## Start in ten minutes
 
 1. Next to your code, write `trace.yaml` with your first requirement and the function and test that carry it, as above. Go, TypeScript, JavaScript and Python are read; for other files, link the whole file.
@@ -68,7 +70,7 @@ items:
 | --- | --- |
 | [Specification](draft/0.3/ostf.md) | The format in 35 numbered requirements, the Go annex, the lock grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents and context rendering |
 | [Schemas](draft/0.3/schema/) and [lock grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.lock` |
-| [Example](draft/0.3/example/README.md) | A refund limit that controls a risk and a payment retry owned by an issue tracker, with a real lock file and the expected tool output |
+| [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with a real lock file and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
 | [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check`, `context` and `stamp` commands, and hand-written cases |
 | [Converters](draft/0.3/tools/README.md) | Doorstop to OSTF and back, and StrictDoc to OSTF, with what each loses |
