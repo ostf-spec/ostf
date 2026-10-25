@@ -38,7 +38,8 @@ def links(result):
 
 
 def codes(result):
-    return sorted({d["code"] for d in result["diagnostics"]})
+    """The Annex C codes of a result; the reader's own codes (OSTF-151) are no conformance target."""
+    return sorted({d["code"] for d in result["diagnostics"] if not d["code"].startswith(reader.OWN_PREFIX)})
 
 
 def states(analysis):
@@ -191,6 +192,7 @@ def check():
     for case in cases["sarif"]:
         analysis = reader.Analysis(case["files"])
         result = analysis.result()
+        result["diagnostics"] = [d for d in result["diagnostics"] if not d["code"].startswith(reader.OWN_PREFIX)]
         log = reader.sarif(analysis, result)
         assert log["version"] == "2.1.0" and len(log["runs"]) == 1, f"{case['id']}: one SARIF 2.1.0 run"
         run_ = log["runs"][0]
@@ -237,7 +239,20 @@ def check():
     assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
     assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1].encode() == lock, "stamp drops only the non-UTF-8 line"
     assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
-    counts["directChecks"] = 7
+    # The reader's own info for statements that no link targets (OSTF-151): one diagnostic, never a failure.
+    lonely = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n'
+                              '  - id: R-A\n    text: Do a.\n    refines: [N-A]\n  - id: R-B\n    text: Do b.\n    status: draft\n'
+                              '  - id: R-C\n    text: Do c.\n    status: obsolete\n  - id: RISK-A\n    type: risk\n    text: A risk.\n'
+                              '  - id: V-A\n    type: verification\n    text: Review a.\n    verifies: [R-A]\n'})
+    assert [(d["severity"], d["message"]) for d in lonely.diagnostics if d["code"] == reader.UNLINKED] == \
+        [("info", "1 statement that no link targets: R-B")] and not lonely.failed(), "statements that no link targets"
+    many = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n' + "".join(f"  - id: R-{i:02}\n    text: Step {i}.\n" for i in range(12))})
+    assert [d["message"] for d in many.diagnostics if d["code"] == reader.UNLINKED] == \
+        ["12 statements that no link targets: R-00, R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09 and 2 more"], "unlinked statements counted"
+    run_ = reader.sarif(many, many.result())["runs"][0]
+    assert {"id": reader.UNLINKED} in run_["tool"]["driver"]["rules"] and \
+        [r["level"] for r in run_["results"] if r["ruleId"] == reader.UNLINKED] == ["note"], "unlinked statements in SARIF"
+    counts["directChecks"] = 10
 
     # Every requirement and Annex C code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
     covered = {r for case in every for r in case["requirements"]}
@@ -264,6 +279,11 @@ def check():
     assert code == 0 and json.loads(out)["context"] == "example/refund.go#CheckRefundLimit", "TARGET kept as given"
     assert [i["id"] for i in json.loads(out)["items"]] == ["N-REFUNDS", "R-REFUND-LIMIT", "RISK-REFUND-ABUSE"], "root from TARGET"
     assert run(DRAFT / "example", "context", "R-NOPE")[0] == 1, "context exit 1"
+    # A path that does not resolve gets a hint spelled from the working directory, which I.3 reads it from.
+    code, out = run(DRAFT / "example" / "deploy", "context", "deploy/database.tf", "--format", "json")
+    assert code == 1 and json.loads(out)["diagnostics"][0].get("hint", "").endswith("try database.tf"), "context hint from a subdirectory"
+    code, out = run(DRAFT / "example", "context", "database.tf", "--format", "json")
+    assert code == 1 and json.loads(out)["diagnostics"][0].get("hint", "").endswith("try deploy/database.tf"), "context hint for a file name"
     with tempfile.TemporaryDirectory() as temp:
         tree = pathlib.Path(temp)
         (tree / "sub").mkdir()
@@ -294,6 +314,7 @@ def check():
         (tree / "elsewhere").mkdir()
         code, out = run(tree / "elsewhere", "context", "math.go#Add", "--root", "..", "--format", "json")
         assert code == 1 and json.loads(out)["items"] == [], "context TARGET outside --root does not resolve"
+        assert json.loads(out)["diagnostics"][0].get("hint", "").endswith("try ../math.go#Add"), "context hint with --root"
     # check --base, SARIF and stamp on an edited copy of the example, as an agent would run them.
     with tempfile.TemporaryDirectory() as temp:
         tree = pathlib.Path(temp) / "example"
@@ -350,7 +371,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 24
+    counts["commandLine"] = 27
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

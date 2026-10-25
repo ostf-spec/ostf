@@ -28,6 +28,14 @@ cd draft/0.3/example
 
 Outside a Git checkout, the added option `--base-tree DIR` (Annex I.6) supplies the base view instead: DIR is the directory that holds this root in a checkout of REV, and REV is then only the label in `impact.base`. For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
 
+The reader adds one code of its own, outside Annex C as OSTF-151 allows: `ostf-reader.UNLINKED`, an info that counts the statements, other than obsolete ones, that no link targets, and names the first ten. `check` reports whether links are fresh, not whether statements are covered, so without it a requirement with no code, test or verification passes in silence; whether it must be covered is a policy for the team or a tool on top. The info never fails `check`, and the cases compare Annex C codes only. When `context` is given a path that does not resolve, its hint names the covered files whose paths end with that path, spelled from the working directory, which is where Annex I.3 reads TARGET from:
+
+```sh
+cd draft/0.3/example/deploy
+../../../../.venv/bin/python ../../conformance/reader.py context deploy/database.tf
+# error BROKEN_LINK deploy/database.tf: deploy/database.tf does not resolve (paths are relative to the working directory: try database.tf)
+```
+
 [check.py](check.py) runs:
 
 | Check | What it pins |
@@ -41,7 +49,7 @@ Outside a Git checkout, the added option `--base-tree DIR` (Annex I.6) supplies 
 | `sarif` in cases.json | Rules, levels, locations, `ostf.link` and `ostf.state` of link-state results, and the mapping of each diagnostic |
 | Annex C.3 example | The edit that C.3 describes, applied to the example, yields the JSON printed in the specification; stamping the example's eight links from no lock yields its `trace.lock` |
 | Coverage | The vector files are byte-identical to 0.2, and every requirement and Annex C code has a case or a reason in `notCovered` |
-| The command line | Exit codes 0, 1 and 2 of all three commands, root selection from TARGET, TARGET kept as given, and on an edited copy of the example `check --base`, `--format sarif`, a refused stamp that writes nothing, a stamp that makes `check` pass and leaves no temporary file, no write through a symbolic or hard link, and text `check` naming links that have no state yet |
+| The command line | Exit codes 0, 1 and 2 of all three commands, root selection from TARGET, TARGET kept as given, the hint for a path given from another directory, and on an edited copy of the example `check --base`, `--format sarif`, a refused stamp that writes nothing, a stamp that makes `check` pass and leaves no temporary file, no write through a symbolic or hard link, and text `check` naming links that have no state yet |
 
 [generate_tree.py](generate_tree.py) writes the deterministic 10 000-file tree on which both implementations time `check` (plan, section 5.4): `python3 generate_tree.py DIR`.
 

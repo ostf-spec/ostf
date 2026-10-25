@@ -21,6 +21,7 @@ import json
 import math
 import os
 import pathlib
+import posixpath
 import re
 import stat
 import sys
@@ -62,6 +63,10 @@ SEVERITY = {
     "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info", "LOCK_MISSING": "info",
     "LOCK_INVALID": "error", "LOCK_DUPLICATE": "error", "STAMP_REFUSED": "error",
 }
+# This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
+OWN_PREFIX = "ostf-reader."
+UNLINKED = OWN_PREFIX + "UNLINKED"
+SEVERITY[UNLINKED] = "info"
 LITERALS = {"interpreted_string_literal", "raw_string_literal", "rune_literal", "int_literal",
             "float_literal", "imaginary_literal"}
 GO = Language(tree_sitter_go.language())
@@ -1043,6 +1048,7 @@ class Analysis:
         # step 6
         self._cycles()
         self._freshness()
+        self._unlinked()
 
     # step 4: items (section 4)
     def _register(self, path, raw):
@@ -1390,6 +1396,19 @@ class Analysis:
             link["reasons"] = sorted(reasons, key=str.encode)
             link["state"] = "suspect" if reasons else "valid"
 
+    def _unlinked(self):
+        """One info for the statements, other than obsolete ones, that no link targets: check
+        reports whether links are fresh, so without it such a statement passes in silence.
+        The count and the first ten IDs keep it short on a large imported set."""
+        targets = {link["target"] for link in self.links.values()}
+        statements = set(self.vocabulary["links"]["implements"]["to"])
+        found = sorted((i for i, item in self.items.items() if item["type"] in statements
+                        and item["status"] != "obsolete" and i not in targets), key=str.encode)
+        if found:
+            shown = ", ".join(found[:10]) + (f" and {len(found) - 10} more" if len(found) > 10 else "")
+            self.report(UNLINKED, "trace.yaml", message=f"{len(found)} {'statement' if len(found) == 1 else 'statements'} that no link targets: {shown}",
+                        hint="link the code, tests or verification item that carry each; check tracks links, not coverage")
+
     # Annex C.2
     def item_row(self, ident, detail=False):
         item = self.items[ident]
@@ -1461,8 +1480,26 @@ def resolve(analysis, target, anchor=None):
     return "BROKEN_LINK", None
 
 
-def context(analysis, target, anchor=None):
-    """Annex I.3: the json context result and whether TARGET resolved."""
+def path_hint(analysis, target, anchor, spell, guess=False):
+    """For a TARGET whose file is not in the view: the covered files whose path ends with the
+    path given, spelled from the working directory by `spell`, since I.3 reads TARGET from there.
+    With `guess`, TARGET may be a mistyped ID, so a hint needs such a file."""
+    given, mark, symbol = target.partition("#")
+    looked = (target if anchor is None else anchor).partition("#")[0]
+    if not given or looked in analysis.files:
+        return None  # the file is there, so its symbol is what failed
+    tail = posixpath.normpath(given)
+    found = sorted((p for p in analysis.files if analysis.covered(p) and (p == tail or p.endswith("/" + tail))), key=str.encode)
+    if found:
+        return "paths are relative to the working directory: try " + " or ".join(spell(p) + mark + symbol for p in found[:3])
+    if guess:
+        return None
+    return f"paths are relative to the working directory, and the root has no {looked}" if looked else "the path is outside the root"
+
+
+def context(analysis, target, anchor=None, spell=lambda path: path):
+    """Annex I.3: the json context result and whether TARGET resolved. `spell` writes a
+    root-relative path as TARGET would need it, for hints."""
     result = {"ostf": "0.3", "context": target, "diagnostics": [], "items": [], "links": []}
     if analysis.stopped:
         result["diagnostics"] = list(analysis.diagnostics)
@@ -1477,7 +1514,10 @@ def context(analysis, target, anchor=None):
             links |= keys
     else:
         row = {"code": kind, "severity": SEVERITY[kind], "subject": target, "message": target + " does not resolve"}
-        hint = analysis.nearest(target) if kind == "UNKNOWN_TARGET" else None
+        if kind == "UNKNOWN_TARGET":
+            hint = analysis.nearest(target) or path_hint(analysis, target, anchor, spell, guess=True)
+        else:
+            hint = path_hint(analysis, target, anchor, spell) if kind == "BROKEN_LINK" else None
         if hint:
             row["hint"] = hint
         unresolved = [row]
@@ -1840,7 +1880,9 @@ def main(argv=None):
     else:
         root = find_root(full.parent if looks_like_anchor else cwd)
     if root is None:
-        print("no trace.yaml at or above the working directory", file=sys.stderr)
+        where = "the working directory" if args.root or not looks_like_anchor or full.parent == cwd else \
+            f"the directory of {path} (paths are relative to the working directory)"
+        print("no trace.yaml at or above " + where, file=sys.stderr)
         return 2
     anchor = None
     if looks_like_anchor:
@@ -1919,7 +1961,8 @@ def _run(args, analysis, target, anchor, root):
         else:
             print("".join(line + "\n" for line in text_diagnostics(result) + ["stamped " + identity(l) for l in result["links"]]), end="")
         return 0 if text is not None else 1
-    result, resolved = context(analysis, target, anchor)
+    cwd = os.path.realpath(os.getcwd())
+    result, resolved = context(analysis, target, anchor, lambda p: pathlib.Path(os.path.relpath(root / p, cwd)).as_posix())
     if args.format == "json":
         print(json.dumps(result, indent=2, ensure_ascii=False))
     elif resolved:
