@@ -1193,6 +1193,7 @@ class Analysis:
         self.lock_paths = ["trace.lock"]  # the lock files of trace.yaml and of the item files read
         self.lock_files = {}     # lock path -> its usable entries
         self.lock_seen = {}      # lock path -> every identity written in it
+        self.fingerprinted = None  # (kind, fingerprint) -> anchors of this view, for broken links (OSTF-132)
         try:
             self._build()
         except Stop:
@@ -1678,7 +1679,7 @@ class Analysis:
                 elif status == "unsupported":
                     self.report("UNSUPPORTED_LANGUAGE", link["file"], link["source"])
                 else:
-                    self.report("BROKEN_LINK", link["file"], link["source"])
+                    self.report("BROKEN_LINK", link["file"], link["source"], hint=self._moved(link))
             else:
                 current["source"] = self.hashes[link["source"]]
             current["target"] = self.hashes[link["target"]]
@@ -1715,6 +1716,29 @@ class Analysis:
             link["reasons"] = sorted(reasons, key=str.encode)
             link["state"] = "suspect" if reasons else "valid"
         self._corroboration()
+
+    def _moved(self, link):
+        """OSTF-132: for a broken declared link, a hint naming the definitions or files of this view whose
+        fingerprint equals the one its lock entry records, or None."""
+        entry = (self.lock or {}).get(link["identity"]) if link["origin"] == "declared" else None
+        whole = "#" not in link["source"]
+        recorded = entry and entry["fingerprints"].get("source.sig" if whole else "source.body")
+        if not recorded:
+            return None
+        if self.fingerprinted is None:  # every covered file and definition, by fingerprint, built once
+            self.fingerprinted = {}
+            for path in sorted(self.files, key=str.encode):
+                if not self.covered(path) or self.is_lock(path) or path == "trace.derived":
+                    continue
+                annex = annex_for(path)
+                parsed = _parsed(self, path) if annex else None
+                self.fingerprinted.setdefault(("file", _file_sig(self, path)), []).append(path)
+                for d in parsed["definitions"] if parsed else []:
+                    self.fingerprinted.setdefault(("defs", fingerprint(annex.algorithm, d["body"])), []).append(path + "#" + d["name"])
+        found = sorted(set(self.fingerprinted.get(("file" if whole else "defs", recorded), [])), key=str.encode)
+        if not found:
+            return None
+        return "moved? the same content is at " + ", ".join(found[:3]) + (f" and {len(found) - 3} more" if len(found) > 3 else "")
 
     def _corroboration(self):
         """OSTF-146: beside the state of each implements link whose anchor binds, whether a test anchor

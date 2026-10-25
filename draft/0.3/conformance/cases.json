@@ -1856,6 +1856,125 @@
    }
   },
   {
+   "id": "broken-link-hint-names-the-move",
+   "requirements": [
+    "OSTF-132",
+    "OSTF-143"
+   ],
+   "note": "Each definition and file moved with its content unchanged is found by the fingerprint its lock entry records: F to b.go, A.m to B.m in b.py, old.txt to new.txt and pkg/util.go to lib/util.go. Gone was renamed, and its name is in its body, so nothing has its fingerprint and its hint names none.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.py#A.m, old.txt, pkg/util.go, a.go#Gone]\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:3VFk9iHePcQKkBchHKGi_yIqU5NOlxkPFJ_WzNKrHkY source.body=go2:GltoD15teFtjsUd7DBOJWN2Zy41_FIhzJeD1E9DQLeo target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Gone implements R-A source.sig=go2:vo6cJm-43fyCCfq4WYG_U5IKJ9MPG-gBiWTn34VfcKg source.body=go2:n8ogM1lg53BQiaZyaUzHmOuLEjY7RVsgFGE_hQNW0Os target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.py#A.m implements R-A source.sig=py1:5zar4ox3uc3gaEL2JnwFoYh95uDuNu8Dcaw0PaJxs1Y source.body=py1:FgcFykb9qduhfbE0b_rdS4LCAoj1835fOiZlwB782P4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\nold.txt implements R-A source.sig=lf1:7Xm9wPJalVWOBkQV92Faik7piIP7SSbTQxOOeQ5ops4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\npkg/util.go implements R-A source.sig=go2:vFBddPqxnybQjswneJgCLoi1KEteSQu2wRqKlTO2lNY target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n",
+    "a.go": "package a\n",
+    "b.go": "package a\n\nfunc F(a int) int {\n\treturn a + 1\n}\n\nfunc Renamed() int { return 7 }\n",
+    "b.py": "class B:\n    def m(self):\n        return 1\n",
+    "new.txt": "keep the keys\n",
+    "lib/util.go": "package pkg\n\nfunc U() {}\n"
+   },
+   "expect": {
+    "codes": [
+     "BROKEN_LINK"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "broken",
+      [
+       "LINK_BROKEN"
+      ]
+     ],
+     [
+      "a.go#Gone",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "broken",
+      [
+       "LINK_BROKEN"
+      ]
+     ],
+     [
+      "a.py#A.m",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "broken",
+      [
+       "LINK_BROKEN"
+      ]
+     ],
+     [
+      "old.txt",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "broken",
+      [
+       "LINK_BROKEN"
+      ]
+     ],
+     [
+      "pkg/util.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "broken",
+      [
+       "LINK_BROKEN"
+      ]
+     ]
+    ],
+    "hints": {
+     "BROKEN_LINK a.go#F": [
+      "b.go#F"
+     ],
+     "BROKEN_LINK a.py#A.m": [
+      "b.py#B.m"
+     ],
+     "BROKEN_LINK old.txt": [
+      "new.txt"
+     ],
+     "BROKEN_LINK pkg/util.go": [
+      "lib/util.go"
+     ],
+     "BROKEN_LINK a.go#Gone": []
+    }
+   }
+  },
+  {
+   "id": "broken-link-hint-needs-a-lock-entry",
+   "requirements": [
+    "OSTF-132"
+   ],
+   "note": "Without a recorded fingerprint there is nothing to look for.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.py#A.m, old.txt, pkg/util.go, a.go#Gone]\n",
+    "a.go": "package a\n",
+    "b.go": "package a\n\nfunc F(a int) int {\n\treturn a + 1\n}\n\nfunc Renamed() int { return 7 }\n",
+    "b.py": "class B:\n    def m(self):\n        return 1\n",
+    "new.txt": "keep the keys\n",
+    "lib/util.go": "package pkg\n\nfunc U() {}\n"
+   },
+   "expect": {
+    "codes": [
+     "BROKEN_LINK",
+     "LOCK_MISSING"
+    ],
+    "hints": {
+     "BROKEN_LINK a.go#F": [],
+     "BROKEN_LINK old.txt": []
+    }
+   }
+  },
+  {
    "id": "no-lock",
    "requirements": [
     "OSTF-143"

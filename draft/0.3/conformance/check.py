@@ -222,6 +222,12 @@ def check():
             assert next(i["fingerprint"] for i in result["items"] if i["id"] == ident) == value, f"{case['id']}: fingerprint of {ident}"
         for ident, value in expect.get("linkFingerprints", {}).items():
             assert [l["fingerprints"] for l in result["links"] if reader.identity(l) == ident] == [value], f"{case['id']}: fingerprints of {ident}"
+        for key, anchors in expect.get("hints", {}).items():  # OSTF-132: the anchors a hint must name, or no hint
+            code, subject = key.split(" ", 1)
+            found = [d for d in result["diagnostics"] if d["code"] == code and d.get("subject") == subject]
+            assert len(found) == 1, f"{case['id']}: one {key}, found {len(found)}"
+            assert ("hint" in found[0]) == bool(anchors) and all(a in found[0].get("hint", "") for a in anchors), \
+                f"{case['id']}: hint of {key}: {found[0].get('hint')!r}, want {anchors}"
         for code, files in expect.get("diagnosticFiles", {}).items():
             assert sorted({d.get("file") for d in result["diagnostics"] if d["code"] == code}) == files, f"{case['id']}: files of {code}"
     for case in cases["contexts"]:
