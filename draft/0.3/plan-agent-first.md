@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.4: plan to make the format agent-first
 
-Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 started on 2026-10-25 (section 6) with the agents decided and the two real repositories still to be named by the maintainer. Applies to the [0.3 draft](ostf.md) from document revision 0.12 and produces wire version 0.4.
+Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 done on 2026-10-25 (section 6), with [baseline.md](trials/baseline.md) published and the Breadth row not measured; Phase 2 waits on the maintainer. Applies to the [0.3 draft](ostf.md) from document revision 0.12 and produces wire version 0.4.
 
 ## 1. Why this plan
 
@@ -92,6 +92,8 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 - **Token cost.** OSTF output read per changed symbol, in every arm.
 
 **Exit gate.** `trials/baseline.md` published with every row of section 2, the differences between arms with intervals, and the precision table.
+
+**Outcome.** Done on 2026-10-25; [trials/baseline.md](trials/baseline.md) gives every row and the [decision record](decisions.md#agent-first-plan-phase-1-baseline) the rulings. Against a plain requirements file, 0.3 helps the small models: task outcome on T1 to T7 was 94 % in `full`, 83 % in `intent` and 60 % in `none`, a difference of 35 points with an interval of 22 to 46, made in asking before changing a risk control, refusing an invented ID and naming the items and tests a change touches; the format alone gave most of it. The review queue is where 0.3 falls short. Replayed on three of the maintainer's repositories, 9 % of the labelled `BODY_CHANGED` links and 1 % of the `SIGNATURE_CHANGED` ones were real mismatches, and most `SIGNATURE_CHANGED` came from whole-file anchors and definitions without a body, which `bodyChange: risk` does not quiet. Agents stamped 93 % of the links they touched in the same change, their own changes to risk controls included, as 0.3 asks. The gate holds with three gaps: Breadth is not measured, since its tasks are written in Phase 5; two replay windows are shorter than three months; and an agent, at the maintainer's request, labelled the sample of judge verdicts in place of a person.
 
 ## 7. Phase 2: wire 0.4 core
 
