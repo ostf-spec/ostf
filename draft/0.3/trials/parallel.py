@@ -137,10 +137,10 @@ def run_agent(n, base, work):
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", f"Agent {n + 1}: refactor {symbol}", check=False)
     git(repo, "push", "-q", "origin", f"HEAD:refs/heads/agent-{n + 1:02d}")
-    changed = git(repo, "diff", "--name-only", "main", "HEAD").stdout.split()
+    changed = git(repo, "diff", "--name-only", "origin/main", "HEAD").stdout.split()
     return {"agent": agent, "model": harness.CLAUDE_MODEL if agent == "claude" else harness.CODEX_MODEL, "function": FUNCTIONS[n],
             "branch": f"agent-{n + 1:02d}", "timing": timing, "checks": checks, "changedFiles": changed,
-            "stampCalls": m["stampCalls"], "lockHandEdits": m["lockHandEdits"], "finalMessage": final[-2000:]}
+            "stampCalls": m["stampCalls"], "lockHandEdits": m["lockHandEdits"], "usage": usage, "finalMessage": final[-2000:]}
 
 
 def merge_all(base, agents):
