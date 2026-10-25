@@ -6587,6 +6587,180 @@
     ],
     "links": []
    }
+  },
+  {
+   "id": "lock-provenance-read",
+   "requirements": [
+    "OSTF-142",
+    "Annex B"
+   ],
+   "note": "by and at record who rechecked a link and in which view; they are not part of its identity and change no state, and an entry without them, as written before they were defined, reads as unknown.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ana%20lima at=9fceb02d0ae598e95dc970b74767f19372d61af8\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-provenance-any-order",
+   "requirements": [
+    "OSTF-142",
+    "Annex B"
+   ],
+   "note": "A reader accepts pairs in any order.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD at=unknown by=ci:nightly source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=agent:claude-haiku-5-5 at=unknown\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-provenance-invalid",
+   "requirements": [
+    "OSTF-142",
+    "Annex B"
+   ],
+   "note": "by is a principal, person:, agent: or ci: and a name, or unknown; at is nonempty; each occurs once. A line that breaks this is LOCK_INVALID and its link is unstamped.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=ana at=unknown\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=agent: at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown by=unknown at=x\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_INVALID"
+    ],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-provenance-not-identity",
+   "requirements": [
+    "OSTF-142"
+   ],
+   "note": "Two entries that differ only in provenance share a link identity.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ana at=unknown\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ben at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_DUPLICATE"
+    ],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "link-attribute-named-by-rejected",
+   "requirements": [
+    "OSTF-121",
+    "OSTF-142"
+   ],
+   "note": "by and at are lock keys, so no link attribute takes their names.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
+    "p.yaml": "ostf: \"0.3\"\nlinks:\n  verifies:\n    attributes:\n      by: {}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ]
+   }
   }
  ],
  "contexts": [
@@ -7334,7 +7508,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7363,7 +7537,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7389,7 +7563,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -7417,7 +7591,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -7445,7 +7619,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7473,7 +7647,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7500,7 +7674,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath.go#Sub implements R-ADD source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\nmath.go#Sub implements R-ADD source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -7526,7 +7700,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -7551,7 +7725,7 @@
      "R-A",
      "R-B"
     ],
-    "lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI\n"
+    "lock": "trace.lock 1\nR-A refines R-B source=f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk target=f1:502brx1s_0Xz1RAz8WyIc_oPFrYyDuCVsyKfsh3yPiI by=unknown at=unknown\n"
    }
   },
   {
@@ -7582,7 +7756,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD role=effectiveness source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmy%20file.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD role=effectiveness source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\nmy%20file.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7608,7 +7782,7 @@
     "items": [
      "R-A"
     ],
-    "lock": "trace.lock 1\nnotes.txt implements R-A source.sig=lf1:kRFp3arxRq_1OfWMJsSJrzuJLf8P4oPBwmTGWuWqWaI target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "lock": "trace.lock 1\nnotes.txt implements R-A source.sig=lf1:kRFp3arxRq_1OfWMJsSJrzuJLf8P4oPBwmTGWuWqWaI target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo by=unknown at=unknown\n"
    }
   },
   {
@@ -7635,7 +7809,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7828,7 +8002,7 @@
     "items": [
      "R-A"
     ],
-    "lock": "trace.lock 1\nmath.ts#add implements R-A source.sig=ts2:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE source.body=ts2:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.ts#add implements R-A source.sig=ts2:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE source.body=ts2:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
    }
   },
   {
@@ -7861,7 +8035,65 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown\n"
+   }
+  },
+  {
+   "id": "stamp-records-provenance",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-142"
+   ],
+   "note": "The stamped entry records the principal and view given; the other entry is kept as read.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+   },
+   "stamp": [
+    "math.go#Add implements R-ADD"
+   ],
+   "by": "agent:claude-haiku-5-5",
+   "at": "9fceb02d0ae598e95dc970b74767f19372d61af8",
+   "expect": {
+    "codes": [],
+    "links": [
+     "math.go#Add implements R-ADD"
+    ],
+    "items": [
+     "R-ADD"
+    ],
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=agent:claude-haiku-5-5 at=9fceb02d0ae598e95dc970b74767f19372d61af8\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+   }
+  },
+  {
+   "id": "stamp-escapes-principal",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-142",
+    "Annex B"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
+    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ana at=unknown\n"
+   },
+   "stamp": [
+    "math.go#Add implements R-ADD"
+   ],
+   "by": "person:Ana Lima",
+   "at": "unknown",
+   "expect": {
+    "codes": [],
+    "links": [
+     "math.go#Add implements R-ADD"
+    ],
+    "items": [
+     "R-ADD"
+    ],
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:Ana%20Lima at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ana at=unknown\n"
    }
   }
  ],
@@ -9669,6 +9901,26 @@
     "types": {
      "threat": {
       "kind": "statement"
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-link-attribute-reserved-provenance",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-121",
+    "OSTF-142"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "links": {
+     "verifies": {
+      "attributes": {
+       "at": {}
+      }
      }
     }
    },

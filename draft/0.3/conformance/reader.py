@@ -46,6 +46,9 @@ ATTRIBUTE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9]{0,47}\Z")
 SOURCE_ALIAS = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
 EXTERNAL = re.compile(r"([a-z][a-z0-9-]{0,31}):([^\s\x00-\x1f\x7f]+)\Z")
 FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
+# OSTF-142: who rechecked a link and in which view, after the fingerprint pairs.
+PROVENANCE_KEYS = ("by", "at")
+PRINCIPAL = re.compile(r"unknown\Z|(?:person|agent|ci):.+\Z", re.S)
 ALGORITHMS = {"f1", "go2", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
@@ -929,13 +932,15 @@ def parse_lock(data):
             parts = line.split(" ")
             if len(parts) < 3 or not LINK_NAME.fullmatch(parts[1]) or not parts[0] or not parts[2]:
                 raise ValueError("bad entry")
-            entry = {"source": decode(parts[0]), "type": parts[1], "target": decode(parts[2]), "attributes": {}, "fingerprints": {}}
+            entry = {"source": decode(parts[0]), "type": parts[1], "target": decode(parts[2]), "attributes": {}, "fingerprints": {}, "provenance": {}}
             for part in parts[3:]:
                 key, value = part.split("=", 1)
-                field = "fingerprints" if key in FINGERPRINT_KEYS else "attributes"
+                field = "fingerprints" if key in FINGERPRINT_KEYS else "provenance" if key in PROVENANCE_KEYS else "attributes"
                 if key in entry[field] or (field == "attributes" and not ATTRIBUTE_NAME.fullmatch(key)):
                     raise ValueError("bad or repeated key")
                 entry[field][key] = decode(value)
+            if not PRINCIPAL.match(entry["provenance"].get("by", "unknown")) or entry["provenance"].get("at", "unknown") == "":
+                raise ValueError("by is a principal and at is not empty")
             key = identity(entry)
             if key in entries:
                 problems.append(("LOCK_DUPLICATE", line))
@@ -976,9 +981,11 @@ def parse_derived(data):
 
 
 def lock_text(entries):
+    """OSTF-142: canonical lock bytes; an entry's by and at are written as recorded, absent when it has none."""
     lines = []
     for key, entry in entries.items():
         pairs = [k + "=" + lock_escape(entry["fingerprints"][k]) for k in FINGERPRINT_KEYS if k in entry["fingerprints"]]
+        pairs += [k + "=" + lock_escape(entry["provenance"][k]) for k in PROVENANCE_KEYS if k in entry.get("provenance", {})]
         lines.append(" ".join([key] + pairs))
     return "trace.lock 1\n" + "".join(line + "\n" for line in sorted(lines, key=str.encode))
 
@@ -1099,7 +1106,7 @@ def merge_profile(vocabulary, profile):
             raise ValueError("a new link needs from and to")
         for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
             mapping(declared, {"values", "required"})
-            if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"source", "target", "to", "ref"} or not isinstance(declared.get("required", False), bool):
+            if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"source", "target", "to", "ref", "by", "at"} or not isinstance(declared.get("required", False), bool):
                 raise ValueError("link attribute")
             if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
                 raise ValueError("link attribute values")
@@ -2019,8 +2026,9 @@ def impact(base, current, rev):
 
 # --- stamp (Annex I.4) ------------------------------------------------------
 
-def stamp(analysis, names):
-    """Annex I.4: the json result and the new trace.lock text, or None when nothing is stamped."""
+def stamp(analysis, names, by="unknown", at="unknown"):
+    """Annex I.4: the json result and the new trace.lock text, or None when nothing is stamped. Each
+    stamped entry records the principal `by` and the view identifier `at` (OSTF-142)."""
     result = {"ostf": "0.3", "diagnostics": [d for d in analysis.diagnostics if analysis.stopped or d.get("file") == "trace.lock"],
               "items": [], "links": []}
     chosen, refused = [], []
@@ -2038,7 +2046,7 @@ def stamp(analysis, names):
     entries = dict(analysis.lock or {})
     items = set()
     for link in chosen:
-        entries[link["identity"]] = {"fingerprints": link["fingerprints"]}
+        entries[link["identity"]] = {"fingerprints": link["fingerprints"], "provenance": {"by": by, "at": at}}
         items |= {link["target"]} | (set() if link["anchor"] else {link["source"]})
     text = lock_text(entries)
     if len(text.encode()) > MAX_FILE_BYTES:  # a lock that no reader would use (OSTF-105)
@@ -2192,6 +2200,8 @@ def main(argv=None):
             sub.add_argument("target")
         if command == "stamp":
             sub.add_argument("links", nargs="+", metavar="LINK")
+            sub.add_argument("--by", metavar="PRINCIPAL", default="unknown")
+            sub.add_argument("--at", metavar="VIEW", default="unknown")
     args = parser.parse_args(argv)
     cwd = pathlib.Path(os.path.realpath(os.getcwd()))
     target = getattr(args, "target", None)
@@ -2212,6 +2222,9 @@ def main(argv=None):
     anchor = None
     if looks_like_anchor:
         anchor = full.relative_to(root).as_posix() + target[len(path):] if full.is_relative_to(root) and full != root else ""
+    if args.command == "stamp" and (not PRINCIPAL.match(args.by) or not args.at):
+        print("--by takes a principal, person:, agent: or ci: and a name, and --at a nonempty view identifier (OSTF-142)", file=sys.stderr)
+        return 2
     if args.command == "check" and (args.base is not None or args.base_tree is not None):
         if not args.base or (args.base_tree is not None and not args.base_tree.is_dir()):
             print("--base needs a nonempty REV, and --base-tree a directory: a checkout of REV at this root", file=sys.stderr)
@@ -2278,7 +2291,7 @@ def _run(args, analysis, target, anchor, root):
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result), end="\n" if args.format == "json" else "")
         return 1 if analysis.failed(args.strict) else 0
     if args.command == "stamp":
-        result, text = stamp(analysis, args.links)
+        result, text = stamp(analysis, args.links, args.by, args.at)
         if text is not None:
             write_lock(root / "trace.lock", text)
         if args.format == "json":

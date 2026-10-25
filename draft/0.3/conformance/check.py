@@ -63,7 +63,7 @@ def states(analysis):
     return {k: (l.get("state"), l.get("reasons")) for k, l in analysis.links.items()}
 
 
-def check_stamp(case_id, files, names, result, text):
+def check_stamp(case_id, files, names, result, text, by="unknown", at="unknown"):
     """Annex I.4: a stamp leaves a canonical lock in which the named links are valid and every other link
     keeps its state; without a lock before, the others get the states an empty lock gives them."""
     before = states(reader.Analysis(files if "trace.lock" in files else {**files, "trace.lock": "trace.lock 1\n"}))
@@ -73,7 +73,7 @@ def check_stamp(case_id, files, names, result, text):
     for key, state in states(again).items():
         want = ("valid", []) if key in names else before[key]
         assert state == want, f"{case_id}: {key} is {state} after stamping, want {want}"
-    assert reader.stamp(again, names)[1] == text, f"{case_id}: stamping twice changes the lock"
+    assert reader.stamp(again, names, by, at)[1] == text, f"{case_id}: stamping twice changes the lock"
 
 
 def sarif_validator():
@@ -178,7 +178,8 @@ def check():
     # Stamping every link of the example from no lock rebuilds its lock, tagged and item links included (Annex I.4).
     unlocked = {path: value for path, value in edited.items() if path != "trace.lock"} | {"refund.go": example.files["refund.go"]}
     result, text = reader.stamp(reader.Analysis(unlocked), sorted(example.links))
-    assert text == example.files["trace.lock"].decode() and len(result["links"]) == 8, "example lock from stamp"
+    assert text == example.files["trace.lock"].decode().replace("\n", " by=unknown at=unknown\n").replace("trace.lock 1 by=unknown at=unknown\n", "trace.lock 1\n") \
+        and len(result["links"]) == 8, "example lock from stamp"
     counts["exampleOutputs"] = 5
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))
@@ -229,14 +230,14 @@ def check():
             got["text"] = reader.render(analysis, case["context"])
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
     for case in cases["stamps"]:
-        result, text = reader.stamp(reader.Analysis(case_files(case)), case["stamp"])
+        result, text = reader.stamp(reader.Analysis(case_files(case)), case["stamp"], case.get("by", "unknown"), case.get("at", "unknown"))
         expect = case["expect"]
         got = {"codes": codes(result), "links": [reader.identity(l) for l in result["links"]],
                "items": [i["id"] for i in result["items"]], "lock": text}
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
         assert all(l["state"] == "valid" and l["reasons"] == [] for l in result["links"]), f"{case['id']}: stamped links are valid"
         if text is not None:
-            check_stamp(case["id"], case_files(case), case["stamp"], result, text)
+            check_stamp(case["id"], case_files(case), case["stamp"], result, text, case.get("by", "unknown"), case.get("at", "unknown"))
     for case in cases["impacts"]:
         current = reader.Analysis(case["files"])
         got = reader.impact(reader.Analysis(case["base"]), current, case["rev"])
@@ -299,15 +300,17 @@ def check():
     lock = (DRAFT / "fixtures" / "minimal" / "trace.lock").read_bytes()
     damaged = reader.Analysis({**minimal_files, "trace.lock": lock + b"\xff\n"})
     assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
-    assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1].encode() == lock, "stamp drops only the non-UTF-8 line"
+    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add "))
+    stamped = lock.decode().replace(add, add + " by=unknown at=unknown").encode()  # OSTF-142: a writer records by and at
+    assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1].encode() == stamped, "stamp drops only the non-UTF-8 line"
     assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
     # OSTF-105 and Annex I.4: stamp writes a lock of at most 8 MiB and refuses the whole stamp above it. The lock
     # holds entries for links outside the graph, which a stamp keeps, so that adding one entry crosses the limit.
-    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add ")) + "\n"
+    add = add + " by=unknown at=unknown\n"
     filler = lambda i, pad: f"f{i:07}{'x' * pad}.go#F implements R-ADD source.sig=go2:{'A' * 43} target=f1:{'A' * 43}\n"
-    count, rest = divmod(limit - len(lock), len(filler(0, 0)))
+    count, rest = divmod(limit - len(stamped), len(filler(0, 0)))
     for over in (0, 1):
-        full = "trace.lock 1\n" + "".join(sorted(lock.decode().splitlines(keepends=True)[1:] + [filler(i, rest + over if i == 0 else 0) for i in range(count)]))
+        full = "trace.lock 1\n" + "".join(sorted(stamped.decode().splitlines(keepends=True)[1:] + [filler(i, rest + over if i == 0 else 0) for i in range(count)]))
         assert len(full.encode()) == limit + over
         result, written = reader.stamp(reader.Analysis({**minimal_files, "trace.lock": full.replace(add, "")}), ["math.go#Add implements R-ADD"])
         if over:
@@ -422,8 +425,11 @@ def check():
         lock = (tree / "trace.lock").read_bytes()
         code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-NOPE", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT")
         assert code == 1 and (tree / "trace.lock").read_bytes() == lock, "stamp exit 1 writes nothing"
-        code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT", "--format", "json")
+        assert run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT", "--by", "ana")[0] == 2 and \
+            (tree / "trace.lock").read_bytes() == lock, "stamp --by without a principal exits 2 and writes nothing"
+        code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT", "--format", "json", "--by", "agent:claude-haiku-5-5", "--at", "9fceb02")
         assert code == 0 and [l["state"] for l in json.loads(out)["links"]] == ["valid"], "stamp exit 0"
+        assert " by=agent:claude-haiku-5-5 at=9fceb02\n" in (tree / "trace.lock").read_text(), "stamp records --by and --at (OSTF-142)"
         assert run(tree, "check")[0] == 0 and (tree / "trace.lock").read_bytes() != lock, "check passes after the stamp"
         assert not list(tree.glob(".trace.lock.*")), "stamp leaves no temporary file"
         os.remove(tree / "trace.lock")
@@ -465,7 +471,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 32
+    counts["commandLine"] = 34
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

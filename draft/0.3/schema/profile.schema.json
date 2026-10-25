@@ -84,7 +84,7 @@
         "inverse": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,47}$" },
         "attributes": {
           "type": "object",
-          "propertyNames": { "$ref": "#/$defs/attributeName", "not": { "enum": ["to", "ref", "source", "target"] } },
+          "propertyNames": { "$ref": "#/$defs/attributeName", "not": { "enum": ["to", "ref", "source", "target", "by", "at"] } },
           "additionalProperties": { "$ref": "#/$defs/linkAttribute" }
         }
       },

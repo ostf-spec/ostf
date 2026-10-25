@@ -3,14 +3,15 @@
 ; (OSTF-142, OSTF-146). RFC 5234 ABNF with RFC 7405 case-sensitive
 ; literals. Each file is a sequence of octets. Semantic constraints that
 ; the grammar does not express: a percent-decoded value is valid UTF-8;
-; the names source, source.sig, source.body and target are fingerprint
-; keys, never attribute names; a key occurs at most once per entry, and
-; an observation holds view and tool once each; a canonical writer sorts
-; attribute pairs by name before the fingerprint pairs, orders
-; fingerprint pairs source, source.sig, source.body, target, writes view
-; before tool, sorts lines by their bytes, ends every line with LF and
-; writes no empty line. Readers accept CRLF, unsorted input and
-; lowercase hex.
+; the fingerprint keys source, source.sig, source.body and target, and
+; by and at, are never attribute names; the value of by matches
+; principal and that of at is not empty; a key occurs at most once per
+; entry, and an observation holds view and tool once each; a canonical
+; writer sorts attribute pairs by name before the fingerprint pairs,
+; orders fingerprint pairs source, source.sig, source.body, target, then
+; by and at, writes view before tool, sorts lines by their bytes, ends
+; every line with LF and writes no empty line. Readers accept CRLF,
+; unsorted input and lowercase hex.
 
 lock-file    = header *( newline [ entry ] )
 header       = %s"trace.lock 1"
@@ -18,7 +19,7 @@ entry        = source SP link-name SP target *( SP pair )
 source       = 1*( safe-octet / escape )
 target       = 1*( safe-octet / escape )
 pair         = key "=" value
-key          = fp-key / attr-name
+key          = fp-key / %s"by" / %s"at" / attr-name
 fp-key       = %s"source.sig" / %s"source.body" / %s"source" / %s"target"
 value        = *( safe-octet / escape )
 escape       = "%" HEXDIG HEXDIG
@@ -28,6 +29,7 @@ link-name    = LOALPHA *47( LOALPHA / DIGIT / "_" )
 attr-name    = ALPHA *47( ALPHA / DIGIT )
 newline      = CRLF / LF
 LOALPHA      = %x61-7A
+principal    = %s"unknown" / ( %s"person" / %s"agent" / %s"ci" ) ":" 1*( safe-octet / escape )
 derived-file = %s"trace.derived 1" *( newline [ observation ] )
 observation  = source SP %s"covers" SP target 2( SP derived-pair )
 derived-pair = ( %s"view" / %s"tool" ) "=" 1*( safe-octet / escape )
