@@ -2040,9 +2040,9 @@
     "OSTF-110",
     "OSTF-113"
    ],
-   "note": "A controls catalog kept in another repository is named by its OSTF URI, with the root's path after # unless the root is at the top; readers never resolve it.",
+   "note": "A controls catalog kept in another repository is named by its OSTF URI, with the root's path and a / after # unless the root is at the top; readers never resolve it.",
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: ostf://github.com/acme/controls\n    url: \"https://github.com/acme/controls/blob/main/trace.yaml#{id}\"\n  policies:\n    ostf: \"ostf://github.com/acme/handbook#security/policies\"\nitems:\n  - id: C-7\n    external: catalog:C-7\n  - id: P-2\n    external: policies:P-2\n  - id: R-A\n    text: Encrypt backups.\n    code: [a.go#F]\n",
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: ostf://github.com/acme/controls\n    url: \"https://github.com/acme/controls/blob/main/trace.yaml#{id}\"\n  policies:\n    ostf: \"ostf://github.com/acme/handbook#security/policies/\"\nitems:\n  - id: C-7\n    external: catalog:C-7\n  - id: P-2\n    external: policies:P-2\n  - id: R-A\n    text: Encrypt backups.\n    code: [a.go#F]\n",
     "a.go": "package a\n\nfunc F() int { return 1 }\n"
    },
    "expect": {
@@ -2064,7 +2064,7 @@
    ],
    "note": "An OSTF URI needs a repository, and a root path after # follows OSTF-105.",
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://github.com/acme/controls#../x\"\nitems: []\n"
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://github.com/acme/controls#../x/\"\nitems: []\n"
    },
    "expect": {
     "codes": [
@@ -2080,6 +2080,22 @@
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://\"\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "PATH_INVALID"
+    ]
+   }
+  },
+  {
+   "id": "source-repository-uri-without-slash",
+   "requirements": [
+    "OSTF-110",
+    "OSTF-113"
+   ],
+   "note": "A root's URI without an ID ends in /: ostf://github.com/acme/controls#security is the URI of the top root's item security, not of the root security.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://github.com/acme/controls#security\"\nitems: []\n"
    },
    "expect": {
     "codes": [
@@ -6368,6 +6384,47 @@
     "risk": [
      "R-A",
      "R-B"
+    ]
+   }
+  },
+  {
+   "id": "threat-linked-to-risk-is-not-a-control",
+   "requirements": [
+    "OSTF-144",
+    "OSTF-120",
+    "OSTF-121"
+   ],
+   "note": "A control is an item of kind statement that links to an item of kind risk. T-1, a threat, links to RISK-1 by the profile's causes and is not a control; R-A, which controls T-1, is.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: RISK-1\n    type: risk\n    text: Card numbers leak.\n  - id: T-1\n    type: threat\n    text: An attacker reads the card table.\n    causes: [RISK-1]\n  - id: R-A\n    text: Encrypt the card table.\n    controls: [T-1]\n",
+    "p.yaml": "ostf: \"0.3\"\nlinks:\n  causes: {from: [threat], to: [risk]}\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "R-A",
+      "controls",
+      "T-1",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "T-1",
+      "causes",
+      "RISK-1",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "risk": [
+     "R-A"
     ]
    }
   },
@@ -11335,7 +11392,7 @@
       "ostf": "ostf://github.com/acme/controls"
      },
      "policies": {
-      "ostf": "ostf://github.com/acme/handbook#security/policies"
+      "ostf": "ostf://github.com/acme/handbook#security/policies/"
      }
     },
     "items": []

@@ -1039,11 +1039,12 @@ def match_glob(pattern, path):
 
 def source_root_ok(value):
     """OSTF-113: a root path from the repository's top, . for the top, or for another repository
-    ostf:// and the repository, then # and a root path unless the root is at its top (OSTF-110)."""
+    ostf:// and the repository, then # and a root path ending in / unless the root is at its top
+    (OSTF-110)."""
     if not value.startswith("ostf://"):
         return value == "." or clean_path(value)
     repository, mark, path = value[len("ostf://"):].partition("#")
-    return bool(repository) and not re.search(r"[\s\x00-\x1f\x7f]", repository) and (not mark or clean_path(path))
+    return bool(repository) and not re.search(r"[\s\x00-\x1f\x7f]", repository) and (not mark or (path.endswith("/") and clean_path(path[:-1])))
 
 
 def split_anchor(anchor):
@@ -1653,8 +1654,9 @@ class Analysis:
     def _freshness(self):
         types = self.vocabulary["types"]
         self.hashes = {ident: fingerprint("f1", item_projection(item, types)) for ident, item in self.items.items()}
-        # OSTF-144: an item that links to an item of kind risk is a control.
-        controls = {l["source"] for l in self.links.values() if not l["anchor"] and types[self.items[l["target"]]["type"]]["kind"] == "risk"}
+        # OSTF-144: an item of kind statement that links to an item of kind risk is a control.
+        kind = lambda ident: types[self.items[ident]["type"]]["kind"]
+        controls = {l["source"] for l in self.links.values() if not l["anchor"] and kind(l["source"]) == "statement" and kind(l["target"]) == "risk"}
         self.risk = set(controls)
         while True:
             added = {l["source"] for l in self.links.values() if l["type"] == "refines" and not l["anchor"] and l["target"] in self.risk}
