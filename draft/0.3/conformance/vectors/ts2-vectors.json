@@ -1,0 +1,798 @@
+[
+  {
+    "id": "ts-function",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.ts",
+    "source": "export function add(a: number, b: number): number {\n  return a + b;\n}\n",
+    "symbol": "add",
+    "sigTokens": "export function add ( a : number , b : number ) : number",
+    "bodyTokens": "export function add ( a : number , b : number ) : number { return a + b ; }",
+    "expect": {
+      "source.sig": "ts2:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE",
+      "source.body": "ts2:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc"
+    }
+  },
+  {
+    "id": "ts-whole-file",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "b.ts",
+    "source": "// header\nconst x = 1;\nexport { x };\n",
+    "symbol": "",
+    "sigTokens": "const x = 1 ; export { x } ;",
+    "expect": {
+      "source.sig": "ts2:Xi7tgY8TtnVeW5CZIIWTXWMVMxwH_VuRnpd-WUYv1Hg"
+    }
+  },
+  {
+    "id": "ts-overloads",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "o.ts",
+    "source": "function f(a: string): string;\nfunction f(a: number): number;\nfunction f(a: any): any { return a; }\n",
+    "symbol": "f",
+    "sigTokens": "function f ( a : string ) : string ; function f ( a : number ) : number ; function f ( a : any ) : any",
+    "bodyTokens": "function f ( a : string ) : string ; function f ( a : number ) : number ; function f ( a : any ) : any { return a ; }",
+    "expect": {
+      "source.sig": "ts2:XGJRDv6BjnK_b9Jmjj3r4cLem_xBg-DUVFBi4iHQVRU",
+      "source.body": "ts2:l9SgN9S73_Imv8kKQcRXO90h-HP9QE1AAXYcHI6a7K0"
+    }
+  },
+  {
+    "id": "ts-class-method",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart.add",
+    "sigTokens": "add ( item : string ) : void",
+    "bodyTokens": "add ( item : string ) : void { this . items . push ( item ) ; }",
+    "expect": {
+      "source.sig": "ts2:KqHmtzzM7uZF22iKzIw_dznvUd7FCP16g5rua3L_ggE",
+      "source.body": "ts2:HdCMcdh574B-5Sy2SKq2FNpQVve3BsbQWr6tGdME6qQ"
+    }
+  },
+  {
+    "id": "ts-member-last-component",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "add",
+    "sigTokens": "add ( item : string ) : void",
+    "bodyTokens": "add ( item : string ) : void { this . items . push ( item ) ; }",
+    "expect": {
+      "source.sig": "ts2:KqHmtzzM7uZF22iKzIw_dznvUd7FCP16g5rua3L_ggE",
+      "source.body": "ts2:HdCMcdh574B-5Sy2SKq2FNpQVve3BsbQWr6tGdME6qQ"
+    }
+  },
+  {
+    "id": "ts-class-decorated",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart",
+    "sigTokens": "@ Injectable ( ) export class Cart",
+    "bodyTokens": "@ Injectable ( ) export class Cart { items : string [ ] = [ ] ; add ( item : string ) : void { this . items . push ( item ) ; } }",
+    "expect": {
+      "source.sig": "ts2:r1lEqwKiynSnPIOVYcX930gXDa7Uud2ay9OVo7RN2GI",
+      "source.body": "ts2:MqcD-vu4muPksxMPzeHiJtxmDP08k2ZCyd0geg66Dj8"
+    }
+  },
+  {
+    "id": "ts-arrow-const",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d.ts",
+    "source": "export const double = (n: number) => n * 2;\n",
+    "symbol": "double",
+    "sigTokens": "export const double = ( n : number ) =>",
+    "bodyTokens": "export const double = ( n : number ) => n * 2 ;",
+    "expect": {
+      "source.sig": "ts2:6lCYOaoUY3TyYXXBs9hPnVy1i5zUlOzgMRhFywmD1lE",
+      "source.body": "ts2:wozCAWz9aH9O-CbTaTIgzsqAb9CgrFN9JFqF34UfZXo"
+    }
+  },
+  {
+    "id": "ts-several-declarators",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.ts",
+    "source": "const a = 1, b = { x: 1, };\n",
+    "symbol": "b",
+    "sigTokens": "b = { x : 1 }",
+    "bodyTokens": "b = { x : 1 }",
+    "expect": {
+      "source.sig": "ts2:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U",
+      "source.body": "ts2:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U"
+    }
+  },
+  {
+    "id": "ts-template-regex",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "g.ts",
+    "source": "function greet(name: string) {\n  return `Hello, ${ name /* c */ }!`.replace(/\\s+/g, \" \");\n}\n",
+    "symbol": "greet",
+    "sigTokens": "function greet ( name : string )",
+    "bodyTokens": "function greet ( name : string ) { return `Hello, ${ name /* c */ }!` . replace ( /\\s+/g , \" \" ) ; }",
+    "expect": {
+      "source.sig": "ts2:-HO9uzzmy48KYT-GPtnbeovcIDJ5IXWtdRIy7QxepfI",
+      "source.body": "ts2:oBhFBENlo0n2s7VuQ57UPO35nn1ARhDMgacN1se7jYY"
+    }
+  },
+  {
+    "id": "ts-test",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart > adds an item",
+    "sigTokens": "it ( \"adds an item\" , ( ) =>",
+    "bodyTokens": "it ( \"adds an item\" , ( ) => { expect ( 1 + 1 ) . toBe ( 2 ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts2:OxM4PNDaq8psOrSF4MLOrVT2dQNxNP4ERQQXmUsl-OA",
+      "source.body": "ts2:bVO9hYz4ZXkwaV7fHbrzUNd7GhgCEk8CRJs1pmj5Hgs"
+    }
+  },
+  {
+    "id": "ts-suite",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart",
+    "sigTokens": "describe ( \"Cart\" , ( ) =>",
+    "bodyTokens": "describe ( \"Cart\" , ( ) => { it ( \"adds an item\" , ( ) => { expect ( 1 + 1 ) . toBe ( 2 ) ; } ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts2:Ud3U7mcKxi3A5fXfCkNgFnNq7qH6ZnSSrgcYIr-qg_c",
+      "source.body": "ts2:Ogd08nUMOW9BmPbnB2eahWruy-IZtbD2PjWbz3UXWa4"
+    }
+  },
+  {
+    "id": "ts-jsx",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "view.tsx",
+    "source": "export function View({ name }: { name: string }) {\n  return (\n    <div className=\"v\">\n      Hello,   {name}\n      <b>!</b>\n      <br />\n    </div>\n  );\n}\n",
+    "symbol": "View",
+    "sigTokens": "export function View ( { name } : { name : string ; } )",
+    "bodyTokens": "export function View ( { name } : { name : string ; } ) { return ( < div className = \"v\" > Hello, { name } < b > ! </ b > < br /> </ div > ) ; }",
+    "expect": {
+      "source.sig": "ts2:wfERgXdFRf-wSvkyIBBXdLgik9puEzsx8lZ2TKiz0lQ",
+      "source.body": "ts2:IWUVNOn7Y7ZPXae6pzc16ie_YfjmvXcbvskiKRq1Z9E"
+    }
+  },
+  {
+    "id": "ts-generics",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "t.ts",
+    "source": "type Pair<T> = Map<string, Array<T>>;\n",
+    "symbol": "Pair",
+    "sigTokens": "type Pair < T > = Map < string , Array < T > > ;",
+    "bodyTokens": "type Pair < T > = Map < string , Array < T > > ;",
+    "expect": {
+      "source.sig": "ts2:HuxCn5tcd5MCRf4bbWD5aNsYrFkjAwiKboor_pyYD-U",
+      "source.body": "ts2:HuxCn5tcd5MCRf4bbWD5aNsYrFkjAwiKboor_pyYD-U"
+    }
+  },
+  {
+    "id": "ts-namespace-member",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.ts",
+    "source": "export namespace Geo {\n  export function area(r: number) { return 3.14 * r * r; }\n}\n",
+    "symbol": "Geo.area",
+    "sigTokens": "export function area ( r : number )",
+    "bodyTokens": "export function area ( r : number ) { return 3.14 * r * r ; }",
+    "expect": {
+      "source.sig": "ts2:Shg3VfOv4PG8yW6KuRBzQcJ0CjDTT3A_1OqZ6JyJrDo",
+      "source.body": "ts2:H6u62fohgKonVOU7UjG6pumVbZ60cdBosNy_AJ5PORM"
+    }
+  },
+  {
+    "id": "ts-exports-assignment",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "lib.js",
+    "source": "exports.send = function (msg) { return msg; };\n",
+    "symbol": "exports.send",
+    "sigTokens": "exports . send = function ( msg )",
+    "bodyTokens": "exports . send = function ( msg ) { return msg ; } ;",
+    "expect": {
+      "source.sig": "ts2:y0kj62bTZlhYbot8MR5Zud2MCfnsQKN0Tv3vUdfe8ck",
+      "source.body": "ts2:ROBIn7yX8rnZpvnaBd1UkKdMBJoTGvcTpSAFnVpXdjo"
+    }
+  },
+  {
+    "id": "ts-trailing-commas",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "c.ts",
+    "source": "function f(a, b,) {\n  return [a, b,];\n}\n",
+    "symbol": "f",
+    "sigTokens": "function f ( a , b )",
+    "bodyTokens": "function f ( a , b ) { return [ a , b ] ; }",
+    "expect": {
+      "source.sig": "ts2:-ipj-ECTgRhm4wfAlqp_BavUGsxfpsRgX_0y4nGjXSo",
+      "source.body": "ts2:gxgbJ-U3O7m3jeeb-4Z5qX3Y4tb1HYEAMqFGkEaqufg"
+    }
+  },
+  {
+    "id": "ts-unicode",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "u.ts",
+    "source": "const café = \"naïve\";\n",
+    "symbol": "café",
+    "sigTokens": "const café = \"naïve\" ;",
+    "bodyTokens": "const café = \"naïve\" ;",
+    "expect": {
+      "source.sig": "ts2:_ptjeEufI7lXb-PCKgW96CphnopkgvyHn13rvvzsnu0",
+      "source.body": "ts2:_ptjeEufI7lXb-PCKgW96CphnopkgvyHn13rvvzsnu0"
+    }
+  },
+  {
+    "id": "ts-hashbang-whole-file",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cli.js",
+    "source": "#!/usr/bin/env node\nconsole.log(\"hi\")\n",
+    "symbol": "",
+    "sigTokens": "console . log ( \"hi\" ) ;",
+    "expect": {
+      "source.sig": "ts2:UFGV7ym9PeUg2s3GsmGtwMA4BdoPkvxuHM9YjJ1Ha9g"
+    }
+  },
+  {
+    "id": "ts-getter-setter",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "gs.ts",
+    "source": "class C {\n  get x() { return 1; }\n  set x(v) {}\n}\n",
+    "symbol": "C.x",
+    "sigTokens": "get x ( ) set x ( v )",
+    "bodyTokens": "get x ( ) { return 1 ; } set x ( v ) { }",
+    "expect": {
+      "source.sig": "ts2:98Oku3S8ymcPJGmQKpNP5Qtf5WEOXrrUUWw50VaE764",
+      "source.body": "ts2:U-xvWoNF37G0cI2Arj4dcBF_AJ-DxNyuYdVg8rrKE1I"
+    }
+  },
+  {
+    "id": "ts-decorated-method",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "s.ts",
+    "source": "class S {\n  @log()\n  run() {}\n}\n",
+    "symbol": "S.run",
+    "sigTokens": "@ log ( ) run ( )",
+    "bodyTokens": "@ log ( ) run ( ) { }",
+    "expect": {
+      "source.sig": "ts2:dfIXsge0bTPB2bynS57vJEJlVG7CUaY-xOluAyhyDe0",
+      "source.body": "ts2:W8RCLrF3VosnS-YZ2Kuo42ZiZbHzMak1F1KDmjpkwIg"
+    }
+  },
+  {
+    "id": "ts-template-literal-type",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "t2.ts",
+    "source": "type Route<T extends string> = `/api/${T}`;\n",
+    "symbol": "Route",
+    "sigTokens": "type Route < T extends string > = `/api/${T}` ;",
+    "bodyTokens": "type Route < T extends string > = `/api/${T}` ;",
+    "expect": {
+      "source.sig": "ts2:C-0_KemMoGx4q-hdtF8QfmqpAo8etr1nuvSQ3iddI00",
+      "source.body": "ts2:C-0_KemMoGx4q-hdtF8QfmqpAo8etr1nuvSQ3iddI00"
+    }
+  },
+  {
+    "id": "ts-jsx-character-reference",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "p.tsx",
+    "source": "const V = <p>a&nbsp;b</p>;\n",
+    "symbol": "V",
+    "sigTokens": "const V = < p > a &nbsp; b </ p > ;",
+    "bodyTokens": "const V = < p > a &nbsp; b </ p > ;",
+    "expect": {
+      "source.sig": "ts2:KDJmopZ55qzfGO8iPkyQnQG9Ojgonvb0RAmgu7td-O4",
+      "source.body": "ts2:KDJmopZ55qzfGO8iPkyQnQG9Ojgonvb0RAmgu7td-O4"
+    }
+  },
+  {
+    "id": "ts-parenthesized-member-assignment",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "m.js",
+    "source": "exports.send = (() => 1);\n",
+    "symbol": "send",
+    "sigTokens": "exports . send = ( ( ) =>",
+    "bodyTokens": "exports . send = ( ( ) => 1 ) ;",
+    "expect": {
+      "source.sig": "ts2:7Dm6nZuYAKqFZXeXNq3AyN_GSBe5a1d3If6SpOCPbe4",
+      "source.body": "ts2:o9O_tukSXe-7pJ2jCRC84skjEJ1yM11kC2meLrtfUNg"
+    }
+  },
+  {
+    "id": "ts-destructuring",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d2.ts",
+    "source": "const { x, y: z, ...rest } = obj;\n",
+    "symbol": "z",
+    "sigTokens": "const { x , y : z , ... rest } = obj ;",
+    "bodyTokens": "const { x , y : z , ... rest } = obj ;",
+    "expect": {
+      "source.sig": "ts2:4K816Ie3F-YaBEzFBeBFiEvKoVD0JluyS5kvc9lubKs",
+      "source.body": "ts2:4K816Ie3F-YaBEzFBeBFiEvKoVD0JluyS5kvc9lubKs"
+    }
+  },
+  {
+    "id": "ts-export-declare",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e2.ts",
+    "source": "export declare function f(): void;\n",
+    "symbol": "f",
+    "sigTokens": "export declare function f ( ) : void ;",
+    "bodyTokens": "export declare function f ( ) : void ;",
+    "expect": {
+      "source.sig": "ts2:p3MQYJIquhIm7muvT5abModdNsfIPAodPyflkIeSg1M",
+      "source.body": "ts2:p3MQYJIquhIm7muvT5abModdNsfIPAodPyflkIeSg1M"
+    }
+  },
+  {
+    "id": "ts-comment-between-test-arguments",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.test.ts",
+    "source": "test(\"works\", /* why */ () => {\n  run();\n});\n",
+    "symbol": "works",
+    "sigTokens": "test ( \"works\" , ( ) =>",
+    "bodyTokens": "test ( \"works\" , ( ) => { run ( ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts2:LfCmvt72tFpBpOj9doDjsgvZamJKyhRI-ZL9djUFcCg",
+      "source.body": "ts2:A6AAswS5Tt3uAS6DMf-lM5cU4fJGbvYLG_XF-R0gnis"
+    }
+  },
+  {
+    "id": "ts-comment-after-decorator",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "c2.ts",
+    "source": "class C {\n  @d()\n  /* note */\n  m() {}\n}\n",
+    "symbol": "C.m",
+    "sigTokens": "@ d ( ) m ( )",
+    "bodyTokens": "@ d ( ) m ( ) { }",
+    "expect": {
+      "source.sig": "ts2:-5kdkZKwfA4UppiV753txYrYo2U0C9FE25I2_lcmigM",
+      "source.body": "ts2:1Fc_wGAtFtFESThJOOpqsinR1WSq1Ked5ksREhY2DgQ"
+    }
+  },
+  {
+    "id": "ts-interface",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "i.ts",
+    "source": "export interface Item { id: string; qty?: number }\n",
+    "symbol": "Item",
+    "sigTokens": "export interface Item { id : string ; qty ? : number ; }",
+    "bodyTokens": "export interface Item { id : string ; qty ? : number ; }",
+    "expect": {
+      "source.sig": "ts2:vEpcwMHJn5ipLqeLV9Tke4CAPzU9_2XOBVgNkuihtUY",
+      "source.body": "ts2:vEpcwMHJn5ipLqeLV9Tke4CAPzU9_2XOBVgNkuihtUY"
+    }
+  },
+  {
+    "id": "ts2-return-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "r.js",
+    "source": "function f() {\n  return\n  1\n}\n",
+    "symbol": "f",
+    "note": "Returns undefined. Under ts1 its body was the same token stream as ts2-return-same-line.",
+    "sigTokens": "function f ( )",
+    "bodyTokens": "function f ( ) { return ; 1 ; }",
+    "expect": {
+      "source.sig": "ts2:EQ0puCiR06A0Hdi3e9NO-TdNzjW-JjaUeN1iJ4FSYW0",
+      "source.body": "ts2:EkDko9KW5_eVC4Unk7wRObewK7cDAORXWPz3Mqv6Jms"
+    }
+  },
+  {
+    "id": "ts2-return-same-line",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "r.js",
+    "source": "function f() {\n  return 1\n}\n",
+    "symbol": "f",
+    "note": "Returns 1. The omitted ; is a token, so the digest equals that of return 1; with the ; written.",
+    "sigTokens": "function f ( )",
+    "bodyTokens": "function f ( ) { return 1 ; }",
+    "expect": {
+      "source.sig": "ts2:EQ0puCiR06A0Hdi3e9NO-TdNzjW-JjaUeN1iJ4FSYW0",
+      "source.body": "ts2:JX_X5f0rBCEgsS6WHViozcUmWpgrEo6PdoTBO_QCE3E"
+    }
+  },
+  {
+    "id": "ts2-postfix-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "p.js",
+    "source": "function g(a, b) {\n  a\n  ++b\n}\n",
+    "symbol": "g",
+    "note": "Increments b. Under ts1 the same stream as ts2-postfix-same-line, which increments a.",
+    "sigTokens": "function g ( a , b )",
+    "bodyTokens": "function g ( a , b ) { a ; ++ b ; }",
+    "expect": {
+      "source.sig": "ts2:q2zffw3ieqkP4CiBGHA-iIBOijp3Be2N8op_sVHz8OQ",
+      "source.body": "ts2:26qAoRXuKiStyge0c7sXOeWcSqpYKkvvc_cyLzoT5hQ"
+    }
+  },
+  {
+    "id": "ts2-postfix-same-line",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "p.js",
+    "source": "function g(a, b) {\n  a++\n  b\n}\n",
+    "symbol": "g",
+    "sigTokens": "function g ( a , b )",
+    "bodyTokens": "function g ( a , b ) { a ++ ; b ; }",
+    "expect": {
+      "source.sig": "ts2:q2zffw3ieqkP4CiBGHA-iIBOijp3Be2N8op_sVHz8OQ",
+      "source.body": "ts2:_rwh_B0r6iGWfheej5CwkzO8lgzfcDiEaUuty84YEjM"
+    }
+  },
+  {
+    "id": "ts2-async-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.js",
+    "source": "async\nfunction f() {}\n",
+    "symbol": "",
+    "note": "An expression statement async, then an ordinary function. Under ts1 the same stream as ts2-async-function.",
+    "sigTokens": "async ; function f ( ) { }",
+    "expect": {
+      "source.sig": "ts2:w-BKR4xh8ka6OjIJNjVERJDLQrc62vY2UmMze2fFjd4"
+    }
+  },
+  {
+    "id": "ts2-async-function",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.js",
+    "source": "async function f() {}\n",
+    "symbol": "",
+    "sigTokens": "async function f ( ) { }",
+    "expect": {
+      "source.sig": "ts2:cRsNuDEVbwn2T0tEchSfUHDojZvuxxRQN-9-pQlC-Js"
+    }
+  },
+  {
+    "id": "ts2-break-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "l.js",
+    "source": "outer: for (;;) {\n  break\n  outer\n}\n",
+    "symbol": "",
+    "note": "Breaks the innermost loop, then evaluates outer. Under ts1 the same stream as ts2-break-label.",
+    "sigTokens": "outer : for ( ; ; ) { break ; outer ; }",
+    "expect": {
+      "source.sig": "ts2:1w-_2QBH4qawYs_5d2mWCqCDPVIym9zkf5ZBRUq3Va4"
+    }
+  },
+  {
+    "id": "ts2-break-label",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "l.js",
+    "source": "outer: for (;;) {\n  break outer\n}\n",
+    "symbol": "",
+    "sigTokens": "outer : for ( ; ; ) { break outer ; }",
+    "expect": {
+      "source.sig": "ts2:fp7RZTlRJ45lvLcervbd5COnUvSIsXC03IzmyAWNQyA"
+    }
+  },
+  {
+    "id": "ts2-not-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.ts",
+    "source": "x\n!y\n",
+    "symbol": "",
+    "note": "Negates y. Under ts1 the same stream as ts2-non-null, a non-null assertion on x.",
+    "sigTokens": "x ; ! y ;",
+    "expect": {
+      "source.sig": "ts2:QVFutYzx7WcsFlEx_xytInwYkWUVJiekzD2y-R41jP8"
+    }
+  },
+  {
+    "id": "ts2-non-null",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.ts",
+    "source": "x!\ny\n",
+    "symbol": "",
+    "sigTokens": "x ! ; y ;",
+    "expect": {
+      "source.sig": "ts2:mRIOoIlIXBMGCLCilOVP6tjyODUXGXUiugJ_xb3FLzg"
+    }
+  },
+  {
+    "id": "ts2-type-member-line-break",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "m.ts",
+    "source": "type T = { a: B\n[C] }\n",
+    "symbol": "T",
+    "note": "Two members, a and a computed name. Under ts1 the same stream as ts2-indexed-access-type.",
+    "sigTokens": "type T = { a : B ; [ C ] ; } ;",
+    "bodyTokens": "type T = { a : B ; [ C ] ; } ;",
+    "expect": {
+      "source.sig": "ts2:UB4p9wjEUhmW_WvOVNMGqkLw4Ux_0TcbFrS3UkhQ4-8",
+      "source.body": "ts2:UB4p9wjEUhmW_WvOVNMGqkLw4Ux_0TcbFrS3UkhQ4-8"
+    }
+  },
+  {
+    "id": "ts2-indexed-access-type",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "m.ts",
+    "source": "type T = { a: B[C] }\n",
+    "symbol": "T",
+    "sigTokens": "type T = { a : B [ C ] ; } ;",
+    "bodyTokens": "type T = { a : B [ C ] ; } ;",
+    "expect": {
+      "source.sig": "ts2:Fc4kaT8MnnbdwR28fz1tuD3qHSEq93c6F6EIgJlRb2o",
+      "source.body": "ts2:Fc4kaT8MnnbdwR28fz1tuD3qHSEq93c6F6EIgJlRb2o"
+    }
+  },
+  {
+    "id": "ts2-type-members-lines",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "i.ts",
+    "source": "interface I {\n  a: string\n  b(): void\n}\n",
+    "symbol": "I",
+    "note": "Members separated by line breaks, by ; or by , give one stream.",
+    "sigTokens": "interface I { a : string ; b ( ) : void ; }",
+    "bodyTokens": "interface I { a : string ; b ( ) : void ; }",
+    "expect": {
+      "source.sig": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs",
+      "source.body": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs"
+    }
+  },
+  {
+    "id": "ts2-type-members-commas",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "i.ts",
+    "source": "interface I { a: string, b(): void, }\n",
+    "symbol": "I",
+    "sigTokens": "interface I { a : string ; b ( ) : void ; }",
+    "bodyTokens": "interface I { a : string ; b ( ) : void ; }",
+    "expect": {
+      "source.sig": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs",
+      "source.body": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs"
+    }
+  },
+  {
+    "id": "ts2-type-members-semicolons",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "i.ts",
+    "source": "interface I { a: string; b(): void }\n",
+    "symbol": "I",
+    "sigTokens": "interface I { a : string ; b ( ) : void ; }",
+    "bodyTokens": "interface I { a : string ; b ( ) : void ; }",
+    "expect": {
+      "source.sig": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs",
+      "source.body": "ts2:KbQmpFKM4P0qZ44tgRSpp060tUfY0aSTuYP84AY81rs"
+    }
+  },
+  {
+    "id": "ts2-class-fields",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  a = 1\n  b = () => 2\n}\n",
+    "symbol": "K",
+    "sigTokens": "class K",
+    "bodyTokens": "class K { a = 1 ; b = ( ) => 2 ; }",
+    "expect": {
+      "source.sig": "ts2:vDK5fxs-E-IYiMIlh-ENiCue6Wod6SiC5zn43yhNP30",
+      "source.body": "ts2:vepw454_aOvcYotSUrW2WkgLujCxmTAIwNjDvo_lbVE"
+    }
+  },
+  {
+    "id": "ts2-class-field-member",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  a = 1\n  b = () => 2\n}\n",
+    "symbol": "K.b",
+    "sigTokens": "b = ( ) =>",
+    "bodyTokens": "b = ( ) => 2 ;",
+    "expect": {
+      "source.sig": "ts2:Rgc5JU5KOYj0uglI27SNSfVvQgowaUHQ6HErU1PKpTA",
+      "source.body": "ts2:ZLAQHXUJX8NVfKNbBhrxmBVWz_2kjiTYqIW8YXGU_Xs"
+    }
+  },
+  {
+    "id": "ts2-export-default-function",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "x.js",
+    "source": "export default function () {}\n",
+    "symbol": "",
+    "note": "A declaration, which the grammar does not end with ;.",
+    "sigTokens": "export default function ( ) { }",
+    "expect": {
+      "source.sig": "ts2:Lq5h54_343cXwjAMB1BsONNRMvgE6xbVzaIDsDuhE4M"
+    }
+  },
+  {
+    "id": "ts2-export-arrow",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "x.js",
+    "source": "export const f = () => 1\n",
+    "symbol": "f",
+    "sigTokens": "export const f = ( ) =>",
+    "bodyTokens": "export const f = ( ) => 1 ;",
+    "expect": {
+      "source.sig": "ts2:cHL_cWNTgMUILrRBPddMvg2pXuf3lhScqrbKdd0uMiY",
+      "source.body": "ts2:ClhMf07zOPGSUMzeXqEzMmyIslon9QxWHiA50j5jSq0"
+    }
+  },
+  {
+    "id": "ts2-do-while",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "w.js",
+    "source": "do x(); while (y) z()\n",
+    "symbol": "",
+    "sigTokens": "do x ( ) ; while ( y ) ; z ( ) ;",
+    "expect": {
+      "source.sig": "ts2:Z6qHPzzDcgZohY6V2BK22gdhEIS6wLB9ArKDS-5Sogs"
+    }
+  },
+  {
+    "id": "ts2-no-insertion",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "c.js",
+    "source": "const x = a\n(b)\n",
+    "symbol": "x",
+    "note": "No semicolon is inserted before (, so a is called.",
+    "sigTokens": "const x = a ( b ) ;",
+    "bodyTokens": "const x = a ( b ) ;",
+    "expect": {
+      "source.sig": "ts2:7TQe5Y_wHblrwy7UXJ55N3dycuiMzeWvccR3cCRP3WU",
+      "source.body": "ts2:7TQe5Y_wHblrwy7UXJ55N3dycuiMzeWvccR3cCRP3WU"
+    }
+  },
+  {
+    "id": "ts2-several-declarators",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.ts",
+    "source": "const a = 1, b = { x: 1, }\n",
+    "symbol": "b",
+    "note": "The ; ends the statement, which the declarator's span does not hold whole, as with a written ;.",
+    "sigTokens": "b = { x : 1 }",
+    "bodyTokens": "b = { x : 1 }",
+    "expect": {
+      "source.sig": "ts2:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U",
+      "source.body": "ts2:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U"
+    }
+  },
+  {
+    "id": "ts2-ambient-module",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d.ts",
+    "source": "declare module \"x\"\n",
+    "symbol": "",
+    "note": "A module declaration without a body ends with ;.",
+    "sigTokens": "declare module \"x\" ;",
+    "expect": {
+      "source.sig": "ts2:eA5gDLxqXRozAIbBo_2dHD4VcU1bOFWYSN8wloUMbDQ"
+    }
+  },
+  {
+    "id": "ts2-ambient-module-semicolon",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d.ts",
+    "source": "declare module \"x\";\n",
+    "symbol": "",
+    "sigTokens": "declare module \"x\" ;",
+    "expect": {
+      "source.sig": "ts2:eA5gDLxqXRozAIbBo_2dHD4VcU1bOFWYSN8wloUMbDQ"
+    }
+  },
+  {
+    "id": "ts2-if-else",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "f.js",
+    "source": "if (a) b\nelse c\n",
+    "symbol": "",
+    "sigTokens": "if ( a ) b ; else c ;",
+    "expect": {
+      "source.sig": "ts2:xTQMdjUx7k_URn2EeoI3JLv9w72AOib1RKs9jCbJ2zo"
+    }
+  },
+  {
+    "id": "ts2-test-without-semicolons",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "s.test.ts",
+    "source": "test(\"works\", () => {\n  run()\n})\n",
+    "symbol": "works",
+    "sigTokens": "test ( \"works\" , ( ) =>",
+    "bodyTokens": "test ( \"works\" , ( ) => { run ( ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts2:LfCmvt72tFpBpOj9doDjsgvZamJKyhRI-ZL9djUFcCg",
+      "source.body": "ts2:A6AAswS5Tt3uAS6DMf-lM5cU4fJGbvYLG_XF-R0gnis"
+    }
+  }
+]

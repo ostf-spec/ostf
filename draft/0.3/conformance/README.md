@@ -40,7 +40,7 @@ cd draft/0.3/example/deploy
 
 | Check | What it pins |
 | --- | --- |
-| [vectors/](vectors/) | The item, Go and lock vectors published with 0.2: f1, go1 and `trace.lock 1` are unchanged (budget rule 5); and the `ts1` and `py1` vectors of Annexes K and L |
+| [vectors/](vectors/) | The item, Go and lock vectors published with 0.2: f1, go1 and `trace.lock 1` are unchanged (budget rule 5); and the `ts2` and `py1` vectors of Annexes K and L, with those of the superseded `ts1` |
 | [example/expected/](../example/expected/) | `check` and `context` JSON and the Annex J text, byte for byte |
 | [fixtures/minimal/](../fixtures/minimal/) | Two valid links and no diagnostics |
 | [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes, origins, states and reasons, risk relevance, context selections and Annex J text, and f1 projections; its schema cases run in [fixtures_test.go](../fixtures_test.go) |

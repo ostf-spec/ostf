@@ -91,12 +91,13 @@ def check():
             assert reader.lock_text(entries) == case["canonical"], case["id"] + ": lock bytes"
     counts["vectors02"] = sum(len(load(VECTORS / n)) for n in ("item-vectors.json", "code-vectors.json", "lock-vectors.json"))
 
-    # Annexes K and L: the ts1 and py1 vectors, token bytes and digests.
-    for name, algorithm in (("ts1-vectors.json", "ts1"), ("py1-vectors.json", "py1")):
+    # Annexes K and L: the ts2 and py1 vectors, token bytes and digests, and those of the superseded ts1.
+    for name, algorithm in (("ts1-vectors.json", "ts1"), ("ts2-vectors.json", "ts2"), ("py1-vectors.json", "py1")):
         for case in load(VECTORS / name):
             annex = reader.annex_for(case["path"])
-            assert annex is not None and annex.algorithm == algorithm, case["id"] + ": annex"
-            parsed = annex.parse(case["source"].encode(), case["path"])
+            assert annex is not None and annex.algorithm == ("ts2" if algorithm == "ts1" else algorithm), case["id"] + ": annex"
+            parse = reader.ts1_source if algorithm == "ts1" else annex.parse
+            parsed = parse(case["source"].encode(), case["path"])
             assert parsed is not None, case["id"] + ": parse"
             if case["symbol"]:
                 found = annex.select(parsed["definitions"], case["symbol"], case["path"])

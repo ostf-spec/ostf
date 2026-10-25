@@ -9,7 +9,7 @@ Whether a coding agent that has never seen OSTF, given only a repository and the
 
 ## Fixtures
 
-[fixtures/go-shop](fixtures/go-shop/) and [fixtures/ts-shop](fixtures/ts-shop/): the same small shop in Go and in TypeScript, each with about 40 items, two external Jira items, two risk controls, links declared in YAML and by tags, a `trace.lock` in which every link is valid, and the agent paragraph with `<tool>` replaced by `ostf`. Nothing else in a fixture mentions OSTF.
+[fixtures/go-shop](fixtures/go-shop/) and [fixtures/ts-shop](fixtures/ts-shop/): the same small shop in Go and in TypeScript, each with about 40 items, two external Jira items, two risk controls, links declared in YAML and by tags, a `trace.lock` in which every link is valid, and the agent paragraph with `<tool>` replaced by `ostf`. Nothing else in a fixture mentions OSTF. On 2026-10-25 the TypeScript fixture's lock was restamped when Annex K replaced `ts1` with `ts2`; only the algorithm prefix of its entries changed, because the fixture writes every `;`. The recorded runs used the `ts1` lock.
 
 ## Conditions
 

@@ -5352,6 +5352,91 @@
      ]
     ]
    }
+  },
+  {
+   "id": "ts2-line-break-after-return-is-suspect",
+   "requirements": [
+    "Annex K.4",
+    "OSTF-144"
+   ],
+   "note": "Stamped when f returned 1; a line break after return now makes it return undefined. Under ts1 the link stayed valid.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ONE\n    text: Return one.\n    code: [r.js#f]\n",
+    "r.js": "function f() {\n  return\n  1\n}\n",
+    "trace.lock": "trace.lock 1\nr.js#f implements R-ONE source.sig=ts2:EQ0puCiR06A0Hdi3e9NO-TdNzjW-JjaUeN1iJ4FSYW0 source.body=ts2:JX_X5f0rBCEgsS6WHViozcUmWpgrEo6PdoTBO_QCE3E target=f1:05eyQS6lOLGPqgNQrekxjNjOmHNykK8q80NHU1RhYSs\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "r.js#f",
+      "implements",
+      "R-ONE",
+      {},
+      "declared",
+      "suspect",
+      [
+       "BODY_CHANGED"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ts2-omitted-semicolon-stays-valid",
+   "requirements": [
+    "Annex K.4",
+    "OSTF-144"
+   ],
+   "note": "The same lock, with the ; of return 1 left to automatic semicolon insertion.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ONE\n    text: Return one.\n    code: [r.js#f]\n",
+    "r.js": "function f() {\n  return 1\n}\n",
+    "trace.lock": "trace.lock 1\nr.js#f implements R-ONE source.sig=ts2:EQ0puCiR06A0Hdi3e9NO-TdNzjW-JjaUeN1iJ4FSYW0 source.body=ts2:JX_X5f0rBCEgsS6WHViozcUmWpgrEo6PdoTBO_QCE3E target=f1:05eyQS6lOLGPqgNQrekxjNjOmHNykK8q80NHU1RhYSs\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "r.js#f",
+      "implements",
+      "R-ONE",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "ts1-lock-entry-is-unstamped",
+   "requirements": [
+    "Annex K.6",
+    "OSTF-143"
+   ],
+   "note": "ts1 is superseded: an Analyzer implements ts2 in its place, so a recorded ts1 value has an unknown algorithm until the link is restamped.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ONE\n    text: Return one.\n    code: [r.js#f]\n",
+    "r.js": "function f() {\n  return 1;\n}\n",
+    "trace.lock": "trace.lock 1\nr.js#f implements R-ONE source.sig=ts1:EQ0puCiR06A0Hdi3e9NO-TdNzjW-JjaUeN1iJ4FSYW0 source.body=ts1:JX_X5f0rBCEgsS6WHViozcUmWpgrEo6PdoTBO_QCE3E target=f1:05eyQS6lOLGPqgNQrekxjNjOmHNykK8q80NHU1RhYSs\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "r.js#f",
+      "implements",
+      "R-ONE",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "UNKNOWN_ALGORITHM"
+      ]
+     ]
+    ]
+   }
   }
  ],
  "contexts": [
@@ -6405,7 +6490,7 @@
     "items": [
      "R-A"
     ],
-    "lock": "trace.lock 1\nmath.ts#add implements R-A source.sig=ts1:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE source.body=ts1:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.ts#add implements R-A source.sig=ts2:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE source.body=ts2:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   }
  ],
@@ -7337,6 +7422,54 @@
     }
    },
    "note": "A suite and its test both changed; both are tests (K.1). The class Cart changed because its method did."
+  },
+  {
+   "id": "impact-line-break-after-return",
+   "requirements": [
+    "Annex C.3",
+    "Annex K.4"
+   ],
+   "note": "A line break after return changes what f returns; under ts1 f had the same body token stream in both views and was not listed.",
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ONE\n    text: Return one.\n    code: [r.js#f]\n    tests: [r.test.js#f returns one]\n",
+    "r.js": "function f() { return 1 }\n",
+    "r.test.js": "test(\"f returns one\", () => {\n  expect(f()).toBe(1)\n})\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ONE\n    text: Return one.\n    code: [r.js#f]\n    tests: [r.test.js#f returns one]\n",
+    "r.js": "function f() { return\n1 }\n",
+    "r.test.js": "test(\"f returns one\", () => {\n  expect(f()).toBe(1)\n})\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [
+      {
+       "anchor": "r.js#f",
+       "items": [
+        "R-ONE"
+       ]
+      }
+     ],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "tests": [
+      "r.test.js#f returns one"
+     ]
+    }
+   }
   }
  ],
  "sarif": [

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import ast
 import base64
+import bisect
 import copy
 import difflib
 import hashlib
@@ -45,7 +46,7 @@ ATTRIBUTE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9]{0,47}\Z")
 SOURCE_ALIAS = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
 EXTERNAL = re.compile(r"([a-z][a-z0-9-]{0,31}):([^\s\x00-\x1f\x7f]+)\Z")
 FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
-ALGORITHMS = {"f1", "go1", "lf1", "ts1", "py1"}
+ALGORITHMS = {"f1", "go1", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
 STATEMENTS = ["need", "requirement", "design"]
@@ -318,7 +319,7 @@ def select(definitions, symbol, path=""):
     return _select_members(definitions, symbol)
 
 
-# --- Annex K: TypeScript and JavaScript, ts1 --------------------------------
+# --- Annex K: TypeScript and JavaScript, ts2 --------------------------------
 
 TS_TYPESCRIPT, TS_TSX = (".ts", ".mts", ".cts"), (".tsx",)
 TS_JAVASCRIPT = (".js", ".mjs", ".cjs", ".jsx")
@@ -326,6 +327,15 @@ TS_ATOMS = {"string", "template_string", "template_literal_type", "regex", "jsx_
 TS_COMMENTS = {"comment", "hash_bang_line", "html_comment"}
 TS_FUNCTIONS = {"arrow_function", "function_expression", "function", "generator_function"}
 TS_NAMES = {"identifier", "type_identifier", "property_identifier", "private_property_identifier", "nested_identifier"}
+# K.4 (ts2): the statements and declarations that the grammar ends with ;, the class members that end with
+# one, the containers of type members, and what export default declares without one.
+TS_TERMINATED = {"expression_statement", "variable_declaration", "lexical_declaration", "return_statement",
+                 "throw_statement", "break_statement", "continue_statement", "debugger_statement", "do_statement",
+                 "import_statement", "import_alias", "type_alias_declaration", "function_signature"}
+TS_CLASS_FIELDS = {"public_field_definition", "field_definition", "method_signature", "abstract_method_signature",
+                   "index_signature"}
+TS_TYPE_MEMBERS = {"object_type", "interface_body"}
+TS_UNTERMINATED_EXPORTS = {"function_expression", "generator_function", "class", "import_alias"}
 # ECMAScript WhiteSpace and LineTerminator code points (K.4).
 JS_SPACE = re.compile("[\t\v\f  ﻿  -   　\n\r  ]+")
 
@@ -337,9 +347,55 @@ def ts_test_file(path):
     return stem.endswith((".test", ".spec")) or "__tests__" in path.split("/")[:-1]
 
 
-def _ts_tokens(root, source, start, end):
-    """K.4: the ts1 token stream of source[start:end]."""
-    tokens = []
+def _ts_terminated(n):
+    """K.4 (ts2): whether the grammar ends n with ;: a statement or declaration that takes one, a class
+    field or member signature, or a type member. Keywords, such as module, are not constructs."""
+    if not n.is_named:
+        return False
+    parent = n.parent.type if n.parent is not None else None
+    if parent in TS_TYPE_MEMBERS:
+        return n.type not in TS_COMMENTS
+    if parent == "class_body":
+        return n.type in TS_CLASS_FIELDS
+    if n.type == "export_statement":
+        named = [c for c in n.named_children if c.type not in TS_COMMENTS and c.type != "decorator"]
+        return n.child_by_field_name("declaration") is None and not (named and named[-1].type in TS_UNTERMINATED_EXPORTS)
+    if n.type == "module":  # declare module "name", without a body
+        return n.child_by_field_name("body") is None
+    return n.type in TS_TERMINATED
+
+
+def _ts_omitted(root):
+    """K.4 (ts2): the (start, end) of every construct that the grammar ends with ; and whose ; the source
+    omits: neither its last token nor the token after it is a ;, or a , after a type member."""
+    tokens, constructs, stack = [], [], [root]
+    while stack:
+        n = stack.pop()
+        if n.type in TS_COMMENTS:
+            continue
+        if _ts_terminated(n):
+            constructs.append(n)
+        if n.type in TS_ATOMS or not n.children:
+            if n.end_byte > n.start_byte:
+                tokens.append((n.start_byte, n.end_byte, n.type))
+            continue
+        stack.extend(reversed(n.children))
+    starts = [t[0] for t in tokens]
+    omitted = []
+    for n in constructs:
+        last = bisect.bisect_left(starts, n.end_byte) - 1
+        after = last + 1
+        written = (last >= 0 and tokens[last][2] == ";" and tokens[last][0] >= n.start_byte) or \
+            (after < len(tokens) and tokens[after][2] in ((";", ",") if n.parent.type in TS_TYPE_MEMBERS else (";",)))
+        if not written:
+            omitted.append((n.start_byte, n.end_byte))
+    return sorted(omitted, key=lambda span: span[1])
+
+
+def _ts_tokens(root, source, start, end, omitted=None):
+    """K.4: the ts2 token stream of source[start:end], with a ; after each construct in `omitted` that the
+    span holds whole and a ; for each , after a type member; with `omitted` None, that of ts1."""
+    tokens, ends = [], []
     stack = [root]
     while stack:
         n = stack.pop()
@@ -349,16 +405,25 @@ def _ts_tokens(root, source, start, end):
             raw = source[max(start, n.start_byte):min(end, n.end_byte)]
             if n.type == "jsx_text":
                 raw = JS_SPACE.sub(" ", raw.decode()).strip(" ").encode()
+            if raw == b"," and omitted is not None and n.parent.type in TS_TYPE_MEMBERS:
+                raw = b";"  # ts2: a , after a type member is its ;
             if raw:
                 tokens.append(raw)
+                ends.append(n.end_byte)
             continue
         stack.extend(reversed(n.children))
+    for construct_start, construct_end in omitted or ():
+        if start <= construct_start and construct_end <= end:
+            at = bisect.bisect_right(ends, construct_end)
+            tokens.insert(at, b";")
+            ends.insert(at, construct_end)
     kept = [t for i, t in enumerate(tokens) if not (t == b"," and i + 1 < len(tokens) and tokens[i + 1] in (b")", b"]", b"}", b">"))]
     return b" ".join(kept)
 
 
-def ts_source(source, path=""):
-    """Annex K: definitions, whole-file token stream and comments, or None when the file does not parse."""
+def ts_source(source, path="", algorithm="ts2"):
+    """Annex K: definitions, whole-file token stream and comments, or None when the file does not parse.
+    With algorithm "ts1", the token streams of the superseded ts1 (K.6)."""
     try:
         source.decode("utf-8")
     except UnicodeError:
@@ -369,6 +434,7 @@ def ts_source(source, path=""):
     if root.has_error:
         return None
     comments = _tree_comments(root, source, opaque=TS_ATOMS)
+    omitted = _ts_omitted(root) if algorithm == "ts2" else None
     definitions = []
     test_file = ts_test_file(path)
 
@@ -400,7 +466,8 @@ def ts_source(source, path=""):
         header = body.start_byte if body is not None else end
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
                             "member": member, "test": test,
-                            "sig": _ts_tokens(root, source, start, header), "body": _ts_tokens(root, source, start, end)})
+                            "sig": _ts_tokens(root, source, start, header, omitted),
+                            "body": _ts_tokens(root, source, start, end, omitted)})
 
     def named(node, prefix):
         field = node.child_by_field_name("name")
@@ -502,7 +569,12 @@ def ts_source(source, path=""):
                     test_call(statement, statement.named_children[0], name + " > ")
 
     container(root, "")
-    return {"definitions": definitions, "whole": _ts_tokens(root, source, 0, len(source)), "comments": comments}
+    return {"definitions": definitions, "whole": _ts_tokens(root, source, 0, len(source), omitted), "comments": comments}
+
+
+def ts1_source(source, path=""):
+    """K.6: the superseded ts1, for its vectors; no Analyzer state uses it."""
+    return ts_source(source, path, "ts1")
 
 
 def ts_select(definitions, symbol, path=""):
@@ -653,7 +725,7 @@ class Annex:
 
 ANNEXES = [
     Annex("go1", (".go",), go_source, select, lambda path: path.endswith("_test.go")),
-    Annex("ts1", TS_TYPESCRIPT + TS_TSX + TS_JAVASCRIPT, ts_source, ts_select, ts_test_file),
+    Annex("ts2", TS_TYPESCRIPT + TS_TSX + TS_JAVASCRIPT, ts_source, ts_select, ts_test_file),
     Annex("py1", (".py",), py_source, py_select, py_test_file),
 ]
 
