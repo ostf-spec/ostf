@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them, and keeps a lock file that shows which links were rechecked since either end last changed. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them, and keeps a lock file that shows which links were rechecked since either end last changed. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look.
 
 **Status:** working draft, wire version `ostf: "0.3"`, document revision 0.14. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
 

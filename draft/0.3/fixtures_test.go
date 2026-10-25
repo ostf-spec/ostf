@@ -155,6 +155,7 @@ func TestSchemas(t *testing.T) {
 		{"tags opt-out", "trace.schema.json", "ostf: \"0.3\"\ntags: false\nitems: []\n", true},
 		{"tags not boolean", "trace.schema.json", "ostf: \"0.3\"\ntags: \"yes\"\nitems: []\n", false},
 		{"OSTF-121 profile example", "profile.schema.json", blocks(t, "**OSTF-121 Profiles", "yaml")[0], true},
+		{"security profile", "profile.schema.json", read(t, "profiles/security.yaml"), true},
 		{"C.2 result example", "result.schema.json", blocks(t, "**C.2 Result format", "json")[0], true},
 		{"C.3 impact example", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": ` + impact + `}`, true},
 		{"expected check", "result.schema.json", read(t, "example/expected/check.json"), true},

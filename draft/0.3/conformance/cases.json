@@ -5866,6 +5866,109 @@
      "R-B"
     ]
    }
+  },
+  {
+   "id": "breadth-threat-control-decision",
+   "requirements": [
+    "OSTF-120",
+    "OSTF-144"
+   ],
+   "note": "threat is of kind risk and control of kind statement, so a control that controls a threat is risk-relevant with no profile; a decision is a design item with a title.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: T-REPLAY\n    type: threat\n    text: An attacker replays a captured payment request.\n  - id: C-NONCE\n    type: control\n    text: Each payment request carries a nonce that the server accepts once.\n    controls: [T-REPLAY]\n    code: [a.go#Accept]\n  - id: D-NONCE-STORE\n    type: design\n    title: Nonces live in the payments database\n    text: Accepted nonces are kept in the payments database for 24 hours.\n    rationale: The database already serializes payment writes.\n    refines: [C-NONCE]\n",
+    "a.go": "package a\n\nfunc Accept(nonce string) bool { return nonce != \"\" }\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "C-NONCE",
+      "controls",
+      "T-REPLAY",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "D-NONCE-STORE",
+      "refines",
+      "C-NONCE",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Accept",
+      "implements",
+      "C-NONCE",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "risk": [
+     "C-NONCE",
+     "D-NONCE-STORE"
+    ]
+   }
+  },
+  {
+   "id": "security-profile-threat",
+   "requirements": [
+    "OSTF-114",
+    "OSTF-120",
+    "OSTF-121"
+   ],
+   "note": "profile.yaml is profiles/security.yaml byte for byte, which check.py confirms.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: T-REPLAY\n    type: threat\n    text: An attacker replays a captured payment request.\n    attributes: {stride: [spoofing, tampering], assets: [payments], boundaries: [internet]}\n  - id: C-NONCE\n    type: control\n    text: Each payment request carries a nonce that the server accepts once.\n    controls: [T-REPLAY]\n",
+    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n        meaning: true\n      assets: {type: list, meaning: true}\n      boundaries: {type: list, meaning: true}\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "C-NONCE",
+      "controls",
+      "T-REPLAY",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "risk": [
+     "C-NONCE"
+    ]
+   }
+  },
+  {
+   "id": "security-profile-stride-required",
+   "requirements": [
+    "OSTF-114",
+    "OSTF-121"
+   ],
+   "note": "profile.yaml is profiles/security.yaml byte for byte; a threat without a STRIDE category, or with one outside it, is excluded.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: T-1\n    type: threat\n    text: An attacker replays a request.\n  - id: T-2\n    type: threat\n    text: An attacker floods the queue.\n    attributes: {stride: [flooding]}\n  - id: R-A\n    text: A.\n",
+    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n        meaning: true\n      assets: {type: list, meaning: true}\n      boundaries: {type: list, meaning: true}\n"
+   },
+   "expect": {
+    "codes": [
+     "INVALID_ATTRIBUTE",
+     "LOCK_MISSING"
+    ],
+    "items": [
+     "R-A"
+    ]
+   }
   }
  ],
  "contexts": [
@@ -8862,6 +8965,24 @@
     "types": {
      "requirement": {
       "kind": "risk"
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-default-threat-kind-changed",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-120",
+    "OSTF-121"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "types": {
+     "threat": {
+      "kind": "statement"
      }
     }
    },

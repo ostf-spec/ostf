@@ -5,7 +5,7 @@
 
 ## Abstract
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it, and keeps a lock file of fingerprints that shows whether each link was rechecked since either end last changed. Any tool, person or coding agent that can read YAML can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look. OSTF specifies files, not tools. A four-line file is a complete, valid start.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it, and keeps a lock file of fingerprints that shows whether each link was rechecked since either end last changed. Any tool, person or coding agent that can read YAML can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look. OSTF specifies files, not tools. A four-line file is a complete, valid start.
 
 ## 1. Introduction
 
@@ -50,7 +50,7 @@ Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers 
 | Term | Meaning |
 | --- | --- |
 | root | A directory containing `trace.yaml`. Every path in that root's files is relative to it, and it covers the files beneath it that no nested root covers (OSTF-102). |
-| item | A unit of intent or evidence with a stable ID: a need, requirement, design element, risk or verification. |
+| item | A unit of intent or evidence with a stable ID: a need, requirement, design element, control, risk, threat or verification. |
 | statement | An item whose type is of kind `statement`, such as a need, a requirement or a design element (OSTF-120). |
 | anchor | A reference to a file (`path`) or to a definition in a file (`path#symbol`). |
 | link | A typed, directed relationship from a source (an item or an anchor) to a target item. |
@@ -161,7 +161,7 @@ attr-name = ALPHA *47( ALPHA / DIGIT )
 
 ## 5. Vocabulary
 
-**OSTF-120 Default vocabulary.**<a id="OSTF-120"></a> Without a profile, the default vocabulary applies. Every type has a kind, `statement`, `risk` or `verification`, and link rules and risk relevance follow the kind, never the type's name. The default types are `need`, `requirement` and `design`, of kind `statement`, `risk`, of kind `risk`, and `verification`, of kind `verification`. Its link types are:
+**OSTF-120 Default vocabulary.**<a id="OSTF-120"></a> Without a profile, the default vocabulary applies. Every type has a kind, `statement`, `risk` or `verification`, and link rules and risk relevance follow the kind, never the type's name. The default types are `need`, `requirement`, `design` and `control`, of kind `statement`, `risk` and `threat`, of kind `risk`, and `verification`, of kind `verification`. Its link types are:
 
 | Link | From | To | Acyclic | Inverse reading | Meaning |
 | --- | --- | --- | --- | --- | --- |
@@ -170,7 +170,7 @@ attr-name = ALPHA *47( ALPHA / DIGIT )
 | `implements` | `code` | statement | no | `implemented_by` | The definition carries the statement. |
 | `verifies` | `tests`, verification | statement, verification | no | `verified_by` | The test or verification provides evidence for the target. |
 
-In the table, statement, risk and verification stand for every type of that kind, a profile's included, and `code` and `tests` denote anchors (OSTF-132). A `risk` is anything that can cause harm or loss: a security breach, a financial loss or an injury alike. A `verification` is a check that is not an automated test, such as an inspection or a review procedure. Inverse readings are computed by tools and never stored. The default vocabulary declares no attributes.
+In the table, statement, risk and verification stand for every type of that kind, a profile's included, and `code` and `tests` denote anchors (OSTF-132). A `risk` is anything that can cause harm or loss: a security breach, a financial loss or an injury alike, and a `threat` is a risk that an adversary causes on purpose. A `control` states a safeguard that `controls` a risk or a threat. A decision is a `design` item whose `title` names it, whose `text` states what was decided and whose `rationale` says why. A `verification` is a check that is not an automated test, such as an inspection or a review procedure. Inverse readings are computed by tools and never stored. The default vocabulary declares no attributes; the profile [profiles/security.yaml](profiles/security.yaml), published with this draft, adds STRIDE categories, assets and trust boundaries to threats (OSTF-121).
 
 **OSTF-121 Profiles.**<a id="OSTF-121"></a> The root MAY name a profile file with `profile: <path>`. A profile carries `ostf`, and OPTIONAL `types`, `links` and `fingerprints` mappings. A type name matches `type-name`; a link name matches `link-name`. An entry whose name exists in the default vocabulary merges over the default definition, property by property; an entry with a new name defines a new type or link. A new type MUST declare its `kind`, and a default type keeps its own. A new link MUST declare `from` and `to`. Link endpoints in a profile are type names or the anchor kinds `code` and `tests`, and endpoints a profile lists for a default link replace the kinds of OSTF-120; only `implements` and `verifies` MAY list anchor kinds in `from`. A type or link MAY carry a `description`. A type MAY declare `attributes` (OSTF-114); a link MAY declare string-valued link attributes, other than `to`, `ref`, `source` and `target`, with allowed values and a required flag, `acyclic`, and an `inverse` name. `fingerprints` carries `bodyChange` (OSTF-144). A profile that fails its schema or these rules is `PROFILE_INVALID` and graph construction stops. A profile is a file in the repository; OSTF defines no profile registry and readers MUST NOT fetch one.
 

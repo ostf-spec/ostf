@@ -52,7 +52,8 @@ ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", 
 # OSTF-120: the default types and their kinds. A default link names kinds, written "kind:" and the kind,
 # each standing for every type of that kind once the profile is merged.
 KINDS = ("statement", "risk", "verification")
-DEFAULT_TYPES = {"need": "statement", "requirement": "statement", "design": "statement", "risk": "risk", "verification": "verification"}
+DEFAULT_TYPES = {"need": "statement", "requirement": "statement", "design": "statement", "control": "statement",
+                 "risk": "risk", "threat": "risk", "verification": "verification"}
 SEVERITY = {
     "FORMAT_INVALID": "error", "VERSION_UNSUPPORTED": "error", "RESERVED_KEY_SKIPPED": "info",
     "UNKNOWN_KEY": "error", "PATH_INVALID": "error", "FILE_TOO_LARGE": "error",

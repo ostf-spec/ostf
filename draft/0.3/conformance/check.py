@@ -189,6 +189,12 @@ def check():
     for case in every:
         for requirement in case["requirements"]:
             assert requirement in defined or re.fullmatch(r"Annex [A-L](\.\d+)?", requirement), f"{case['id']}: unknown requirement {requirement}"
+    # The official profiles (OSTF-121) are published files, and the cases that use one carry it byte for byte.
+    profiles = {path.name: path.read_text() for path in (DRAFT / "profiles").glob("*.yaml")}
+    assert sorted(profiles) == ["security.yaml"], "official profiles"
+    for case in cases["checks"]:
+        if case["id"].startswith("security-profile-"):
+            assert case["files"]["profile.yaml"] == profiles["security.yaml"], f"{case['id']}: profile.yaml is not profiles/security.yaml"
     for case in cases["checks"]:
         analysis = reader.Analysis(case_files(case))
         result, expect = analysis.result(), case["expect"]

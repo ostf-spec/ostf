@@ -1,0 +1,16 @@
+# SPDX-License-Identifier: Apache-2.0
+# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a
+# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.
+# It classifies threats by STRIDE and names the assets and trust boundaries they reach.
+ostf: "0.3"
+types:
+  threat:
+    description: A risk that an adversary causes on purpose.
+    attributes:
+      stride:
+        type: list
+        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]
+        required: true
+        meaning: true
+      assets: {type: list, meaning: true}
+      boundaries: {type: list, meaning: true}
