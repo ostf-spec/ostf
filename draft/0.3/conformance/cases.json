@@ -5437,6 +5437,86 @@
      ]
     ]
    }
+  },
+  {
+   "id": "risk-relevance-follows-controls-only",
+   "requirements": [
+    "OSTF-144",
+    "OSTF-121"
+   ],
+   "note": "A profile link with another name, such as the mitigates of the OSTF-121 example, makes no item a control, so under bodyChange: risk the dose cap's body change does not count.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: H-1\n    type: hazard\n    text: A dose above the limit.\n  - id: R-A\n    text: Cap the dose.\n    mitigates: [H-1]\n    code: [a.go#F]\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {description: A potential source of harm.}\nlinks:\n  mitigates: {from: [requirement], to: [hazard]}\nfingerprints:\n  bodyChange: risk\n",
+    "a.go": "package a\n\nfunc F(d int) int { return min(d, 12) }\n",
+    "trace.lock": "trace.lock 1\nR-A mitigates H-1 source=f1:WPDYEgpidmBtNVsNC6QCT5s0PCyvWH_1rQCYCln48Mc target=f1:cnhHHrtbkFavvs4ctvcQnUSI_2DuLb2JFTHSHGVBcRg\na.go#F implements R-A source.sig=go2:7ktHmF-gqjn-ObB6rLMwDMXXPU2r_q1Sq3uNx0EdRgk source.body=go2:I-fFOUVGQhOEpF5lmkTsxasX87OteIiuHsB9ixJMHog target=f1:WPDYEgpidmBtNVsNC6QCT5s0PCyvWH_1rQCYCln48Mc\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "R-A",
+      "mitigates",
+      "H-1",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ],
+    "risk": []
+   }
+  },
+  {
+   "id": "risk-relevance-through-extended-controls",
+   "requirements": [
+    "OSTF-144",
+    "OSTF-121"
+   ],
+   "note": "The same rule written as controls, extended by the profile to hazard, makes R-A a control and the body change suspect.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: H-1\n    type: hazard\n    text: A dose above the limit.\n  - id: R-A\n    text: Cap the dose.\n    controls: [H-1]\n    code: [a.go#F]\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {description: A potential source of harm.}\nlinks:\n  controls: {to: [risk, hazard]}\nfingerprints:\n  bodyChange: risk\n",
+    "a.go": "package a\n\nfunc F(d int) int { return min(d, 12) }\n",
+    "trace.lock": "trace.lock 1\nR-A controls H-1 source=f1:WPDYEgpidmBtNVsNC6QCT5s0PCyvWH_1rQCYCln48Mc target=f1:cnhHHrtbkFavvs4ctvcQnUSI_2DuLb2JFTHSHGVBcRg\na.go#F implements R-A source.sig=go2:7ktHmF-gqjn-ObB6rLMwDMXXPU2r_q1Sq3uNx0EdRgk source.body=go2:I-fFOUVGQhOEpF5lmkTsxasX87OteIiuHsB9ixJMHog target=f1:WPDYEgpidmBtNVsNC6QCT5s0PCyvWH_1rQCYCln48Mc\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "R-A",
+      "controls",
+      "H-1",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "BODY_CHANGED"
+      ]
+     ]
+    ],
+    "risk": [
+     "R-A"
+    ]
+   }
   }
  ],
  "contexts": [

@@ -197,6 +197,8 @@ fingerprints:
   bodyChange: risk
 ```
 
+Under this profile `mitigates` makes nothing risk-relevant (OSTF-144), so `bodyChange: risk` ignores body changes to the code of a requirement that mitigates a hazard; `controls: {to: [risk, hazard]}` in place of `mitigates` would count them.
+
 ## 6. Links
 
 **OSTF-130 Link model.**<a id="OSTF-130"></a> A link is a directed, typed relationship from a source, which is an item or an anchor, to a target item. Its direction runs from the more detailed element to what it serves: code to statement, test to statement, requirement to need, control to risk. Link identity is the tuple of source, link type, target and the link attributes sorted by name; fingerprints are not part of it. Inverse links are computed, never stored.
@@ -257,7 +259,7 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 `broken` takes precedence over `unstamped`, which takes precedence over `suspect`. Reasons are reported with the state. Restoring the recorded content restores `valid`. A link with `UNSUPPORTED_LANGUAGE` (OSTF-132) has no state.
 
-**OSTF-144 Suspect rules.**<a id="OSTF-144"></a> An Analyzer compares the recorded and current fingerprints key by key; a key present on only one side differs. A differing `source` or `target` is `ITEM_CHANGED`. A differing `source.sig` is `SIGNATURE_CHANGED`. A differing `source.body` with an unchanged `source.sig` is `BODY_CHANGED` and counts according to the profile's `fingerprints.bodyChange`: `all` (the default) counts every body change; `risk` counts a body change only when the link is risk-relevant; `none` counts no body change. An item with a `controls` link is a control. A control, every item that `refines` it directly or transitively, and every link whose source or target is one of those items are risk-relevant. A body change that does not count leaves the link `valid`.
+**OSTF-144 Suspect rules.**<a id="OSTF-144"></a> An Analyzer compares the recorded and current fingerprints key by key; a key present on only one side differs. A differing `source` or `target` is `ITEM_CHANGED`. A differing `source.sig` is `SIGNATURE_CHANGED`. A differing `source.body` with an unchanged `source.sig` is `BODY_CHANGED` and counts according to the profile's `fingerprints.bodyChange`: `all` (the default) counts every body change; `risk` counts a body change only when the link is risk-relevant; `none` counts no body change. An item with a `controls` link is a control. A control, every item that `refines` it directly or transitively, and every link whose source or target is one of those items are risk-relevant. Risk relevance follows the link name, not the endpoint types: a profile link with another name, such as `mitigates` in the example of OSTF-121, makes no item a control, whatever its target's type; a profile that needs one extends `controls` to its own types. A body change that does not count leaves the link `valid`.
 
 **OSTF-145 Meaning of a valid link.**<a id="OSTF-145"></a> A valid link means only that the fingerprinted inputs are unchanged since the recorded recheck. It is not approval, correctness, execution, test success, compliance or release authorization. Code outside an anchor, such as a helper it calls, a constant, a configuration file or a dependency, can change without changing the anchor's fingerprint. Analyses that follow such dependencies are tool behavior.
 
