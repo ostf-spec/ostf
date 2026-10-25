@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.14. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1, `lf1` and the lock format of 0.2 are unchanged, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
+**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.15. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1 and `lf1` are unchanged and the lock format of 0.2 only gains optional pairs, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
 
 ## Abstract
 
@@ -590,7 +590,7 @@ Each command accepts `--root DIR` and `--format json|text`; `check` also accepts
 
 **I.4 Stamp.** For each named link, `stamp` writes the fingerprints computed in the evaluated view as its lock entry, with `by` and `at` from `--by PRINCIPAL` and `--at VIEW`, or `unknown`, in its lock file (OSTF-142), creating it when needed and writing it canonically. It keeps the entries a reader may use and drops the rest (OSTF-142). It stamps every named link or none: an argument that names no link in the graph, a `broken` link or a link with `UNSUPPORTED_LANGUAGE` is `STAMP_REFUSED`, and so is the whole stamp when a lock file it would write exceeds 8 MiB (OSTF-105). Its `json` output is a result whose `links` are the stamped links, each `valid`, whose `items` are their item endpoints, and whose `diagnostics` are `STAMP_REFUSED` and those that stop graph construction or concern a lock file as read. No option stamps unnamed links.
 
-**I.5 MCP binding.** A tool serving the Model Context Protocol [MCP] exposes the commands as tools `ostf_check` (arguments `base`, `root`), `ostf_context` (`target`, `root`) and `ostf_stamp` (`links`, a list of identities, `by`, `at` and `root`); only `target` and `links` are required. Each returns its `json` result as structured content and MAY add the text form as text content. Exit code 1 maps to a successful call carrying the findings, exit code 2 to a tool error.
+**I.5 MCP binding.** A tool serving the Model Context Protocol [MCP] exposes the commands as tools `ostf_check` (arguments `base`, `root`), `ostf_context` (`target`, `root`) and `ostf_stamp` (`links`, a list of identities, `by`, `at` and `root`); only `target` and `links` are required. Each returns its `json` result as structured content and MAY add its text form. Exit code 1 maps to a successful call carrying the findings, exit code 2 to a tool error.
 
 **I.6 Writes and extensions.** `check` and `context` MUST NOT modify any file; `stamp` MUST NOT modify any file other than lock files, which it MAY create or replace. A tool MAY add options and commands, but an added option MUST NOT change the meaning of those above, and added commands are outside a claim of this annex.
 

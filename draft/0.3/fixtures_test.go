@@ -157,6 +157,12 @@ func TestSchemas(t *testing.T) {
 	}{
 		{"minimal fixture", "trace.schema.json", read(t, "fixtures/minimal/trace.yaml"), true},
 		{"example", "trace.schema.json", read(t, "example/trace.yaml"), true},
+		{"trial fixture go-shop", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace.yaml"), true},
+		{"trial fixture go-shop requirements", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace/requirements.yaml"), true},
+		{"trial fixture go-shop design", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace/design.yaml"), true},
+		{"trial fixture ts-shop", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace.yaml"), true},
+		{"trial fixture ts-shop requirements", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace/requirements.yaml"), true},
+		{"trial fixture ts-shop design", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace/design.yaml"), true},
 		{"tags opt-out", "trace.schema.json", "ostf: \"0.3\"\ntags: false\nitems: []\n", true},
 		{"tags not boolean", "trace.schema.json", "ostf: \"0.3\"\ntags: \"yes\"\nitems: []\n", false},
 		{"OSTF-121 profile example", "profile.schema.json", blocks(t, "**OSTF-121 Profiles", "yaml")[0], true},
