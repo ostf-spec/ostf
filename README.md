@@ -75,6 +75,7 @@ Under the default, every edit to a linked function's body makes its link suspect
 | [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check`, `context` and `stamp` commands, and hand-written cases |
 | [Converters](draft/0.3/tools/README.md) | Doorstop to OSTF and back, and StrictDoc to OSTF, with what each loses |
 | [Agent-readiness plan](draft/0.3/plan-agent-readiness.md) | Five phases that made OSTF work for coding agents without growing its core, all done, with each phase's outcome and the two scorecard rows lowered |
+| [Agent-first plan](draft/0.3/plan-agent-first.md) | Proposed, no phase started: seven phases toward wire 0.4 drawn from two independent reviews of 0.3, from fixing the defects they found to trials against a baseline without OSTF |
 | [Agent trials](draft/0.3/trials/protocol.md) | The protocol, fixtures, harness and every result of coding agents from two vendors, and a small model, doing eight tasks with only the agent paragraph to go on |
 | [Decision record](draft/0.3/decisions.md) | The rulings taken while carrying out the plan: each ambiguity or defect, the rule that settled it and the requirement it touched |
 
