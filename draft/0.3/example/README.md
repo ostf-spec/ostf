@@ -6,7 +6,8 @@ A small Go package that shows the constructs most teams need:
 - a need, a risk, and the requirement that controls the risk (`N-REFUNDS`, `RISK-REFUND-ABUSE`, `R-REFUND-LIMIT`), with links declared in [trace.yaml](trace.yaml);
 - a requirement owned by an issue tracker (`PAY-123`, declared `external: jira:PAY-123` with the observed text and revision), linked from [charge.go](charge.go) and [charge_test.go](charge_test.go) by `@req` comments, which are read unless the root sets `tags: false`;
 - a requirement that no function carries (`R-DATA-AT-REST`, encryption at rest): it links the whole infrastructure file [deploy/database.tf](deploy/database.tf), which no language annex covers, and is verified by a review procedure, `V-ENCRYPTION-REVIEW`, an item of type `verification` rather than an automated test;
-- [trace.lock](trace.lock) with eight rechecked links, three between items, four from Go code and tests and one from a whole file, and real `go2`, `f1` and `lf1` fingerprints.
+- [trace.lock](trace.lock) with eight rechecked links, three between items, four from Go code and tests and one from a whole file, and real `go2`, `f1` and `lf1` fingerprints;
+- [trace.derived](trace.derived), the coverage a test tool records (OSTF-146): `TestRefundLimit` covers `CheckRefundLimit` and `TestChargeRetry` covers `Service.Charge`, so both `implements` links are `corroborated`, while `deploy/database.tf`, whose item no test verifies, is `unobserved`. Its lines carry `view=unknown` because they were written for this example, not observed in a commit.
 
 Run the tests from this directory:
 

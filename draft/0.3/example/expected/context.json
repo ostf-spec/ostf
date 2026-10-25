@@ -68,7 +68,8 @@
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
       "state": "valid",
-      "reasons": []
+      "reasons": [],
+      "corroboration": "corroborated"
     },
     {
       "source": "refund_test.go#TestRefundLimit",

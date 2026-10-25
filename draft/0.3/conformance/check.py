@@ -165,6 +165,9 @@ def check():
     counts["minimalFixture"] = 1
 
     spec = (DRAFT / "ostf.md").read_text()
+    # Annex B reproduces the rules of trace-lock.abnf.
+    rules = [line.split(";")[0].rstrip() for line in (DRAFT / "trace-lock.abnf").read_text().splitlines()]
+    assert [r for r in rules if r] == re.search(r"## Annex B .*?```abnf\n(.*?)```", spec, re.S)[1].splitlines(), "Annex B differs from trace-lock.abnf"
 
     # The Annex C.3 example: edit the body of CheckRefundLimit and add a field to Account.
     edited = {path: example.files[path] for path in example.files}
@@ -203,6 +206,9 @@ def check():
             assert links(result) == expect["links"], f"{case['id']}: links\n got {links(result)}\nwant {expect['links']}"
         if "items" in expect:
             assert [i["id"] for i in result["items"]] == expect["items"], f"{case['id']}: items"
+        if "corroboration" in expect:  # OSTF-146: by link identity, for every link that has one
+            got = {reader.identity(l): l["corroboration"] for l in result["links"] if "corroboration" in l}
+            assert got == expect["corroboration"], f"{case['id']}: corroboration\n got {got}\nwant {expect['corroboration']}"
         if "linkCount" in expect:
             assert len(result["links"]) == expect["linkCount"], f"{case['id']}: link count"
         if "risk" in expect:
@@ -332,7 +338,7 @@ def check():
     covered |= {code for case in load(VECTORS / "lock-vectors.json") for code in case["errors"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
     annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))
-    assert len(annex_c) == 37, "Annex C.1 codes"
+    assert len(annex_c) == 38, "Annex C.1 codes"
     for name, reason in cases["notCovered"].items():
         assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
     for name in sorted(defined | annex_c):

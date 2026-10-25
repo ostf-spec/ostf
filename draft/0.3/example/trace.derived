@@ -1,0 +1,4 @@
+trace.derived 1
+charge_test.go#TestChargeRetry covers charge.go#NewService view=unknown tool=go-test-cover
+charge_test.go#TestChargeRetry covers charge.go#Service.Charge view=unknown tool=go-test-cover
+refund_test.go#TestRefundLimit covers refund.go#CheckRefundLimit view=unknown tool=go-test-cover

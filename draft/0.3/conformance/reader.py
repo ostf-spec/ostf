@@ -67,7 +67,7 @@ SEVERITY = {
     "UNSUPPORTED_LANGUAGE": "warning", "PARSE_ERROR": "warning", "TAG_UNKNOWN_ID": "error",
     "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info", "LOCK_MISSING": "info",
     "LOCK_INVALID": "error", "LOCK_DUPLICATE": "error", "STAMP_REFUSED": "error",
-    "NESTED_ROOT": "info",
+    "NESTED_ROOT": "info", "DERIVED_INVALID": "error",
 }
 # This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
 OWN_PREFIX = "ostf-reader."
@@ -895,25 +895,33 @@ def identity(link):
     return " ".join(fields)
 
 
-def parse_lock(data):
-    """Entries by identity, and (code, line) problems. Each line is decoded on its own."""
-    entries, problems, duplicates = {}, [], set()
+def _lines(data, code):
+    """The lines of a lock or derived file, each decoded on its own: None, and a problem, for one that is not UTF-8."""
     data = data.encode() if isinstance(data, str) else data
-    lines = []
+    lines, problems = [], []
     for raw in data.replace(b"\r\n", b"\n").split(b"\n"):
         try:
             lines.append(raw.decode("utf-8"))
         except UnicodeError:
             lines.append(None)
-            problems.append(("LOCK_INVALID", raw.decode("utf-8", "backslashreplace")))
+            problems.append((code, raw.decode("utf-8", "backslashreplace")))
+    return lines, problems
+
+
+def _unescape(value):
+    """Annex B: a percent-escaped value, or ValueError."""
+    if re.search(r"%(?![0-9a-fA-F]{2})", value) or any(ord(c) <= 32 or c in "=\x7f" for c in value):
+        raise ValueError("bad escape")
+    return urllib.parse.unquote(value, errors="strict")
+
+
+def parse_lock(data):
+    """Entries by identity, and (code, line) problems. Each line is decoded on its own."""
+    entries, duplicates = {}, set()
+    lines, problems = _lines(data, "LOCK_INVALID")
     if lines[0] != "trace.lock 1":
         return entries, problems if lines[0] is None else [("LOCK_INVALID", lines[0])]
-
-    def decode(value):
-        if re.search(r"%(?![0-9a-fA-F]{2})", value) or any(ord(c) <= 32 or c in "=\x7f" for c in value):
-            raise ValueError("bad escape")
-        return urllib.parse.unquote(value, errors="strict")
-
+    decode = _unescape
     for line in lines[1:]:
         if not line:  # an empty line, or one already reported as not UTF-8
             continue
@@ -938,6 +946,33 @@ def parse_lock(data):
             problems.append(("LOCK_INVALID", line))
     # OSTF-142: neither duplicate entry is used, so the link is unstamped.
     return {key: entry for key, entry in entries.items() if key not in duplicates}, problems
+
+
+def parse_derived(data):
+    """OSTF-146: the (test anchor, code anchor) of each observation, and (code, line) problems."""
+    observations = []
+    lines, problems = _lines(data, "DERIVED_INVALID")
+    if lines[0] != "trace.derived 1":
+        return observations, problems if lines[0] is None else [("DERIVED_INVALID", lines[0])]
+    for line in lines[1:]:
+        if not line:  # an empty line, or one already reported as not UTF-8
+            continue
+        try:
+            parts = line.split(" ")
+            if len(parts) != 5 or parts[1] != "covers":
+                raise ValueError("bad observation")
+            pairs = dict(part.split("=", 1) for part in parts[3:])
+            if sorted(pairs) != ["tool", "view"] or not all(pairs.values()):
+                raise ValueError("view and tool, once each")
+            for value in pairs.values():
+                _unescape(value)
+            test, code = _unescape(parts[0]), _unescape(parts[2])
+            if split_anchor(test) is None or split_anchor(code) is None:
+                raise ValueError("not an anchor")
+            observations.append((test, code))
+        except (ValueError, UnicodeError):
+            problems.append(("DERIVED_INVALID", line))
+    return observations, problems
 
 
 def lock_text(entries):
@@ -993,12 +1028,12 @@ def match_glob(pattern, path):
 
 
 def split_anchor(anchor):
-    """Path and symbol of an anchor, or None when it is malformed or names the root's trace.lock,
-    in any ASCII case (OSTF-132)."""
+    """Path and symbol of an anchor, or None when it is malformed or names the root's trace.lock or
+    trace.derived, in any ASCII case (OSTF-132)."""
     if not isinstance(anchor, str):
         return None
     path, hash_, symbol = anchor.partition("#")
-    if not clean_path(path) or fold(path) == "trace.lock" or (hash_ and (not symbol or "\r" in symbol or "\n" in symbol)):
+    if not clean_path(path) or fold(path) in ("trace.lock", "trace.derived") or (hash_ and (not symbol or "\r" in symbol or "\n" in symbol)):
         return None
     return path, symbol
 
@@ -1639,6 +1674,29 @@ class Analysis:
                 reasons.add("BODY_CHANGED")
             link["reasons"] = sorted(reasons, key=str.encode)
             link["state"] = "suspect" if reasons else "valid"
+        self._corroboration()
+
+    def _corroboration(self):
+        """OSTF-146: beside the state of each implements link whose anchor binds, whether a test anchor
+        that verifies its item covers it, by the definitions each anchor binds to in this view."""
+        if "trace.derived" not in self.files:
+            return
+        if self.size("trace.derived") > MAX_FILE_BYTES:
+            self.report("FILE_TOO_LARGE", "trace.derived", message="larger than 8 MiB; no line is used")
+            observations = []
+        else:
+            observations, problems = parse_derived(self.data("trace.derived"))
+            for code, line in problems:
+                self.report(code, "trace.derived", line)
+        bound = lambda anchor: (lambda found: found[2] if found[0] == "ok" else None)(self.bind(anchor))
+        covered = {(bound(test), bound(code)) for test, code in observations}
+        for link in self.links.values():
+            if link["type"] != "implements" or not link["anchor"] or link["status"] != "ok":
+                continue
+            tests = [l["binding"] for l in self.links.values()
+                     if l["type"] == "verifies" and l["anchor"] and l["target"] == link["target"] and l["status"] == "ok"]
+            link["corroboration"] = "unobserved" if not tests else \
+                "corroborated" if any((test, link["binding"]) in covered for test in tests) else "uncorroborated"
 
     def _unlinked(self):
         """One info for the statements, other than obsolete ones, that no link targets: check
@@ -1668,6 +1726,8 @@ class Analysis:
         row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin", "fingerprints")}
         if "state" in link:
             row["state"], row["reasons"] = link["state"], link["reasons"]
+        if "corroboration" in link:
+            row["corroboration"] = link["corroboration"]
         return row
 
     def result(self):
@@ -1774,7 +1834,7 @@ def context(analysis, target, anchor=None, spell=lambda path: path):
         unresolved = [row]
     subjects = items | {analysis.links[k]["source"] for k in links} | links
     paths = {split_anchor(analysis.links[k]["source"])[0] for k in links if analysis.links[k]["anchor"]}
-    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") == "trace.lock"
+    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") in ("trace.lock", "trace.derived")
                                           or d.get("subject") in subjects or d.get("file") in paths]
     result["items"] = [analysis.item_row(i, True) for i in sorted(items, key=str.encode)]
     result["links"] = [analysis.link_row(analysis.links[k]) for k in sorted(links, key=str.encode)]
@@ -1798,7 +1858,9 @@ def render(analysis, target, anchor=None):
         return text
 
     def state(link):
-        return f" ({link['state']})" if "state" in link else ""
+        """Rule 5: the state, then the corroboration (OSTF-146), in parentheses."""
+        shown = [link[k] for k in ("state", "corroboration") if k in link]
+        return f" ({', '.join(shown)})" if shown else ""
 
     def name(link, inverse=False):
         base = vocabulary[link["type"]].get("inverse", link["type"] + "_by") if inverse else link["type"]

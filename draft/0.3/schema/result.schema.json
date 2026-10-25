@@ -78,6 +78,7 @@
           "additionalProperties": false
         },
         "state": { "enum": ["valid", "suspect", "unstamped", "broken"] },
+        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the state, never part of it." },
         "reasons": {
           "type": "array",
           "items": { "enum": ["LINK_BROKEN", "LINK_UNSTAMPED", "UNKNOWN_ALGORITHM", "ITEM_CHANGED", "SIGNATURE_CHANGED", "BODY_CHANGED"] }

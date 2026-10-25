@@ -97,7 +97,8 @@
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
       },
       "state": "valid",
-      "reasons": []
+      "reasons": [],
+      "corroboration": "corroborated"
     },
     {
       "source": "charge_test.go#TestChargeRetry",
@@ -124,7 +125,8 @@
         "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
       },
       "state": "valid",
-      "reasons": []
+      "reasons": [],
+      "corroboration": "unobserved"
     },
     {
       "source": "refund.go#CheckRefundLimit",
@@ -138,7 +140,8 @@
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
       "state": "valid",
-      "reasons": []
+      "reasons": [],
+      "corroboration": "corroborated"
     },
     {
       "source": "refund_test.go#TestRefundLimit",

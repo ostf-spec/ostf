@@ -5969,6 +5969,624 @@
      "R-A"
     ]
    }
+  },
+  {
+   "id": "derived-corroboration",
+   "requirements": [
+    "OSTF-146",
+    "Annex B"
+   ],
+   "note": "F is covered by TestF, which verifies R-A; Service.Run by TestRun, spelled as Run and as a subtest, since anchors match by the definitions they bind to; G and b.go have a verifying test that covers neither; H's item has no test, so TestF covering it corroborates nothing. Verifies links get no corroboration.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestRun covers a.go#Run view=5d1e2f0 tool=go-cover\na_test.go#TestF covers a.go#H view=5d1e2f0 tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "corroborated",
+     "a.go#G implements R-A": "uncorroborated",
+     "a.go#H implements R-B": "unobserved",
+     "a.go#Service.Run implements R-A": "corroborated",
+     "b.go implements R-A": "uncorroborated"
+    }
+   }
+  },
+  {
+   "id": "derived-absent",
+   "requirements": [
+    "OSTF-146"
+   ],
+   "note": "Without trace.derived no corroboration is reported, as no state is without a lock.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {}
+   }
+  },
+  {
+   "id": "derived-header-only",
+   "requirements": [
+    "OSTF-146"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "uncorroborated",
+     "a.go#G implements R-A": "uncorroborated",
+     "a.go#H implements R-B": "unobserved",
+     "a.go#Service.Run implements R-A": "uncorroborated",
+     "b.go implements R-A": "uncorroborated"
+    }
+   }
+  },
+  {
+   "id": "derived-invalid-lines",
+   "requirements": [
+    "OSTF-146",
+    "Annex B"
+   ],
+   "note": "Each malformed line is not used and the others are: a line without tool, with another word than covers, with a pair other than view and tool or one of them twice, with an empty value, a bad escape, or a test anchor that is not an anchor.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#G view=5d1e2f0\na_test.go#TestF calls a.go#G view=5d1e2f0 tool=t\na_test.go#TestF covers a.go#G view=5d1e2f0 tool=t by=x\na_test.go#TestF covers a.go#G view=5d1e2f0 tool=t tool=u\na_test.go#TestF covers a.go#G view= tool=t\na_test.go#TestF covers a.go#G view=%zz tool=t\n../a_test.go#TestF covers a.go#G view=5d1e2f0 tool=t\na_test.go#TestF covers a.go#F tool=go-cover view=5d1e2f0\r\n"
+   },
+   "expect": {
+    "codes": [
+     "DERIVED_INVALID",
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "corroborated",
+     "a.go#G implements R-A": "uncorroborated",
+     "a.go#H implements R-B": "unobserved",
+     "a.go#Service.Run implements R-A": "uncorroborated",
+     "b.go implements R-A": "uncorroborated"
+    }
+   }
+  },
+  {
+   "id": "derived-header-invalid",
+   "requirements": [
+    "OSTF-146",
+    "Annex B"
+   ],
+   "note": "A malformed first line voids every line.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 2\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestRun covers a.go#Run view=5d1e2f0 tool=go-cover\na_test.go#TestF covers a.go#H view=5d1e2f0 tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [
+     "DERIVED_INVALID",
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "uncorroborated",
+     "a.go#G implements R-A": "uncorroborated",
+     "a.go#H implements R-B": "unobserved",
+     "a.go#Service.Run implements R-A": "uncorroborated",
+     "b.go implements R-A": "uncorroborated"
+    }
+   }
+  },
+  {
+   "id": "derived-too-large",
+   "requirements": [
+    "OSTF-105",
+    "OSTF-146"
+   ],
+   "note": "trace.derived is padded with line feeds to one byte above 8 MiB, so no line is used.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestRun covers a.go#Run view=5d1e2f0 tool=go-cover\na_test.go#TestF covers a.go#H view=5d1e2f0 tool=go-cover\n"
+   },
+   "padTo": {
+    "trace.derived": 8388609
+   },
+   "expect": {
+    "codes": [
+     "FILE_TOO_LARGE",
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#H",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Service.Run",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestRun/fast",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "b.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "uncorroborated",
+     "a.go#G implements R-A": "uncorroborated",
+     "a.go#H implements R-B": "unobserved",
+     "a.go#Service.Run implements R-A": "uncorroborated",
+     "b.go implements R-A": "uncorroborated"
+    }
+   }
+  },
+  {
+   "id": "derived-broken-test",
+   "requirements": [
+    "OSTF-146"
+   ],
+   "note": "A verifying test anchor that does not bind is no test of the item, so the code is unobserved; a broken code anchor has no corroboration.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#Gone]\n    tests: [a_test.go#TestGone]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [
+     "BROKEN_LINK",
+     "LOCK_MISSING"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a.go#Gone",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ],
+     [
+      "a_test.go#TestGone",
+      "verifies",
+      "R-A",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "unobserved"
+    }
+   }
+  },
+  {
+   "id": "derived-not-an-anchor",
+   "requirements": [
+    "OSTF-132",
+    "OSTF-146"
+   ],
+   "note": "A tool rewrites trace.derived, so, like trace.lock, it is not an anchor.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [trace.derived, TRACE.DERIVED]\n",
+    "trace.derived": "trace.derived 1\n"
+   },
+   "expect": {
+    "codes": [
+     "ANCHOR_INVALID",
+     "LOCK_MISSING"
+    ],
+    "links": []
+   }
   }
  ],
  "contexts": [
@@ -6620,6 +7238,74 @@
      "V-2 verifies V-1"
     ],
     "text": "V-1\n  Check one.\n  verifies V-2: Check two.\n    verifies V-1\n"
+   }
+  },
+  {
+   "id": "context-corroboration-without-lock",
+   "requirements": [
+    "OSTF-146",
+    "Annex I.3",
+    "Annex J"
+   ],
+   "note": "Without a lock a link has no state, and its corroboration stands alone in the parentheses.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestRun covers a.go#Run view=5d1e2f0 tool=go-cover\na_test.go#TestF covers a.go#H view=5d1e2f0 tool=go-cover\n"
+   },
+   "context": "R-A",
+   "expect": {
+    "resolved": true,
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a.go#G implements R-A",
+     "a.go#Service.Run implements R-A",
+     "a_test.go#TestF verifies R-A",
+     "a_test.go#TestRun/fast verifies R-A",
+     "b.go implements R-A"
+    ],
+    "text": "R-A\n  A.\n  implemented_by a.go#F (corroborated)\n  implemented_by a.go#G (uncorroborated)\n  implemented_by a.go#Service.Run (corroborated)\n  implemented_by b.go (uncorroborated)\n  verified_by a_test.go#TestF\n  verified_by a_test.go#TestRun/fast\n"
+   }
+  },
+  {
+   "id": "context-corroboration-after-state",
+   "requirements": [
+    "OSTF-146",
+    "Annex I.3",
+    "Annex J"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
+    "a.go": "package a\n\ntype Service struct{}\n\nfunc (Service) Run() int { return 1 }\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n\nfunc H() int { return 4 }\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestRun(t *testing.T) { Service{}.Run() }\n",
+    "b.go": "package a\n\nconst B = 1\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestRun covers a.go#Run view=5d1e2f0 tool=go-cover\na_test.go#TestF covers a.go#H view=5d1e2f0 tool=go-cover\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:Li9bJdNSleQLs3X-GJy-0MrrJ8HHRvhqEbJsekxP4X4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "context": "a.go#F",
+   "expect": {
+    "resolved": true,
+    "codes": [],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a.go#G implements R-A",
+     "a.go#Service.Run implements R-A",
+     "a_test.go#TestF verifies R-A",
+     "a_test.go#TestRun/fast verifies R-A",
+     "b.go implements R-A"
+    ],
+    "text": "a.go#F\n  implements R-A (valid, corroborated)\n    A.\n    implemented_by a.go#G (unstamped, uncorroborated)\n    implemented_by a.go#Service.Run (unstamped, corroborated)\n    implemented_by b.go (unstamped, uncorroborated)\n    verified_by a_test.go#TestF (unstamped)\n    verified_by a_test.go#TestRun/fast (unstamped)\n"
    }
   }
  ],

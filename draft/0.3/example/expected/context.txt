@@ -1,5 +1,5 @@
 refund.go#CheckRefundLimit
-  implements R-REFUND-LIMIT: Refund limit (valid)
+  implements R-REFUND-LIMIT: Refund limit (valid, corroborated)
     risk-relevant: ask before changing
     A refund must not exceed the original order, and refunds above the daily limit for an account need a second approval.
     controls RISK-REFUND-ABUSE: A compromised account or a mistaken operator drains funds through refunds. (valid)
