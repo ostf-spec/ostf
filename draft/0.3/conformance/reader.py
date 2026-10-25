@@ -46,7 +46,7 @@ ATTRIBUTE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9]{0,47}\Z")
 SOURCE_ALIAS = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
 EXTERNAL = re.compile(r"([a-z][a-z0-9-]{0,31}):([^\s\x00-\x1f\x7f]+)\Z")
 FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
-ALGORITHMS = {"f1", "go1", "lf1", "ts2", "py1"}
+ALGORITHMS = {"f1", "go2", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
 STATEMENTS = ["need", "requirement", "design"]
@@ -173,8 +173,63 @@ def item_projection(item, types):
     return rfc8785.dumps(fields)
 
 
-def _token_bytes(node, source, start, end):
-    tokens = []
+# A.4 (go2): the lists whose elements the grammar ends with ;, and the declarations whose
+# specifications are such elements when grouped in parentheses.
+GO_LISTS = {"source_file", "statement_list", "import_spec_list", "var_spec_list", "field_declaration_list", "interface_type"}
+GO_GROUPS = {"const_declaration", "type_declaration"}
+
+
+def _go_element(n):
+    """A.4 (go2): whether n is a statement, declaration, specification, field or interface element
+    that the grammar ends with ;."""
+    if not n.is_named or n.type == "comment" or n.parent is None:
+        return False
+    if n.parent.type in GO_LISTS:
+        return True
+    return n.parent.type in GO_GROUPS and any(c.type == "(" for c in n.parent.children)
+
+
+def _go_omitted(root):
+    """A.4 (go2): the (start, end) of every element whose ; the source omits, at a line end or
+    before a closing bracket: neither its last token nor the token after it is a written ;."""
+    tokens, elements, stack = [], [], [root]
+    while stack:
+        n = stack.pop()
+        if n.type == "comment":
+            continue
+        if _go_element(n):
+            elements.append(n)
+        if n.type in LITERALS or not n.children:
+            tokens.append((n.start_byte, n.type))
+            continue
+        stack.extend(reversed(n.children))
+    starts = [t[0] for t in tokens]
+    omitted = []
+    for n in elements:
+        after = bisect.bisect_left(starts, n.end_byte)
+        written = (after > 0 and tokens[after - 1][1] == ";" and tokens[after - 1][0] >= n.start_byte) or \
+            (after < len(tokens) and tokens[after][1] == ";")
+        if not written:
+            omitted.append((n.start_byte, n.end_byte))
+    return sorted(omitted, key=lambda span: span[1])
+
+
+def _insert_omitted(tokens, ends, omitted, start, end, own=None):
+    """A.4, K.4: a ; after each construct in `omitted`, sorted by end, that source[start:end] holds
+    whole, other than `own`."""
+    for element in omitted[bisect.bisect_right(omitted, start, key=lambda span: span[1]):]:
+        if element[1] > end:
+            break
+        if element[0] >= start and element != own:
+            at = bisect.bisect_right(ends, element[1])
+            tokens.insert(at, b";")
+            ends.insert(at, element[1])
+
+
+def _token_bytes(node, source, start, end, omitted=None, own=None):
+    """A.4: the token stream of source[start:end]. With `omitted`, that of go2: a ; after each element
+    in it that the span holds whole, other than `own`, the definition the span belongs to."""
+    tokens, ends = [], []
 
     def visit(n):
         if n.end_byte <= start or n.start_byte >= end or n.type == "comment":
@@ -185,11 +240,13 @@ def _token_bytes(node, source, start, end):
                 raw = raw.replace(b"\r", b"")
             if raw:
                 tokens.append(raw)
+                ends.append(n.end_byte)
             return
         for child in n.children:
             visit(child)
 
     visit(node)
+    _insert_omitted(tokens, ends, omitted or [], start, end, own)
     return b" ".join(tokens)
 
 
@@ -248,8 +305,9 @@ def _tree_comments(root, source, kinds=("comment",), opaque=()):
     return sorted(found, key=lambda c: c["start"])
 
 
-def go_source(source, path=""):
-    """Annex A: definitions, whole-file token stream and comments, or None when the file does not parse."""
+def go_source(source, path="", algorithm="go2"):
+    """Annex A: definitions, whole-file token stream and comments, or None when the file does not parse.
+    With algorithm "go1", the token streams of the superseded go1 (A.6)."""
     try:
         source.decode("utf-8")
     except UnicodeError:
@@ -259,6 +317,7 @@ def go_source(source, path=""):
         return None
     definitions = []
     comments = _tree_comments(tree.root_node, source)
+    omitted = _go_omitted(tree.root_node) if algorithm == "go2" else None
     for declaration in tree.root_node.named_children:
         spans = []
         function = declaration.type == "function_declaration"
@@ -285,11 +344,16 @@ def go_source(source, path=""):
         for name, start, end, header, member in spans:
             definition = {"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
                           "function": function, "member": member,
-                          "sig": _token_bytes(tree.root_node, source, start, header),
-                          "body": _token_bytes(tree.root_node, source, start, end)}
+                          "sig": _token_bytes(tree.root_node, source, start, header, omitted, (start, end)),
+                          "body": _token_bytes(tree.root_node, source, start, end, omitted, (start, end))}
             definition["test"] = is_test(definition, path)
             definitions.append(definition)
-    return {"definitions": definitions, "whole": _token_bytes(tree.root_node, source, 0, len(source)), "comments": comments}
+    return {"definitions": definitions, "whole": _token_bytes(tree.root_node, source, 0, len(source), omitted), "comments": comments}
+
+
+def go1_source(source, path=""):
+    """A.6: the superseded go1, for its vectors; no Analyzer state uses it."""
+    return go_source(source, path, "go1")
 
 
 def is_test(definition, path):
@@ -412,12 +476,10 @@ def _ts_tokens(root, source, start, end, omitted=None):
                 ends.append(n.end_byte)
             continue
         stack.extend(reversed(n.children))
-    for construct_start, construct_end in omitted or ():
-        if start <= construct_start and construct_end <= end:
-            at = bisect.bisect_right(ends, construct_end)
-            tokens.insert(at, b";")
-            ends.insert(at, construct_end)
-    kept = [t for i, t in enumerate(tokens) if not (t == b"," and i + 1 < len(tokens) and tokens[i + 1] in (b")", b"]", b"}", b">"))]
+    _insert_omitted(tokens, ends, omitted or [], start, end)
+    # A , before a closing bracket is dropped; under ts2, not an elision, a , after [ or another , (K.4).
+    kept = [t for i, t in enumerate(tokens) if not (t == b"," and i + 1 < len(tokens) and tokens[i + 1] in (b")", b"]", b"}", b">")
+                                                    and (omitted is None or i == 0 or tokens[i - 1] not in (b"[", b",")))]
     return b" ".join(kept)
 
 
@@ -724,7 +786,7 @@ class Annex:
 
 
 ANNEXES = [
-    Annex("go1", (".go",), go_source, select, lambda path: path.endswith("_test.go")),
+    Annex("go2", (".go",), go_source, select, lambda path: path.endswith("_test.go")),
     Annex("ts2", TS_TYPESCRIPT + TS_TSX + TS_JAVASCRIPT, ts_source, ts_select, ts_test_file),
     Annex("py1", (".py",), py_source, py_select, py_test_file),
 ]

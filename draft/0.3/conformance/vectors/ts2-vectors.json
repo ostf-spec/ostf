@@ -768,6 +768,83 @@
     }
   },
   {
+    "id": "ts2-elision",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.js",
+    "source": "const a = [,]\n",
+    "symbol": "a",
+    "note": "An array of length 1. Under ts1 the comma was dropped before ], giving the stream of ts2-empty-array.",
+    "sigTokens": "const a = [ , ] ;",
+    "bodyTokens": "const a = [ , ] ;",
+    "expect": {
+      "source.sig": "ts2:GcrETSBmitTG59RH0oyUaxqiMC_UP_Kf6lG33VXMCXg",
+      "source.body": "ts2:GcrETSBmitTG59RH0oyUaxqiMC_UP_Kf6lG33VXMCXg"
+    }
+  },
+  {
+    "id": "ts2-empty-array",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.js",
+    "source": "const a = []\n",
+    "symbol": "a",
+    "sigTokens": "const a = [ ] ;",
+    "bodyTokens": "const a = [ ] ;",
+    "expect": {
+      "source.sig": "ts2:2WOYXI6ov3FmP0T-IbFy8poZSYR3ZpH9_inlTmWmQSM",
+      "source.body": "ts2:2WOYXI6ov3FmP0T-IbFy8poZSYR3ZpH9_inlTmWmQSM"
+    }
+  },
+  {
+    "id": "ts2-elision-pattern",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.js",
+    "source": "[,] = it\n",
+    "symbol": "",
+    "note": "Takes one value from it; [] = it takes none.",
+    "sigTokens": "[ , ] = it ;",
+    "expect": {
+      "source.sig": "ts2:O4DT2WiAM6gnkIvpCRVpEVSZVEh0CeZvzx5YrNpKqqM"
+    }
+  },
+  {
+    "id": "ts2-trailing-elision",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.js",
+    "source": "const a = [1,,]\n",
+    "symbol": "a",
+    "note": "Length 2: the last , follows another, so it is an elision and stays.",
+    "sigTokens": "const a = [ 1 , , ] ;",
+    "bodyTokens": "const a = [ 1 , , ] ;",
+    "expect": {
+      "source.sig": "ts2:Wewy9GrdVLMgFI2fiz_bZPQ2usTtS7VMHWDk-ns4Z3w",
+      "source.body": "ts2:Wewy9GrdVLMgFI2fiz_bZPQ2usTtS7VMHWDk-ns4Z3w"
+    }
+  },
+  {
+    "id": "ts2-trailing-comma-array",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.js",
+    "source": "const a = [1,]\n",
+    "symbol": "a",
+    "note": "Length 1, like [1]: a trailing comma after an element is dropped.",
+    "sigTokens": "const a = [ 1 ] ;",
+    "bodyTokens": "const a = [ 1 ] ;",
+    "expect": {
+      "source.sig": "ts2:6WUVihAYcM7X3GV5HljhWdSJKW4oI2U_yXLqWWdS_5g",
+      "source.body": "ts2:6WUVihAYcM7X3GV5HljhWdSJKW4oI2U_yXLqWWdS_5g"
+    }
+  },
+  {
     "id": "ts2-if-else",
     "requirements": [
       "Annex K"

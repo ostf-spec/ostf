@@ -1,0 +1,575 @@
+[
+  {
+    "id": "go-function",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "symbol": "Add",
+    "sigTokens": "func Add ( a , b int ) int",
+    "bodyTokens": "func Add ( a , b int ) int { return a + b ; }",
+    "expect": {
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
+    }
+  },
+  {
+    "id": "go-comments",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\n// docs\nfunc Add(a,b int)int { /* hi */ return a + b // end\n}\n",
+    "symbol": "Add",
+    "sigTokens": "func Add ( a , b int ) int",
+    "bodyTokens": "func Add ( a , b int ) int { return a + b ; }",
+    "expect": {
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
+    }
+  },
+  {
+    "id": "go-whole",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Add(a,b int)int{return a+b}\n",
+    "symbol": "",
+    "sigTokens": "package sample ; func Add ( a , b int ) int { return a + b ; } ;",
+    "expect": {
+      "source.sig": "go2:swjWU0XlWGPk538nwbSLQadcasZrWRBhfQ8X2cF8bEE"
+    }
+  },
+  {
+    "id": "go-explicit-semicolon",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() { x := 1; _ = x }\n",
+    "symbol": "F",
+    "sigTokens": "func F ( )",
+    "bodyTokens": "func F ( ) { x := 1 ; _ = x ; }",
+    "expect": {
+      "source.sig": "go2:Gy7W4mgChxlwDQEMnQNUaDvNUcHsmc3TgtJF_rVtcRk",
+      "source.body": "go2:c218hnrc6CkXUPHFknRUoyEIWIsq8n0ofbqafUzwrT8"
+    }
+  },
+  {
+    "id": "go-pointer-method",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct{}\nfunc (p *Pump) Stop() {}\n",
+    "symbol": "Pump.Stop",
+    "sigTokens": "func ( p * Pump ) Stop ( )",
+    "bodyTokens": "func ( p * Pump ) Stop ( ) { }",
+    "expect": {
+      "source.sig": "go2:b-gZC-ycl1_BGAunvRLPSHAnuXSRn9otet4VC7wh2GM",
+      "source.body": "go2:xiDLqAiDYQS5nEsyTYzPiysU8kE-OqIW7eIKjAHS2mk"
+    }
+  },
+  {
+    "id": "go-bare-method",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct{}\nfunc (p *Pump) Stop() {}\n",
+    "symbol": "Stop",
+    "sigTokens": "func ( p * Pump ) Stop ( )",
+    "bodyTokens": "func ( p * Pump ) Stop ( ) { }",
+    "expect": {
+      "source.sig": "go2:b-gZC-ycl1_BGAunvRLPSHAnuXSRn9otet4VC7wh2GM",
+      "source.body": "go2:xiDLqAiDYQS5nEsyTYzPiysU8kE-OqIW7eIKjAHS2mk"
+    }
+  },
+  {
+    "id": "go-generic-method",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump[T any] struct{}\nfunc (p *Pump[T]) Stop(v T) T {return v}\n",
+    "symbol": "Pump.Stop",
+    "sigTokens": "func ( p * Pump [ T ] ) Stop ( v T ) T",
+    "bodyTokens": "func ( p * Pump [ T ] ) Stop ( v T ) T { return v ; }",
+    "expect": {
+      "source.sig": "go2:ipoPF9sl1XfRuQgky0ZztzCx82do6hDQ5p_FpcvPhAc",
+      "source.body": "go2:2zKAmLLIYJdl96kVk0auSJ1IWJNf3mozawC66wmYskA"
+    }
+  },
+  {
+    "id": "go-type",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct { Limit int }\n",
+    "symbol": "Pump",
+    "sigTokens": "type Pump struct { Limit int ; }",
+    "bodyTokens": "type Pump struct { Limit int ; }",
+    "expect": {
+      "source.sig": "go2:-2AL_qVgmAUnKwTMFzyE5rGn7iP9Qexb0R3QsHcylS0",
+      "source.body": "go2:-2AL_qVgmAUnKwTMFzyE5rGn7iP9Qexb0R3QsHcylS0"
+    }
+  },
+  {
+    "id": "go-type-group",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype (\n Pump struct { Limit int }\n Other int\n)\n",
+    "symbol": "Pump",
+    "sigTokens": "Pump struct { Limit int ; }",
+    "bodyTokens": "Pump struct { Limit int ; }",
+    "expect": {
+      "source.sig": "go2:VjaVezfsn88Js_YQZlZ_190kIYdnqNgU_3q7orXvvkM",
+      "source.body": "go2:VjaVezfsn88Js_YQZlZ_190kIYdnqNgU_3q7orXvvkM"
+    }
+  },
+  {
+    "id": "go-const",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nconst Max = 0x_FF\n",
+    "symbol": "Max",
+    "sigTokens": "const Max = 0x_FF",
+    "bodyTokens": "const Max = 0x_FF",
+    "expect": {
+      "source.sig": "go2:EAmaY6eeKIE797TfmLzulweCY0rSGi-f7bSLb4XTFfo",
+      "source.body": "go2:EAmaY6eeKIE797TfmLzulweCY0rSGi-f7bSLb4XTFfo"
+    }
+  },
+  {
+    "id": "go-const-group",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nconst (\n Max = 4\n Min = 1\n)\n",
+    "symbol": "Min",
+    "sigTokens": "Min = 1",
+    "bodyTokens": "Min = 1",
+    "expect": {
+      "source.sig": "go2:N3RMg8V5fzfY9ZCmprpDOotG7HS2sqELc2QLpsaDVn8",
+      "source.body": "go2:N3RMg8V5fzfY9ZCmprpDOotG7HS2sqELc2QLpsaDVn8"
+    }
+  },
+  {
+    "id": "go-var-group",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nvar (\n X = 1\n Y = 2\n)\n",
+    "symbol": "Y",
+    "sigTokens": "Y = 2",
+    "bodyTokens": "Y = 2",
+    "expect": {
+      "source.sig": "go2:aKxclipfZAAl15E0S1vtSj8V430SapJOy9jrk5Dgedw",
+      "source.body": "go2:aKxclipfZAAl15E0S1vtSj8V430SapJOy9jrk5Dgedw"
+    }
+  },
+  {
+    "id": "go-multi-name",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nvar A, B = 1, 2\n",
+    "symbol": "B",
+    "sigTokens": "var A , B = 1 , 2",
+    "bodyTokens": "var A , B = 1 , 2",
+    "expect": {
+      "source.sig": "go2:q_INufq5dXG3qwe8YLqk59tOanUm5_hHDA8aycXfkZE",
+      "source.body": "go2:q_INufq5dXG3qwe8YLqk59tOanUm5_hHDA8aycXfkZE"
+    }
+  },
+  {
+    "id": "go-unicode",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Δ(α int) int { return α }\n",
+    "symbol": "Δ",
+    "sigTokens": "func Δ ( α int ) int",
+    "bodyTokens": "func Δ ( α int ) int { return α ; }",
+    "expect": {
+      "source.sig": "go2:R0OK9eXW7WC2AEoCNTZAMWWunCzguQkKB_bu671bQPw",
+      "source.body": "go2:0I6z00nRERVz-lrOpMukHs4Bs0ZhxhfREYpq_9qGWKg"
+    }
+  },
+  {
+    "id": "go-literals",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc S() string { return \"a\\n\\\"b\" }\n",
+    "symbol": "S",
+    "sigTokens": "func S ( ) string",
+    "bodyTokens": "func S ( ) string { return \"a\\n\\\"b\" ; }",
+    "expect": {
+      "source.sig": "go2:LkhEuF3TAICnurbtfRs-el57v9z6l3hxsrBpw3-TvCw",
+      "source.body": "go2:1hakv5XMSt-pNqjOoZv4HvvMpAJ_7Jj-rihVQjcLpVo"
+    }
+  },
+  {
+    "id": "go-raw-cr",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc S() string { return `a\r\nb` }\n",
+    "symbol": "S",
+    "sigTokens": "func S ( ) string",
+    "bodyTokens": "func S ( ) string { return `a\nb` ; }",
+    "expect": {
+      "source.sig": "go2:LkhEuF3TAICnurbtfRs-el57v9z6l3hxsrBpw3-TvCw",
+      "source.body": "go2:LUdh6QfvnVcSC910h-vB_QT772YJEHzsUtcKsjWTa60"
+    }
+  },
+  {
+    "id": "go-result-struct",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() struct{X int} { return struct{X int}{1} }\n",
+    "symbol": "F",
+    "sigTokens": "func F ( ) struct { X int ; }",
+    "bodyTokens": "func F ( ) struct { X int ; } { return struct { X int ; } { 1 } ; }",
+    "expect": {
+      "source.sig": "go2:pXh_uOeIScQl00FH8HNLM2-efhE_urVK6gA2TK7b4tM",
+      "source.body": "go2:RyPIphVrqS3zEnr4sjohYWQy84ShxesLccNwPG4RCtI"
+    }
+  },
+  {
+    "id": "go-bare-multiple",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype A int\ntype B int\nfunc (a A) F() {}\nfunc (b B) F() {}\n",
+    "symbol": "F",
+    "sigTokens": "func ( a A ) F ( ) func ( b B ) F ( )",
+    "bodyTokens": "func ( a A ) F ( ) { } func ( b B ) F ( ) { }",
+    "expect": {
+      "source.sig": "go2:5Gt7cCGJMzmg4i3GLwgWArKYw5e7Wo4-lVPu_dFtSbE",
+      "source.body": "go2:cMkV0XHn6Wbgb74wuI7Lh7HHiZHeGkQ7FhuG9n6AStg"
+    }
+  },
+  {
+    "id": "go-generic-receiver-pair",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump[K, V any] struct{}\nfunc (p *Pump[K, V]) Stop() {}\n",
+    "symbol": "Pump.Stop",
+    "sigTokens": "func ( p * Pump [ K , V ] ) Stop ( )",
+    "bodyTokens": "func ( p * Pump [ K , V ] ) Stop ( ) { }",
+    "expect": {
+      "source.sig": "go2:kvcd1ZIvRWKEULGH3dj2nRmPfuQlNle1yYcZIAhW0ZY",
+      "source.body": "go2:O6NFhJ6Nt-YXTHrKAmUkYohJCXdaIwAsE4aDSZX4uQQ"
+    }
+  },
+  {
+    "id": "go-interface-func-signature",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Run(f func(interface{ Done() }) error) error { return f(nil) }\n",
+    "symbol": "Run",
+    "sigTokens": "func Run ( f func ( interface { Done ( ) ; } ) error ) error",
+    "bodyTokens": "func Run ( f func ( interface { Done ( ) ; } ) error ) error { return f ( nil ) ; }",
+    "expect": {
+      "source.sig": "go2:HXpHdqIw1WNFAXxPK_NLeFOV75jX3OieV_8R9mncXL4",
+      "source.body": "go2:6Ee0H5PPmkaxt7zZrbvDD5fB-BulbcQHqzqWHqfBv5k"
+    }
+  },
+  {
+    "id": "go-block-comment-newline",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() { return /*\n*/ }\n",
+    "symbol": "F",
+    "sigTokens": "func F ( )",
+    "bodyTokens": "func F ( ) { return ; }",
+    "expect": {
+      "source.sig": "go2:Gy7W4mgChxlwDQEMnQNUaDvNUcHsmc3TgtJF_rVtcRk",
+      "source.body": "go2:BpgvdIRI5PM2Xw33HJBjqID6rNhkGHj17TudzZuZnVo"
+    }
+  },
+  {
+    "id": "go2-return-line-break",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (err error) {\n\tif c {\n\t\treturn\n\t\tg()\n\t}\n\treturn nil\n}\n",
+    "symbol": "f",
+    "note": "Returns nil without calling g. Under go1 the same stream as go2-return-call, which returns g().",
+    "sigTokens": "func f ( c bool ) ( err error )",
+    "bodyTokens": "func f ( c bool ) ( err error ) { if c { return ; g ( ) ; } ; return nil ; }",
+    "expect": {
+      "source.sig": "go2:5s5PSAoefJlag4_lrlWSgmZr_mGjt3MNLgYQnqgb9bs",
+      "source.body": "go2:DOuZdQwTjaPXtC4V-w43jAkRHkBF3_Q61OP-T2u9mHc"
+    }
+  },
+  {
+    "id": "go2-return-call",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (err error) {\n\tif c {\n\t\treturn g()\n\t}\n\treturn nil\n}\n",
+    "symbol": "f",
+    "sigTokens": "func f ( c bool ) ( err error )",
+    "bodyTokens": "func f ( c bool ) ( err error ) { if c { return g ( ) ; } ; return nil ; }",
+    "expect": {
+      "source.sig": "go2:5s5PSAoefJlag4_lrlWSgmZr_mGjt3MNLgYQnqgb9bs",
+      "source.body": "go2:LJY4gt2vodguTke7hO0v07SJy1YGE527rzl_NirNzEI"
+    }
+  },
+  {
+    "id": "go2-parenthesized-call-line-break",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() any {\n\tx := h\n\t(g())\n\treturn x\n}\n",
+    "symbol": "f",
+    "note": "Assigns h to x and calls g. Under go1 the same stream as go2-call, which assigns h(g()).",
+    "sigTokens": "func f ( ) any",
+    "bodyTokens": "func f ( ) any { x := h ; ( g ( ) ) ; return x ; }",
+    "expect": {
+      "source.sig": "go2:zJymWqViCidPvMXA_Sj1QKUAsX6tAWLhurjIlYMg0eY",
+      "source.body": "go2:Mnv5z-pWxCwgDRF_tov-7fcoIsM31eTtEVFtkb-UJlk"
+    }
+  },
+  {
+    "id": "go2-call",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() any {\n\tx := h(g())\n\treturn x\n}\n",
+    "symbol": "f",
+    "sigTokens": "func f ( ) any",
+    "bodyTokens": "func f ( ) any { x := h ( g ( ) ) ; return x ; }",
+    "expect": {
+      "source.sig": "go2:zJymWqViCidPvMXA_Sj1QKUAsX6tAWLhurjIlYMg0eY",
+      "source.body": "go2:LbfvsChjoFpn16P_Sk65WveV9EgVO_0XnF-ryzw1Lfs"
+    }
+  },
+  {
+    "id": "go2-receive-line-break",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (v int) {\n\tif c {\n\t\treturn\n\t\t<-ch\n\t}\n\treturn 1\n}\n",
+    "symbol": "f",
+    "note": "Returns 0 without receiving. Under go1 the same stream as go2-return-receive.",
+    "sigTokens": "func f ( c bool ) ( v int )",
+    "bodyTokens": "func f ( c bool ) ( v int ) { if c { return ; <- ch ; } ; return 1 ; }",
+    "expect": {
+      "source.sig": "go2:rHAGBlfwxVtuVrzZiHFgogXGuCOqVNpzHFIoQ3eD0gQ",
+      "source.body": "go2:fwgFTVFWNVB5wYOP3k2o3Ms95dLl2I-Sw5c8l8icLKM"
+    }
+  },
+  {
+    "id": "go2-return-receive",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (v int) {\n\tif c {\n\t\treturn <-ch\n\t}\n\treturn 1\n}\n",
+    "symbol": "f",
+    "sigTokens": "func f ( c bool ) ( v int )",
+    "bodyTokens": "func f ( c bool ) ( v int ) { if c { return <- ch ; } ; return 1 ; }",
+    "expect": {
+      "source.sig": "go2:rHAGBlfwxVtuVrzZiHFgogXGuCOqVNpzHFIoQ3eD0gQ",
+      "source.body": "go2:N40F6LIzSXJIkohg5OqP9p2bowayC4P5OckoU0Po9r4"
+    }
+  },
+  {
+    "id": "go2-one-line-body",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() int { return 1 }\n",
+    "symbol": "F",
+    "note": "A body on one line and the same body over three lines give one stream.",
+    "sigTokens": "func F ( ) int",
+    "bodyTokens": "func F ( ) int { return 1 ; }",
+    "expect": {
+      "source.sig": "go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o",
+      "source.body": "go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o"
+    }
+  },
+  {
+    "id": "go2-three-line-body",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() int {\n\treturn 1\n}\n",
+    "symbol": "F",
+    "sigTokens": "func F ( ) int",
+    "bodyTokens": "func F ( ) int { return 1 ; }",
+    "expect": {
+      "source.sig": "go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o",
+      "source.body": "go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o"
+    }
+  },
+  {
+    "id": "go2-struct-one-line",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype T struct{ a int; b int }\n",
+    "symbol": "T",
+    "note": "Fields separated by ; on one line, or by line breaks, give one stream.",
+    "sigTokens": "type T struct { a int ; b int ; }",
+    "bodyTokens": "type T struct { a int ; b int ; }",
+    "expect": {
+      "source.sig": "go2:ziCLulV7Nzg1iYTMJ2NLGJDlIh9eTWgmD_dKhhd6kek",
+      "source.body": "go2:ziCLulV7Nzg1iYTMJ2NLGJDlIh9eTWgmD_dKhhd6kek"
+    }
+  },
+  {
+    "id": "go2-struct-lines",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype T struct {\n\ta int\n\tb int\n}\n",
+    "symbol": "T",
+    "sigTokens": "type T struct { a int ; b int ; }",
+    "bodyTokens": "type T struct { a int ; b int ; }",
+    "expect": {
+      "source.sig": "go2:ziCLulV7Nzg1iYTMJ2NLGJDlIh9eTWgmD_dKhhd6kek",
+      "source.body": "go2:ziCLulV7Nzg1iYTMJ2NLGJDlIh9eTWgmD_dKhhd6kek"
+    }
+  },
+  {
+    "id": "go2-interface",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype I interface {\n\tM()\n\t~int | string\n}\n",
+    "symbol": "I",
+    "sigTokens": "type I interface { M ( ) ; ~ int | string ; }",
+    "bodyTokens": "type I interface { M ( ) ; ~ int | string ; }",
+    "expect": {
+      "source.sig": "go2:ReZkqu-CvZJ4Ed56eoUr_uVvcYAt8Pe8YNNolC8_LKw",
+      "source.body": "go2:ReZkqu-CvZJ4Ed56eoUr_uVvcYAt8Pe8YNNolC8_LKw"
+    }
+  },
+  {
+    "id": "go2-grouped-spec",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nvar (\n\ta = 1\n\tb = 2\n)\n",
+    "symbol": "b",
+    "note": "The ; that ends the definition itself is not part of its span (A.3).",
+    "sigTokens": "b = 2",
+    "bodyTokens": "b = 2",
+    "expect": {
+      "source.sig": "go2:909RygKjcJ0SqB8Y8narqrIPX1Cg6BRMv50ABOSvPto",
+      "source.body": "go2:909RygKjcJ0SqB8Y8narqrIPX1Cg6BRMv50ABOSvPto"
+    }
+  },
+  {
+    "id": "go2-switch-one-line",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(x int) { switch x { case 1: a() } }\n",
+    "symbol": "f",
+    "sigTokens": "func f ( x int )",
+    "bodyTokens": "func f ( x int ) { switch x { case 1 : a ( ) ; } ; }",
+    "expect": {
+      "source.sig": "go2:g1kyiLUTW0RgNylJ8G8mZEGl40074_gGXeZqObYz6go",
+      "source.body": "go2:tcsv5JNTAWzBq9I4GFnEZb41KHuvpbtmEJgpbtCUBW0"
+    }
+  },
+  {
+    "id": "go2-label-at-end",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() {\n\tgoto L\nL:\n}\n",
+    "symbol": "f",
+    "note": "A label before the closing brace labels an empty statement, which ends with ;.",
+    "sigTokens": "func f ( )",
+    "bodyTokens": "func f ( ) { goto L ; L : ; }",
+    "expect": {
+      "source.sig": "go2:lRRkh2T2KIMSiIiIqRO3FiPcpb72jICCUpfRFKafzlM",
+      "source.body": "go2:at9KtMDzuC2YQHLds8dDReNq_OIMryW5LrB-yWlFcck"
+    }
+  },
+  {
+    "id": "go2-empty-statement",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();; }\n",
+    "symbol": "f",
+    "note": "A written ; that follows another is an empty statement and ends itself.",
+    "sigTokens": "func f ( )",
+    "bodyTokens": "func f ( ) { a ( ) ; ; }",
+    "expect": {
+      "source.sig": "go2:lRRkh2T2KIMSiIiIqRO3FiPcpb72jICCUpfRFKafzlM",
+      "source.body": "go2:hfZWf3mChsmM26djuLCUVff-QTkO61eoyBHeamNskDQ"
+    }
+  },
+  {
+    "id": "go2-whole-imports",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nimport (\n\t\"a\"\n\t\"b\"\n)\n",
+    "symbol": "",
+    "sigTokens": "package p ; import ( \"a\" ; \"b\" ; ) ;",
+    "expect": {
+      "source.sig": "go2:cKQHatNhGkcZ3EO-iUy2SYF-2xnt_keAJCCxf-XB2Qs"
+    }
+  },
+  {
+    "id": "go2-whole-no-newline",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() {}",
+    "symbol": "",
+    "note": "The last declaration ends with ; with or without a final line break.",
+    "sigTokens": "package p ; func F ( ) { } ;",
+    "expect": {
+      "source.sig": "go2:rnph1VOyS9C-NZoJsnt8HABaT7zwpYHiCA135NV_YnM"
+    }
+  }
+]

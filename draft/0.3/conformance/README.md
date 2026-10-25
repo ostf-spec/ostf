@@ -40,7 +40,7 @@ cd draft/0.3/example/deploy
 
 | Check | What it pins |
 | --- | --- |
-| [vectors/](vectors/) | The item, Go and lock vectors published with 0.2: f1, go1 and `trace.lock 1` are unchanged (budget rule 5); and the `ts2` and `py1` vectors of Annexes K and L, with those of the superseded `ts1` |
+| [vectors/](vectors/) | The item, Go and lock vectors published with 0.2: f1 and `trace.lock 1` are unchanged, and the Go vectors still pass under the superseded `go1`; and the `go2`, `ts2` and `py1` vectors of Annexes A, K and L, with those of the superseded `ts1` |
 | [example/expected/](../example/expected/) | `check` and `context` JSON and the Annex J text, byte for byte |
 | [fixtures/minimal/](../fixtures/minimal/) | Two valid links and no diagnostics |
 | [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes, origins, states and reasons, risk relevance, context selections and Annex J text, and f1 projections; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
@@ -48,7 +48,7 @@ cd draft/0.3/example/deploy
 | `impacts` in cases.json | A base view and an evaluated view with the expected `impact`, and the evaluated view's codes, read after the impact so it cannot add a diagnostic; [fixtures_test.go](../fixtures_test.go) checks each expected `impact` against the result schema |
 | `sarif` in cases.json | Rules, levels, locations, `ostf.link` and `ostf.state` of link-state results, and the mapping of each diagnostic |
 | Annex C.3 example | The edit that C.3 describes, applied to the example, yields the JSON printed in the specification; stamping the example's eight links from no lock yields its `trace.lock` |
-| Coverage | The vector files are byte-identical to 0.2, and every requirement and Annex C code has a case or a reason in `notCovered` |
+| Coverage | The vector files of 0.2 are unchanged byte for byte, and every requirement and Annex C code has a case or a reason in `notCovered` |
 | The command line | Exit codes 0, 1 and 2 of all three commands, root selection from TARGET, TARGET kept as given, the hint for a path given from another directory, and on an edited copy of the example `check --base`, `--format sarif`, a refused stamp that writes nothing, a stamp that makes `check` pass and leaves no temporary file, no write through a symbolic or hard link, and text `check` naming links that have no state yet |
 
 [generate_tree.py](generate_tree.py) writes the deterministic 10 000-file tree on which both implementations time `check` (plan, section 5.4): `python3 generate_tree.py DIR`.

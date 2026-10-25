@@ -14,7 +14,7 @@
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
    },
@@ -51,7 +51,7 @@
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "math.go": "package sample\n// @req R-AD\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
    },
@@ -178,7 +178,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 2 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -206,7 +206,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a twice.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F(x int) int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -234,7 +234,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -262,7 +262,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n    tests: [a_test.go#TestF]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
     "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { _ = F() }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -1020,7 +1020,7 @@
     "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  bodyChange: risk\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 2 }\n",
     "b.go": "package a\n\nfunc G() int { return 2 }\n",
-    "trace.lock": "trace.lock 1\nR-CHILD refines R-CTRL source=f1:eX6eyM7egMqr-C-xc_Ht5bn-tA6c3dZgceQyN9Og8M4 target=f1:T0WYMUi-H6F3BfkFwnRcjHRvoGjxSHwqwUWewCHRp3s\nR-CTRL controls RISK-A source=f1:T0WYMUi-H6F3BfkFwnRcjHRvoGjxSHwqwUWewCHRp3s target=f1:j0ikM3NVijwQjvPiY9bThOuVq78P0c0IG8TJyumbreE\na.go#F implements R-CHILD source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:eX6eyM7egMqr-C-xc_Ht5bn-tA6c3dZgceQyN9Og8M4\nb.go#G implements R-OTHER source.sig=go1:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go1:tr_NkOAY6SgidSfXxbs7IO_vyE9ekGMObXJ1PPzUUs0 target=f1:qTrZFRQJHDAB14yhIlfXD-ARgErYmK24XEGqk_2XIu8\n"
+    "trace.lock": "trace.lock 1\nR-CHILD refines R-CTRL source=f1:eX6eyM7egMqr-C-xc_Ht5bn-tA6c3dZgceQyN9Og8M4 target=f1:T0WYMUi-H6F3BfkFwnRcjHRvoGjxSHwqwUWewCHRp3s\nR-CTRL controls RISK-A source=f1:T0WYMUi-H6F3BfkFwnRcjHRvoGjxSHwqwUWewCHRp3s target=f1:j0ikM3NVijwQjvPiY9bThOuVq78P0c0IG8TJyumbreE\na.go#F implements R-CHILD source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:eX6eyM7egMqr-C-xc_Ht5bn-tA6c3dZgceQyN9Og8M4\nb.go#G implements R-OTHER source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:tr_NkOAY6SgidSfXxbs7IO_vyE9ekGMObXJ1PPzUUs0 target=f1:qTrZFRQJHDAB14yhIlfXD-ARgErYmK24XEGqk_2XIu8\n"
    },
    "expect": {
     "codes": [],
@@ -1079,7 +1079,7 @@
     "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 2 }\n",
     "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  bodyChange: none\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -1105,7 +1105,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: PAY-1\n    external: jira:PAY-1\n    revision: \"8\"\n    text: Old copy.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements PAY-1 source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:4_IiAKxnJR1M6DKqXGVAY0MHrizJ1W4pDICsWaXCPbc\n"
+    "trace.lock": "trace.lock 1\na.go#F implements PAY-1 source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:4_IiAKxnJR1M6DKqXGVAY0MHrizJ1W4pDICsWaXCPbc\n"
    },
    "expect": {
     "codes": [],
@@ -1131,7 +1131,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: PAY-1\n    external: jira:PAY-1\n    revision: \"7\"\n    text: New copy.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements PAY-1 source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:4_IiAKxnJR1M6DKqXGVAY0MHrizJ1W4pDICsWaXCPbc\n"
+    "trace.lock": "trace.lock 1\na.go#F implements PAY-1 source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:4_IiAKxnJR1M6DKqXGVAY0MHrizJ1W4pDICsWaXCPbc\n"
    },
    "expect": {
     "codes": [],
@@ -1158,7 +1158,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=zz9:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=zz9:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -1184,7 +1184,7 @@
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=zz9:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=zz9:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [
@@ -1217,7 +1217,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\n// docs\nfunc Add(a,b int)int { /* hi */ return a + b // end\n}\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1250,13 +1250,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1272,7 +1272,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add values safely.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1309,13 +1309,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:QrdWpi8sfpMG2Vaytwf96MUQK6jBLhUlPo2Glgw2aMs",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:QrdWpi8sfpMG2Vaytwf96MUQK6jBLhUlPo2Glgw2aMs",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1331,7 +1331,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1367,13 +1367,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1388,7 +1388,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int64) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1423,13 +1423,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:UWOrvYYTnTTnaVQ4lZJwvrAdFnlNxA8WvcdGcPcWzx4",
-      "source.body": "go1:dVQdz0h2t62ZDT-nvv_AN3HY0Hk1rsRoiF1YRLuotVU"
+      "source.sig": "go2:UWOrvYYTnTTnaVQ4lZJwvrAdFnlNxA8WvcdGcPcWzx4",
+      "source.body": "go2:13509m5SmgX_W2yoJNcn6CbRl9F3siPtVqVV2FnbLy0"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1479,13 +1479,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1537,13 +1537,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1596,13 +1596,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1619,7 +1619,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Other(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [
@@ -1659,8 +1659,8 @@
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    },
@@ -1677,7 +1677,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [
@@ -1717,8 +1717,8 @@
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    },
@@ -1735,7 +1735,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    controls: [RISK-X]\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n  - id: RISK-X\n    type: risk\n    text: Incorrect arithmetic.\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nR-ADD controls RISK-X source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nR-ADD controls RISK-X source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1788,13 +1788,13 @@
      },
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1811,7 +1811,7 @@
     "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-ADD\n    text: Add two values.\n    refines: [RC-PARENT]\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n  - id: RC-PARENT\n    text: Control arithmetic.\n    controls: [RISK-X]\n  - id: RISK-X\n    type: risk\n    text: Incorrect arithmetic.\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nR-ADD refines RC-PARENT source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc\nRC-PARENT controls RISK-X source=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nR-ADD refines RC-PARENT source=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE target=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc\nRC-PARENT controls RISK-X source=f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc target=f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  bodyChange: risk\n"
    },
    "expect": {
@@ -1881,13 +1881,13 @@
      },
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1902,7 +1902,7 @@
     "trace.yaml": "ostf: \"0.3\"\ninclude: [trace/*.yaml]\nitems: []\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "trace/requirements.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n"
    },
    "expect": {
@@ -1936,13 +1936,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -1960,7 +1960,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    aliases: [123/legacy]\n    text: Add two values.\n    code: []\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\n// @req 123/legacy\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -1993,13 +1993,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2017,7 +2017,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\n// @req R-ADD\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [
@@ -2052,13 +2052,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2076,7 +2076,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { // @req UNKNOWN\n return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [
@@ -2117,7 +2117,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n\n// @req R-ADD\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [
@@ -2158,7 +2158,7 @@
     "trace.yaml": "ostf: \"0.3\"\nx-example: {note: preserved and ignored}\nitems:\n  - id: R-ADD\n    x-owner: payments\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -2191,13 +2191,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2217,7 +2217,7 @@
     "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-ADD\n    attributes: {limit: 4.5, enabled: true, label: yes}\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg\n",
     "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number, meaning: true}\n      enabled: {type: boolean, meaning: true}\n      label: {type: string}\nfingerprints: {bodyChange: all}\n"
    },
    "expect": {
@@ -2253,13 +2253,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:30deKk3RPsXbGH3mKpMNRVlV0WpVL-_Z7A-Yi-jLxhk"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
      },
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2715,7 +2715,7 @@
     "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [{ref: math_test.go#TestAdd, role: effectiveness}]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "p.yaml": "ostf: \"0.3\"\nlinks:\n  verifies:\n    attributes:\n      role: {values: [implementation, effectiveness]}\n"
    },
    "expect": {
@@ -2753,13 +2753,13 @@
     "linkFingerprints": {
      "math.go#Add implements R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A"
+      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
+      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
      },
      "math_test.go#TestAdd verifies R-ADD role=effectiveness": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2912,13 +2912,13 @@
     "linkFingerprints": {
      "math_test.go#TestAdd verifies R-ADD": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      },
      "math_test.go#TestAdd verifies R-ADD role=effectiveness": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -2996,8 +2996,8 @@
     "linkFingerprints": {
      "math_test.go#TestAdd verifies R-ADD note=reviewed": {
       "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0"
+      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
+      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
      }
     }
    }
@@ -3190,8 +3190,8 @@
     "linkFingerprints": {
      "main_test.go#TestRun/child verifies R-A": {
       "target": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk",
-      "source.sig": "go1:eSTTLKHPHn3v9w-03ckN6C1lT3wuGKLxHfnL76UYNSg",
-      "source.body": "go1:vg_ijE_73NkLLHsl65ypgaBKeNdpRgUa94QycCA6UEY"
+      "source.sig": "go2:eSTTLKHPHn3v9w-03ckN6C1lT3wuGKLxHfnL76UYNSg",
+      "source.body": "go2:8VfEkdcI6K4iFe3o19VHK2xfabaz4uAyyMuu0L6yNbU"
      }
     }
    }
@@ -3376,7 +3376,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.siggo1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.siggo2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [
@@ -3406,7 +3406,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 2\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 2\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [
@@ -3436,7 +3436,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return 1 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:WRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:XRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:XRrJP-aoD5xenWGzYGyp-UaNbo9h7Zk_BzHJh1lh2jE target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [
@@ -3751,7 +3751,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\n// F does a.\nfunc F() int { return helper() }\n\nfunc helper() int { return 3 }\n",
-    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go1:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go1:oh3pVvY6_cdu0AvkMN9Cphc3aoP-9aJ1MRhxvHBfhnk target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:UoUDGTFbVKXqgNGfZ7P6mU1_S6tzDi2UvJGEHDeuuuY target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
    },
    "expect": {
     "codes": [],
@@ -4105,12 +4105,12 @@
     "OSTF-142",
     "OSTF-143"
    ],
-   "note": "go1:bad is compared as written and differs; go1 without a colon does not begin with an implemented algorithm and a colon.",
+   "note": "go2:bad is compared as written and differs; go2 without a colon does not begin with an implemented algorithm and a colon.",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:bad source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1 source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:bad source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2 source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "codes": [],
@@ -5491,7 +5491,7 @@
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
     "math.go": "package sample\n// @req R-AD\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
    },
@@ -5996,7 +5996,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6025,7 +6025,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6038,7 +6038,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\r\n\r\nmath_test.go#TestAdd verifies R-ADD target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM\r\n"
+    "trace.lock": "trace.lock 1\r\n\r\nmath_test.go#TestAdd verifies R-ADD target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM\r\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6051,7 +6051,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6064,7 +6064,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nthis line is not an entry\n"
+    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nthis line is not an entry\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6079,7 +6079,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6092,7 +6092,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6107,7 +6107,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6120,7 +6120,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 2\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 2\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6135,7 +6135,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6149,7 +6149,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath.go#Sub implements R-ADD source.sig=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath.go#Sub implements R-ADD source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6162,7 +6162,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath.go#Sub implements R-ADD source.sig=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath.go#Sub implements R-ADD source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=future1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=future1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6175,7 +6175,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD"
@@ -6188,7 +6188,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6244,7 +6244,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD role=effectiveness source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmy%20file.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath_test.go#TestAdd verifies R-ADD role=effectiveness source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmy%20file.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6297,7 +6297,7 @@
     "items": [
      "R-ADD"
     ],
-    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   },
   {
@@ -6309,7 +6309,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "stamp": [
     "math.go#Add implements R-ADD",
@@ -7482,7 +7482,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\n// @req R-AD {0}\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go1:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go1:nIWV2wKwNg4H9csmdRpivhb6yXQ2VmaLhn8JZ1BAeW0 target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    },
    "expect": {
     "rules": [
@@ -7534,7 +7534,7 @@
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add, math.go#Gone]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go1:NpIAL7sz8T1-PWKHY0O290HtKeoEUxHZQCUSFDj1d-A target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
    },
    "expect": {
     "rules": [

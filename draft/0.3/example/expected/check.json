@@ -92,8 +92,8 @@
       "attributes": {},
       "origin": "tagged",
       "fingerprints": {
-        "source.sig": "go1:yldS4_vemVDMKn7G-adDXben29GTlgflD-sWIKU__pw",
-        "source.body": "go1:X9pRD_jYNxXNuDK-wrPKPY0gu_Gqk_a8Vu2eEnaSDfY",
+        "source.sig": "go2:yldS4_vemVDMKn7G-adDXben29GTlgflD-sWIKU__pw",
+        "source.body": "go2:Jw2w-95r5lgsRFHMnsxh3Fv3CpRUaBwuMtEY37USaM0",
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
       },
       "state": "valid",
@@ -106,8 +106,8 @@
       "attributes": {},
       "origin": "tagged",
       "fingerprints": {
-        "source.sig": "go1:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0",
-        "source.body": "go1:jmSIQcdKpuVppckGyyGo6ZsSudyupeGNZYs_GNVMhmU",
+        "source.sig": "go2:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0",
+        "source.body": "go2:DMGD_AqBImkmXDZz9gjG4l7bMZhMaHU7fwl4jhEbUBg",
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
       },
       "state": "valid",
@@ -133,8 +133,8 @@
       "attributes": {},
       "origin": "declared",
       "fingerprints": {
-        "source.sig": "go1:Sk2hoKJ7XFGtX9rBO9ArLtwl3XP4w3ZIm0-_Jecg1Yo",
-        "source.body": "go1:VXEjsjADENIh9OdVqZYTEuMWc2SHggjHcLvKnzCEDGc",
+        "source.sig": "go2:Sk2hoKJ7XFGtX9rBO9ArLtwl3XP4w3ZIm0-_Jecg1Yo",
+        "source.body": "go2:QDiQOM8Mdapw64qINhfEceHRv5rJqWGmQDeok1bNN5M",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
       "state": "valid",
@@ -147,8 +147,8 @@
       "attributes": {},
       "origin": "declared",
       "fingerprints": {
-        "source.sig": "go1:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
-        "source.body": "go1:XNzVhKa7AERnwx1OHXnQq7kY160VCxW5UR3cDbMfriY",
+        "source.sig": "go2:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
+        "source.body": "go2:rckr3heqlM8R-vIAGLat7g_d9XKCA137w9VTa57Y5qM",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
       "state": "valid",

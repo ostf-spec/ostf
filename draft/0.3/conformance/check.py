@@ -72,7 +72,7 @@ def check():
         assert canonical.decode() == case["canonical"], case["id"] + ": canonical bytes"
         assert reader.fingerprint("f1", canonical) == case["fingerprint"], case["id"] + ": item hash"
     for case in load(VECTORS / "code-vectors.json"):
-        parsed = reader.go_source(case["source"].encode())
+        parsed = reader.go1_source(case["source"].encode())
         assert parsed is not None, case["id"] + ": parse"
         if case["symbol"]:
             found = reader.select(parsed["definitions"], case["symbol"])
@@ -91,12 +91,13 @@ def check():
             assert reader.lock_text(entries) == case["canonical"], case["id"] + ": lock bytes"
     counts["vectors02"] = sum(len(load(VECTORS / n)) for n in ("item-vectors.json", "code-vectors.json", "lock-vectors.json"))
 
-    # Annexes K and L: the ts2 and py1 vectors, token bytes and digests, and those of the superseded ts1.
-    for name, algorithm in (("ts1-vectors.json", "ts1"), ("ts2-vectors.json", "ts2"), ("py1-vectors.json", "py1")):
+    # Annexes A, K and L: the go2, ts2 and py1 vectors, token bytes and digests, and those of the superseded ts1.
+    superseded = {"ts1": ("ts2", reader.ts1_source)}
+    for name, algorithm in (("go2-vectors.json", "go2"), ("ts1-vectors.json", "ts1"), ("ts2-vectors.json", "ts2"), ("py1-vectors.json", "py1")):
         for case in load(VECTORS / name):
             annex = reader.annex_for(case["path"])
-            assert annex is not None and annex.algorithm == ("ts2" if algorithm == "ts1" else algorithm), case["id"] + ": annex"
-            parse = reader.ts1_source if algorithm == "ts1" else annex.parse
+            assert annex is not None and annex.algorithm == superseded.get(algorithm, (algorithm,))[0], case["id"] + ": annex"
+            parse = superseded[algorithm][1] if algorithm in superseded else annex.parse
             parsed = parse(case["source"].encode(), case["path"])
             assert parsed is not None, case["id"] + ": parse"
             if case["symbol"]:
@@ -294,7 +295,7 @@ def check():
         assert code == 0 and [i["id"] for i in json.loads(out)["items"]] == ["R-B"], "alias before anchor from a subdirectory"
         code, out = run(tree / "sub", "context", "a.go#F", "--root", "..", "--format", "json")
         assert code == 0 and [i["id"] for i in json.loads(out)["items"]] == ["R-B"], "alias before anchor with --root"
-        (tree / "trace.lock").write_text("trace.lock 1\nsub/a.go#F implements R-A source.sig=go1:" + "A" * 43 + " target=f1:" + "A" * 43 + "\n")
+        (tree / "trace.lock").write_text("trace.lock 1\nsub/a.go#F implements R-A source.sig=go2:" + "A" * 43 + " target=f1:" + "A" * 43 + "\n")
         assert run(tree, "check")[0] == 1, "check exit 1 on a suspect link"
         os.remove(tree / "trace.yaml")
         assert run(tree, "check")[0] == 2, "check exit 2 without a root"

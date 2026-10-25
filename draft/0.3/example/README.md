@@ -6,7 +6,7 @@ A small Go package that shows the constructs most teams need:
 - a need, a risk, and the requirement that controls the risk (`N-REFUNDS`, `RISK-REFUND-ABUSE`, `R-REFUND-LIMIT`), with links declared in [trace.yaml](trace.yaml);
 - a requirement owned by an issue tracker (`PAY-123`, declared `external: jira:PAY-123` with the observed text and revision), linked from [charge.go](charge.go) and [charge_test.go](charge_test.go) by `@req` comments, which are read unless the root sets `tags: false`;
 - a requirement that no function carries (`R-DATA-AT-REST`, encryption at rest): it links the whole infrastructure file [deploy/database.tf](deploy/database.tf), which no language annex covers, and is verified by a review procedure, `V-ENCRYPTION-REVIEW`, an item of type `verification` rather than an automated test;
-- [trace.lock](trace.lock) with eight rechecked links, three between items, four from Go code and tests and one from a whole file, and real `go1`, `f1` and `lf1` fingerprints.
+- [trace.lock](trace.lock) with eight rechecked links, three between items, four from Go code and tests and one from a whole file, and real `go2`, `f1` and `lf1` fingerprints.
 
 Run the tests from this directory:
 
@@ -30,4 +30,4 @@ Each lock line names a link and the fingerprints of both ends at the last rechec
 
 ## Status
 
-The `go1` and `f1` fingerprints were first computed with the code of the 0.2 Python prototype, since this draft keeps both algorithms unchanged. The [0.3 reader](../conformance/README.md) reads this tree directly, reports all eight links `valid` and reproduces [expected/](expected/) byte for byte. zztrace's second reader, written separately on Go's own parser, agrees with it on every fingerprint, state and rendering of this tree ([agent-readiness plan](../plan-agent-readiness.md), step 2d).
+The `f1` fingerprints were first computed with the code of the 0.2 Python prototype, since this draft keeps that algorithm unchanged; the Go fingerprints were recomputed when `go2` replaced 0.2's `go1` (Annex A.6). The [0.3 reader](../conformance/README.md) reads this tree directly, reports all eight links `valid` and reproduces [expected/](expected/) byte for byte. zztrace's second reader, written separately on Go's own parser, agrees with it on every fingerprint, state and rendering of this tree ([agent-readiness plan](../plan-agent-readiness.md), step 2d).
