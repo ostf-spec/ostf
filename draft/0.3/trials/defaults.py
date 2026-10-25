@@ -9,6 +9,7 @@ by `codex`, which the maintainer ruled on 2026-10-25.
     python3 defaults.py report
     python3 defaults.py sheet
     python3 defaults.py codex
+    python3 defaults.py verdict
 
 `collect` reads each repository's index in OSTF_REPLAY_DATA and writes
 results/phase1/replay-defaults.json, counts only, as replay.py's `publish` does; `report` writes
@@ -18,7 +19,8 @@ code and item text and so stays private: the labelled links a person checks firs
 item 6), each with its item, its change and the judge's verdict, and a line for the person's own.
 It needs PyYAML, as replay.py's `label` does. `codex` labels the same links in place of the person,
 blind to the judge's verdict and to which part a link is in, with the judge's question, and writes
-OSTF_REPLAY_DATA/codex-labels.json; it skips links already labelled there.
+OSTF_REPLAY_DATA/codex-labels.json; it skips links already labelled there. `verdict` reads those
+labels and prints section 8's pre-registered verdict, counts only.
 """
 import difflib
 import collections
@@ -295,6 +297,10 @@ CODEX_MODEL, CODEX_EFFORT = "gpt-6.1-sol", "xhigh"
 CODEX_LABELS = replay.DATA / "codex-labels.json"
 
 
+def label_key(c):
+    return "|".join((c["name"], c["root"], c["view"], c["link"]))
+
+
 def codex(workers=6):
     import concurrent.futures
     import subprocess
@@ -308,9 +314,6 @@ def codex(workers=6):
     schema = scratch / "schema.json"
     schema.write_text(json.dumps({"type": "object", "additionalProperties": False, "required": ["verdict", "reason"],
                                   "properties": {"verdict": {"enum": ["mismatch", "relevant", "noise"]}, "reason": {"type": "string"}}}))
-
-    def key(c):
-        return "|".join((c["name"], c["root"], c["view"], c["link"]))
 
     def one(c):
         item = c["item"] or {"text": "(item not found)"}
@@ -338,11 +341,11 @@ def codex(workers=6):
                 continue
             if out.returncode or commands or answer.get("verdict") not in ("mismatch", "relevant", "noise"):
                 continue
-            return key(c), {"verdict": answer["verdict"], "reason": answer["reason"], "usage": usage,
+            return label_key(c), {"verdict": answer["verdict"], "reason": answer["reason"], "usage": usage,
                             "seconds": round(time.monotonic() - started)}
-        return key(c), None
+        return label_key(c), None
 
-    todo = [c for c in first + then if key(c) not in record["labels"]]
+    todo = [c for c in first + then if label_key(c) not in record["labels"]]
     failed = 0
     with concurrent.futures.ThreadPoolExecutor(workers) as pool:
         for k, label in pool.map(one, todo):
@@ -359,6 +362,28 @@ def codex(workers=6):
     print(f"wrote {CODEX_LABELS}: {len(record['labels'])} labels, {failed} failed this run; tokens {dict(tokens)}")
 
 
+def verdict():
+    """Section 8's pre-registered verdict on the labels of item 6. Recall: the share of the links
+    labelled mismatches that stay in the fingerprint queue under Phase 3's defaults, which quiet
+    FILE_CHANGED and DEFINITION_CHANGED. Precision: the share of the judge's mismatches, the triaged
+    queue, that the labels confirm. Phase 3 passes at 90 % and 50 %; a shortfall by any margin is a
+    miss (rule 9). Counts only."""
+    first, then = checked()
+    labels = json.loads(CODEX_LABELS.read_text())["labels"]
+    missing = [c for c in first + then if label_key(c) not in labels]
+    if missing:
+        raise SystemExit(f"{len(missing)} links have no label in {CODEX_LABELS}; run codex first")
+    found = [c for c in first + then if labels[label_key(c)]["verdict"] == "mismatch"]
+    kept = [c for c in found if c["reason"] not in QUIETED]
+    confirmed = [c for c in first if labels[label_key(c)]["verdict"] == "mismatch"]
+    recall, precision = len(kept) / len(found), len(confirmed) / len(first)
+    hidden = collections.Counter(c["reason"] for c in found if c["reason"] in QUIETED)
+    print(f"recall: {len(kept)} of {len(found)} mismatches stay in the fingerprint queue ({100 * recall:.1f} %), gate 90 %; "
+          f"hidden: {dict(sorted(hidden.items()))}")
+    print(f"precision: {len(confirmed)} of the judge's {len(first)} mismatches confirmed ({100 * precision:.1f} %), gate 50 %")
+    print("verdict: " + ("pass" if recall >= 0.9 and precision >= 0.5 else "miss; the fallback of section 8 applies (rule 9)"))
+
+
 def main(argv=None):
     command = (argv or sys.argv[1:] or ["report"])[0]
     if command == "collect":
@@ -367,6 +392,8 @@ def main(argv=None):
         sheet()
     elif command == "codex":
         codex()
+    elif command == "verdict":
+        verdict()
     else:
         OUT.write_text(report())
         print(f"wrote {OUT}")
