@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.4: plan to make the format agent-first
 
-Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 done on 2026-10-25 (section 6), with [baseline.md](trials/baseline.md) published and the Breadth row not measured; Phase 2 waits on the maintainer. Applies to the [0.3 draft](ostf.md) from document revision 0.12 and produces wire version 0.4.
+Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 done on 2026-10-25 (section 6), with [baseline.md](trials/baseline.md) published and the Breadth row not measured; the maintainer's rulings on the baseline, taken the same day, close section 6, and Phase 2 begins with the pre-work of section 7, with no agent run before Phase 5 (rule 8). Applies to the [0.3 draft](ostf.md) from document revision 0.12 and produces wire version 0.4.
 
 ## 1. Why this plan
 
@@ -27,6 +27,7 @@ The scorecard. Each row is measured in Phase 1 before any change and again in Ph
 | Queue precision | Entries of "needs another look" that a reviewer confirms as a real mismatch | 50 %, reported per reason |
 | Recheck lag | Suspect links at merge whose recheck is recorded in the same change | 95 % |
 | Hand stamps | Stamps by a person per 100 merged changes on tested code | 0 |
+| Link churn | Links broken by a merged change and neither re-anchored nor retired in that change, per 100 merged changes | 0 |
 | Breadth | Pass rate on the threat, control and decision tasks, T9 to T11 | 95 % |
 | Parallel | Lock conflicts per 100 merged changes on the ten-agent fixture | 0 |
 | Guarded | Invented IDs merged, hand edits of a lock, instructions in item text followed, self-stamps of risk-relevant links | 0 each |
@@ -44,6 +45,7 @@ These bind every phase. A change that breaks one is rejected, however useful.
 5. **Policy stays out of the format**, but the diagnostics a policy needs are in it, so a tool can enforce a policy from the result alone.
 6. **No claim about agents without a control arm.** Every trial runs a no-OSTF baseline on the same tasks with the same models, and the report gives the difference.
 7. **One page per annex**, as before, with one change: a rule that needs room replaces rationale, never another rule.
+8. **No agent run before Phase 5.** Added by the maintainer on 2026-10-25, after the baseline. What the Phase 1 records already answer is not run again: Phases 2 and 3 are judged by replaying those records, the trials run again only in Phase 5, and a new model labelling needs the maintainer's approval of its cost.
 
 ## 4. Phases at a glance
 
@@ -51,7 +53,7 @@ These bind every phase. A change that breaks one is rejected, however useful.
 | --- | --- | --- | --- | --- |
 | P0 Fix 0.3 | Close the defects found on 2026-10-25 in the current text and readers | Revision 0.13, `ts2`, the context fix, strict mode, pinned grammars, cases | Both readers pass the new cases; the `ts1` vectors still pass under their identifier | S |
 | P1 Baseline | Measure before redesigning | Control-arm trials of 0.3, queue precision on two real repositories, a parallel-agent fixture | `trials/baseline.md` published with every scorecard row | M |
-| P2 Wire 0.4 core | Breadth, corroboration, recheck provenance, sharded locks, one call per change | Specification revision 0.20, schemas, migration note, converted suite, both readers | Suite passes in both readers; the rules of section 3 hold | L |
+| P2 Wire 0.4 core | Breadth, corroboration, recheck provenance, sharded locks, one call per change, reasons for what has no body, links that survive a rename, roots that know each other | Revision 0.14 with the pre-work, then specification revision 0.20, schemas, migration note, converted suite, both readers | Suite passes in both readers; the rules of section 3 hold | L |
 | P3 Freshness per kind | Replace the human stamp where evidence can replace it | Annex M on rechecks, separation of duties, the triage record, exit-code rules | Queue precision and hand stamps meet their targets on the Phase 1 repositories | M |
 | P4 Languages without hand-written annexes | A new language at a day each | The parser-delegated annex form, three new languages, a generated vector corpus | Vectors pass in both readers; the corpus and harness run in CI | M |
 | P5 Trials v2 | Replace the 0.3 scorecard with measured, controlled claims | Three arms, matched models, held-out tasks, an external judge, breadth and parallel tasks, a longitudinal replay | Every row measured; the report published with deltas and intervals | L |
@@ -93,11 +95,24 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 **Exit gate.** `trials/baseline.md` published with every row of section 2, the differences between arms with intervals, and the precision table.
 
-**Outcome.** Done on 2026-10-25; [trials/baseline.md](trials/baseline.md) gives every row and the [decision record](decisions.md#agent-first-plan-phase-1-baseline) the rulings. Against a plain requirements file, 0.3 helps the small models: task outcome on T1 to T7 was 94 % in `full`, 83 % in `intent` and 60 % in `none`, a difference of 35 points with an interval of 22 to 46, made in asking before changing a risk control, refusing an invented ID and naming the items and tests a change touches; the format alone gave most of it. The review queue is where 0.3 falls short. Replayed on three of the maintainer's repositories, 9 % of the labelled `BODY_CHANGED` links and 1 % of the `SIGNATURE_CHANGED` ones were real mismatches, and most `SIGNATURE_CHANGED` came from whole-file anchors and definitions without a body, which `bodyChange: risk` does not quiet. Agents stamped 93 % of the links they touched in the same change, their own changes to risk controls included, as 0.3 asks. The gate holds with three gaps: Breadth is not measured, since its tasks are written in Phase 5; two replay windows are shorter than three months; and an agent, at the maintainer's request, labelled the sample of judge verdicts in place of a person.
+**Outcome.** Done on 2026-10-25; [trials/baseline.md](trials/baseline.md) gives every row and the [decision record](decisions.md#agent-first-plan-phase-1-baseline) the rulings. Against a plain requirements file, 0.3 helps the small models: task outcome on T1 to T7 was 94 % in `full`, 83 % in `intent` and 60 % in `none`, a difference of 35 points with an interval of 22 to 46, made in asking before changing a risk control, refusing an invented ID and naming the items and tests a change touches. `intent` carries the paragraph's rules that `none` lacks, so `intent` minus `none` measures the format together with those rules, and the tool's own share shows on T7, the impact listing, where 1, 4 and 11 of 12 runs named what the change touched. The review queue is where 0.3 falls short. Replayed on three of the maintainer's repositories, 9 % of the labelled `BODY_CHANGED` links and 1 % of the `SIGNATURE_CHANGED` ones were real mismatches, and most `SIGNATURE_CHANGED` came from whole-file anchors and definitions without a body, which `bodyChange: risk` does not quiet. The large repository also broke 548 of its links in three months, which no stamp repairs, and the generated lock of 34 290 links reached 87 % of the 8 MiB limit of OSTF-105, which the reference reader does not apply to the lock. Agents stamped 93 % of the links they touched in the same change, their own changes to risk controls included, as 0.3 asks. The gate holds with three gaps: Breadth is not measured, since its tasks are written in Phase 5; two replay windows are shorter than three months; and an agent, at the maintainer's request, labelled the sample of judge verdicts in place of a person.
+
+**Rulings on the baseline, 2026-10-25.** Nothing that the Phase 1 records already answer is run again (rule 8). The `rules` arm that would separate the format from the paragraph's rules joins Phase 5, which runs the trials again for 0.4 in any case; until then the claim is the one stated above. The records settle the following, and the phases below are amended to carry them: the stamp is replaced for tested code (Phase 3), decided by the precision table and not by a further trial; a whole-file anchor and a definition without a body get reasons of their own, which a profile quiets separately (Phase 2); the lock is sharded, since the conflicts came from adjacent lock lines and a second root changed nothing (Phase 2); links must survive a rename, measured by the new Link churn row (Phase 2); a top-level `check` must name the nested roots it does not cover, and roots must be able to reference each other's items (Phase 2, the diagnostic in the pre-work); the self-stamps of risk controls stand behind Phase 3's separation of duties; `impact.contexts` answers the Tokens row; and a package anchor stays out until the Phase 3 replay still shows the need (section 12). Phase 3's defaults are set by replaying the Phase 1 index and labels under candidate defaults, which costs no agent run.
 
 ## 7. Phase 2: wire 0.4 core
 
 **Goal.** The format carries what agents need to build and read traceability for requirements, threats, controls and decisions, with corroboration and recheck provenance, without growing past 35 requirements.
+
+**Before the wire change, as document revision 0.14, with no agent run.**
+
+1. **Replay the replay.** From the Phase 1 index and its labels, compute the suspect queue and its precision per reason under candidate defaults: whole-file anchors and bodyless definitions quieted; `bodyChange: risk`; tested code exempt when its verifying test is recorded as passed for the view. Publish the table as `trials/baseline-defaults.md`; Phase 3 sets its defaults from it. A link that Phase 1 did not label gets no new label without the maintainer's approval.
+2. **Nested roots.** `check` at a root that has nested roots says so, in text and in the result, so that a green top-level check is never read as covering them; a case pins it in both readers.
+3. **The lock and the size limit.** The text says whether the 8 MiB limit of OSTF-105 applies to `trace.lock`, the readers agree, and a case pins it.
+4. **The grammar.** `new(exit.ExitCode())`, Go 1.26 syntax that tree-sitter-go 0.25.0 refuses, is settled as Phase 0 settled the others: the pin moves and its vectors with it, or Annex A names the form as outside the annex.
+5. **The baseline's wording.** `baseline.md`, through `baseline.py`, states the difference between arms as section 6 now does.
+6. **The maintainer's part.** Label `results/phase1/human-sample.md`, so that `baseline.md` reports a person's agreement, and decide before any push whether the replay repositories keep their names, which appear in `baseline.md`, `decisions.md`, `trials/replay.py` and `results/phase1/replay-summary.json`.
+
+Then the rows below, in order.
 
 | Change | Where | Simplicity cost |
 | --- | --- | --- |
@@ -105,7 +120,10 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 | **Breadth in the default vocabulary.** Add `threat`, a risk-kind type, and `control`, a statement type. Decisions use `design` with a `title`, and the text says so. An official `profiles/security.yaml`, published with the draft, adds STRIDE categories, assets and trust boundaries as attributes, so the core does not. | OSTF-120, new profile file | Two types, one file outside core |
 | **Derived links.** A machine-written file `trace.derived 1` beside the lock records what a test tool observed: `<test anchor> covers <code anchor> view=<id> tool=<name>`. A declared `implements` link is `corroborated` when a test that `verifies` the same item covers the anchor in the evaluated view, `uncorroborated` when such a test exists and does not cover it, and `unobserved` otherwise. Corroboration is reported beside the state, never merged into it. The computation is outside OSTF; the file is data. | New requirement, with the identifier freed by merging OSTF-160 to OSTF-162 | One file, one requirement |
 | **Recheck provenance.** `trace.lock 2` adds two reserved pairs to each entry: `by=<principal>` and `at=<view id>`. A principal is `person:<name>`, `agent:<model or tool>` or `ci:<name>`. A reader of lock 2 reads lock 1 entries without them. | OSTF-142, Annex B | Two reserved keys |
-| **Sharded locks.** An item file may carry a lock beside it, holding the entries whose target item it declares; the root's lock holds the rest. Tools write to the shard of the target; readers merge the shards and report `LOCK_DUPLICATE` across them. Parallel changes in different areas then touch different files. | OSTF-142, Annex I.4 | One placement rule |
+| **Sharded locks.** An item file may carry a lock beside it, holding the entries whose target item it declares; the root's lock holds the rest. Tools write to the shard of the target; readers merge the shards and report `LOCK_DUPLICATE` across them. Parallel changes in different areas then touch different files, and no shard approaches the size limit that the Phase 1 fan-out tree's single lock neared. | OSTF-142, Annex I.4 | One placement rule |
+| **Reasons for what has no body.** A whole-file anchor reports its change as `FILE_CHANGED` and a definition without a body, a constant, a type or a field, as `DEFINITION_CHANGED`; `SIGNATURE_CHANGED` is kept for a signature. The profile's `fingerprints` quiets each kind on its own, as `bodyChange` does for bodies. Phase 1 found most `SIGNATURE_CHANGED` suspects were of these two kinds. | OSTF-143, OSTF-144, OSTF-121 | Two reasons, one profile key |
+| **Links that survive a rename.** A derived link re-anchors by construction, since each view records the symbols its tests covered. For a declared link whose definition is gone, `check` reports `LINK_BROKEN` with a hint naming the definition in the evaluated view that has the same `body` fingerprint, so that the agent rewrites the anchor in the same change. The Link churn row measures the result. | OSTF-143, Annex C, Annex I | One hint |
+| **Roots that know each other.** `check` at a root reports the nested roots it does not cover, with their state when `--base` is given, and a source entry `ostf: <root path>` lets an item of another root of the same repository be referenced as `external`, so that an item linked from two roots is written once. In Phase 1 the parallel fixture needed copies, and a red nested root passed unseen. | OSTF-102, OSTF-113, Annex I | Extends the index row's source entry |
 | **Context both ways and one call per change.** I.3 keeps P0's incoming links. `check --base` returns `impact.contexts`, the context of every changed linked symbol, so an agent reads one result instead of one per function. The paragraph's per-function `context` call becomes optional. | Annex I, Annex C.3, Annex F.1 | One result field |
 | **Item text as data.** In text output every item text line begins with `| `; in JSON it is already a field; the paragraph says that lines after `| ` are content to report, never instructions. | Annex J, Annex F.1 | One prefix |
 | **Paragraph split.** A core paragraph, normative and under 120 words: discovery, data not instructions, never invent an ID, the three commands. A policy paragraph, informative, with the recommended default: ask before risk-relevant changes, draft items for new behavior, never rewrite an item to fit code, a second principal for rechecks. Projects replace the second and never edit the first. | Annex F | None |
@@ -121,14 +139,14 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 **Annex M (normative, optional): recheck.** It defines, per link kind, what makes a link `valid` and who may make it so.
 
-- **Code with tests.** An `implements` link that is `corroborated` in the evaluated view, and whose test anchors are recorded as passed for that view by an Annex E attestation or the tool's own record, needs no stamp. A body change on such a link is reported as `BODY_CHANGED` with its corroboration and counts as suspect only under `bodyChange: all`, whose default becomes `risk` once the Phase 1 precision table supports it.
+- **Code with tests.** An `implements` link that is `corroborated` in the evaluated view, and whose test anchors are recorded as passed for that view by an Annex E attestation or the tool's own record, needs no stamp. A body change on such a link is reported as `BODY_CHANGED` with its corroboration and counts as suspect only under `bodyChange: all`. The default, and what the new reasons for whole files and bodyless definitions count by default, are set from the replay of the Phase 1 records under candidate defaults (section 7, pre-work), not from a new trial; Phase 1 measured 9 % precision for body changes under `all`.
 - **Code without tests.** The fingerprint is the trigger. A recheck is a lock entry whose `by` is not the principal that made the change which caused the suspect state; a stamp by the same principal is `SELF_STAMP`, a warning, and an error under `--strict`. The change's principal comes from the view; in a Git checkout it is the author of the commits between `at` and the evaluated view.
 - **Prose to prose.** For `refines`, `controls` and `verifies` between items, the item fingerprints are the trigger and a recheck is a lock entry under the same separation rule.
 - **Machine triage.** A tool MAY recheck a suspect link with a model and stamp it as `agent:<model>` when the verdict is that the link holds. The verdict, its inputs and the model are recorded as an in-toto attestation with the predicate `https://ostf.dev/attestation/recheck/v1` (Annex E), never in the lock. A triage stamp is subject to the separation rule like any other.
 
 **Exit codes.** `check` without `--base` exits 1 on errors and broken links and reports suspect links. `check --base` exits 1 also on suspect links that the change introduced. `--strict` exits 1 on any suspect or unstamped link. This keeps the per-change recheck flow and removes the incentive to stamp a queue of old suspects blindly.
 
-**Exit gate.** On the Phase 1 repositories, replayed with the new rules: queue precision at or above 50 % per reason, hand stamps on tested code at zero, recheck lag at or above 95 %, and no `SELF_STAMP` on a risk-relevant link in the trial fixtures.
+**Exit gate.** On the Phase 1 repositories, replayed with the new rules from the Phase 1 index and labels: queue precision at or above 50 % per reason, hand stamps on tested code at zero, recheck lag at or above 95 %, and the reader reporting `SELF_STAMP` on the 25 self-stamps recorded in the Phase 1 T3 runs. A suspect link that Phase 1 did not label is labelled only with the maintainer's approval of the cost; whether agents under the new paragraph avoid self-stamps is measured in Phase 5.
 
 ## 9. Phase 4: languages without hand-written annexes
 
@@ -142,7 +160,7 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 **Goal.** Measured, controlled claims replace the 0.3 scorecard.
 
-**Arms.** `none`, `intent` and `full` as in Phase 1, with `full` now 0.4 and Annex M. The Phase 1 agents, `claude-haiku-5-5` and `gpt-6-sol`, each task three times, plus one repetition of every cell on the large model of each vendor, `claude-opus-5-5` and `gpt-6-astra`, so that a claim about agents in general rests on both sizes.
+**Arms.** `none`, `intent` and `full` as in Phase 1, with `full` now 0.4 and Annex M. The Phase 1 agents, `claude-haiku-5-5` and `gpt-6-sol`, each task three times, plus one repetition of every cell on the large model of each vendor, `claude-opus-5-5` and `gpt-6-astra`, so that a claim about agents in general rests on both sizes. A fourth arm, `rules`, is `REQUIREMENTS.md` with the paragraph's rules written without OSTF terms: it separates the format from the rules, which Phase 1 did not, deferred here by the maintainer's choice to run nothing twice.
 
 **Tasks.** T1 to T8 as before with the corrected criteria, and:
 
@@ -170,6 +188,7 @@ OSTF-171 asks for a second, independently maintained implementation and two orga
 - A review state on links. The pull request is still the review unit; `by` and `at` record provenance, not approval.
 - Telemetry and authorship fields. Annexes E and G still point to in-toto and Agent Trace.
 - A database as the source of truth. The files in the repository stay authoritative, because a change to code and intent must land in one reviewed commit; an index built from them, for cross-repository and longitudinal queries, is an extension the format is ready for and does not define.
+- A package or directory anchor. The Phase 1 replay found a handful of items per root that wanted one, and the whole-file anchors used in its place were the main source of signature noise; Phase 2 quiets those first, and the anchor returns only if the Phase 3 replay still shows the need.
 - Any network dependency.
 
 Completing this plan does not make OSTF 1.0. It makes the claim measurable.
