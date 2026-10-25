@@ -35,7 +35,7 @@ Under the default, every edit to a linked function's body makes its link suspect
    ostf stamp 'math.go#Add implements R-ADD' 'math_test.go#TestAdd verifies R-ADD'
    ```
 
-4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`. Coding agents then run `ostf context` before they edit a function and `ostf check --base` before they finish.
+4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`, and after it your policy for agents, or the [recommended one](draft/0.3/fixtures/agent-policy.txt). Coding agents then run `ostf check --base` before they finish, which also shows what every function they changed serves.
 5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a suspect or broken link, and in a pull request whose base branch has a `trace.lock` also on an unstamped link or a missing lock (`check --strict`), shows the impact of a pull request in its log and uploads the findings to code scanning:
 
    ```yaml

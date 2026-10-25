@@ -59,6 +59,7 @@ func TestSpecMatchesFixtures(t *testing.T) {
 		{"## 2. Overview", "yaml", "fixtures/minimal/trace.yaml"},
 		{"## 2. Overview", "text", "fixtures/minimal/trace.lock"},
 		{"**F.1 Agent paragraph", "text", "fixtures/agent-paragraph.txt"},
+		{"**F.2 Policy paragraph", "text", "fixtures/agent-policy.txt"},
 		{"## Annex J", "text", "example/expected/context.txt"},
 	} {
 		if got, want := blocks(t, c.start, c.lang)[0], read(t, c.file); got != want {
@@ -85,6 +86,10 @@ func TestSimplicityBudget(t *testing.T) {
 	}
 	if p := read(t, "fixtures/agent-paragraph.txt"); !strings.HasPrefix(p, "OSTF agent paragraph 4. ") || !strings.Contains(p, "<tool> check") {
 		t.Error("the agent paragraph lost its version line or its check command")
+	}
+	// Plan section 7: the normative paragraph stays under 120 words; policy goes in the paragraph after it.
+	if words := len(strings.Fields(read(t, "fixtures/agent-paragraph.txt"))); words >= 120 {
+		t.Errorf("the agent paragraph has %d words; it must stay under 120", words)
 	}
 }
 
