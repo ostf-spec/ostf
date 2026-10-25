@@ -1975,6 +1975,66 @@
    }
   },
   {
+   "id": "source-names-another-root",
+   "requirements": [
+    "OSTF-113"
+   ],
+   "note": "A source whose items another root of the same repository owns names that root by its path from the repository's top, or . for the top; readers do not resolve it, and its items are referenced as external items, here with and without a copy of their text.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  core:\n    ostf: services/core\n  top:\n    ostf: \".\"\nitems:\n  - id: R-SHARED\n    external: core:R-SHARED\n  - id: R-TOP\n    external: top:R-TOP\n    text: Copied from the top-level root.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "items": [
+     "R-SHARED",
+     "R-TOP"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-TOP",
+      {},
+      "declared",
+      null,
+      null
+     ]
+    ]
+   }
+  },
+  {
+   "id": "source-root-path-invalid",
+   "requirements": [
+    "OSTF-105",
+    "OSTF-113"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  core:\n    ostf: ../core\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "PATH_INVALID"
+    ]
+   }
+  },
+  {
+   "id": "source-root-path-not-a-string",
+   "requirements": [
+    "OSTF-113"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  core:\n    ostf: [core]\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "FORMAT_INVALID"
+    ]
+   }
+  },
+  {
    "id": "no-lock",
    "requirements": [
     "OSTF-143"
@@ -9456,6 +9516,118 @@
    }
   },
   {
+   "id": "impact-nested-roots-each-evaluated",
+   "requirements": [
+    "OSTF-102",
+    "Annex I.1"
+   ],
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [sub/b.go#G]\n",
+    "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: S-A\n    text: Do s.\n    code: [c.go#H]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "sub/b.go": "package sub\n\nfunc G() int { return 1 }\n",
+    "sub/c.go": "package sub\n\nfunc H() int { return 1 }\n",
+    "sub/deep/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: D-A\n    text: Do d.\n    code: [d.go#K]\n",
+    "sub/deep/d.go": "package deep\n\nfunc K() int { return 1 }\n",
+    "sub/deep/trace.lock": "trace.lock 1\nd.go#K implements D-A source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [sub/b.go#G]\n",
+    "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: S-A\n    text: Do s.\n    code: [c.go#H]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "sub/b.go": "package sub\n\nfunc G() int { return 2 }\n",
+    "sub/c.go": "package sub\n\nfunc H() int { return 2 }\n",
+    "sub/deep/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: D-A\n    text: Do d.\n    code: [d.go#K]\n",
+    "sub/deep/d.go": "package deep\n\nfunc K() int { return 1 }\n",
+    "sub/deep/trace.lock": "trace.lock 1\nd.go#K implements D-A source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA source.body=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING",
+     "NESTED_ROOT",
+     "NESTED_ROOT_FAILED"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [
+      {
+       "anchor": "sub/b.go#G",
+       "items": [
+        "R-A"
+       ]
+      }
+     ],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
+    }
+   },
+   "note": "Every nested root is evaluated on its own, at any depth: sub passes, sub/deep has a suspect link and fails, which its parent's own check would not show."
+  },
+  {
+   "id": "impact-nested-root-failed",
+   "requirements": [
+    "OSTF-102",
+    "Annex I.1"
+   ],
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [sub/b.go#G]\n",
+    "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: S-A\n    text: Do s.\n    code: [c.go#H]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "sub/b.go": "package sub\n\nfunc G() int { return 1 }\n",
+    "sub/c.go": "package sub\n\nfunc H() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [sub/b.go#G]\n",
+    "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: S-A\n    text: Do s.\n    code: [c.go#H]\n  - id: S-B\n    text: Do t.\n    refines: [S-NOPE]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "sub/b.go": "package sub\n\nfunc G() int { return 2 }\n",
+    "sub/c.go": "package sub\n\nfunc H() int { return 2 }\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING",
+     "NESTED_ROOT",
+     "NESTED_ROOT_FAILED"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [
+      {
+       "anchor": "sub/b.go#G",
+       "items": [
+        "R-A"
+       ]
+      }
+     ],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
+    }
+   },
+   "note": "With a base, a nested root is also evaluated on its own: sub's link to an unknown item is an error there, so the result reports NESTED_ROOT_FAILED, an error that makes check exit 1. Its impact is not part of this result."
+  },
+  {
    "id": "impact-skips-uncoverable-paths",
    "requirements": [
     "Annex C.3",
@@ -10848,6 +11020,46 @@
     }
    },
    "valid": true
+  },
+  {
+   "id": "schema-source-root",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-113"
+   ],
+   "schema": "trace.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "sources": {
+     "core": {
+      "ostf": "services/core"
+     },
+     "top": {
+      "ostf": ".",
+      "url": "https://example.com/{id}"
+     }
+    },
+    "items": []
+   },
+   "valid": true
+  },
+  {
+   "id": "schema-source-root-absolute",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-113"
+   ],
+   "schema": "trace.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "sources": {
+     "core": {
+      "ostf": "/services/core"
+     }
+    },
+    "items": []
+   },
+   "valid": false
   }
  ],
  "notCovered": {

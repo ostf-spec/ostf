@@ -94,7 +94,11 @@
     "source": {
       "type": "object",
       "properties": {
-        "url": { "type": "string", "minLength": 1, "$comment": "Display template; {id} is replaced by the percent-encoded native ID." }
+        "url": { "type": "string", "minLength": 1, "$comment": "Display template; {id} is replaced by the percent-encoded native ID." },
+        "ostf": {
+          "anyOf": [{ "const": "." }, { "$ref": "#/$defs/path" }],
+          "$comment": "The root of the same repository that owns the source's items, by its path from the repository's top (OSTF-113)."
+        }
       },
       "patternProperties": { "^x-": {} },
       "additionalProperties": false

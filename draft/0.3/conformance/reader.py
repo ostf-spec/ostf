@@ -70,7 +70,7 @@ SEVERITY = {
     "UNSUPPORTED_LANGUAGE": "warning", "PARSE_ERROR": "warning", "TAG_UNKNOWN_ID": "error",
     "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info", "LOCK_MISSING": "info",
     "LOCK_INVALID": "error", "LOCK_DUPLICATE": "error", "STAMP_REFUSED": "error",
-    "NESTED_ROOT": "info", "DERIVED_INVALID": "error",
+    "NESTED_ROOT": "info", "DERIVED_INVALID": "error", "NESTED_ROOT_FAILED": "error",
 }
 # This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
 OWN_PREFIX = "ostf-reader."
@@ -1281,9 +1281,16 @@ class Analysis:
             raise Stop
         for alias, source in sources.items():
             for key in source:
-                if key != "url" and not key.startswith("x-"):
+                if key not in ("url", "ostf") and not key.startswith("x-"):
                     self.report("UNKNOWN_KEY", "trace.yaml", key, f"source {alias} has no key {key}")
                     raise Stop
+            # OSTF-113: the root of the same repository that owns the source's items, never resolved.
+            if "ostf" in source and not isinstance(source["ostf"], str):
+                self.report("FORMAT_INVALID", "trace.yaml", alias, f"source {alias}: ostf is a root path")
+                raise Stop
+            if "ostf" in source and source["ostf"] != "." and not clean_path(source["ostf"]):
+                self.report("PATH_INVALID", "trace.yaml", alias, f"source {alias}: ostf is a path from the repository's top, or .")
+                raise Stop
         self.sources = sources
         if "profile" in root:
             name = root["profile"]
@@ -2081,6 +2088,29 @@ def impact(base, current, rev):
     }
 
 
+def nested_view(files, directory):
+    """The files of the nested root in `directory`, by path relative to it."""
+    if isinstance(files, Tree):
+        return Tree(files.root / directory)
+    prefix = directory + "/"
+    return {path[len(prefix):]: value for path, value in files.items() if path.startswith(prefix)}
+
+
+def check_base(base, current, rev, strict=False):
+    """Annex I.1: the result of check --base, with impact (C.3), and each nested root evaluated on its own
+    with the same options, one whose check would exit 1 being NESTED_ROOT_FAILED (OSTF-102)."""
+    found = impact(base, current, rev)
+    for d in [d for d in current.diagnostics if d["code"] == "NESTED_ROOT"]:
+        directory = d["file"][:-len("/trace.yaml")]
+        if Analysis(nested_view(current.files, directory)).failed(strict):
+            current.report("NESTED_ROOT_FAILED", d["file"], message=f"the nested root {directory}/ fails its own check",
+                           hint=f"run check with --root {directory}")
+    result = current.result()
+    if found is not None:
+        result["impact"] = found
+    return result
+
+
 # --- stamp (Annex I.4) ------------------------------------------------------
 
 def stamp(analysis, names, by="unknown", at="unknown"):
@@ -2349,9 +2379,7 @@ def _run(args, analysis, target, anchor, root):
         result = analysis.result()
         if args.base is not None:
             base = Tree(args.base_tree) if args.base_tree is not None else git_view(root, args.base)
-            found = impact(Analysis(base), analysis, args.base)
-            if found is not None:
-                result["impact"] = found
+            result = check_base(Analysis(base), analysis, args.base, args.strict)
         if args.format == "sarif":
             print(json.dumps(sarif(analysis, result), indent=2, ensure_ascii=False))
         else:

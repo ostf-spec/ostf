@@ -253,11 +253,11 @@ def check():
         if texts is not None:
             check_stamp(case["id"], case_files(case), case["stamp"], result, texts, case.get("by", "unknown"), case.get("at", "unknown"))
     for case in cases["impacts"]:
-        current = reader.Analysis(case["files"])
-        got = reader.impact(reader.Analysis(case["base"]), current, case["rev"])
+        # The result of check --base: impact, and the nested roots evaluated on their own (OSTF-102).
+        result = reader.check_base(reader.Analysis(case["base"]), reader.Analysis(case["files"]), case["rev"])
+        got = result.get("impact")
         assert got == case["expect"]["impact"], f"{case['id']}:\n got {got}\nwant {case['expect']['impact']}"
-        # Computed after impact, so impact cannot add a diagnostic to the evaluated view.
-        assert codes(current.result()) == case["expect"]["codes"], f"{case['id']}: codes {codes(current.result())}"
+        assert codes(result) == case["expect"]["codes"], f"{case['id']}: codes {codes(result)}"
     valid_sarif = sarif_validator()
     try:  # a nested rule of the schema, reached through its references, is enforced
         valid_sarif({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "x"}}, "results": [
@@ -355,7 +355,7 @@ def check():
     covered |= {code for case in load(VECTORS / "lock-vectors.json") for code in case["errors"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
     annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))
-    assert len(annex_c) == 38, "Annex C.1 codes"
+    assert len(annex_c) == 39, "Annex C.1 codes"
     for name, reason in cases["notCovered"].items():
         assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
     for name in sorted(defined | annex_c):
@@ -412,6 +412,10 @@ def check():
         (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems: []\n')
         code, out = run(tree, "check")
         assert code == 0 and any("NESTED_ROOT" in line and "svc/trace.yaml" in line for line in out.splitlines()), "text check names a nested root"
+        # OSTF-102: with a base, a nested root that fails its own check fails the top-level one.
+        (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems:\n  - id: S-A\n    text: A.\n    refines: [S-NOPE]\n')
+        code, out = run(tree, "check", "--base", "main", "--base-tree", str(tree))
+        assert code == 1 and "NESTED_ROOT_FAILED svc/trace.yaml" in out and run(tree, "check")[0] == 0, "check --base fails on a failing nested root"
         os.remove(tree / "svc" / "trace.yaml")
         # I.1: --strict also fails on LOCK_MISSING with links in the graph and on an unstamped link.
         assert run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 without a lock"
@@ -494,7 +498,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 35
+    counts["commandLine"] = 36
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 
