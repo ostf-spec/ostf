@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.4: plan to make the format agent-first
 
-Date: 2026-10-25. Status: proposed; no phase started. Applies to the [0.3 draft](ostf.md) at document revision 0.12 and produces wire version 0.4.
+Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 waits on the maintainer's decision on the trial budget and the two real repositories. Applies to the [0.3 draft](ostf.md) at document revision 0.12 and produces wire version 0.4.
 
 ## 1. Why this plan
 
@@ -75,6 +75,8 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 | Trial criterion T5 accepts the paragraph's own behavior: an agent that reports a conflicting item and leaves its links unstamped passes. | trials/tasks.json, protocol | 6 |
 
 **Exit gate.** Both readers pass every new case and the unchanged `ts1`, `go1`, `py1`, `f1` and `lf1` vectors. The example tree reproduces its expected outputs byte for byte under the new context rule. Document revision 0.13 is published with these changes recorded in the [decision record](decisions.md).
+
+**Outcome.** Done on 2026-10-25; the [decision record](decisions.md#agent-first-plan-phase-0-fix-03) gives each row's defect and ruling. Three rows went further than the table: `go1` had the defect class of K.4, so every Go fingerprint moved to `go2`; `impact.lock` needed a fourth value, `absent`; and pinning the grammars left three TypeScript 5.4 forms outside Annex K. The example's expected outputs did not change, because no item links to `R-REFUND-LIMIT`. The GitHub Action's new default, strict whenever the base branch has a lock, fails a pull request that adds a link until the link is stamped.
 
 ## 6. Phase 1: baseline
 

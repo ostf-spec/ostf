@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-**Working draft, 2026-10-24.** Wire version `ostf: "0.3"`. Proposed document revision 0.12. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-171). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1, `lf1` and the lock format of 0.2 are unchanged, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
+**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.13. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-171). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1, `lf1` and the lock format of 0.2 are unchanged, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
 
 ## Abstract
 
