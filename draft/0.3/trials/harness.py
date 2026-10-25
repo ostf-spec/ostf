@@ -57,11 +57,18 @@ def load_tasks():
     return json.loads((HERE / "tasks.json").read_text())
 
 
+_READER = None
+
+
 def load_reader():
     """The reference reader as a module, for the arm-neutral parts of the judge."""
+    global _READER
+    if _READER:
+        return _READER
     spec = importlib.util.spec_from_file_location("ostf_trials_reader", READER)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
+    _READER = module
     return module
 
 
