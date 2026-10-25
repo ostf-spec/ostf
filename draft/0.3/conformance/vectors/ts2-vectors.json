@@ -871,5 +871,121 @@
       "source.sig": "ts2:LfCmvt72tFpBpOj9doDjsgvZamJKyhRI-ZL9djUFcCg",
       "source.body": "ts2:A6AAswS5Tt3uAS6DMf-lM5cU4fJGbvYLG_XF-R0gnis"
     }
+  },
+  {
+    "id": "ts2-async-generator-method",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  static async *d() { yield 1 }\n}\n",
+    "symbol": "K.d",
+    "note": "The method's name is d, after its modifiers and the *.",
+    "sigTokens": "static async * d ( )",
+    "bodyTokens": "static async * d ( ) { yield 1 ; }",
+    "expect": {
+      "source.sig": "ts2:t7l4kGjJHXbkCSyPAcaguY-pUND9s8L2LnerpfiqyeA",
+      "source.body": "ts2:fDBe0ApNySzcRBp34RC9kZXJZYixypuKL0yGMmT-vSk"
+    }
+  },
+  {
+    "id": "ts2-numeric-separators",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.js",
+    "source": "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0\n",
+    "symbol": "n",
+    "note": "A separator stands between two digits.",
+    "sigTokens": "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0 ;",
+    "bodyTokens": "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0 ;",
+    "expect": {
+      "source.sig": "ts2:PscFyRPOGGdoHApIGyxeHM6GqtwWWoR6dhnEWBDRkT8",
+      "source.body": "ts2:PscFyRPOGGdoHApIGyxeHM6GqtwWWoR6dhnEWBDRkT8"
+    }
+  },
+  {
+    "id": "ts2-separator-after-prefix",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.js",
+    "source": "const n = 0x_ff;\n",
+    "symbol": "",
+    "note": "ECMAScript allows no separator after 0x, so the file does not parse and falls back to lf1.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:gOK7RBR7XYLkFZRIak8KvPvOPHr1oSqAiSg8zwBjjQ4"
+    }
+  },
+  {
+    "id": "ts2-separator-after-zero",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.js",
+    "source": "const n = 0_1;\n",
+    "symbol": "",
+    "note": "No separator after a leading 0.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:ZwAhSbsH3oK7Zk5pHIhZMWc85AyhB4IoG1NgbKPlHHM"
+    }
+  },
+  {
+    "id": "ts2-double-separator",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.js",
+    "source": "const n = 1__0;\n",
+    "symbol": "",
+    "note": "No two separators in a row.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:126sUOFMu8RpdbQP-bMNu9knVjqdjFba1y6XMhiAlrs"
+    }
+  },
+  {
+    "id": "ts2-variance-annotation",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "v.ts",
+    "source": "interface I<in out T> { x: T }\n",
+    "symbol": "",
+    "note": "TypeScript 5.4 reads variance annotations; tree-sitter-typescript 0.23.2 does not, so the annex leaves them out.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:M9b53Rf3BWdZFp-RkU6C104CNj8gjdlpiy6tLrNZjvU"
+    }
+  },
+  {
+    "id": "ts2-export-type-star",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "x.ts",
+    "source": "export type * from \"x\";\n",
+    "symbol": "",
+    "note": "Outside the annex, like variance annotations.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:nZIo3eYRofcX4gmdKdBy77K5H5kDRC-cq-gcJhVXcic"
+    }
+  },
+  {
+    "id": "ts2-static-accessor",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.ts",
+    "source": "class A { static accessor y = 2 }\n",
+    "symbol": "",
+    "note": "Outside the annex, like variance annotations.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:FzN6BQTjcq1sbcOKA3fipVda7W4WvfVDcPXJKBND7Rs"
+    }
   }
 ]

@@ -99,6 +99,11 @@ def check():
             assert annex is not None and annex.algorithm == superseded.get(algorithm, (algorithm,))[0], case["id"] + ": annex"
             parse = superseded[algorithm][1] if algorithm in superseded else annex.parse
             parsed = parse(case["source"].encode(), case["path"])
+            if case.get("parses") is False:  # syntax outside the annex: the file falls back to lf1 (OSTF-141)
+                assert parsed is None, case["id"] + ": parses"
+                got = {"source.sig": reader.fingerprint("lf1", case["source"].encode().replace(b"\r\n", b"\n"))}
+                assert got == case["expect"], case["id"] + f": {got} != {case['expect']}"
+                continue
             assert parsed is not None, case["id"] + ": parse"
             if case["symbol"]:
                 found = annex.select(parsed["definitions"], case["symbol"], case["path"])

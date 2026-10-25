@@ -571,5 +571,36 @@
     "expect": {
       "source.sig": "go2:rnph1VOyS9C-NZoJsnt8HABaT7zwpYHiCA135NV_YnM"
     }
+  },
+  {
+    "id": "go2-empty-statement-between",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();; b() }\n",
+    "symbol": "f",
+    "note": "Go reads an empty statement between two statements; tree-sitter-go 0.25.0 refuses it, and the reference reader accepts that one recovery.",
+    "sigTokens": "func f ( )",
+    "bodyTokens": "func f ( ) { a ( ) ; ; b ( ) ; }",
+    "expect": {
+      "source.sig": "go2:lRRkh2T2KIMSiIiIqRO3FiPcpb72jICCUpfRFKafzlM",
+      "source.body": "go2:TeNKUavpyTo0knlDaiaCCkgIv8BE4FXiWHOLy5vswLQ"
+    }
+  },
+  {
+    "id": "go2-empty-statements",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();;; b() }\n",
+    "symbol": "f",
+    "sigTokens": "func f ( )",
+    "bodyTokens": "func f ( ) { a ( ) ; ; ; b ( ) ; }",
+    "expect": {
+      "source.sig": "go2:lRRkh2T2KIMSiIiIqRO3FiPcpb72jICCUpfRFKafzlM",
+      "source.body": "go2:gpiRJbZHgfCJo3ZL4MDsOpyNIbami4qd9PqWIGF8Mmg"
+    }
   }
 ]

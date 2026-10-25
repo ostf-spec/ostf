@@ -305,6 +305,24 @@ def _tree_comments(root, source, kinds=("comment",), opaque=()):
     return sorted(found, key=lambda c: c["start"])
 
 
+def _go_empty_statement_only(root):
+    """tree-sitter-go 0.25.0 refuses an empty statement between two statements, as in a();; b(),
+    which Go reads (Annex A). Its recovery wraps the statements up to the empty statement in an
+    ERROR node; accept a tree whose every error is that one."""
+    stack = [root]
+    while stack:
+        n = stack.pop()
+        if n.is_missing:
+            return False
+        if n.type == "ERROR":
+            if n.parent is None or n.parent.type != "block" or [c.type for c in n.children] != ["statement_list"] \
+                    or n.children[0].has_error or n.children[0].named_children[-1].type != "empty_statement":
+                return False
+            continue
+        stack.extend(n.children)
+    return True
+
+
 def go_source(source, path="", algorithm="go2"):
     """Annex A: definitions, whole-file token stream and comments, or None when the file does not parse.
     With algorithm "go1", the token streams of the superseded go1 (A.6)."""
@@ -313,7 +331,7 @@ def go_source(source, path="", algorithm="go2"):
     except UnicodeError:
         return None
     tree = Parser(GO).parse(source)
-    if tree.root_node.has_error or not _escapes_ok(tree.root_node):
+    if (tree.root_node.has_error and not _go_empty_statement_only(tree.root_node)) or not _escapes_ok(tree.root_node):
         return None
     definitions = []
     comments = _tree_comments(tree.root_node, source)
@@ -402,6 +420,31 @@ TS_TYPE_MEMBERS = {"object_type", "interface_body"}
 TS_UNTERMINATED_EXPORTS = {"function_expression", "generator_function", "class", "import_alias"}
 # ECMAScript WhiteSpace and LineTerminator code points (K.4).
 JS_SPACE = re.compile("[\t\v\f  ﻿  -   　\n\r  ]+")
+
+
+_DIGITS = r"[0-9](?:_?[0-9])*"
+# ECMAScript 2024 NumericLiteral: a separator stands between two digits (K.4). Legacy octal and
+# octal-like integers take none.
+JS_NUMBER = re.compile(rf"""(?:(?:0|[1-9](?:_?[0-9])*|0[0-7]*[89][0-9]*)(?:\.(?:{_DIGITS})?)?(?:[eE][+-]?{_DIGITS})?
+                          |\.{_DIGITS}(?:[eE][+-]?{_DIGITS})?
+                          |0[0-7]+
+                          |(?:0|[1-9](?:_?[0-9])*)n
+                          |0[xX][0-9a-fA-F](?:_?[0-9a-fA-F])*n?
+                          |0[oO][0-7](?:_?[0-7])*n?
+                          |0[bB][01](?:_?[01])*n?)\Z""", re.VERBOSE)
+
+
+def _js_numbers_ok(root):
+    """Numeric literals that ECMAScript reads; tree-sitter accepts some it does not, such as 0_1."""
+    stack = [root]
+    while stack:
+        n = stack.pop()
+        if n.type == "number" and n.is_named:  # not the type keyword number
+            if not JS_NUMBER.match(n.text.decode()):
+                return False
+            continue
+        stack.extend(n.children)
+    return True
 
 
 def ts_test_file(path):
@@ -493,7 +536,7 @@ def ts_source(source, path="", algorithm="ts2"):
     language = TS if path.endswith(TS_TYPESCRIPT) else TSX if path.endswith(TS_TSX) else JS
     tree = Parser(language).parse(source)
     root = tree.root_node
-    if root.has_error:
+    if root.has_error or not _js_numbers_ok(root):
         return None
     comments = _tree_comments(root, source, opaque=TS_ATOMS)
     omitted = _ts_omitted(root) if algorithm == "ts2" else None
@@ -660,6 +703,8 @@ def py_source(source, path=""):
         text = source.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
         source = text.encode()
         tree = ast.parse(text, feature_version=(3, 12))  # Annex L: the Python 3.12 grammar
+        if any(getattr(node, "is_lazy", 0) for node in ast.walk(tree)):
+            return None  # lazy imports are Python 3.15 syntax, which feature_version does not refuse
         lines = io.StringIO(text).readlines()
         raw_tokens = list(tokenize.generate_tokens(io.StringIO(text).readline))
     except (UnicodeError, SyntaxError, ValueError, tokenize.TokenError):

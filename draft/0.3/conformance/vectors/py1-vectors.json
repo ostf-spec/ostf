@@ -484,5 +484,74 @@
     "expect": {
       "source.sig": "py1:u5kHnakn2JTwd0T0-Ut98UDtKepa_mYobq3qNLZb2iE"
     }
+  },
+  {
+    "id": "py-except-parenthesized",
+    "requirements": [
+      "Annex L"
+    ],
+    "path": "e.py",
+    "source": "try:\n    pass\nexcept (A, B):\n    pass\n",
+    "symbol": "",
+    "sigTokens": "0 try :\n1 pass\n0 except ( A , B ) :\n1 pass",
+    "expect": {
+      "source.sig": "py1:LgRrdSSYpCdB8D9ofTx8ITpjlwPJrgJ1W6bpNwfwRek"
+    }
+  },
+  {
+    "id": "py-except-without-parentheses",
+    "requirements": [
+      "Annex L"
+    ],
+    "path": "e.py",
+    "source": "try:\n    pass\nexcept A, B:\n    pass\n",
+    "symbol": "",
+    "note": "Python 3.14 syntax, which Python 3.12 does not read.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:nELibrzFeakVlDck-qDSxTpL4SuMaR3iUKvovXNhmug"
+    }
+  },
+  {
+    "id": "py-template-string",
+    "requirements": [
+      "Annex L"
+    ],
+    "path": "t.py",
+    "source": "x = t\"hello {name}\"\n",
+    "symbol": "",
+    "note": "Python 3.14 syntax.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:fRxqriqSuKAQLpPSntfdzXCIGTXZa9kry-Gtrc1HACQ"
+    }
+  },
+  {
+    "id": "py-lazy-import",
+    "requirements": [
+      "Annex L"
+    ],
+    "path": "l.py",
+    "source": "lazy import json\n",
+    "symbol": "",
+    "note": "Python 3.15 syntax.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:SsWRn6hNdPh8msHYFitqQUfYYsxVxSzXnGbOF5qEOvo"
+    }
+  },
+  {
+    "id": "py-type-parameter-default",
+    "requirements": [
+      "Annex L"
+    ],
+    "path": "d.py",
+    "source": "def f[T = int](x: T) -> T:\n    return x\n",
+    "symbol": "",
+    "note": "Python 3.13 syntax.",
+    "parses": false,
+    "expect": {
+      "source.sig": "lf1:sbJyelRbdCo_1jYc8KNHFjcOGeI_MNHGWaGCcGHJnQw"
+    }
   }
 ]
