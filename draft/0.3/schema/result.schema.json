@@ -106,6 +106,20 @@
             "additionalProperties": false
           }
         },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "context": { "$ref": "#/$defs/anchor" },
+              "items": { "$ref": "#/$defs/ids" },
+              "links": { "$ref": "#/$defs/identities" }
+            },
+            "required": ["context", "items", "links"],
+            "additionalProperties": false,
+            "$comment": "The context (Annex I.3) of a changed anchor; its items carry their details in the result's items (C.3)."
+          }
+        },
         "items": {
           "type": "object",
           "properties": {
@@ -128,7 +142,7 @@
         "lock": { "enum": ["kept", "added", "removed", "absent"] },
         "tests": { "type": "array", "items": { "$ref": "#/$defs/anchor" } }
       },
-      "required": ["base", "coverage", "changed", "items", "links", "lock", "tests"],
+      "required": ["base", "coverage", "changed", "contexts", "items", "links", "lock", "tests"],
       "patternProperties": { "^x-": {} },
       "additionalProperties": false
     }

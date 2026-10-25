@@ -2075,10 +2075,17 @@ def impact(base, current, rev):
         parsed = _parsed(current, path) if symbol and path in current.files else None
         if parsed and any(d["name"] == symbol and d["test"] for d in parsed["definitions"]):
             tests.add(anchor)
+    # The context (I.3) of each changed anchor that resolves in the evaluated view and names an item.
+    contexts = []
+    for anchor in sorted((a for a in changed if changed[a]), key=str.encode):
+        found, resolved = context(current, anchor)
+        if resolved and found["items"]:
+            contexts.append({"context": anchor, "items": [i["id"] for i in found["items"]], "links": [identity(l) for l in found["links"]]})
     return {
         "base": rev,
         "coverage": "direct",
         "changed": [{"anchor": a, "items": sorted(changed[a], key=str.encode)} for a in sorted(changed, key=str.encode)],
+        "contexts": contexts,
         "items": {"added": added, "changed": modified, "removed": removed},
         "links": {"added": sorted(current.links.keys() - base.links.keys(), key=str.encode),
                   "removed": sorted(base.links.keys() - current.links.keys(), key=str.encode)},
@@ -2108,6 +2115,9 @@ def check_base(base, current, rev, strict=False):
     result = current.result()
     if found is not None:
         result["impact"] = found
+        # C.3: the items that a context names carry the fields a context adds (I.3).
+        named = {i for c in found["contexts"] for i in c["items"]}
+        result["items"] = [current.item_row(row["id"], row["id"] in named) for row in result["items"]]
     return result
 
 
@@ -2262,7 +2272,8 @@ def text_diagnostics(result):
     return lines
 
 
-def text_check(result):
+def text_check(result, analysis=None):
+    """I.1 and Annex J: check's text; with impact, each context of impact.contexts rendered after it."""
     lines = text_diagnostics(result)
     for link in result["links"]:
         if link.get("state") != "valid":
@@ -2277,6 +2288,8 @@ def text_check(result):
         lines += [f"  link {kind} {i}" for kind in ("added", "removed") for i in found["links"][kind]]
         lines += [f"  trace.lock {found['lock']}"] if found["lock"] in ("added", "removed") else []
         lines += [f"  test {t}" for t in found["tests"]]
+        if analysis is not None:
+            lines += [render(analysis, c["context"]).rstrip("\n") for c in found["contexts"]]
     return "\n".join(lines) + "\n"
 
 
@@ -2383,7 +2396,7 @@ def _run(args, analysis, target, anchor, root):
         if args.format == "sarif":
             print(json.dumps(sarif(analysis, result), indent=2, ensure_ascii=False))
         else:
-            print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result), end="\n" if args.format == "json" else "")
+            print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result, analysis), end="\n" if args.format == "json" else "")
         return 1 if analysis.failed(args.strict) else 0
     if args.command == "stamp":
         result, texts = stamp(analysis, args.links, args.by, args.at)

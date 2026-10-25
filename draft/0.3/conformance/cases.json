@@ -9056,6 +9056,18 @@
        "items": []
       }
      ],
+     "contexts": [
+      {
+       "context": "a.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go#F implements R-A",
+        "a_test.go#TestF verifies R-A"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9099,6 +9111,17 @@
        "anchor": "a.go#S.F",
        "items": [
         "R-A"
+       ]
+      }
+     ],
+     "contexts": [
+      {
+       "context": "a.go#S.F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go#F implements R-A"
        ]
       }
      ],
@@ -9146,6 +9169,7 @@
        ]
       }
      ],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9234,6 +9258,7 @@
        "items": []
       }
      ],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9303,6 +9328,37 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "a.go",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go implements R-A",
+        "a_test.go#TestF verifies R-A"
+       ]
+      },
+      {
+       "context": "a.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go implements R-A",
+        "a_test.go#TestF verifies R-A"
+       ]
+      },
+      {
+       "context": "spec.txt",
+       "items": [
+        "R-B"
+       ],
+       "links": [
+        "spec.txt implements R-B"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9343,6 +9399,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [
        "R-D"
@@ -9395,6 +9452,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [
        "R-A"
@@ -9501,6 +9559,17 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "sub/b.go#G",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "sub/b.go#G implements R-A"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9559,6 +9628,17 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "sub/b.go#G",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "sub/b.go#G implements R-A"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9612,6 +9692,17 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "sub/b.go#G",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "sub/b.go#G implements R-A"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9654,6 +9745,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9707,6 +9799,7 @@
        "items": []
       }
      ],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9754,6 +9847,7 @@
        "items": []
       }
      ],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9803,6 +9897,18 @@
        "anchor": "b.go#F",
        "items": [
         "R-A"
+       ]
+      }
+     ],
+     "contexts": [
+      {
+       "context": "b.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a_test.go#TestF verifies R-A",
+        "b.go#F implements R-A"
        ]
       }
      ],
@@ -9862,6 +9968,26 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "a.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go#F implements R-A"
+       ]
+      },
+      {
+       "context": "a.go#G",
+       "items": [
+        "R-B"
+       ],
+       "links": [
+        "a.go#G implements R-B"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9906,6 +10032,7 @@
        "items": []
       }
      ],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -9953,6 +10080,19 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "a.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go#F implements R-A",
+        "a_test.go#TestF/sub verifies R-A",
+        "a_test.go#TestGone verifies R-A"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -9993,6 +10133,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -10061,6 +10202,30 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "cart.test.ts#Cart > adds",
+       "items": [
+        "R-ADD"
+       ],
+       "links": [
+        "calc.py#total implements R-ADD",
+        "cart.test.ts#Cart%20>%20adds verifies R-ADD",
+        "cart.ts#Cart.add implements R-ADD"
+       ]
+      },
+      {
+       "context": "cart.ts#Cart.add",
+       "items": [
+        "R-ADD"
+       ],
+       "links": [
+        "calc.py#total implements R-ADD",
+        "cart.test.ts#Cart%20>%20adds verifies R-ADD",
+        "cart.ts#Cart.add implements R-ADD"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -10112,6 +10277,18 @@
        ]
       }
      ],
+     "contexts": [
+      {
+       "context": "r.js#f",
+       "items": [
+        "R-ONE"
+       ],
+       "links": [
+        "r.js#f implements R-ONE",
+        "r.test.js#f%20returns%20one verifies R-ONE"
+       ]
+      }
+     ],
      "items": {
       "added": [],
       "changed": [],
@@ -10152,6 +10329,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -10188,6 +10366,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -10225,6 +10404,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],
@@ -10268,6 +10448,7 @@
      "base": "main",
      "coverage": "direct",
      "changed": [],
+     "contexts": [],
      "items": {
       "added": [],
       "changed": [],

@@ -258,6 +258,10 @@ def check():
         got = result.get("impact")
         assert got == case["expect"]["impact"], f"{case['id']}:\n got {got}\nwant {case['expect']['impact']}"
         assert codes(result) == case["expect"]["codes"], f"{case['id']}: codes {codes(result)}"
+        # C.3: exactly the items that a context names carry their text in the result.
+        named = {i for c in (got or {}).get("contexts", []) for i in c["items"]}
+        assert {i["id"] for i in result["items"] if "text" in i} == {i for i in named if "text" in reader.Analysis(case["files"]).items[i]}, \
+            f"{case['id']}: items with their text"
     valid_sarif = sarif_validator()
     try:  # a nested rule of the schema, reached through its references, is enforced
         valid_sarif({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "x"}}, "results": [
@@ -446,6 +450,9 @@ def check():
         assert run(tree, "check", "--base", "main")[0] == 2, "check --base outside a Git checkout exits 2"
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "json")
         assert code == 1 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example"
+        code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"))
+        assert code == 1 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (suspect, corroborated)\n" in out, \
+            "the text of check --base renders each context (Annex J)"
         code, out = run(tree, "check", "--format", "sarif")
         assert code == 1 and [r["ruleId"] for r in json.loads(out)["runs"][0]["results"]] == ["BODY_CHANGED"], "check --format sarif"
         valid_sarif(json.loads(out), "check --format sarif")
@@ -498,7 +505,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 36
+    counts["commandLine"] = 37
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 
