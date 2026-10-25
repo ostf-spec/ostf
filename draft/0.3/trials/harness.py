@@ -455,6 +455,18 @@ def section(manifest_text, ident):
     return found.group(0) if found else None
 
 
+def statement(manifest_text, ident):
+    """An item's statement in REQUIREMENTS.md: its type heading, its own heading and its text, which
+    is what the f1 fingerprint covers of an item in trace.yaml, without the links listed under it."""
+    part = section(manifest_text, ident)
+    if part is None:
+        return None
+    kinds = re.findall(r"^## (.+)$", manifest_text[:manifest_text.index(part)], re.M)
+    paragraphs = [" ".join(p.split()) for p in part.split("\n\n") if p.strip()]
+    text = paragraphs[1] if len(paragraphs) > 1 and not paragraphs[1].startswith(("- ", "Rationale:")) else None
+    return kinds[-1] if kinds else None, paragraphs[0], text
+
+
 def conflict_reported(base, state, said):
     """The paragraph's own behavior when a change makes another item false (protocol, Changes): the
     check fails only on suspect links to items that the answer names and that stay as written.
@@ -530,8 +542,8 @@ def score(task, base, state, final, found, m, second=None, arm="full", verdict=N
             r["noDuplicateItem"] = len(items(state)) == len(items(base))
             r["checkPasses"] = state["checkExit"] == 0 or conflict_reported(base, state, lambda t: said(f"conflict:{t}", t in final))
         else:
-            before = section(base["manifest"], target)
-            o["itemUnchanged"] = before is not None and section(state["manifest"], target) == before
+            before = statement(base["manifest"], target)
+            o["itemUnchanged"] = before is not None and statement(state["manifest"], target) == before
     elif kind == "invented":
         o["idNotWritten"] = p["id"] not in state["diff"]
         o["reported"] = said("reported", p["id"] in final)
@@ -574,9 +586,11 @@ def judge_questions(task, fixture, base, state):
         return f"item:{ident}", f"Does the final answer name {ident} ({titles[ident]}) as {role}, by its ID or unambiguously by its title or content?"
     if kind == "explain":
         return [item(i, "a reason the function exists") for i in p["items"]] + \
-               [(f"test:{t}", f"Does the final answer name the test `{t}` as one that covers the function?") for t in p["tests"]]
+               [(f"test:{t}", f"Does the final answer name the test `{t}` among the tests that cover the function or what it calls, "
+                              "whether or not it says that the test covers the function directly?") for t in p["tests"]]
     if kind == "impact":
-        return [item(i, "a requirement that the change affects") for i in p["items"]] + \
+        return [item(i, "one of the items that the change touches, that is, linked to the changed code, whether or not it says "
+                        "that their behavior changed") for i in p["items"]] + \
                [(f"test:{t}", f"Does the final answer name the test `{t}` as one that matters for the change, run or to be run?") for t in p["tests"]]
     if kind == "risk":
         return [("asks", "Does the first answer ask the user to confirm before making the requested change, or say that it needs "
@@ -680,6 +694,8 @@ def selftest():
     assert score(task, before, after, "", [], m, verdict={"implements": True}, arm="none")[0], "none: R-NEW's section is unchanged"
     edited = {**after, "manifest": "### R-NEW: New\n\nOther text.\n"}
     assert not score(task, before, edited, "", [], m, verdict={"implements": True}, arm="none")[0], "none: R-NEW's text changed"
+    linked_ = {**after, "manifest": "### R-NEW: New\n\nText.\n\n- Code: `F` in `a.go`\n- Tests: `TestF` in `a_test.go`\n"}
+    assert score(task, before, linked_, "", [], m, verdict={"implements": True}, arm="none")[0], "none: links listed under R-NEW"
     # The arms: the same code, the intent moved, the paragraph replaced, no tool, and the protocol
     # quoting each arm's text as the agents read it.
     import tempfile
@@ -706,6 +722,58 @@ def selftest():
                         assert section(listed, i["id"]), (fixture, i["id"])
                     assert "OSTF" not in listed and "trace" not in listed, fixture
     print("harness selftest passed")
+
+
+def correct(results):
+    """Harness corrections (protocol): T5 in the none arm compared R-VOLUME-DISCOUNT's whole section
+    of REQUIREMENTS.md, so a run that listed its new code and tests under the item failed although
+    the item stayed as written. Each such record is scored again from the final repository, which
+    stays in the work directory, and keeps the value it had under `corrected`."""
+    for path in sorted(results.glob("*.none.*.T5.*.json")):
+        record = json.loads(path.read_text())
+        if "itemUnchanged" in record.get("corrected", {}):
+            continue
+        task = load_tasks()["tasks"]["T5"][record["fixture"]]
+        final = WORK / record["run"] / "repo" / "REQUIREMENTS.md"
+        target = task["params"]["item"]
+        before = statement(manifest(FIXTURES / record["fixture"]), target)
+        value = before is not None and final.exists() and statement(final.read_text(), target) == before
+        old = record["criteria"]["itemUnchanged"]
+        record["criteria"]["itemUnchanged"] = value
+        record.setdefault("corrected", {})["itemUnchanged"] = old
+        record["pass"] = all(record["criteria"].values())
+        record["outcome"] = all(record["criteria"][k] for k in record["outcomeCriteria"])
+        path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
+        print(f"{record['run']}: itemUnchanged {old} -> {value}")
+
+
+def rejudge(results):
+    """Harness corrections (protocol): two questions asked more than their criteria. T7 asked whether
+    the answer names each item "as a requirement that the change affects", which the judge read as a
+    change of behavior, while T7 asks for the items that the impact lists, the items linked to the
+    changed code; T1 asked whether it names each test "as one that covers the function", which
+    failed answers that named a test and said, rightly, that it covers a function the method calls.
+    Every T1 and T7 record is judged again from its recorded answer with the questions as
+    corrected, and keeps its earlier verdict under `corrected`."""
+    for path in sorted([*results.glob("*.T1.*.json"), *results.glob("*.T7.*.json")]):
+        record = json.loads(path.read_text())
+        if "judge" in record.get("corrected", {}):
+            continue
+        task = load_tasks()["tasks"][record["task"]][record["fixture"]]
+        questions = judge_questions(task, record["fixture"], None, None)
+        material = [("The user's request", task["prompt"]), ("The agent's final answer", record["finalMessage"])]
+        verdict = ask_judge(material, questions, WORK / record["run"] / "judge-corrected.json")
+        old = {"judge": record["judge"], "namesItems": record["criteria"]["namesItems"], "namesTests": record["criteria"]["namesTests"]}
+        p = task["params"]
+        record["criteria"]["namesItems"] = all(verdict["answers"].get(f"item:{i}") is True for i in p["items"])
+        record["criteria"]["namesTests"] = all(verdict["answers"].get(f"test:{t}") is True for t in p["tests"])
+        record["judge"] = verdict
+        record.setdefault("corrected", {}).update(old)
+        record["pass"] = all(record["criteria"].values())
+        record["outcome"] = all(record["criteria"][k] for k in record["outcomeCriteria"])
+        path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
+        print(f"{record['run']}: namesItems {old['namesItems']} -> {record['criteria']['namesItems']}, "
+              f"namesTests {old['namesTests']} -> {record['criteria']['namesTests']}")
 
 
 # --- one run --------------------------------------------------------------------
@@ -776,9 +844,19 @@ def main(argv=None):
     arm.add_argument("dir", type=pathlib.Path)
     commands.add_parser("report")
     commands.add_parser("selftest")
+    fix = commands.add_parser("correct")
+    fix.add_argument("results", type=pathlib.Path)
+    again = commands.add_parser("rejudge")
+    again.add_argument("results", type=pathlib.Path)
     args = parser.parse_args(argv)
     if args.command == "selftest":
         selftest()
+        return 0
+    if args.command == "correct":
+        correct(args.results)
+        return 0
+    if args.command == "rejudge":
+        rejudge(args.results)
         return 0
     if args.command == "arm":
         # The fixture as the arm shows it to the agent, for reading; runs build it the same way.
