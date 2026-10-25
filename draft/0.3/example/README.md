@@ -27,4 +27,4 @@ Each lock line names a link and the fingerprints of both ends at the last rechec
 
 ## Status
 
-The fingerprints were first computed with the `go1` and `f1` code of the 0.2 Python prototype, since this draft keeps both algorithms unchanged. The [0.3 reader](../conformance/README.md) now reads this tree directly, reports the same six links `valid` and reproduces [expected/](expected/) byte for byte. zztrace does not read wire 0.3 yet.
+The fingerprints were first computed with the `go1` and `f1` code of the 0.2 Python prototype, since this draft keeps both algorithms unchanged. The [0.3 reader](../conformance/README.md) reads this tree directly, reports the same six links `valid` and reproduces [expected/](expected/) byte for byte. zztrace's second reader, written separately on Go's own parser, agrees with it on every fingerprint, state and rendering of this tree ([agent-readiness plan](../plan-agent-readiness.md), step 2d).

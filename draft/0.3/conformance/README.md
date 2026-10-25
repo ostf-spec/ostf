@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.3 reader and cases
 
-[reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, K and L) with the `check`, `context` and `stamp` commands of [Annex I](../ostf.md#annex-i-normative-optional-command-profile), `impact` for `check --base` (Annex C.3) and SARIF output (Annex D). It is independent code ported from the 0.2 Python prototype; it does not import zztrace, call Git, start a subprocess or touch the network. It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
+[reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, K and L) with the `check`, `context` and `stamp` commands of [Annex I](../ostf.md#annex-i-normative-optional-command-profile), `impact` for `check --base` (Annex C.3) and SARIF output (Annex D). It is independent code ported from the 0.2 Python prototype; it does not import zztrace or touch the network, and the reader itself starts no subprocess: only the command line's `check --base REV`, without `--base-tree`, runs Git's plumbing commands to read REV. It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
 
 From the repository root, with Python 3.12 or newer:
 
@@ -19,16 +19,14 @@ cd draft/0.3/example
 ../../../.venv/bin/python ../conformance/reader.py stamp 'refund.go#CheckRefundLimit implements R-REFUND-LIMIT'
 ```
 
-Because the reader never calls Git, `check --base REV` also needs the added option `--base-tree DIR` (Annex I.6): DIR is the directory that holds this root in a checkout of REV, and REV is only the label in `impact.base`. Without `--base-tree` the command exits 2. For the example, against the last commit:
+`check --base REV` reads the base view from Git with its plumbing commands (`rev-parse`, `ls-tree`, `cat-file`), which run no hooks, filters or repository code; REV is any commit the checkout can name, and a REV without the root's directory is a base with an empty graph (Annex C.3). For the example, against the last commit:
 
 ```sh
-git worktree add --detach /tmp/ostf-base HEAD
 cd draft/0.3/example
-../../../.venv/bin/python ../conformance/reader.py check --base HEAD --base-tree /tmp/ostf-base/draft/0.3/example
-git worktree remove /tmp/ostf-base
+../../../.venv/bin/python ../conformance/reader.py check --base HEAD
 ```
 
-For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
+Outside a Git checkout, the added option `--base-tree DIR` (Annex I.6) supplies the base view instead: DIR is the directory that holds this root in a checkout of REV, and REV is then only the label in `impact.base`. For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
 
 [check.py](check.py) runs:
 
