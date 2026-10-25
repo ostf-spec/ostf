@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.4: plan to make the format agent-first
 
-Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 waits on the maintainer's decision on the trial budget and the two real repositories. Applies to the [0.3 draft](ostf.md) at document revision 0.12 and produces wire version 0.4.
+Date: 2026-10-25. Status: Phase 0 done on 2026-10-25 (section 5), as document revision 0.13; Phase 1 started on 2026-10-25 (section 6) with the agents decided and the two real repositories still to be named by the maintainer. Applies to the [0.3 draft](ostf.md) from document revision 0.12 and produces wire version 0.4.
 
 ## 1. Why this plan
 
@@ -84,7 +84,7 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 **Work.**
 
-- **Control-arm trials of 0.3.** The eight tasks of the [protocol](trials/protocol.md) on both fixtures, in three arms. `none`: the same items in a `REQUIREMENTS.md` with stable IDs and a one-line instruction to read it and run the tests of anything touched, no OSTF files. `intent`: `trace.yaml` and tags with no lock, and a paragraph without the stamping sentences. `full`: 0.3 as published. Two vendors with models matched in size this time, three repetitions. Prose answers are judged by a model that is neither agent's, with a human sample of one verdict in ten.
+- **Control-arm trials of 0.3.** The eight tasks of the [protocol](trials/protocol.md) on both fixtures, in three arms. `none`: the same items in a `REQUIREMENTS.md` with stable IDs and a one-line instruction to read it and run the tests of anything touched, no OSTF files. `intent`: `trace.yaml` and tags with no lock, and a paragraph without the stamping sentences. `full`: 0.3 as published. Two vendors with models matched in size this time, decided by the maintainer on 2026-10-25: Claude Code on `claude-haiku-5-5` and Codex on `gpt-6-sol`, the small model of each vendor, set with the harness's `OSTF_TRIALS_CLAUDE_MODEL` and `OSTF_TRIALS_CODEX_MODEL`; three repetitions. Prose answers are judged by a model that is neither agent, `gpt-6-astra` or `claude-opus-5-5`, the same one for every run, with a human sample of one verdict in ten. The differences between arms are small-model results: a small model gains more from structure and a tool than a large one, so `baseline.md` reports the `full` minus `none` difference as an upper bound for larger models, and the `intent` minus `none` difference, the format without the lock or the tool, as the one that transfers best.
 - **Queue precision on real code.** Two repositories the maintainer controls, one Go and one TypeScript or Python, each with at least 200 linked symbols after an agent backfills the links. Replay at least three months of merged history: at each merge compute the suspect links, and have a reviewer, a person or an independent model with a human sample, label each as a real mismatch or noise. Report precision for `BODY_CHANGED`, `SIGNATURE_CHANGED` and `ITEM_CHANGED` separately. This table decides P3's defaults.
 - **Parallel-agent fixture.** Ten agents on ten branches of the Go fixture, each changing and restamping distinct functions, merged in sequence. Count lock conflicts and the merges that left `check` red.
 - **The first index.** The replay tooling stores each `check` result by view identifier in a small database whose tables are those of the index annex planned in Phase 2. It is the first OSTF index, the longitudinal queries of Phase 5 reuse it, and what it needs from the format feeds the annex.
@@ -139,7 +139,7 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 **Goal.** Measured, controlled claims replace the 0.3 scorecard.
 
-**Arms.** `none`, `intent` and `full` as in Phase 1, with `full` now 0.4 and Annex M. Two vendors with matched models, plus the small-model arm. Each task three times.
+**Arms.** `none`, `intent` and `full` as in Phase 1, with `full` now 0.4 and Annex M. The Phase 1 agents, `claude-haiku-5-5` and `gpt-6-sol`, each task three times, plus one repetition of every cell on the large model of each vendor, `claude-opus-5-5` and `gpt-6-astra`, so that a claim about agents in general rests on both sizes.
 
 **Tasks.** T1 to T8 as before with the corrected criteria, and:
 
