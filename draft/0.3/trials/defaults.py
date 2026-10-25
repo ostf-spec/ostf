@@ -2,11 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 """The replay of the replay (agent-first plan, section 7, pre-work item 1): the suspect queue of
 the Phase 1 replay and its precision per reason under candidate defaults, recomputed from the
-Phase 1 index and labels alone. No agent runs and no link is labelled again (plan, rule 8).
+Phase 1 index and labels alone. No agent runs and no link is labelled again (plan, rule 8), except
+by `codex`, which the maintainer ruled on 2026-10-25.
 
     python3 defaults.py collect
     python3 defaults.py report
     python3 defaults.py sheet
+    python3 defaults.py codex
 
 `collect` reads each repository's index in OSTF_REPLAY_DATA and writes
 results/phase1/replay-defaults.json, counts only, as replay.py's `publish` does; `report` writes
@@ -14,12 +16,15 @@ baseline-defaults.md from it. Both check first that the counts give back the Pha
 results/phase1/replay-summary.json. `sheet` writes OSTF_REPLAY_DATA/person-labels.md, which holds
 code and item text and so stays private: the labelled links a person checks first (plan, section 7,
 item 6), each with its item, its change and the judge's verdict, and a line for the person's own.
-It needs PyYAML, as replay.py's `label` does.
+It needs PyYAML, as replay.py's `label` does. `codex` labels the same links in place of the person,
+blind to the judge's verdict and to which part a link is in, with the judge's question, and writes
+OSTF_REPLAY_DATA/codex-labels.json; it skips links already labelled there.
 """
 import difflib
 import collections
 import itertools
 import json
+import pathlib
 import sqlite3
 import sys
 
@@ -223,7 +228,9 @@ def change(before, after):
     return "\n".join(lines[:200] + ([f"... {len(lines) - 200} more lines"] if len(lines) > 200 else []))
 
 
-def sheet():
+def checked():
+    """The labelled links a person checks (plan, section 7, item 6): the judge's mismatches, then the
+    other labelled links that the quieting default removes, each as a dict with what the judge saw."""
     import yaml
     first, then = [], []
     for name in replay.REPOS:
@@ -241,15 +248,25 @@ def sheet():
             if root not in texts:
                 document = yaml.safe_load((replay.DATA / name / "roots" / root / "trace.yaml").read_text())
                 texts[root] = {i["id"]: i for i in document.get("items") or []}
-            item = texts[root].get(target, {})
             repo = replay.clone(name)
-            subject = replay.git(repo, "log", "-1", "--format=%s", view).stdout.strip()
-            entry = [f"{label} ({name}), root `{root}`, commit `{view[:12]}`: {subject}", "",
-                     f"Link: `{link}`. Reason: `{was}` in 0.3, `{reason}` in 0.4.", "",
-                     f"Item {target}{' (' + item['title'] + ')' if item.get('title') else ''}: " + " ".join(str(item.get("text", "(not found)")).split()),
-                     "", "````diff", change(replay.definition_text(repo, parent, root, source), replay.definition_text(repo, view, root, source)),
-                     "````", "", "**You:** ", "", "<details><summary>The judge</summary>", "", f"{verdict}. {why}", "", "</details>", ""]
-            (first if verdict == "mismatch" else then).append(entry)
+            (first if verdict == "mismatch" else then).append(
+                {"name": name, "label": label, "repo": repo, "root": root, "view": view, "parent": parent, "link": link,
+                 "source": source, "kind": kind, "target": target, "was": was, "reason": reason, "verdict": verdict, "why": why,
+                 "item": texts[root].get(target), "subject": replay.git(repo, "log", "-1", "--format=%s", view).stdout.strip()})
+    return first, then
+
+
+def sheet():
+    first, then = checked()
+    for group in (first, then):
+        for n, c in enumerate(group):
+            item = c["item"] or {}
+            group[n] = [f"{c['label']} ({c['name']}), root `{c['root']}`, commit `{c['view'][:12]}`: {c['subject']}", "",
+                        f"Link: `{c['link']}`. Reason: `{c['was']}` in 0.3, `{c['reason']}` in 0.4.", "",
+                        f"Item {c['target']}{' (' + item['title'] + ')' if item.get('title') else ''}: " + " ".join(str(item.get("text", "(not found)")).split()),
+                        "", "````diff", change(replay.definition_text(c["repo"], c["parent"], c["root"], c["source"]),
+                                               replay.definition_text(c["repo"], c["view"], c["root"], c["source"])),
+                        "````", "", "**You:** ", "", "<details><summary>The judge</summary>", "", f"{c['verdict']}. {c['why']}", "", "</details>", ""]
     lines = ["# Replay labels for a person to check", "",
              "Private: this file holds code and item text of the maintainer's repositories, so it stays in the data directory. "
              "Written by `defaults.py sheet` from the Phase 1 index (agent-first plan, section 7, item 6). For each link, write one "
@@ -271,12 +288,85 @@ def sheet():
     print(f"wrote {target}: {len(first)} and {len(then)} links")
 
 
+# By the maintainer's ruling of 2026-10-25 the labels of item 6 are synthetic: Codex labels the links
+# that a person was to check, blind to the judge's verdict and to which part a link is in, asked the
+# judge's own question and told to answer from the message alone.
+CODEX_MODEL, CODEX_EFFORT = "gpt-6.1-sol", "xhigh"
+CODEX_LABELS = replay.DATA / "codex-labels.json"
+
+
+def codex(workers=6):
+    import concurrent.futures
+    import subprocess
+    import tempfile
+    import threading
+    import time
+    first, then = checked()
+    record = json.loads(CODEX_LABELS.read_text()) if CODEX_LABELS.exists() else {"model": CODEX_MODEL, "effort": CODEX_EFFORT, "labels": {}}
+    lock = threading.Lock()
+    scratch = pathlib.Path(tempfile.mkdtemp())
+    schema = scratch / "schema.json"
+    schema.write_text(json.dumps({"type": "object", "additionalProperties": False, "required": ["verdict", "reason"],
+                                  "properties": {"verdict": {"enum": ["mismatch", "relevant", "noise"]}, "reason": {"type": "string"}}}))
+
+    def key(c):
+        return "|".join((c["name"], c["root"], c["view"], c["link"]))
+
+    def one(c):
+        item = c["item"] or {"text": "(item not found)"}
+        prompt = replay.LABEL.format(item=c["target"], title=f" ({item['title']})" if item.get("title") else "",
+                                     text=" ".join(str(item.get("text", "")).split()), link=c["link"], commit=c["view"][:12],
+                                     subject=c["subject"], reasons=c["was"] or "none", what="test" if c["kind"] == "verifies" else "code",
+                                     before=replay.definition_text(c["repo"], c["parent"], c["root"], c["source"])[:20000],
+                                     after=replay.definition_text(c["repo"], c["view"], c["root"], c["source"])[:20000])
+        prompt += "\n\nAnswer from this message alone: run no command and read no file.\n"
+        work = pathlib.Path(tempfile.mkdtemp(dir=scratch))
+        for attempt in range(3):
+            if attempt:
+                time.sleep(60 * attempt)
+            started = time.monotonic()
+            out = subprocess.run(["codex", "exec", "--ignore-user-config", "-m", CODEX_MODEL, "-c", f"model_reasoning_effort={CODEX_EFFORT}",
+                                  "-s", "read-only", "-C", str(work), "--skip-git-repo-check", "--ephemeral", "--json",
+                                  "--output-schema", str(schema), "-o", str(work / "answer.json"), "-"],
+                                 input=prompt, cwd=work, capture_output=True, text=True, timeout=1800)
+            events = [json.loads(line) for line in out.stdout.splitlines() if line.startswith("{")]
+            commands = sum(1 for e in events if e.get("item", {}).get("type") in ("command_execution", "file_change", "mcp_tool_call", "web_search"))
+            usage = next((e["usage"] for e in events if e.get("type") == "turn.completed"), None)
+            try:
+                answer = json.loads((work / "answer.json").read_text())
+            except (OSError, json.JSONDecodeError):
+                continue
+            if out.returncode or commands or answer.get("verdict") not in ("mismatch", "relevant", "noise"):
+                continue
+            return key(c), {"verdict": answer["verdict"], "reason": answer["reason"], "usage": usage,
+                            "seconds": round(time.monotonic() - started)}
+        return key(c), None
+
+    todo = [c for c in first + then if key(c) not in record["labels"]]
+    failed = 0
+    with concurrent.futures.ThreadPoolExecutor(workers) as pool:
+        for k, label in pool.map(one, todo):
+            with lock:
+                if label is None:
+                    failed += 1
+                    continue
+                record["labels"][k] = label
+                CODEX_LABELS.write_text(json.dumps(record, indent=1, sort_keys=True) + "\n")
+                print(f"{len(record['labels'])} of {len(first) + len(then)} labelled", flush=True)
+    tokens = collections.Counter()
+    for label in record["labels"].values():
+        tokens.update({k: v for k, v in (label["usage"] or {}).items() if isinstance(v, int)})
+    print(f"wrote {CODEX_LABELS}: {len(record['labels'])} labels, {failed} failed this run; tokens {dict(tokens)}")
+
+
 def main(argv=None):
     command = (argv or sys.argv[1:] or ["report"])[0]
     if command == "collect":
         collect()
     elif command == "sheet":
         sheet()
+    elif command == "codex":
+        codex()
     else:
         OUT.write_text(report())
         print(f"wrote {OUT}")
