@@ -325,7 +325,8 @@ def _go_empty_statement_only(root):
 
 
 # tree-sitter-go 0.25.0 lexes new and make as keywords whose first argument must be a type, where Go
-# reads them as identifiers, and Go 1.26 reads an expression after new (Annex A).
+# reads them as identifiers, and Go 1.26 reads an expression after new (Annex A). When a tree-sitter-go
+# release reads the form, the pin moves and _go_parse goes back to a single parse.
 GO_NEW_MAKE = re.compile(rb"\b(?:new|make)(?=[ \t]*\()")
 
 
