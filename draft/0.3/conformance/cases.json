@@ -1584,6 +1584,278 @@
    }
   },
   {
+   "id": "reasons-for-what-has-no-body",
+   "requirements": [
+    "OSTF-143",
+    "OSTF-144"
+   ],
+   "note": "A whole file's change is FILE_CHANGED, whether an annex covers it or not; a definition whose sig and body are one stream, a constant, a type or a variable, DEFINITION_CHANGED; a function's new parameter stays SIGNATURE_CHANGED. The lock was stamped on the old sources.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#Limit, a.go#Order, a.go#F, a.go, a.ts#limit, a.py#LIMIT, notes.txt]\n",
+    "a.go": "package a\n\nconst Limit = 12\n\ntype Order struct {\n\tTotal int\n\tKey   string\n}\n\nfunc F(a, b int) int { return a }\n",
+    "a.ts": "export const limit = 12;\nexport function g(a: number): number { return a; }\n",
+    "a.py": "LIMIT = 12\n\n\ndef h(a):\n    return a\n",
+    "notes.txt": "new\n",
+    "trace.lock": "trace.lock 1\na.go implements R-A source.sig=go2:zx9fBQJUTGIz_jvjqmh82lQsInblBK-1Zz4iq3YG4Ik target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#F implements R-A source.sig=go2:3VFk9iHePcQKkBchHKGi_yIqU5NOlxkPFJ_WzNKrHkY source.body=go2:pnKJHLqffPpXSwbJFAC-oQL3nWgNXJ8cCclaCnCHTCA target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Limit implements R-A source.sig=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk source.body=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Order implements R-A source.sig=go2:IQx07ITyVSOYJIz6hVyrmLyHWpx37CaZm3_PPbsh2IQ source.body=go2:IQx07ITyVSOYJIz6hVyrmLyHWpx37CaZm3_PPbsh2IQ target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.py#LIMIT implements R-A source.sig=py1:XNwc15XYe9Cl0ThFsKJnqgwQHHoLkJ8NU1-LSB7oeS4 source.body=py1:XNwc15XYe9Cl0ThFsKJnqgwQHHoLkJ8NU1-LSB7oeS4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.ts#limit implements R-A source.sig=ts2:yet9eBbhIMCJd8HemgEEqGXbMGg4pDp8EpMbnXfTF5E source.body=ts2:yet9eBbhIMCJd8HemgEEqGXbMGg4pDp8EpMbnXfTF5E target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\nnotes.txt implements R-A source.sig=lf1:AdCdGcITmkauv7V3eA0SPXOW6XIBvH6tIQouv_gjne4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "FILE_CHANGED"
+      ]
+     ],
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "SIGNATURE_CHANGED"
+      ]
+     ],
+     [
+      "a.go#Limit",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "DEFINITION_CHANGED"
+      ]
+     ],
+     [
+      "a.go#Order",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "DEFINITION_CHANGED"
+      ]
+     ],
+     [
+      "a.py#LIMIT",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "DEFINITION_CHANGED"
+      ]
+     ],
+     [
+      "a.ts#limit",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "DEFINITION_CHANGED"
+      ]
+     ],
+     [
+      "notes.txt",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "FILE_CHANGED"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "id": "reasons-quieted-on-their-own",
+   "requirements": [
+    "OSTF-121",
+    "OSTF-144"
+   ],
+   "note": "fileChange and definitionChange quiet their reasons as bodyChange quiets bodies; a signature change always counts.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#Limit, a.go#Order, a.go#F, a.go, a.ts#limit, a.py#LIMIT, notes.txt]\n",
+    "a.go": "package a\n\nconst Limit = 12\n\ntype Order struct {\n\tTotal int\n\tKey   string\n}\n\nfunc F(a, b int) int { return a }\n",
+    "a.ts": "export const limit = 12;\nexport function g(a: number): number { return a; }\n",
+    "a.py": "LIMIT = 12\n\n\ndef h(a):\n    return a\n",
+    "notes.txt": "new\n",
+    "trace.lock": "trace.lock 1\na.go implements R-A source.sig=go2:zx9fBQJUTGIz_jvjqmh82lQsInblBK-1Zz4iq3YG4Ik target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#F implements R-A source.sig=go2:3VFk9iHePcQKkBchHKGi_yIqU5NOlxkPFJ_WzNKrHkY source.body=go2:pnKJHLqffPpXSwbJFAC-oQL3nWgNXJ8cCclaCnCHTCA target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Limit implements R-A source.sig=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk source.body=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Order implements R-A source.sig=go2:IQx07ITyVSOYJIz6hVyrmLyHWpx37CaZm3_PPbsh2IQ source.body=go2:IQx07ITyVSOYJIz6hVyrmLyHWpx37CaZm3_PPbsh2IQ target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.py#LIMIT implements R-A source.sig=py1:XNwc15XYe9Cl0ThFsKJnqgwQHHoLkJ8NU1-LSB7oeS4 source.body=py1:XNwc15XYe9Cl0ThFsKJnqgwQHHoLkJ8NU1-LSB7oeS4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.ts#limit implements R-A source.sig=ts2:yet9eBbhIMCJd8HemgEEqGXbMGg4pDp8EpMbnXfTF5E source.body=ts2:yet9eBbhIMCJd8HemgEEqGXbMGg4pDp8EpMbnXfTF5E target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\nnotes.txt implements R-A source.sig=lf1:AdCdGcITmkauv7V3eA0SPXOW6XIBvH6tIQouv_gjne4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n",
+    "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  fileChange: none\n  definitionChange: none\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "SIGNATURE_CHANGED"
+      ]
+     ],
+     [
+      "a.go#Limit",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.go#Order",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.py#LIMIT",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.ts#limit",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "notes.txt",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "reasons-quieted-unless-risk-relevant",
+   "requirements": [
+    "OSTF-121",
+    "OSTF-144"
+   ],
+   "note": "Under risk, a definition or file change counts only on a risk-relevant link: R-A controls RISK-A, R-B controls nothing. The lock was stamped on the old sources.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: RISK-A\n    type: risk\n    text: Overselling.\n  - id: R-A\n    text: A.\n    controls: [RISK-A]\n    code: [a.go#Limit, notes.txt]\n  - id: R-B\n    text: B.\n    code: [a.go#Limit, notes.txt]\n",
+    "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  fileChange: risk\n  definitionChange: risk\n",
+    "a.go": "package a\n\nconst Limit = 12\n\ntype Order struct {\n\tTotal int\n\tKey   string\n}\n\nfunc F(a, b int) int { return a }\n",
+    "notes.txt": "new\n",
+    "trace.lock": "trace.lock 1\nR-A controls RISK-A source=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE target=f1:WitOCSNQDeBETJsrIMBwmFCS7o4vjinZ1TFuspgSVTo by=unknown at=unknown\na.go#Limit implements R-A source.sig=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk source.body=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\na.go#Limit implements R-B source.sig=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk source.body=go2:yzGOFO8jJ3bv8wf9mweAxx4CQYYiR_HBhMwoCH0fHNk target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=unknown at=unknown\nnotes.txt implements R-A source.sig=lf1:AdCdGcITmkauv7V3eA0SPXOW6XIBvH6tIQouv_gjne4 target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\nnotes.txt implements R-B source.sig=lf1:AdCdGcITmkauv7V3eA0SPXOW6XIBvH6tIQouv_gjne4 target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=unknown at=unknown\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "R-A",
+      "controls",
+      "RISK-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "a.go#Limit",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "DEFINITION_CHANGED"
+      ]
+     ],
+     [
+      "a.go#Limit",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "notes.txt",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "suspect",
+      [
+       "FILE_CHANGED"
+      ]
+     ],
+     [
+      "notes.txt",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ],
+    "risk": [
+     "R-A"
+    ]
+   }
+  },
+  {
+   "id": "reasons-setting-invalid",
+   "requirements": [
+    "OSTF-121"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
+    "p.yaml": "ostf: \"0.3\"\nfingerprints:\n  fileChange: some\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ]
+   }
+  },
+  {
    "id": "no-lock",
    "requirements": [
     "OSTF-143"
@@ -10440,6 +10712,23 @@
     }
    },
    "valid": false
+  },
+  {
+   "id": "schema-fingerprints-reason-settings",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-121"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "fingerprints": {
+     "bodyChange": "all",
+     "fileChange": "none",
+     "definitionChange": "risk"
+    }
+   },
+   "valid": true
   }
  ],
  "notCovered": {

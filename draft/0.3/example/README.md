@@ -21,7 +21,7 @@ Each lock line names a link and the fingerprints of both ends at the last rechec
 
 - Change the body of `CheckRefundLimit` and its `implements` link becomes `suspect` with reason `BODY_CHANGED`, because `bodyChange` defaults to `all` (OSTF-144).
 - Refresh the Jira item's copy to a new `revision` with different `text` and both `PAY-123` links become `suspect` with reason `ITEM_CHANGED`: the observed copy enters the item fingerprint (OSTF-113).
-- Change any byte of `deploy/database.tf`, a comment included, and its `implements` link becomes `suspect` with reason `SIGNATURE_CHANGED`. Without an annex there are no comments or whitespace to drop, so a whole-file link is rechecked more often than a symbol link; that is the price of tracing a file OSTF cannot parse.
+- Change any byte of `deploy/database.tf`, a comment included, and its `implements` link becomes `suspect` with reason `FILE_CHANGED`. Without an annex there are no comments or whitespace to drop, so a whole-file link is rechecked more often than a symbol link; that is the price of tracing a file OSTF cannot parse.
 - `V-ENCRYPTION-REVIEW` names no test, so no tool can run it. `check` reports only whether the procedure's text or its requirement's text changed since the two were last confirmed to match; whether the review happened is evidence kept outside OSTF (Annex E).
 - Remove the receipts map initialization from `NewService` and every link stays `valid`. `Service.Charge` did not change. That is the boundary OSTF-145 states: a valid link is unchanged inputs, not correct behavior. Finding that `TestChargeRetry` must run is a dependency analysis a tool performs on top of the format.
 

@@ -27,7 +27,11 @@
     },
     "fingerprints": {
       "type": "object",
-      "properties": { "bodyChange": { "enum": ["all", "risk", "none"] } },
+      "properties": {
+        "bodyChange": { "enum": ["all", "risk", "none"] },
+        "fileChange": { "enum": ["all", "risk", "none"] },
+        "definitionChange": { "enum": ["all", "risk", "none"] }
+      },
       "additionalProperties": false
     }
   },

@@ -1059,7 +1059,7 @@ def default_vocabulary():
             "implements": {"from": ["code"], "to": ["kind:statement"], "inverse": "implemented_by"},
             "verifies": {"from": ["tests", "kind:verification"], "to": ["kind:statement", "kind:verification"], "inverse": "verified_by"},
         },
-        "bodyChange": "all",
+        "bodyChange": "all", "fileChange": "all", "definitionChange": "all",
     }
 
 
@@ -1127,11 +1127,11 @@ def merge_profile(vocabulary, profile):
                     raise ValueError("anchor kinds only in from of implements and verifies")
                 if not anchor and not e.startswith("kind:") and e not in vocabulary["types"]:
                     raise ValueError("unknown endpoint type " + e)
-    fingerprints = mapping(profile.get("fingerprints", {}), {"bodyChange"})
-    if "bodyChange" in fingerprints:
-        if fingerprints["bodyChange"] not in {"all", "risk", "none"}:
-            raise ValueError("bodyChange")
-        vocabulary["bodyChange"] = fingerprints["bodyChange"]
+    fingerprints = mapping(profile.get("fingerprints", {}), {"bodyChange", "fileChange", "definitionChange"})
+    for setting, value in fingerprints.items():
+        if value not in {"all", "risk", "none"}:
+            raise ValueError(setting + " is all, risk or none")
+        vocabulary[setting] = value
     return vocabulary
 
 
@@ -1698,16 +1698,19 @@ class Analysis:
                 link["state"], link["reasons"] = "unstamped", ["UNKNOWN_ALGORITHM"]
                 continue
             risky = link["source"] in self.risk or link["target"] in self.risk
+            counts = lambda setting: self.vocabulary[setting] == "all" or (self.vocabulary[setting] == "risk" and risky)
             reasons = set()
-            for key in set(recorded) | set(current):
-                if recorded.get(key) == current.get(key):
-                    continue
-                if key in {"source", "target"}:
-                    reasons.add("ITEM_CHANGED")
-                elif key == "source.sig":
+            if any(recorded.get(key) != current.get(key) for key in ("source", "target")):
+                reasons.add("ITEM_CHANGED")
+            # OSTF-144: a whole file and a definition without a body have reasons of their own.
+            if recorded.get("source.sig") != current.get("source.sig"):
+                if link["anchor"] and "#" not in link["source"]:
+                    reasons |= {"FILE_CHANGED"} if counts("fileChange") else set()
+                elif link["anchor"] and current.get("source.sig") == current.get("source.body"):
+                    reasons |= {"DEFINITION_CHANGED"} if counts("definitionChange") else set()
+                else:
                     reasons.add("SIGNATURE_CHANGED")
-            if (recorded.get("source.body") != current.get("source.body") and "SIGNATURE_CHANGED" not in reasons
-                    and (self.vocabulary["bodyChange"] == "all" or (self.vocabulary["bodyChange"] == "risk" and risky))):
+            elif recorded.get("source.body") != current.get("source.body") and counts("bodyChange"):
                 reasons.add("BODY_CHANGED")
             link["reasons"] = sorted(reasons, key=str.encode)
             link["state"] = "suspect" if reasons else "valid"
