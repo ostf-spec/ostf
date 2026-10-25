@@ -193,13 +193,16 @@ def report():
               "retired in it. In the replay no item changed, so no broken link was ever re-anchored, and its Phase 1 value is every "
               "link newly broken, per 100 merged changes: " +
               ", ".join(f"{r['name']} {100 * r['broken'] / r['changes']:.0f} ({r['broken']} in {r['changes']})" for r in repos) + ".", ""]
-    OUT.write_text("\n".join(lines))
-    print(f"wrote {OUT}")
+    return "\n".join(lines)
 
 
 def main(argv=None):
     command = (argv or sys.argv[1:] or ["report"])[0]
-    {"collect": collect, "report": report}[command]()
+    if command == "collect":
+        collect()
+    else:
+        OUT.write_text(report())
+        print(f"wrote {OUT}")
     return 0
 
 

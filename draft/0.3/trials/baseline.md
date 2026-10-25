@@ -41,7 +41,7 @@ Task outcome is the part of each task's criteria that is the same in every arm; 
 | `intent` minus `none` | +31 points (+13 to +47) | +17 points (-4 to +35) | +24 points (+10 to +36) |
 | `full` minus `intent` | +2 points (-10 to +15) | +19 points (+3 to +35) | +11 points (+1 to +21) |
 
-The agents are the small model of each vendor, so these differences are small-model results: the plan reads `full` minus `none` as an upper bound for larger models and `intent` minus `none`, the format without the lock or the tool, as the difference that transfers best.
+The agents are the small model of each vendor, so these are small-model results. The difference between `full` and `none` is made on T3 Change a risk control, T6 Refuse an invented ID and T7 Impact of a diff, where the two arms differ by half the runs or more ([outcome by task](#outcome-by-task)). `intent` carries the paragraph's rules, which `none` lacks, so `intent` minus `none` measures the format together with those rules, not the format alone; Phase 5's `rules` arm separates the two. The tool's own share shows on T7, the impact listing, where 1, 4 and 11 of 12 runs in `none`, `intent` and `full` named what the change touched.
 
 ## Outcome by task
 

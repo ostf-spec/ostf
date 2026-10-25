@@ -39,6 +39,7 @@ def main():
     subprocess.run([str(python), str(HERE.parent / "tools" / "check_tools.py")], cwd=ROOT, check=True)
     subprocess.run([str(python), str(HERE.parent / "trials" / "harness.py"), "selftest"], cwd=ROOT, check=True)
     subprocess.run([str(python), str(HERE.parent / "trials" / "parallel.py"), "selftest"], cwd=ROOT, check=True)
+    subprocess.run([str(python), str(HERE.parent / "trials" / "baseline.py"), "check"], cwd=ROOT, check=True)
 
 
 if __name__ == "__main__":

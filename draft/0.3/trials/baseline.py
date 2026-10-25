@@ -5,10 +5,13 @@ Phase 1 tools recorded in results/phase1/, and the sample of verdicts for a pers
 
     python3 baseline.py report
     python3 baseline.py sample
+    python3 baseline.py check
 
 `sample` writes results/phase1/human-sample.md: one verdict of the judge model in ten, drawn by a
 hash of the run and the question, for the maintainer to label in its last column; `report` reads
-the labels back and gives the agreement.
+the labels back and gives the agreement. `check` fails when baseline.md or baseline-defaults.md
+is not what `report` and `defaults.py report` write, so the published wording cannot drift from
+its generator.
 """
 import collections
 import hashlib
@@ -170,9 +173,19 @@ def report(runs):
     lines += ["", "| Difference | claude | codex | both |", "| --- | --- | --- | --- |"]
     for a, b in (("full", "none"), ("intent", "none"), ("full", "intent")):
         lines.append(f"| `{a}` minus `{b}` | " + " | ".join(diff(outcome(a, g), outcome(b, g)) for g in ("claude", "codex", "both")) + " |")
-    lines += ["", "The agents are the small model of each vendor, so these differences are small-model results: the plan reads "
-              "`full` minus `none` as an upper bound for larger models and `intent` minus `none`, the format without the lock or the "
-              "tool, as the difference that transfers best.", ""]
+    # The plan's reading of the arms (section 6): intent holds the paragraph's rules that none lacks, so intent
+    # minus none is the format with those rules, and the tool's share shows on T7, the impact listing.
+    per_task = {arm: {task: count([r for r in by[(arm, "both")] if r["task"] == task], lambda r: r["outcome"]) for task in common}
+                for arm in ARMS}
+    made = [task for task in common if 2 * (per_task["full"][task][0] - per_task["none"][task][0]) >= per_task["full"][task][1]]
+    named = [f"{task} {TASKS[task]}" for task in made]
+    t7 = [per_task[arm]["T7"] for arm in ARMS]
+    lines += ["", "The agents are the small model of each vendor, so these are small-model results. The difference between `full` and "
+              f"`none` is made on {', '.join(named[:-1])} and {named[-1]}, where the two arms differ by half the runs or more "
+              "([outcome by task](#outcome-by-task)). `intent` carries the paragraph's rules, which `none` lacks, so `intent` minus "
+              "`none` measures the format together with those rules, not the format alone; Phase 5's `rules` arm separates the two. "
+              f"The tool's own share shows on T7, the impact listing, where {t7[0][0]}, {t7[1][0]} and {t7[2][0]} of {t7[0][1]} runs "
+              "in `none`, `intent` and `full` named what the change touched.", ""]
     lines += ["## Outcome by task", "", "| Task | " + " | ".join(f"`{a}`" for a in ARMS) + " |", "| --- |" + " --- |" * len(ARMS)]
     for task, title in TASKS.items():
         cells = []
@@ -209,8 +222,7 @@ def report(runs):
     rejudged = sum(1 for r in runs if "judge" in (r.get("corrected") or {}))
     lines += [f"After the scored runs, {rejudged} T1 and T7 records were judged again and the T5 and lock corrections applied, as the "
               f"[protocol](protocol.md#corrections) records; {changed} records changed from fail to pass or back.", ""]
-    OUT.write_text("\n".join(lines))
-    print(f"wrote {OUT}")
+    return "\n".join(lines)
 
 
 def cost_section(runs, parallel, replay):
@@ -422,13 +434,24 @@ def sections(corroboration, recheck, parallel, replay):
     return lines
 
 
+def check(runs):
+    import defaults
+    for path, text in ((OUT, report(runs)), (defaults.OUT, defaults.report())):
+        if path.read_text() != text:
+            raise SystemExit(f"{path.name} is not what its generator writes; run it again")
+    print("baseline reports reproduce")
+
+
 def main(argv=None):
     command = (argv or sys.argv[1:] or ["report"])[0]
     runs = load_runs()
     if command == "sample":
         sample(runs)
+    elif command == "check":
+        check(runs)
     else:
-        report(runs)
+        OUT.write_text(report(runs))
+        print(f"wrote {OUT}")
     return 0
 
 
