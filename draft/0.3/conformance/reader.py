@@ -1920,8 +1920,8 @@ def render(analysis, target, anchor=None):
     def label(ident, summary=False):
         item = analysis.items[ident]
         text = ident
-        if "title" in item:
-            text += ": " + item["title"]
+        if "title" in item:  # rule 2: one line, so that a title cannot pass for a line of the layout
+            text += ": " + " ".join(normalize_text(item["title"]).split("\n"))
         elif summary and normalize_text(item.get("text", "")):
             text += ": " + normalize_text(item["text"]).split("\n")[0]
         if item["status"] != "accepted":
@@ -1945,11 +1945,12 @@ def render(analysis, target, anchor=None):
         item = analysis.items[ident]
         if ident in analysis.risk:
             lines.append(pad + "risk-relevant: ask before changing")
+        # Rule 2: each line of item text, and of the rationale, begins with "| ", marking it as data.
         if normalize_text(item.get("text", "")):
-            lines.extend((pad + line).rstrip(" ") for line in normalize_text(item["text"]).split("\n"))
+            lines.extend((pad + "| " + line).rstrip(" ") for line in normalize_text(item["text"]).split("\n"))
         if "rationale" in item:
             rationale = normalize_text(item["rationale"]).split("\n")
-            lines.extend((pad + ("rationale: " if n == 0 else "") + line).rstrip(" ") for n, line in enumerate(rationale))
+            lines.extend((pad + "| " + ("rationale: " if n == 0 else "") + line).rstrip(" ") for n, line in enumerate(rationale))
         if "external" in item:
             alias, native = item["external"].split(":", 1)
             parts = [item["external"]]

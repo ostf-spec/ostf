@@ -83,7 +83,7 @@ func TestSimplicityBudget(t *testing.T) {
 	if lines := strings.Count(read(t, "fixtures/minimal/trace.yaml"), "\n"); lines > 6 {
 		t.Errorf("the minimal file has %d lines; it must not grow", lines)
 	}
-	if p := read(t, "fixtures/agent-paragraph.txt"); !strings.HasPrefix(p, "OSTF agent paragraph 3. ") || !strings.Contains(p, "<tool> check") {
+	if p := read(t, "fixtures/agent-paragraph.txt"); !strings.HasPrefix(p, "OSTF agent paragraph 4. ") || !strings.Contains(p, "<tool> check") {
 		t.Error("the agent paragraph lost its version line or its check command")
 	}
 }
