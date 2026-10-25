@@ -6,12 +6,17 @@ Phase 1 index and labels alone. No agent runs and no link is labelled again (pla
 
     python3 defaults.py collect
     python3 defaults.py report
+    python3 defaults.py sheet
 
 `collect` reads each repository's index in OSTF_REPLAY_DATA and writes
 results/phase1/replay-defaults.json, counts only, as replay.py's `publish` does; `report` writes
 baseline-defaults.md from it. Both check first that the counts give back the Phase 1 numbers in
-results/phase1/replay-summary.json.
+results/phase1/replay-summary.json. `sheet` writes OSTF_REPLAY_DATA/person-labels.md, which holds
+code and item text and so stays private: the labelled links a person checks first (plan, section 7,
+item 6), each with its item, its change and the judge's verdict, and a line for the person's own.
+It needs PyYAML, as replay.py's `label` does.
 """
+import difflib
 import collections
 import itertools
 import json
@@ -31,11 +36,30 @@ REASONS = ("BODY_CHANGED", "SIGNATURE_CHANGED", "DEFINITION_CHANGED", "FILE_CHAN
 LINKS = ("code, tested", "code, untested", "test")
 # The candidates of the pre-work, each a test of whether a cell still counts. No backfilled item
 # controls a risk, so `risk` counts no body change, and a reason quieted to `risk` counts nothing.
+QUIETED = ("FILE_CHANGED", "DEFINITION_CHANGED")
 CANDIDATES = {
-    "quiet": ("whole files and bodyless definitions quieted", lambda c: c["reason"] not in ("FILE_CHANGED", "DEFINITION_CHANGED")),
+    "quiet": ("whole files and bodyless definitions quieted", lambda c: c["reason"] not in QUIETED),
     "risk": ("`bodyChange: risk`", lambda c: c["reason"] != "BODY_CHANGED"),
     "tested": ("tested code exempt", lambda c: c["link"] != "code, tested"),
 }
+
+
+def reason_of(source, was, current):
+    """The reason 0.4 reports for a suspect link that 0.3 reported as `was`, from the link's
+    current fingerprints."""
+    if "#" not in source:
+        return "FILE_CHANGED"
+    if current.get("source.sig") == current.get("source.body"):
+        return "DEFINITION_CHANGED"
+    return was
+
+
+def fingerprints_of(db, name, keys):
+    """The current fingerprints of the given (root, view, link) keys; the lock entries table has no
+    index, so it is read once."""
+    return {(root, view, link): json.loads(value) for root, view, link, value in
+            db.execute("select root, view, link, fingerprints from lock_entries where repository=?", (name,))
+            if (root, view, link) in keys}
 
 
 def cells(name):
@@ -47,9 +71,7 @@ def cells(name):
                       (name,)).fetchall()
     keys = {(root, view, link) for root, view, link, *_ in rows}
     views = {(root, view) for root, view, *_ in rows}
-    fingerprints = {(root, view, link): json.loads(value) for root, view, link, value in
-                    db.execute("select root, view, link, fingerprints from lock_entries where repository=?", (name,))
-                    if (root, view, link) in keys}
+    fingerprints = fingerprints_of(db, name, keys)
     verdicts = {(root, view, link): verdict for root, view, link, verdict in
                 db.execute("select root, view, link, verdict from labels where repository=?", (name,))}
     items = collections.defaultdict(set)
@@ -63,13 +85,7 @@ def cells(name):
             tested[(root, view)].add(target)
     counted = collections.Counter()
     for root, view, link, source, kind, target, was in rows:
-        current = fingerprints[(root, view, link)]
-        if "#" not in source:
-            reason = "FILE_CHANGED"
-        elif current.get("source.sig") == current.get("source.body"):
-            reason = "DEFINITION_CHANGED"
-        else:
-            reason = was
+        reason = reason_of(source, was, fingerprints[(root, view, link)])
         if kind == "verifies":
             what = "test"
         elif kind == "implements":
@@ -198,10 +214,69 @@ def report():
     return "\n".join(lines)
 
 
+def change(before, after):
+    """A unified diff of a definition or file, whole when both sides are short, else with five lines
+    of context, cut at 200 lines."""
+    a, b = before.splitlines(), after.splitlines()
+    context = max(len(a), len(b)) if max(len(a), len(b)) <= 120 else 5
+    lines = list(difflib.unified_diff(a, b, "before", "after", n=context, lineterm=""))
+    return "\n".join(lines[:200] + ([f"... {len(lines) - 200} more lines"] if len(lines) > 200 else []))
+
+
+def sheet():
+    import yaml
+    first, then = [], []
+    for name in replay.REPOS:
+        label = replay.published(name)[0]
+        db = sqlite3.connect(f"file:{replay.DATA / name / 'index.sqlite'}?mode=ro", uri=True)
+        rows = db.execute("select s.root, s.view, s.parent, s.link, s.source, s.type, s.target, s.reasons, l.verdict, l.reason "
+                          "from labels l join suspects s using (repository, root, view, link) where l.repository=? "
+                          "order by s.view, s.root, s.link", (name,)).fetchall()
+        fingerprints = fingerprints_of(db, name, {(r[0], r[1], r[3]) for r in rows})
+        texts = {}
+        for root, view, parent, link, source, kind, target, was, verdict, why in rows:
+            reason = reason_of(source, was, fingerprints[(root, view, link)])
+            if verdict != "mismatch" and reason not in QUIETED:
+                continue
+            if root not in texts:
+                document = yaml.safe_load((replay.DATA / name / "roots" / root / "trace.yaml").read_text())
+                texts[root] = {i["id"]: i for i in document.get("items") or []}
+            item = texts[root].get(target, {})
+            repo = replay.clone(name)
+            subject = replay.git(repo, "log", "-1", "--format=%s", view).stdout.strip()
+            entry = [f"{label} ({name}), root `{root}`, commit `{view[:12]}`: {subject}", "",
+                     f"Link: `{link}`. Reason: `{was}` in 0.3, `{reason}` in 0.4.", "",
+                     f"Item {target}{' (' + item['title'] + ')' if item.get('title') else ''}: " + " ".join(str(item.get("text", "(not found)")).split()),
+                     "", "````diff", change(replay.definition_text(repo, parent, root, source), replay.definition_text(repo, view, root, source)),
+                     "````", "", "**You:** ", "", "<details><summary>The judge</summary>", "", f"{verdict}. {why}", "", "</details>", ""]
+            (first if verdict == "mismatch" else then).append(entry)
+    lines = ["# Replay labels for a person to check", "",
+             "Private: this file holds code and item text of the maintainer's repositories, so it stays in the data directory. "
+             "Written by `defaults.py sheet` from the Phase 1 index (agent-first plan, section 7, item 6). For each link, write one "
+             "word after **You:**, as the judge was asked to, and open the judge's verdict below it only afterwards:", "",
+             "- `mismatch`: after the change the item's statement is no longer true of the code, or the code no longer implements "
+             "it, or the test no longer verifies it, so the item, the link or the code needs an update;",
+             "- `relevant`: the change touches the behavior the item states, and the statement still holds;",
+             "- `noise`: the change does not touch that behavior, as a refactor, a rename, logging or formatting does not.", "",
+             f"Part 1 holds the {len(first)} links the judge called mismatches: Phase 3's precision gate is the share of them a "
+             f"person confirms. Part 2 holds the {len(then)} other labelled links that the quieting default removes, whole files "
+             "and definitions without a body: a mismatch among them is a real one the default would hide.", ""]
+    for title, entries, start in ((f"Part 1: the judge's {len(first)} mismatches", first, 1),
+                                  (f"Part 2: the {len(then)} quieted links the judge did not call mismatches", then, len(first) + 1)):
+        lines += [f"## {title}", ""]
+        for n, entry in enumerate(entries, start):
+            lines += [f"### {n}. {entry[0]}"] + entry[1:]
+    target = replay.DATA / "person-labels.md"
+    target.write_text("\n".join(lines))
+    print(f"wrote {target}: {len(first)} and {len(then)} links")
+
+
 def main(argv=None):
     command = (argv or sys.argv[1:] or ["report"])[0]
     if command == "collect":
         collect()
+    elif command == "sheet":
+        sheet()
     else:
         OUT.write_text(report())
         print(f"wrote {OUT}")
