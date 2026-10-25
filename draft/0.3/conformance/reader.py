@@ -255,13 +255,13 @@ ESCAPE = {"interpreted_string_literal": re.compile(rb'\\(?:[abfnrtv\\"]|[0-7]{3}
           "rune_literal": re.compile(rb"\\(?:[abfnrtv\\']|[0-7]{3}|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})")}
 
 
-def _escapes_ok(root):
+def _escapes_ok(root, source):
     """Go's escape rules for interpreted strings and runes, which tree-sitter does not enforce."""
     stack = [root]
     while stack:
         n = stack.pop()
         if n.type in ESCAPE:
-            if ESCAPE[n.type].sub(b"", n.text).count(b"\\"):
+            if ESCAPE[n.type].sub(b"", source[n.start_byte:n.end_byte]).count(b"\\"):
                 return False
             continue
         stack.extend(n.children)
@@ -300,7 +300,7 @@ def _tree_comments(root, source, kinds=("comment",), opaque=()):
     while stack:
         n = stack.pop()
         if n.type in kinds:
-            found.append(_comment(n.start_byte, n.end_byte, source.count(b"\n", 0, n.start_byte), n.text.decode()))
+            found.append(_comment(n.start_byte, n.end_byte, source.count(b"\n", 0, n.start_byte), source[n.start_byte:n.end_byte].decode()))
         elif n.type not in opaque:
             stack.extend(reversed(n.children))
     return sorted(found, key=lambda c: c["start"])
@@ -324,6 +324,40 @@ def _go_empty_statement_only(root):
     return True
 
 
+# tree-sitter-go 0.25.0 lexes new and make as keywords whose first argument must be a type, where Go
+# reads them as identifiers, and Go 1.26 reads an expression after new (Annex A).
+GO_NEW_MAKE = re.compile(rb"\b(?:new|make)(?=[ \t]*\()")
+
+
+def _go_errors(root):
+    """The bytes under error nodes, and the missing nodes, of a tree-sitter tree."""
+    total, stack = 0, [root]
+    while stack:
+        n = stack.pop()
+        if n.type == "ERROR" or n.is_missing:
+            total += n.end_byte - n.start_byte + 1
+            continue
+        stack.extend(n.children)
+    return total
+
+
+def _go_parse(source):
+    """The tree of a Go file. Where tree-sitter refuses it, each call of new or make in turn is spelled
+    as an identifier of the same length, for the parse alone, and stays so when the parse has fewer
+    errors; tokens, names and comments are always read from the source as written."""
+    tree = Parser(GO).parse(source)
+    if not tree.root_node.has_error:
+        return tree
+    best, respelled = _go_errors(tree.root_node), source
+    for match in GO_NEW_MAKE.finditer(source):
+        trial = respelled[:match.start()] + match.group().upper() + respelled[match.end():]
+        parsed = Parser(GO).parse(trial)
+        errors = _go_errors(parsed.root_node)
+        if errors < best:
+            tree, best, respelled = parsed, errors, trial
+    return tree
+
+
 def go_source(source, path="", algorithm="go2"):
     """Annex A: definitions, whole-file token stream and comments, or None when the file does not parse.
     With algorithm "go1", the token streams of the superseded go1 (A.6)."""
@@ -331,24 +365,25 @@ def go_source(source, path="", algorithm="go2"):
         source.decode("utf-8")
     except UnicodeError:
         return None
-    tree = Parser(GO).parse(source)
-    if (tree.root_node.has_error and not _go_empty_statement_only(tree.root_node)) or not _escapes_ok(tree.root_node):
+    tree = _go_parse(source)
+    if (tree.root_node.has_error and not _go_empty_statement_only(tree.root_node)) or not _escapes_ok(tree.root_node, source):
         return None
     definitions = []
     comments = _tree_comments(tree.root_node, source)
     omitted = _go_omitted(tree.root_node) if algorithm == "go2" else None
+    spelled = lambda n: source[n.start_byte:n.end_byte].decode()  # as written, whatever _go_parse respelled
     for declaration in tree.root_node.named_children:
         spans = []
         function = declaration.type == "function_declaration"
         if declaration.type in {"function_declaration", "method_declaration"}:
-            name = declaration.child_by_field_name("name").text.decode()
+            name = spelled(declaration.child_by_field_name("name"))
             receiver = declaration.child_by_field_name("receiver")
             member = False
             if receiver:
                 t = receiver.named_children[0].child_by_field_name("type")
                 while t.type in {"pointer_type", "generic_type", "parenthesized_type"}:
                     t = t.child_by_field_name("type") or t.named_children[0]
-                name, member = t.text.decode() + "." + name, True
+                name, member = spelled(t) + "." + name, True
             body = declaration.child_by_field_name("body")
             spans.append((name, declaration.start_byte, declaration.end_byte, body.start_byte if body else declaration.end_byte, member))
         elif declaration.type in {"type_declaration", "var_declaration", "const_declaration"}:
@@ -359,7 +394,7 @@ def go_source(source, path="", algorithm="go2"):
             for spec in specs:
                 for name_node in spec.children_by_field_name("name"):
                     start, end = (spec.start_byte, spec.end_byte) if grouped else (declaration.start_byte, declaration.end_byte)
-                    spans.append((name_node.text.decode(), start, end, end, False))
+                    spans.append((spelled(name_node), start, end, end, False))
         for name, start, end, header, member in spans:
             definition = {"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
                           "function": function, "member": member,

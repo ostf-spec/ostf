@@ -602,5 +602,50 @@
       "source.sig": "go2:lRRkh2T2KIMSiIiIqRO3FiPcpb72jICCUpfRFKafzlM",
       "source.body": "go2:gpiRJbZHgfCJo3ZL4MDsOpyNIbami4qd9PqWIGF8Mmg"
     }
+  },
+  {
+    "id": "go2-new-with-call",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nimport \"example.com/exit\"\n\nfunc f() *exit.Code {\n\treturn new(exit.ExitCode())\n}\n",
+    "symbol": "f",
+    "sigTokens": "func f ( ) * exit . Code",
+    "bodyTokens": "func f ( ) * exit . Code { return new ( exit . ExitCode ( ) ) ; }",
+    "expect": {
+      "source.sig": "go2:Zux0wh6HHyFKqW8s8PrrUOsV_eVLBtaUxAkXkLQPeVI",
+      "source.body": "go2:IxJzXl8JgjQ84ac5Rz-0BXSE5zXg3AdOkib8XMXnoZA"
+    }
+  },
+  {
+    "id": "go2-new-with-literal",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nvar x = new(T{A: 1})\n",
+    "symbol": "x",
+    "sigTokens": "var x = new ( T { A : 1 } )",
+    "bodyTokens": "var x = new ( T { A : 1 } )",
+    "expect": {
+      "source.sig": "go2:TrnkTHn5hviNJA4Xli4maJUTtMdoPgPPTrS-5R7un7Q",
+      "source.body": "go2:TrnkTHn5hviNJA4Xli4maJUTtMdoPgPPTrS-5R7un7Q"
+    }
+  },
+  {
+    "id": "go2-new-with-expression-beside-make",
+    "requirements": [
+      "Annex A"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc g(n int) *[]int {\n\ts := make([]int, n)\n\treturn new(append(s, n))\n}\n",
+    "symbol": "g",
+    "sigTokens": "func g ( n int ) * [ ] int",
+    "bodyTokens": "func g ( n int ) * [ ] int { s := make ( [ ] int , n ) ; return new ( append ( s , n ) ) ; }",
+    "expect": {
+      "source.sig": "go2:D_959b2vqi2B6jMKvZ_mWgkKqc8gGAjmYo7mWomNjfc",
+      "source.body": "go2:Mn4NZD2SXy6U7hBg9URBQEi5twn-ne65pvM-AxFHGio"
+    }
   }
 ]
