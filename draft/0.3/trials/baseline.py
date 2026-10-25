@@ -35,7 +35,8 @@ def wilson(x, n):
     p = x / n
     centre = (p + Z * Z / (2 * n)) / (1 + Z * Z / n)
     half = Z * math.sqrt(p * (1 - p) / n + Z * Z / (4 * n * n)) / (1 + Z * Z / n)
-    return centre - half, centre + half
+    # At 0 or n the bound is exact, and rounding must not print it as -0 or 101.
+    return max(0.0, centre - half), min(1.0, centre + half)
 
 
 def newcombe(x1, n1, x2, n2):

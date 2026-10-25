@@ -1,0 +1,235 @@
+{
+ "repositories": [
+  {
+   "name": "go-repo",
+   "changes": 112,
+   "broken": 61,
+   "cells": [
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "code, tested",
+     "suspect": 205,
+     "labelled": 35,
+     "mismatch": 2,
+     "relevant": 17,
+     "noise": 16
+    },
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "code, untested",
+     "suspect": 101,
+     "labelled": 14,
+     "mismatch": 1,
+     "relevant": 2,
+     "noise": 11
+    },
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "test",
+     "suspect": 132,
+     "labelled": 28,
+     "mismatch": 0,
+     "relevant": 7,
+     "noise": 21
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "SIGNATURE_CHANGED",
+     "link": "code, tested",
+     "suspect": 36,
+     "labelled": 2,
+     "mismatch": 0,
+     "relevant": 1,
+     "noise": 1
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "SIGNATURE_CHANGED",
+     "link": "code, untested",
+     "suspect": 8,
+     "labelled": 1,
+     "mismatch": 0,
+     "relevant": 0,
+     "noise": 1
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "DEFINITION_CHANGED",
+     "link": "code, tested",
+     "suspect": 2,
+     "labelled": 1,
+     "mismatch": 1,
+     "relevant": 0,
+     "noise": 0
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "DEFINITION_CHANGED",
+     "link": "code, untested",
+     "suspect": 22,
+     "labelled": 2,
+     "mismatch": 0,
+     "relevant": 0,
+     "noise": 2
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "FILE_CHANGED",
+     "link": "code, tested",
+     "suspect": 56,
+     "labelled": 14,
+     "mismatch": 0,
+     "relevant": 10,
+     "noise": 4
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "FILE_CHANGED",
+     "link": "code, untested",
+     "suspect": 10,
+     "labelled": 3,
+     "mismatch": 0,
+     "relevant": 1,
+     "noise": 2
+    }
+   ]
+  },
+  {
+   "name": "py-repo",
+   "changes": 291,
+   "broken": 25,
+   "cells": [
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "code, untested",
+     "suspect": 299,
+     "labelled": 86,
+     "mismatch": 13,
+     "relevant": 27,
+     "noise": 46
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "SIGNATURE_CHANGED",
+     "link": "code, untested",
+     "suspect": 11,
+     "labelled": 2,
+     "mismatch": 0,
+     "relevant": 2,
+     "noise": 0
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "FILE_CHANGED",
+     "link": "code, untested",
+     "suspect": 37,
+     "labelled": 12,
+     "mismatch": 0,
+     "relevant": 3,
+     "noise": 9
+    }
+   ]
+  },
+  {
+   "name": "ts-repo",
+   "changes": 3259,
+   "broken": 548,
+   "cells": [
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "code, tested",
+     "suspect": 670,
+     "labelled": 22,
+     "mismatch": 1,
+     "relevant": 6,
+     "noise": 15
+    },
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "code, untested",
+     "suspect": 310,
+     "labelled": 8,
+     "mismatch": 1,
+     "relevant": 3,
+     "noise": 4
+    },
+    {
+     "was": "BODY_CHANGED",
+     "reason": "BODY_CHANGED",
+     "link": "test",
+     "suspect": 188,
+     "labelled": 11,
+     "mismatch": 0,
+     "relevant": 3,
+     "noise": 8
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "SIGNATURE_CHANGED",
+     "link": "code, tested",
+     "suspect": 112,
+     "labelled": 5,
+     "mismatch": 0,
+     "relevant": 3,
+     "noise": 2
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "SIGNATURE_CHANGED",
+     "link": "code, untested",
+     "suspect": 52,
+     "labelled": 2,
+     "mismatch": 0,
+     "relevant": 1,
+     "noise": 1
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "DEFINITION_CHANGED",
+     "link": "code, tested",
+     "suspect": 578,
+     "labelled": 22,
+     "mismatch": 0,
+     "relevant": 5,
+     "noise": 17
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "DEFINITION_CHANGED",
+     "link": "code, untested",
+     "suspect": 136,
+     "labelled": 2,
+     "mismatch": 0,
+     "relevant": 0,
+     "noise": 2
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "FILE_CHANGED",
+     "link": "code, untested",
+     "suspect": 6,
+     "labelled": 0,
+     "mismatch": 0,
+     "relevant": 0,
+     "noise": 0
+    },
+    {
+     "was": "SIGNATURE_CHANGED",
+     "reason": "FILE_CHANGED",
+     "link": "test",
+     "suspect": 781,
+     "labelled": 28,
+     "mismatch": 0,
+     "relevant": 4,
+     "noise": 24
+    }
+   ]
+  }
+ ]
+}
