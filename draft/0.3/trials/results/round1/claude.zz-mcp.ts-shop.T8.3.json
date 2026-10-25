@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 746,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 10886,
+  "cache_read_input_tokens": 88231,
+  "output_tokens": 1005,
+  "cost": 0.06243710000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors.\n\n- **Cause:** the `refund-tweaks` merge left one malformed line in `trace.lock`. The line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` had `source.sig:` where it should have `source.sig=`. `check` reported that as `LOCK_INVALID` and left the link unstamped.\n- **Fix:** I did not edit `trace.lock` by hand. I first rechecked `R-REFUND-LIMIT` against `checkRefundLimit`:\n  - It rejects a refund that is non-positive or larger than what is left on the charge.\n  - It requires a second approval above 500.00 per account per UTC day.\n  - All 36 tests pass, including the `checkRefundLimit` and `Refunder` totals tests.\n- **Stamp:** I then ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one lock line.\n- **Scope:** the only change in the working tree is that single `trace.lock` line. I changed no code, tests or `trace.yaml`, and added no items or links. The change is uncommitted.",
+ "date": "2026-10-24"
+}

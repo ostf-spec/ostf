@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 469,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 10066,
+  "cache_read_input_tokens": 109307,
+  "output_tokens": 1118,
+  "cost": 0.062398699999999994
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors.\n\n- **Cause:** the merge `0aa6d3d` left a malformed line in `trace.lock`. The line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` had `source.sig:` where the format needs `source.sig=`. That made the lock invalid and left the link unstamped.\n- **Recheck:** the code matches R-REFUND-LIMIT. `checkRefundLimit` rejects refunds that are not positive or that exceed what is left on the charge. It also requires a second approval once an account's refunds for the UTC day pass `DAILY_REFUND_LIMIT` (50,000 cents, i.e. 500.00). All 5 tests in `src/refunds.test.ts` pass.\n- **Fix:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one lock line. I didn't hand-edit `trace.lock`, and I changed no source code or items.\n\n`trace.lock` is modified but not committed. The check reports no added items or links, so there is nothing to list for a pull request.",
+ "date": "2026-10-24"
+}

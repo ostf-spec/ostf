@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-shell.ts-shop.T4.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 8023,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 48.2
+ },
+ "usage": {
+  "input_tokens": 203678,
+  "cached_input_tokens": 182656,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1353,
+  "reasoning_output_tokens": 19
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to `src/salestax.ts`, along with its rounding helper. Updated callers, tests, documentation, and trace links.\n\nAll 36 tests pass. `ostf check --base main` passes with 111 valid links.\n\nAffected items: `R-TAX-RATE`, `R-TAX-EXEMPT`. No new items. Added links connect `salesTax` to both items and its rounding/exemption tests to their respective items.\n\nImpact tests passed: `salesTax` suite, “rounds half up to the cent,” “is zero for a tax-exempt customer,” and `price > taxes the subtotal after discounts`.",
+ "date": "2026-10-24"
+}

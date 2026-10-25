@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1232,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 20.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 11184,
+  "cache_read_input_tokens": 113109,
+  "output_tokens": 1918,
+  "cost": 0.1173224
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. A refund larger than what's left on the charge still returns `ErrRefundTooLarge`. The `payments` tests pass, and `ostf check --base main` reports no errors (40 items, 109 links valid).\n\n- **Code:** both changes are in `payments/refund.go`. The new error is declared with the others, and `CheckRefundLimit` checks `amount <= 0` before the too-large check.\n- **Tests:** in `TestCheckRefundLimit`, the existing \"zero\" case now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **Stamps:** the check flagged two links as suspect because their bodies changed. I rechecked R-REFUND-LIMIT against the code, and the item text is still true. The tests passed, so I stamped both links, which updated `trace.lock`:\n  - `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`\n  - `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-LIMIT`\n- **New items or links:** the check reports none. `ErrInvalidRefundAmount` has no item, because it's an error value rather than new behavior. If you want the zero-or-negative rule traceable, I can add a draft item for it.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

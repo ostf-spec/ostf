@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 2940,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 16124,
+  "cache_read_input_tokens": 119704,
+  "output_tokens": 3020,
+  "cost": 0.00593304
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links, 111 valid, no errors.\n\n**Cause:** The `trace.lock` line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` used `source.sig:` where every other line uses `source.sig=`. That made the lock line invalid and left the link unstamped.\n\n**Fix:** I rechecked the item and its code, then stamped the link with `ostf stamp`:\n- R-REFUND-LIMIT says refunds above 500.00 per UTC day need a second approval. `DAILY_REFUND_LIMIT` is `50_000` cents, so the text matches the code.\n- All 36 tests pass (`npm test`), including the two `checkRefundLimit` tests and the `Refunder` daily-total test that verify this item.\n- `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'` rewrote that one lock line. The only change to `trace.lock` is `:` becoming `=` on that line. I did not edit the lock by hand.\n\n**Changes:**\n- `trace.lock`: one line, as above.\n- No code, tests, or trace items were changed. R-REFUND-LIMIT is risk-relevant, but this fix only restamps it, so I did not need to ask first.\n\n**Summary for the PR:**\n- Items impacted: none. The `ostf check` impact list against main is empty.\n- Items and links added: none.\n- Links stamped: `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`.\n\nThe working tree has the uncommitted `trace.lock` change. I haven't committed or opened a PR, since you didn't ask for that.",
+ "date": "2026-10-24"
+}

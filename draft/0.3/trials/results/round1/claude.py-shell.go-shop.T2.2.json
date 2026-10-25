@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T2.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 3,
+  "ostfOutputTokens": 6051,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 20982,
+  "cache_read_input_tokens": 195175,
+  "output_tokens": 4397,
+  "cost": 0.1474475
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 7,
+ "finalMessage": "Checkout now adds shipping to the order total. Orders with a subtotal after discounts of at least 100.00 ship free, and every other order pays a flat 5.99. `go test ./...` passes, and `ostf check --base main` reports 41 items and 113 links, all valid. I haven't committed or opened a PR.\n\n- **Code:** `Price` in `pricing/quote.go` now sets a new `Quote.Shipping` field and includes it in `Total`. The two amounts are the constants `FreeShippingMin` (100.00) and `FlatShipping` (5.99). `PlaceOrder` already charges `quote.Total`, so the customer is charged shipping with no change to `cart/checkout.go`.\n- **Tests:**\n  - New `TestPriceShipping` covers 99.99 (pays 5.99), exactly 100.00 (free), 250.00 (free) and 100.00 with a 10% code (pays 5.99, because the threshold is checked after the discount). It also checks that the total adds up and that shipping isn't taxed.\n  - I changed the expected totals in two existing tests, `TestPrice` (now 109.47) and `TestPlaceOrder` (now 28.99), because shipping applies to both orders.\n- **Trace items:** I added `R-SHIPPING` in `trace/requirements.yaml` with `status: draft`, linked to `pricing/quote.go#Price` and to `TestPriceShipping` and `TestPlaceOrder`.\n- **Stamping:** I stamped seven links after rechecking the items against the code and running the tests. I did not edit `trace.lock` by hand; it changed only through `ostf stamp`.\n- **Tax:** Shipping is not taxed. You didn't say either way, and `R-TAX-RATE` says tax applies to the subtotal after discounts, so I left tax alone. If shipping should be taxed, it's a small change to `Price`, but `R-TAX-RATE` would then need updating.\n\n**Links the check reports as added:**\n- Item added: `R-SHIPPING`.\n- `R-SHIPPING refines N-FAIR-PRICE`\n- `pricing/quote.go#Price implements R-SHIPPING`\n- `pricing/tax_test.go#TestPriceShipping verifies R-SHIPPING`\n- `cart/checkout_test.go#TestPlaceOrder verifies R-SHIPPING`\n\n**Stamped after the existing links went stale:**\n- `pricing/quote.go#Price implements R-TAX-RATE`\n- `pricing/tax_test.go#TestPrice verifies R-TAX-RATE`\n- `cart/checkout_test.go#TestPlaceOrder verifies R-CHECKOUT-ORDER`\n\nNo existing item became false. `R-CHARGE-AMOUNT` is risk-relevant, but I didn't touch `ValidateAmount`. The largest order total can only rise by 5.99, and this doesn't change the 10,000.00 cap.",
+ "date": "2026-10-24"
+}

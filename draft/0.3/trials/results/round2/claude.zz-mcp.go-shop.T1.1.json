@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1800,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 11434,
+  "cache_read_input_tokens": 66626,
+  "output_tokens": 1001,
+  "cost": 0.0624286
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (`payments/refund.go#Refunder.Refund`) exists to carry out refunds while meeting three requirements. I got this from `ostf context`. I didn't open the source files or change anything.\n\n**Why it exists**\n\nIt is linked as implementing three requirements:\n- **R-REFUND-LIMIT** (accepted, **risk-relevant**): \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\" This requirement controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds. It also refines the need N-REFUNDS (\"Customers get refunds quickly without the business losing money to abuse\"). The helper `CheckRefundLimit` implements it too.\n- **R-REFUND-ORIGINAL** (accepted): a refund goes back to the payment method of the charge it refunds, never to another one. This link comes from an `@req` tag in the code. `Gateway` and `Processor.receipt` in `charge.go` also implement it.\n- **R-AUDIT-MONEY** (accepted): every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt. It refines N-ACCOUNT-SAFE. `Processor.Charge` implements the charge side.\n\nBecause `Refund` implements a risk-relevant requirement, you would need to confirm with me before I changed it.\n\n**Tests that cover it**\n\nNone of these tests is linked directly to `Refund`. Coverage comes from the tests linked to the requirements it implements:\n- `payments/refund_test.go#TestRefund` verifies R-REFUND-ORIGINAL (declared) and R-AUDIT-MONEY (tagged). It is the main test for `Refund` itself.\n- `payments/refund_test.go#TestRefundDailyLimit` verifies R-REFUND-LIMIT.\n- `payments/refund_test.go#TestCheckRefundLimit` verifies R-REFUND-LIMIT, but it targets the `CheckRefundLimit` helper.\n- `payments/charge_test.go#TestChargeAudited` verifies R-AUDIT-MONEY, but only for the charge side.\n\nAll links were reported as `valid`, with no diagnostics. I haven't read the test bodies, so I can't say whether they exercise every branch of `Refund`.",
+ "date": "2026-10-24"
+}

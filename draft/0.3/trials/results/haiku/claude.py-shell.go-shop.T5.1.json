@@ -1,0 +1,61 @@
+{
+ "run": "claude.py-shell.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 5,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 10288,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 115.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 94986,
+  "cache_read_input_tokens": 1677848,
+  "output_tokens": 23097,
+  "cost": 0.09399342
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "SHOP-57 is implemented. The requirement was already in `trace.yaml` as `R-VOLUME-DISCOUNT`, so I linked code and tests to it and did not edit the item. Tests pass, and `ostf check --base main` is clean (116/116 links valid). I didn't commit or open a PR since you didn't ask for one.\n\n**What changed**\n- **`cart/cart.go`**: new `Cart.VolumeDiscount()`. Each line with 10+ units takes 5% of its amount, rounded down to the cent. Constants `VolumeMinQuantity` and `VolumePercent` hold the rule.\n- **`pricing/quote.go`**: `Price` now takes a `volume` argument. The volume discount comes off the subtotal first, the discount code applies to what's left, and the combined discount is capped at 50% of the subtotal.\n- **`cart/checkout.go`**: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`.\n- **Tests**: `TestVolumeDiscount` (table: under/at threshold, rounding, mixed lines), `TestPlaceOrderVolumeDiscount` (end-to-end charge of 109.23), `TestPriceVolumeThenCode`, and `TestPriceCapCountsVolume`. The existing `TestPrice` now passes `0` for volume.\n\n**Interpretation to confirm**\n- I read \"before any discount code applies\" as the code taking its percentage off the subtotal *after* the volume discount. If the code should instead apply to the full subtotal, with only the cap combined, that is a small change in `Price`.\n\n**Trace impact**\n- Items affected: `R-VOLUME-DISCOUNT` (implemented by `Cart.VolumeDiscount` and `Price`), `R-DISCOUNT-CAP` (now also enforced in `Price`), `R-TAX-RATE` and `R-CHECKOUT-ORDER` / `R-CHECKOUT-SESSION` (signature or body changed, behavior unchanged).\n- Links added and stamped: `Cart.VolumeDiscount` → `R-VOLUME-DISCOUNT`; `Price` → `R-DISCOUNT-CAP`, `R-VOLUME-DISCOUNT`; `TestVolumeDiscount`, `TestPlaceOrderVolumeDiscount`, `TestPriceVolumeThenCode` → `R-VOLUME-DISCOUNT`; `TestPriceCapCountsVolume` → `R-DISCOUNT-CAP`.\n- Suspect links I rechecked and stamped: `Checkout.PlaceOrder` → `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`; `Price` → `R-TAX-RATE`; `TestPrice` → `R-TAX-RATE`.\n- `trace.lock` changed only through `ostf stamp`.\n\n**Not touched:** nothing in `payments/`, the risk-controlled code. No new items were added, so no `status: draft` item was needed.",
+ "date": "2026-10-24"
+}

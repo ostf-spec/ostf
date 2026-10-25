@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 2852,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 14636,
+  "cache_read_input_tokens": 179222,
+  "output_tokens": 3535,
+  "cost": 0.00648852
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` passes now: 40 items, 111 links, 111 valid, exit 0. The only change in the working tree is `trace.lock`, and it came from `ostf stamp`, not a hand edit.\n\n**What was failing:** The link `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` had a malformed lock line. It used `source.sig:` where every other line uses `source.sig=`. That caused `LOCK_INVALID` and also left the link `LINK_UNSTAMPED`.\n\n**What I did:**\n- **Recheck against the item:** R-REFUND-LIMIT says a refund must not exceed what is left on the charge, and daily refunds above 500.00 need a second approval. `checkRefundLimit` enforces both: it checks `amount > leftOnCharge` and `refundedToday + amount > DAILY_REFUND_LIMIT` (50000 cents) without approval. The item still matches the code.\n- **Tests:** `npm test` ran 36 tests, all passing. The item's linked tests are `checkRefundLimit` (three cases) and `Refunder > totals refunds per account and UTC day`.\n- **Stamp:** `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, with the link quoted as check printed it.\n\n**Things to know:**\n- **Risk-relevant item:** `checkRefundLimit` is marked \"risk-relevant: ask before changing.\" I didn't change any code, so no approval was needed. Any future change to it should go through you first.\n- **No items added or changed:** I didn't add or edit any item or test, so the impact list is empty and there are no new items or links to report.\n- **Not committed:** I haven't committed or opened a PR. If you want one, I'll use the attribution lines from the system reminder.",
+ "date": "2026-10-24"
+}

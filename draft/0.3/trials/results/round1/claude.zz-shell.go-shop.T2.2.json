@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T2.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 3,
+  "ostfOutputTokens": 6480,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 22311,
+  "cache_read_input_tokens": 255637,
+  "output_tokens": 3927,
+  "cost": 0.15411769999999997
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Checkout now adds shipping to the order total. An order pays 5.99 flat unless its subtotal after discounts is at least 100.00, in which case shipping is free. `go test ./...` passes and `ostf check --base main` reports no errors. I haven't committed anything or opened a pull request.\n\n**Code**\n- `pricing/quote.go`: `Quote` has a new `Shipping` field. A new `Shipping(net)` function does the free-or-5.99 calculation. `Price` uses it and adds the result to `Total`.\n- `PlaceOrder` already charges `quote.Total`, so the customer is charged shipping with no change to `cart/checkout.go`.\n- Shipping is not taxed. R-TAX-RATE says tax applies to the subtotal after discounts, so I left shipping out. Tell me if you want it taxed.\n\n**Tests**\n- New `TestShipping` covers 99.99 (pays 5.99), exactly 100.00 (free), a discount that drops an order below 100.00 (pays), and a discounted order still at or above 100.00 (free). It also checks that the total is the sum of its parts.\n- I updated two existing tests whose expected totals changed: `TestPrice` now expects 109.47, and `TestPlaceOrder` expects 28.99 instead of 23.00.\n\n**Trace**\n- New draft item `R-SHIPPING`, linked to `pricing/quote.go#Shipping`, `pricing/quote.go#Price` and `TestShipping`. It refines N-FAIR-PRICE.\n- Links added, as `ostf check` reports them:\n  - `R-SHIPPING refines N-FAIR-PRICE`\n  - `pricing/quote.go#Price implements R-SHIPPING`\n  - `pricing/quote.go#Shipping implements R-SHIPPING`\n  - `pricing/tax_test.go#TestShipping verifies R-SHIPPING`\n- Three existing links were flagged as suspect because their code or test bodies changed:\n  - `cart/checkout_test.go#TestPlaceOrder` for R-CHECKOUT-ORDER\n  - `pricing/quote.go#Price` for R-TAX-RATE\n  - `pricing/tax_test.go#TestPrice` for R-TAX-RATE\n- Both items still hold, since tax and the checkout steps are unchanged. I reran the tests, then stamped those three links and the four new ones.\n- No existing item was made false. Nothing I changed is marked risk-relevant.\n\n**Heads-up**\n- Total includes shipping, so the existing 10,000.00 charge cap (R-CHARGE-AMOUNT) now applies to goods plus shipping.",
+ "date": "2026-10-24"
+}

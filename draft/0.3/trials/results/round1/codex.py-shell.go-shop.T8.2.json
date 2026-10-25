@@ -1,0 +1,50 @@
+{
+ "run": "codex.py-shell.go-shop.T8.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4630,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.7
+ },
+ "usage": {
+  "input_tokens": 159055,
+  "cached_input_tokens": 128768,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 505,
+  "reasoning_output_tokens": 24
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed a malformed `source.sig:` field in `trace.lock` by revalidating the refund requirement and running `ostf stamp`.\n\nValidation passed:\n\n- `go test ./...`\n- `ostf check`\n- `ostf check --base main`\n\nAll 109 links are valid. No code changes or new items or links.",
+ "date": "2026-10-24"
+}

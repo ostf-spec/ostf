@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.go-shop.T7.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5266,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 19301,
+  "cache_read_input_tokens": 100731,
+  "output_tokens": 3600,
+  "cost": 0.006668510000000001
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact:** The change is a refactor with no behavior change. `min(d.Percent, MaxDiscountPercent)` is replaced by an explicit `if`. For `int64` values both return the smaller of the two, so the discount amounts are identical.\n\n**Affected items** (from `ostf check --base main` and `ostf context`):\n- Code: `pricing/discount.go#ApplyDiscount`\n- Items implemented: R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY, R-DISCOUNT-PERCENT. All three are now marked suspect with `BODY_CHANGED`.\n- Tests: `pricing/discount_test.go#TestApplyDiscount`, plus its subtests `caps_at_fifty_percent` and `rejects_expired`.\n- Indirect caller: `pricing/quote.go` (`Price`) calls `ApplyDiscount`, and so feeds R-TAX-RATE. No test changed.\n- No item is marked `controls` by this function. R-CHARGE-AMOUNT and R-REFUND-LIMIT are unaffected.\n\n**Tests run:**\n- `go test ./pricing/ -run TestApplyDiscount -v`: all four cases pass.\n- `go test ./...`: all packages pass (accounts, cart, inventory, payments, pricing).\n- `go vet ./pricing/`: clean.\n\n**`ostf check --base main` exits 1** with three suspect links, all `BODY_CHANGED`:\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-CAP`\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-EXPIRY`\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-PERCENT`\n\nThe linked tests pass, so the usual fix is to recheck each item against the code and run `ostf stamp` on each link. I did not stamp them: that writes `trace.lock`, and you didn't ask for it. Say the word and I'll do the recheck and stamp, then report the result.\n\n**Other observations:**\n- The `@req R-DISCOUNT-EXPIRY` comment on `ApplyDiscount` is the only tag on that function. The expiry check is in the function, so the tag is accurate, but the doc comment doesn't mention expiry.\n- Negative `Percent` values are not guarded, so a negative code produces a negative discount. This was already true on main. It's not part of this change, but it's the kind of case RISK-WRONG-CHARGE describes.\n- The cap test uses 100%, so the exact 50% boundary isn't covered. Adding a case would be a reasonable follow-up.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,63 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 33,
+  "callsBeforeFirstEdit": 20,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 8,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 36289,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 112.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 36,
+  "cache_creation_input_tokens": 134957,
+  "cache_read_input_tokens": 1503440,
+  "output_tokens": 24833,
+  "cost": 0.14902898
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "SHOP-57 (`R-VOLUME-DISCOUNT`, rev 2) is implemented, `ostf check --base main` reports no diagnostics, and all tests pass. The changes are uncommitted; I haven't committed, pushed, or opened a PR since you didn't ask for one.\n\n**Behavior implemented**\n- `pricing.VolumeOff` (new `pricing/volume.go`): a line with 10+ units gets 5% off its total, rounded down to the cent.\n- `Cart.VolumeDiscount` sums that over all lines.\n- `pricing.Price` now takes the volume amount. The discount code applies to the subtotal after the volume discount. Volume plus code together are capped at 50% of the original subtotal. `Quote` gained a `Volume` field, and `Discount` is now the total of volume and code.\n- `Checkout.PlaceOrder` passes the cart's volume discount into `Price`.\n\n**Interpretation to confirm:** I read \"before any discount code applies\" as \"the code applies after the volume discount.\" The item doesn't say so explicitly.\n\n**Trace impact**\n- Items: `R-VOLUME-DISCOUNT` (linked, not rewritten). No items added or removed.\n- Links added (7), all to `R-VOLUME-DISCOUNT`: `cart/cart.go#Cart.VolumeDiscount`, `pricing/volume.go#VolumeOff`, `pricing/quote.go#Price`, and tests `cart/cart_test.go#TestVolumeDiscount`, `pricing/volume_test.go#TestVolumeOff`, `pricing/quote_test.go#TestPriceVolumeThenCode`, `pricing/quote_test.go#TestPriceVolumeCountsTowardCap`.\n- Suspect links I rechecked and stamped: `cart/checkout.go#Checkout.PlaceOrder` → `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`; `pricing/quote.go#Price` and `pricing/tax_test.go#TestPrice` → `R-TAX-RATE`. The code still meets those items, and their tests pass.\n- Stamping wrote to `trace.lock`. I did not edit that file by hand.\n- Tests to run for this change: `cart/cart_test.go#TestVolumeDiscount`, `cart/checkout_test.go#TestPlaceOrder`, `cart/checkout_test.go#TestPlaceOrderNeedsSession`, `pricing/quote_test.go` (both new tests), `pricing/tax_test.go#TestPrice`, `pricing/tax_test.go#TestTax`, `pricing/volume_test.go#TestVolumeOff`.\n\n**Needs your decision**\n- `R-DISCOUNT-PERCENT` says a code \"takes its percentage off the subtotal.\" With volume lines, the code now takes its percentage off the post-volume amount, so that text is no longer literally true for those carts. I did not change the item. Please decide whether to revise its text or change the implementation to match it.\n- No changed code is marked risk-relevant, so I didn't need to stop for approval.",
+ "date": "2026-10-24"
+}

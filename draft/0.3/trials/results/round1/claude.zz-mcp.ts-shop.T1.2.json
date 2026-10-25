@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T1.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3158,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 12.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 13694,
+  "cache_read_input_tokens": 50584,
+  "output_tokens": 1006,
+  "cost": 0.06991040000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` (`src/refunds.ts`) exists to send a refund back to the card that paid for the original charge, within the shop's refund limits. I read this from the code and from `ostf context src/refunds.ts#Refunder.refund`. I didn't change any files.\n\n**Why it exists**\n\nIt implements three requirements:\n- **R-REFUND-ORIGINAL** (the `@req` tag on the method): \"A refund goes back to the payment method of the charge it refunds, never to another one.\" It looks up the receipt and calls `gateway.refund(receipt.txn, amount)` on the original transaction.\n- **R-REFUND-LIMIT** (declared link): a refund can't exceed what is left of the charge. Refunds above 500.00 per account per UTC day need a second approval. It enforces this through `checkRefundLimit`, and it keeps the per-charge and per-day running totals. It also rolls those totals back if the gateway call fails. This requirement is marked risk-relevant, so ask before changing this code. It controls RISK-REFUND-ABUSE (\"a compromised account or a mistaken operator drains funds through refunds\").\n- **R-AUDIT-MONEY** (declared link): every refund appends an audit entry with the account, action, amount and receipt.\n\nThose requirements refine the needs N-REFUNDS (\"refunds quickly without the business losing money to abuse\") and N-ACCOUNT-SAFE.\n\n**Tests covering it**\n\nThese are all in `src/refunds.test.ts`:\n- **`Refunder > refunds to the original transaction`** verifies R-REFUND-ORIGINAL. It is also linked to R-AUDIT-MONEY.\n- **`Refunder > totals refunds per account and UTC day`** verifies R-REFUND-LIMIT through `refund` itself.\n- **`checkRefundLimit`** verifies R-REFUND-LIMIT for the helper that `refund` calls.\n\n`src/payments.test.ts#Processor > appends an audit entry` also verifies R-AUDIT-MONEY, but it tests the processor, not `refund`.\n\nAll of these links are currently `valid` according to OSTF. I haven't run the tests.\n\nI found no test linked to the gateway-failure rollback or the unknown-receipt error. That isn't proof none exists, since I only looked at the links OSTF lists.",
+ "date": "2026-10-24"
+}

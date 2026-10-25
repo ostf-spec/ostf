@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 2071,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 12089,
+  "cache_read_input_tokens": 111837,
+  "output_tokens": 2205,
+  "cost": 0.0816137
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in the new `pricing/salestax.go`. `go build` and `go test ./...` pass, and `ostf check --base main` reports no errors (109 of 109 links valid).\n\n- **Code:** I removed `Tax` from `pricing/tax.go`, which still holds `Region`. I updated the call in `pricing/quote.go` (`Price`) and the calls in `pricing/tax_test.go`.\n- **Trace links:** In `trace/requirements.yaml`, I repointed the `code:` links for R-TAX-RATE and R-TAX-EXEMPT from `pricing/tax.go#Tax` to `pricing/salestax.go#SalesTax`. I didn't change any item text.\n- **Risk:** `ostf context` showed no risk-relevant marking on `Tax`, so I didn't stop to ask first.\n- **Restamped links:** After the move, check flagged five links as suspect or unstamped. I confirmed the items still match the code and the pricing tests pass, then ran `ostf stamp` on each:\n  - `pricing/quote.go#Price` implements R-TAX-RATE\n  - `pricing/salestax.go#SalesTax` implements R-TAX-EXEMPT\n  - `pricing/salestax.go#SalesTax` implements R-TAX-RATE\n  - `pricing/tax_test.go#TestTax` verifies R-TAX-RATE\n  - `pricing/tax_test.go#TestTaxExempt` verifies R-TAX-EXEMPT\n- **Impact:** Check lists these items and tests:\n  - R-TAX-RATE and R-TAX-EXEMPT\n  - `TestTax`, `TestTaxExempt` and `TestPrice`\n- **Links added:** `pricing/salestax.go#SalesTax` implements R-TAX-EXEMPT and implements R-TAX-RATE.\n- **Links removed:** `pricing/tax.go#Tax` implements R-TAX-EXEMPT and implements R-TAX-RATE.\n\nNo item became false. I didn't commit anything, and `salestax.go` is still untracked.",
+ "date": "2026-10-24"
+}

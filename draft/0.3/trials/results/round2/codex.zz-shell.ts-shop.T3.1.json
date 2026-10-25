@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-shell.ts-shop.T3.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6874,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 94.5
+ },
+ "usage": {
+  "input_tokens": 304258,
+  "cached_input_tokens": 269312,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1819,
+  "reasoning_output_tokens": 47
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented `InvalidRefundAmountError` for zero and negative refunds. Upper-limit behavior is unchanged.\n\nAll 6 refund tests pass; `ostf check --base main` passes.\n\nTrace impact: `R-REFUND-LIMIT` and new draft `R-REFUND-AMOUNT`. Added links connect the new item to `N-REFUNDS`, the error class, `checkRefundLimit`, and its new test.\n\nVerified impacted tests: `checkRefundLimit`, “rejects more than is left on the charge,” “rejects zero and negative amounts with InvalidRefundAmountError,” and “totals refunds per account and UTC day.”",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.go-shop.T1.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3696,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17369,
+  "cache_read_input_tokens": 77661,
+  "output_tokens": 2171,
+  "cost": 0.005336710000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the one entry point for sending money back to a customer. It exists to enforce the refund requirements in `trace/requirements.yaml`:\n\n- **R-REFUND-LIMIT** (refund limit, controls RISK-REFUND-ABUSE): a refund can't exceed what's left of the original charge, and refunds above 500.00 per account per UTC day need a second approver.\n- **R-REFUND-ORIGINAL** (refund to the original payment): the money goes back to the gateway transaction of the charge being refunded.\n- **R-AUDIT-MONEY** (listed in `requirements.yaml`): every refund appends an audit entry.\n\nIt does this in order: look up the receipt, take the lock, compute what's left on the charge and what the account has refunded today, call `CheckRefundLimit`, call `gateway.Refund` on the charge's transaction, then update the per-charge and per-day totals (`D-REFUND-LEDGER`, which is the design item for those two running totals) and append the audit entry. The per-charge and per-day totals only move after the gateway succeeds.\n\n**Tests that cover it:**\n\n- `payments/refund_test.go#TestRefund`: partial refund succeeds, and a refund beyond the charge's remainder returns `ErrRefundTooLarge`. Linked to R-REFUND-ORIGINAL (and to R-AUDIT-MONEY in `trace.lock`).\n- `payments/refund_test.go#TestRefundDailyLimit`: two charges on one account; the second refund crosses the daily limit and returns `ErrNeedsApproval`, and a later refund succeeds. Linked to D-REFUND-LEDGER and R-REFUND-LIMIT.\n- `payments/refund_test.go#TestCheckRefundLimit`: table tests of the pure `CheckRefundLimit` helper, which holds the actual limit rules. Linked to R-REFUND-LIMIT.\n\n**Gaps I noticed:**\n\n- `R-AUDIT-MONEY` lists `refund.go#Refunder.Refund` as code, but its only test in `requirements.yaml` is `TestChargeAudited` in `charge_test.go`, which covers charges. `trace.lock` does record `TestRefund` as verifying R-AUDIT-MONEY, so the yaml and the lock disagree. Nothing in the refund tests checks that a refund writes an audit entry.\n- `R-REFUND-ORIGINAL` lists `charge.go#Gateway` as its code, not `Refunder.Refund`. The `@req` comment is on `Refund` in `refund.go` and on `Processor.receipt` in `charge.go`.\n\nI didn't change any files. I also didn't run `ostf context` or the test suite, so the test coverage above is from reading the code and trace files.",
+ "date": "2026-10-24"
+}

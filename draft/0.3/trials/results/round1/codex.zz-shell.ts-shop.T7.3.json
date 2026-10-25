@@ -1,0 +1,53 @@
+{
+ "run": "codex.zz-shell.ts-shop.T7.3",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3634,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.5
+ },
+ "usage": {
+  "input_tokens": 128183,
+  "cached_input_tokens": 112896,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 735,
+  "reasoning_output_tokens": 72
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Compared with `main`, your change replaces `Math.min` with an explicit conditional in `applyDiscount`. For numeric inputs, behavior is unchanged: the 50% cap, cent rounding, and expiry rejection remain intact.\n\n- Ran `node --test src/pricing.test.ts src/checkout.test.ts`: **10 tests passed**.\n- Rechecked `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, and `R-DISCOUNT-PERCENT`.\n- OSTF check: **111 valid links, no suspect links**.\n\nNo code was edited. The required `ostf stamp` commands updated `trace.lock`.",
+ "date": "2026-10-24"
+}

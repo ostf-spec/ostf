@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.go-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1138,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 12.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9058,
+  "cache_read_input_tokens": 86882,
+  "output_tokens": 991,
+  "cost": 0.054850199999999995
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no errors.\n\n- **What was wrong:** `trace.lock` had a malformed entry for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. It was reported as `LOCK_INVALID` and left the link unstamped.\n- **Recheck:** `CheckRefundLimit` matches the item text. It rejects a refund that is not positive or exceeds what is left on the charge, and one that takes the day's total above 500.00 without a second approval. I didn't change any code. The `payments` tests pass.\n- **Fix:** I ran `ostf stamp` on that link, as AGENTS.md describes. The stamp rewrote the bad `trace.lock` line, which is the only changed file and is still uncommitted. I didn't edit `trace.lock` by hand.\n- **Pull request:** No items or links were added, so there is nothing to list as added.\n\nThe item is marked risk-relevant. Since the stamp only re-records the link and the code is unchanged, I didn't ask first, but you may want to look over the `trace.lock` diff before committing.",
+ "date": "2026-10-24"
+}

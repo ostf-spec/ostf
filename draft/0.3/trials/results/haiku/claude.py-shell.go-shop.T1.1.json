@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4794,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 16108,
+  "cache_read_input_tokens": 82316,
+  "output_tokens": 3111,
+  "cost": 0.005601060000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why `Refunder.Refund` exists**\n\n`Refund` (`payments/refund.go:63`) is the one path that actually sends money back to a customer. It does four things in order:\n\n1. Looks up the original charge by receipt ID. Unknown IDs return `ErrUnknownReceipt`.\n2. Checks the refund against the limits in `CheckRefundLimit`: the amount must be positive and no more than what is left on the charge, and refunds above `DailyRefundLimit` (500.00) per account per UTC day need a second approver.\n3. Calls the gateway's `Refund` with the charge's original transaction, so the money goes back to the card that was charged.\n4. Updates the running totals (per charge and per account-day) and appends a `refund` entry to the audit log.\n\nThe trace items it serves:\n\n- **R-REFUND-ORIGINAL** (refund goes to the original payment method). This is the only ID in its doc comment (`@req`).\n- **R-REFUND-LIMIT** (limit against controlling RISK-REFUND-ABUSE). `trace/requirements.yaml` lists `Refunder.Refund` as code for this item.\n- **R-AUDIT-MONEY** (every refund writes an audit entry). Also listed in `requirements.yaml`.\n- **D-REFUND-LEDGER** (the running totals). That design item links to `Refunder`, and `dayKey` links to it.\n\n**Tests that cover it**\n\n- `TestRefund` (`payments/refund_test.go:34`) calls `Refund` directly. It checks that a 15.00 refund reaches the original transaction, that the last audit entry is the refund, and that refunding more than what is left fails with `ErrRefundTooLarge`. The file's `@req R-AUDIT-MONEY` comment sits on this test, but `requirements.yaml` links it to R-REFUND-ORIGINAL.\n- `TestRefundDailyLimit` (`payments/refund_test.go:58`) calls `Refund` directly. It checks that a second same-day refund over the limit returns `ErrNeedsApproval` and that the next UTC day is allowed.\n- `TestCheckRefundLimit` (`payments/refund_test.go:12`) covers only the pure `CheckRefundLimit` helper, not `Refund` itself.\n\n**Gaps I noticed**\n\n- Nothing tests a refund that succeeds with `ApprovedBy` set, so the approval path through `Refund` is untested.\n- Nothing tests the unknown-receipt error or a gateway error from `Refund`.\n- The `@req` comment on `Refund` names only R-REFUND-ORIGINAL, while `requirements.yaml` also links it to R-REFUND-LIMIT and R-AUDIT-MONEY. Those links are stamped in `trace.lock`, so the comment and the trace file disagree about what this function is meant to satisfy.\n\nI only read files and ran `git status` (clean), and I changed nothing.",
+ "date": "2026-10-24"
+}

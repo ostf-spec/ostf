@@ -1,0 +1,53 @@
+{
+ "run": "codex.py-shell.go-shop.T7.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3001,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 44.3
+ },
+ "usage": {
+  "input_tokens": 151996,
+  "cached_input_tokens": 124032,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 685,
+  "reasoning_output_tokens": 25
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in `pricing/discount.go` is behavior-preserving: replacing `min` with an explicit comparison keeps the 50% discount cap, rounding, and expiry handling unchanged. Pricing and checkout callers retain the same results.\n\nValidation passed:\n\n- Fresh pricing and cart tests, including discount calculations, cap, expiry, and checkout.\n- Full suite via `go test ./...` (cached).\n- `ostf check --base main`: all 109 links valid, no added items or links.\n\nFollowing repository instructions, I revalidated and stamped the three affected requirement links. This updated `trace.lock`; your code was left untouched.",
+ "date": "2026-10-24"
+}

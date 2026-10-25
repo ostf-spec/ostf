@@ -1,0 +1,50 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T8.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3674,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.1
+ },
+ "usage": {
+  "input_tokens": 127738,
+  "cached_input_tokens": 112000,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 441,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed refund-limit entry in `trace.lock` using `ostf stamp`, after reviewing the requirement and passing all 5 refund tests. No application code changed.\n\n`ostf check --base main` now passes: **40 items, 111 valid links**, no errors or added items/links.",
+ "date": "2026-10-24"
+}

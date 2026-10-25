@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.go-shop.T6.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4162,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.9
+ },
+ "usage": {
+  "input_tokens": 125695,
+  "cached_input_tokens": 110080,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 480,
+  "reasoning_output_tokens": 27
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is absent from the trace files, and checkout currently has no timeout handling.\n\nThe repository’s `AGENTS.md` forbids linking nonexistent requirement IDs. Should I add this requirement as a draft and a failing test, or is there an existing requirement I should use? No files changed.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 24,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 5,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 27500,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 86842,
+  "cache_read_input_tokens": 914947,
+  "output_tokens": 12047,
+  "cost": 0.041742129999999995
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "`tax` is now `salesTax` in `src/salestax.ts`, and everything still works: all 36 tests pass, and `ostf check` reports no diagnostics. I didn't commit anything.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private `roundHalfUp` helper, moved unchanged.\n- **`src/pricing.ts`**: removed the old function and helper. `price` now imports and calls `salesTax`. Its output is the same.\n- **`src/pricing.test.ts`**: the tax tests now import `salesTax` and sit under a `salesTax` describe. I left them in this file rather than moving them.\n- **`trace/requirements.yaml`**: I changed only the link anchors of `R-TAX-RATE` and `R-TAX-EXEMPT` to the new names. Item text is untouched.\n- **`README.md`**: added a row for `src/salestax.ts` and reworded the `pricing.ts` row.\n\n**Trace impact** (`ostf check --base main`, root = repo)\n- Items: `R-TAX-RATE` and `R-TAX-EXEMPT`. Neither is risk-relevant, so I didn't need to ask first. No items were added or removed, and neither item became false.\n- Links added: `src/salestax.ts#salesTax implements R-TAX-EXEMPT`, `src/salestax.ts#salesTax implements R-TAX-RATE`, and two `verifies` links from the renamed tests.\n- Links removed: the four old `src/pricing.ts#tax` and `src/pricing.test.ts#tax` links.\n- Stamped after a recheck against the code and a passing test run: those four new links, plus `src/pricing.ts#price implements R-TAX-RATE`, which went suspect because its body changed. All are now valid.\n- I didn't edit `trace.lock` by hand.\n\n**Things to know**\n- `Region` stays in `pricing.ts`. `salestax.ts` imports it with `import type`, and `pricing.ts` imports `salesTax`. That makes a type-only import cycle, which is erased at runtime and works under Node's type stripping.\n- There's no pull request in this task, so the impact summary above is what goes in the PR description when you open one.",
+ "date": "2026-10-24"
+}

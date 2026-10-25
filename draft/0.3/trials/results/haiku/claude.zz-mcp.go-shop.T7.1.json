@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 9,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 17917,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 57121,
+  "cache_read_input_tokens": 185521,
+  "output_tokens": 3821,
+  "cost": 0.015191109999999999
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is behavior-preserving, and the tests pass. The only edit is in `pricing/discount.go`, where `ApplyDiscount` swaps the `min` builtin for an explicit `if`:\n\n```go\npercent := d.Percent\nif percent > MaxDiscountPercent {\n    percent = MaxDiscountPercent\n}\n```\n\n**Impact**\n\n- **Behavior:** None intended. `Percent` is `int64` and the cap is an untyped constant `50`, so `min(d.Percent, 50)` and the `if` return the same value for every input, including negative and zero percents. The 50% cap, the expiry check, and the cent rounding are unchanged.\n- **Callers:** Only `pricing/quote.go` (`Price`) calls `ApplyDiscount`, so checkout totals are unaffected.\n- **Items (from `ostf check --base main`):** `pricing/discount.go#ApplyDiscount` implements `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT`. None are risk-relevant.\n- **Links:** Three links from `ApplyDiscount` to those items are now `suspect` with reason `BODY_CHANGED`. No links or items were added or removed, and `ostf check` reports no diagnostics errors.\n- **Tests that matter:** `pricing/discount_test.go#TestApplyDiscount`, with its subtests `caps_at_fifty_percent` (covers R-DISCOUNT-CAP) and `rejects_expired` (covers R-DISCOUNT-EXPIRY).\n\n**Test results**\n\n- `go test -count=1 -v -run TestApplyDiscount ./pricing/`: all four subtests pass.\n- `go test -count=1 ./...`: all packages pass (accounts, cart, inventory, payments, pricing).\n- `go vet ./pricing/`: clean.\n\n**Not done**\n\n- I did not stamp the three suspect links. AGENTS.md allows `ostf stamp` only after rechecking each item against the code and running its tests, and the tests pass, so that step is now available. It would change `trace.lock`, so I'd like your go-ahead first. Say the word and I'll recheck and stamp them.\n- `ostf context pricing/discount.go#ApplyDiscount` returned a `BROKEN_LINK` diagnostic saying the anchor does not resolve, even though `ostf check` resolves it. I did not dig into why.\n- The `R-VOLUME-DISCOUNT` item (5% off lines of 10+ units, counted toward the 50% cap) has no code or test links in this tree. This change doesn't touch it, but it is unimplemented.",
+ "date": "2026-10-24"
+}

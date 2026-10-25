@@ -1,0 +1,50 @@
+{
+ "run": "codex.zz-shell.ts-shop.T8.2",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3284,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.8
+ },
+ "usage": {
+  "input_tokens": 125410,
+  "cached_input_tokens": 110464,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 465,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed refund-limit stamp using `ostf stamp`, after reviewing the requirement and passing all 5 refund tests.\n\n`ostf check --base main` now passes: 40 items, 111 valid links. No code changes or new items/links.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T1.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3169,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 14862,
+  "cache_read_input_tokens": 50619,
+  "output_tokens": 1193,
+  "cost": 0.0764559
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` (src/refunds.ts) exists to give customers refunds, and to stop those refunds being used to drain money. I took this from `ostf context` and the code. I didn't run any tests, and I haven't changed any files.\n\n## Why it exists\nIt implements three requirements. All three trace to the need **N-REFUNDS**: \"Customers get refunds quickly without the business losing money to abuse.\"\n\n- **R-REFUND-ORIGINAL** (the `@req` tag on the method): a refund goes back to the payment method of the charge it refunds, never to another one. The method looks up the receipt and calls `gateway.refund(receipt.txn, amount)` on that original transaction. It throws `UnknownReceiptError` if the receipt doesn't exist.\n- **R-REFUND-LIMIT**: a refund can't exceed what is left on the original charge. Refunds above 500.00 per account per UTC day need a second approval. The method calls `checkRefundLimit` and tracks running totals per charge and per account per day. It also rolls the totals back if the gateway call fails. This requirement is marked **risk-relevant**. It controls **RISK-REFUND-ABUSE**: \"a compromised account or a mistaken operator drains funds through refunds.\"\n- **R-AUDIT-MONEY**: every charge and refund appends an audit entry. The method appends one with `action: \"refund\"` after the gateway call succeeds.\n\n## Tests that cover it\nAll the links below are currently in the `valid` state.\n\n- `src/refunds.test.ts#Refunder > refunds to the original transaction` verifies R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `src/refunds.test.ts#Refunder > totals refunds per account and UTC day` verifies R-REFUND-LIMIT. It exercises the daily total through `refund`.\n- `src/refunds.test.ts#checkRefundLimit` verifies R-REFUND-LIMIT. It tests the limit helper directly, not `refund` itself.\n- `src/payments.test.ts#Processor > appends an audit entry` verifies R-AUDIT-MONEY. It is about the charge path, so it only covers `refund` indirectly.\n\n## Gaps\n- No test is linked for the rollback when the gateway fails.\n- No test is linked for `UnknownReceiptError`.\n\nEither might exist in the test file without a trace link. I didn't read `src/refunds.test.ts`, so I can't say.\n\nBecause R-REFUND-LIMIT is risk-relevant, I'd need to ask you before changing that code.",
+ "date": "2026-10-24"
+}

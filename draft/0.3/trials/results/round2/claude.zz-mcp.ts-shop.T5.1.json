@@ -1,0 +1,58 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6236,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 22067,
+  "cache_read_input_tokens": 252268,
+  "output_tokens": 5184,
+  "cost": 0.1653788
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "I implemented SHOP-57 (`R-VOLUME-DISCOUNT`) and left it uncommitted on `main`, with no branch or pull request. I had no Jira access, so I worked from the item text in `trace.yaml`. The tests pass (38 before I added tests to the volume group). `ostf check --base main` now shows 40 items, 115 valid, with no errors or warnings.\n\n**What changed**\n- **`src/pricing.ts`:** new `volumeDiscount(lines)` gives 5% off each line of 10 or more units, rounded down to the cent per line. `price()` takes an optional `volume` argument and applies the volume discount first, then the code discount on what is left. Together they are capped at 50% of the subtotal. Without the argument it behaves as before.\n- **`src/checkout.ts`:** `placeOrder` passes `volumeDiscount(lines)` into `price`.\n- **`src/pricing.test.ts`:** two tests, one for the threshold and rounding and one for ordering and the cap.\n- **Trace links:** I linked the code and tests with `@req R-VOLUME-DISCOUNT` comments and did not edit the item.\n\n**Needs your confirmation:** the item doesn't say how the code discount and the cap combine with the volume discount. I read it as the code percentage applying to the post-volume amount, with the combined discount capped at 50% of the original subtotal. Please check that against the Jira issue.\n\n**Impact (per `ostf check`)**\n- **Items:** `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-TAX-RATE` and `R-VOLUME-DISCOUNT`.\n- **Tests to run:**\n  - `checkout.test.ts#Checkout > places an order`\n  - `checkout.test.ts#Checkout > needs a valid session`\n  - `pricing.test.ts#price > taxes the subtotal after discounts`\n  - `pricing.test.ts#tax > rounds half up to the cent`\n  - `pricing.test.ts#volumeDiscount` and its two child tests\n- **Links added:**\n  - `src/pricing.ts#price` implements `R-VOLUME-DISCOUNT`.\n  - `src/pricing.ts#volumeDiscount` implements `R-VOLUME-DISCOUNT`.\n  - The two `volumeDiscount` tests verify `R-VOLUME-DISCOUNT`.\n\nI rechecked the suspect and unstamped links against the code, ran the tests, and stamped them with `ostf stamp`. I didn't edit `trace.lock` by hand. No existing item became false.",
+ "date": "2026-10-24"
+}

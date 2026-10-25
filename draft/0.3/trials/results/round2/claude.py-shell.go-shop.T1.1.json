@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 399,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 8.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7123,
+  "cache_read_input_tokens": 29510,
+  "output_tokens": 771,
+  "cost": 0.039161
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` in `payments/refund.go` exists to meet three requirements. I got this from `ostf context payments/refund.go#Refunder.Refund`, which reads the trace links in `trace.yaml`. I didn't open the source or run any tests. I made no changes.\n\n**Why it exists**\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it): \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\"\n  - It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds.\n  - It refines N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n  - `CheckRefundLimit` in the same file also implements it.\n- **R-AUDIT-MONEY**: every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt. `Processor.Charge` implements this too. It refines N-ACCOUNT-SAFE.\n- **R-REFUND-ORIGINAL**: a refund goes back to the payment method of the charge it refunds, never to another one. `Gateway` and `Processor.receipt` in `payments/charge.go` also implement it.\n\n**Tests that cover it** (all in `payments/refund_test.go`, all valid links)\n- `TestRefund` verifies R-AUDIT-MONEY and R-REFUND-ORIGINAL.\n- `TestCheckRefundLimit` verifies R-REFUND-LIMIT.\n- `TestRefundDailyLimit` verifies R-REFUND-LIMIT.\n- `TestChargeAudited` in `payments/charge_test.go` verifies R-AUDIT-MONEY. It tests the charge side, not `Refund`.\n\n`TestRefund` is the only test attached to `Refund` for the audit and original-payment requirements. The limit requirement is covered by the other two tests.",
+ "date": "2026-10-24"
+}

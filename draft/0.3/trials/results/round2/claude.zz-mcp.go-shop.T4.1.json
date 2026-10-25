@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12915,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 41986,
+  "cache_read_input_tokens": 169898,
+  "output_tokens": 2456,
+  "cost": 0.20952579999999998
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in the new file `pricing/salestax.go`, and the old definition is gone from `pricing/tax.go`. `go build` and `go test ./...` pass, and `ostf check --base main` reports no errors. I haven't committed anything or opened a PR.\n\n**Changes**\n- The caller in `pricing/quote.go` (`Price`) and the calls in `pricing/tax_test.go` now use `SalesTax`.\n- I changed the `code:` links in `trace/requirements.yaml` from `pricing/tax.go#Tax` to `pricing/salestax.go#SalesTax`. No item text was changed.\n- The function body is unchanged, so no requirement became false.\n\n**OSTF impact**\n- **Items:** R-TAX-RATE and R-TAX-EXEMPT. Neither is marked risk-relevant.\n- **Tests to run:** `pricing/tax_test.go#TestPrice`, `#TestTax` and `#TestTaxExempt`. All pass.\n- **Links added:**\n  - `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n  - `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n- **Links removed:**\n  - `pricing/tax.go#Tax implements R-TAX-EXEMPT`\n  - `pricing/tax.go#Tax implements R-TAX-RATE`\n- **Items added or removed:** none.\n\n**Stamping:** after the move, check listed five links as suspect or unstamped. I rechecked them against their items and ran the tests, which passed, so I stamped all five. They are the two `SalesTax implements` links above, `Price implements R-TAX-RATE`, `TestTax verifies R-TAX-RATE` and `TestTaxExempt verifies R-TAX-EXEMPT`.\n\n`TestTax` and `TestTaxExempt` still live in `tax_test.go`, since you didn't ask to move them.",
+ "date": "2026-10-24"
+}

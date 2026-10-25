@@ -1,0 +1,58 @@
+{
+ "run": "codex.py-shell.ts-shop.T2.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 14,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 9,
+  "ostfOutputTokens": 8160,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 49.0
+ },
+ "usage": {
+  "input_tokens": 199980,
+  "cached_input_tokens": 178944,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1876,
+  "reasoning_output_tokens": 41
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Implemented free shipping for discounted subtotals ≥100.00; otherwise 5.99. Shipping appears in the quote and charged total.\n\nAll 38 tests pass. `ostf check --base main` passes with 117 valid links.\n\nTrace impact: `R-CHECKOUT-ORDER`, `R-TAX-RATE`, and new draft `R-SHIPPING`. Added shipping links to `N-BUY`, `price`, `Checkout.placeOrder`, and shipping tests.\n\nImpacted tests: `Checkout` and `price` suites, including “places an order,” “charges shipping in the order total,” “applies shipping to the discounted subtotal,” “taxes the subtotal after discounts,” and `tax > rounds half up to the cent`.",
+ "date": "2026-10-24"
+}

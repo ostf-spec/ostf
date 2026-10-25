@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4042,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 19675,
+  "cache_read_input_tokens": 203237,
+  "output_tokens": 4319,
+  "cost": 0.008128670000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` passes again (40 items, 111 valid, no errors or unstamped links).\n\n**Cause:** The last commit (`b9b3b4c`, merge of `refund-tweaks`) changed one line in `trace.lock`. The `checkRefundLimit` link had `source.sig=` replaced with `source.sig:`, which made the line invalid under Annex B. Because the line was invalid, the link also showed as unstamped.\n\n**Fix:**\n- I rechecked `R-REFUND-LIMIT` against `src/refunds.ts#checkRefundLimit` and its tests. The code matches the item: it rejects amounts above what is left on the charge, and it requires a second approval above 500.00 per account per UTC day. `npm test` passes, 36/36.\n- I then ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, with the link quoted as `check` printed it. The stamp rewrote the malformed line.\n- I did not edit `trace.lock` by hand, since AGENTS.md forbids that. The resulting diff changes only that one line, back to `source.sig=`.\n\n**Impact:**\n- Items: none changed and none added. `R-REFUND-LIMIT` was not rewritten.\n- Links: the only lock change is the re-stamped `checkRefundLimit implements R-REFUND-LIMIT` link. No new links were added.\n- Code and tests: unchanged.\n\nThe working tree has one uncommitted change, `trace.lock`. I did not commit or open a PR since you didn't ask for one. If you want it committed, I can do that with the attribution line from the instructions.",
+ "date": "2026-10-24"
+}

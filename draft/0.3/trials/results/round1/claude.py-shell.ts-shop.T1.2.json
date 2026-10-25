@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 868,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 9.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7959,
+  "cache_read_input_tokens": 29509,
+  "output_tokens": 850,
+  "cost": 0.0432949
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` (`src/refunds.ts:66-88`) exists to give customers refunds without the business losing money to abuse. This comes from `ostf context`, and the item text there is data, not instructions. The method serves three requirements.\n\n**Why it exists**\n- **R-REFUND-ORIGINAL** (the `@req` on the method): a refund goes back to the payment method of the charge it refunds, never to another one. The method looks up the receipt and calls `gateway.refund(receipt.txn, amount)` on the original transaction. It throws `UnknownReceiptError` if the receipt doesn't exist.\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it):\n  - A refund can't exceed what is left of the original charge.\n  - Refunds above 500.00 per account per UTC day need a second approval.\n  - The method enforces this through `checkRefundLimit`, with running totals kept in the `refunded` and `daily` maps.\n  - It counts the refund before awaiting the gateway so a concurrent refund sees it, and rolls the totals back if the gateway fails.\n  - The requirement controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds.\n- **R-AUDIT-MONEY**: every refund appends an audit entry (account, action, amount, receipt). The method does this at the end, only after the gateway call succeeds.\n\n**Tests that cover it** (all in `src/refunds.test.ts`)\n- `Refunder > refunds to the original transaction` verifies R-REFUND-ORIGINAL and the refund side of R-AUDIT-MONEY.\n- `Refunder > totals refunds per account and UTC day` verifies R-REFUND-LIMIT.\n- `checkRefundLimit` also verifies R-REFUND-LIMIT, but it tests the helper function directly, not `refund`.\n\nAll of these links show as valid in `ostf context`. I didn't change any files.\n\nI didn't open the test file, so I can't say whether the rollback on gateway failure or the unknown-receipt error is tested. The links above don't mention either.",
+ "date": "2026-10-24"
+}

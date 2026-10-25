@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6891,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 25775,
+  "cache_read_input_tokens": 167132,
+  "output_tokens": 3855,
+  "cost": 0.008755220000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links, 111 valid, no errors, and an empty impact list.\n\n**Cause:** the `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` line in `trace.lock` (line 111) had `source.sig:` where every other entry has `source.sig=`. That malformed separator made the lock entry invalid and left the link unstamped.\n\n**Fix:**\n- I rechecked `R-REFUND-LIMIT` against the code. `checkRefundLimit` rejects amounts above what is left on the charge and requires approval above 500.00 per account per UTC day, which matches the item text. The item is risk-relevant, but I changed no code, so I didn't need to ask.\n- The item's tests pass: `node --test src/refunds.test.ts` ran 5 of 5 green.\n- I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. It rewrote that one lock line with the correct `=` separator. I did not hand-edit `trace.lock`.\n\n**For the summary and any PR:**\n- Items impacted: none. The impact list against `main` is empty.\n- Links added: none. The only change is the stamp on the existing `checkRefundLimit` → `R-REFUND-LIMIT` link.\n- Tests verified: the five tests in `src/refunds.test.ts`.\n- No items were added or rewritten.\n\nThe only working-tree change is `trace.lock`, which is uncommitted. I didn't commit or open a PR since you didn't ask for one.",
+ "date": "2026-10-24"
+}

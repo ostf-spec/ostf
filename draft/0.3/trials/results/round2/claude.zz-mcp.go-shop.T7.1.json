@@ -1,0 +1,54 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12093,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 40420,
+  "cache_read_input_tokens": 198975,
+  "output_tokens": 1692,
+  "cost": 0.1985295
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "I've finished the impact check and the tests, and I'm now writing up the result.\n\n**Your change:** in `pricing/discount.go`, `ApplyDiscount` now caps the percentage with an explicit `if percent > MaxDiscountPercent` instead of the builtin `min(...)`. The behavior is the same. The 50% cap, the expiry check and the round-down are untouched.\n\n**Impact** (`ostf check --base main`):\n- **Changed code:** `pricing/discount.go#ApplyDiscount`, whose body changed.\n- **Items it implements:** `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT`. None is risk-relevant. All three refine `N-FAIR-PRICE`.\n- **Items and links added, changed or removed:** none.\n- **Links that went suspect:** the three `ApplyDiscount` implements links, with reason `BODY_CHANGED`.\n\n**Tests the impact lists:**\n- `pricing/discount_test.go#TestApplyDiscount`\n- `pricing/discount_test.go#TestApplyDiscount/caps_at_fifty_percent`\n- `pricing/discount_test.go#TestApplyDiscount/rejects_expired`\n\nI ran `go test ./pricing/ -run TestApplyDiscount -v`, and all four subtests passed. I did not run the rest of the repo's tests.\n\n**Stamping:** I compared the three items' text with the new body, and each still holds. Since the tests passed, I stamped the three suspect links with `ostf stamp`, as `AGENTS.md` directs. This updated `trace.lock`. All three links now show as `valid`. If you'd rather review before the lock changes, you can revert it with `git checkout trace.lock`.\n\n**Not done:**\n- I didn't re-run `ostf check` after stamping. The stamp output itself showed the three links as `valid`.\n- Nothing is committed.",
+ "date": "2026-10-24"
+}

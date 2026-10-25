@@ -1,0 +1,59 @@
+{
+ "run": "codex.py-shell.ts-shop.T3.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6472,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 71.9
+ },
+ "usage": {
+  "input_tokens": 280626,
+  "cached_input_tokens": 230528,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1963,
+  "reasoning_output_tokens": 64
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented `InvalidRefundAmountError` for zero and negative refunds. Excessive refunds still throw `RefundTooLargeError`.\n\nAll six refund tests pass; `ostf check --base main` reports 115 valid links.\n\nTrace impact: `R-REFUND-LIMIT` and new draft `R-REFUND-POSITIVE-AMOUNT`. Added links connect the draft to `N-REFUNDS`, `checkRefundLimit`, the new error class, and its test.\n\nImpacted tests: `checkRefundLimit`, “rejects more than is left on the charge,” “rejects zero and negative refund amounts,” and “totals refunds per account and UTC day.”",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 879,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9287,
+  "cache_read_input_tokens": 88275,
+  "output_tokens": 873,
+  "cost": 0.054725499999999996
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact of your uncommitted change:** none on behavior. The diff touches only `src/pricing.ts`, in `applyDiscount`. It replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an equivalent `let` plus `if` clamp. The expiry check and the `Math.floor((subtotal * percent) / 100)` rounding are unchanged. One edge differs: if `d.percent` were `NaN`, `Math.min` returns `NaN`, while the new `if` leaves it as `NaN` too, so the result is the same. It is a pure refactor that makes the code slightly longer.\n\n**Requirements linked to `applyDiscount`:** `ostf context` lists R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT. All three links show as \"suspect\", because the code changed. The output doesn't mark the function risk-relevant. These requirements still hold, and I haven't stamped anything.\n\n**Tests that matter:** `src/pricing.test.ts` is the only test file that uses `applyDiscount`, and nothing outside `pricing.ts` references it or `MAX_DISCOUNT_PERCENT`. I ran it: 7 of 7 pass. That includes \"caps at fifty percent\", \"rounds down to the cent\" and \"rejects an expired code\".\n\nI haven't run `ostf check` or `ostf stamp`. Do you want me to run the check and stamp the three suspect links now that their tests pass? Or would you rather revert the refactor, which would clear them without a stamp?",
+ "date": "2026-10-24"
+}

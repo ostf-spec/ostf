@@ -1,0 +1,17 @@
+active: true
+derived: false
+header: |
+  Charge tests
+level: 1.0
+links:
+- REQ001: ydC8rdR_NX47Itt2ZWymDTeQ7Xg2kNqb6AjXVIU7Dms=
+- REQ002: jTeNZOWb-_r5mwmQRML2NtrCGcyEgLSzd1bOn2jvzg8=
+normative: true
+ref: ''
+references:
+- keyword: def test_charge
+  path: tests/test_payments.py
+  type: file
+reviewed: ZzzkZEnJTP51SipY9aBtSdwHoRasc0iTfvE4O9Ihw-w=
+text: |
+  Run the payment test suite.

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.ts-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6944,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 45.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 24105,
+  "cache_read_input_tokens": 327114,
+  "output_tokens": 5522,
+  "cost": 0.1843994
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 13,
+ "finalMessage": "Checkout now adds shipping to the order total: free when the subtotal after discounts is at least 100.00, otherwise a flat 5.99. All 39 tests pass, and `ostf check --base main` reports no errors. I haven't committed or opened a PR.\n\n- **Pricing:** `src/pricing.ts` has a new `shipping()` function. `price()` now returns a `shipping` field on the quote and adds it to `total`. `placeOrder` already charges `quote.total`, so the charge includes shipping with no change to `checkout.ts`.\n- **Tax:** I left shipping untaxed. R-TAX-RATE says tax applies to the subtotal after discounts, so that requirement stays true. If you want shipping taxed, that would contradict R-TAX-RATE.\n- **Tests:** New tests cover the 100.00 boundary, shipping judged after discounts, a tax-exempt order, and a checkout that ships free. I updated two existing assertions to include the 5.99 shipping.\n- **Trace:** I added R-SHIPPING as a `draft` item that refines N-FAIR-PRICE and links to the code and tests.\n- **Stamps:** I rechecked R-TAX-RATE and R-CHECKOUT-ORDER against the code, ran their tests, and stamped the suspect links. `trace.lock` changed through `ostf stamp`; I didn't edit it by hand.\n- **Risk code:** The code I changed isn't marked risk-relevant.\n\n**Added by `ostf check`, for the PR description:**\n- Item: R-SHIPPING\n- Link: R-SHIPPING refines N-FAIR-PRICE\n- Links: `src/pricing.ts#shipping` and `src/pricing.ts#price` implement R-SHIPPING\n- Links: three tests verify R-SHIPPING: two in `src/pricing.test.ts` under `shipping`, and one in `src/checkout.test.ts` named \"ships free from 100.00 and charges the total with shipping\"\n\nAlso stamped (they were suspect because I changed their bodies): `price` implements R-TAX-RATE, and the \"places an order\" and \"taxes the subtotal after discounts\" tests verify R-CHECKOUT-ORDER and R-TAX-RATE.\n\nI made no items false.\n\nR-CHARGE-AMOUNT caps a charge at 10,000.00. A large order with shipping could now cross that cap only if its post-discount subtotal is within 5.99 of the cap. Shipping is free above 100.00, so it adds nothing there.",
+ "date": "2026-10-24"
+}

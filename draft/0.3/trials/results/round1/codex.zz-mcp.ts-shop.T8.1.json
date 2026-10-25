@@ -1,0 +1,50 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T8.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3990,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.1
+ },
+ "usage": {
+  "input_tokens": 127956,
+  "cached_input_tokens": 112000,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 481,
+  "reasoning_output_tokens": 11
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed `source.sig` entry in `trace.lock` using `ostf stamp`, after verifying the requirement and refund tests.\n\n- All 5 refund tests pass.\n- `ostf check --base main` passes: 40 items, 111 valid links.\n- No added items or links; application code unchanged.",
+ "date": "2026-10-24"
+}

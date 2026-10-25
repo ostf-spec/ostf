@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4509,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 19553,
+  "cache_read_input_tokens": 249605,
+  "output_tokens": 5156,
+  "cost": 0.1547765
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "I implemented SHOP-57 (volume discount) as described by `R-VOLUME-DISCOUNT` in `trace.yaml`. I have no Jira access, so that item text is the only spec I worked from. `go test ./...` passes and `ostf check --base main` reports 113 valid links with no errors. Nothing is committed.\n\n**How it works**\n- **Per line:** `Cart.VolumeDiscount()` in `cart/cart.go` takes 5% off each line of 10 or more units, rounded down to the cent. It leaves `Subtotal()` alone.\n- **Discount code:** `pricing.PriceWithVolume` in `pricing/quote.go` applies the code to the subtotal after the volume discount.\n- **Cap:** volume plus code together can't exceed 50% of the original subtotal.\n- **Wiring:** `Price` keeps its signature and now calls `PriceWithVolume` with no volume discount. `PlaceOrder` calls `PriceWithVolume` directly.\n- **Tests:** I added `TestVolumeDiscount` (rounding, a 9-unit line that earns nothing) and `TestPriceWithVolume` (the code applies after volume, and the cap).\n\n**Links reported as added by `ostf check`**\n- `Cart.VolumeDiscount` implements `R-VOLUME-DISCOUNT`\n- `PriceWithVolume` implements `R-VOLUME-DISCOUNT`\n- `TestVolumeDiscount` verifies `R-VOLUME-DISCOUNT`\n- `TestPriceWithVolume` verifies `R-VOLUME-DISCOUNT`\n\n**Stamping**\n- I rechecked and stamped the four new links above.\n- I rechecked and stamped three existing links whose function bodies changed: `PlaceOrder` for `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, and `Price` for `R-TAX-RATE`. Their item text is still true.\n- The stamps changed `trace.lock`, which `ostf stamp` wrote; I didn't edit it by hand.\n\n**Judgment calls**\n- I read \"before any discount code applies\" as the code applying to the already-reduced subtotal.\n- I read the cap as 50% of the original subtotal.\n- Say so if either reading is wrong.\n\nNo code I touched was marked risk-relevant, so I didn't need to ask first.",
+ "date": "2026-10-24"
+}

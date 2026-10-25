@@ -1,0 +1,63 @@
+{
+ "run": "claude.zz-shell.go-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 36,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 3,
+  "ostfOutputTokens": 12292,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 122.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 61759,
+  "cache_read_input_tokens": 985584,
+  "output_tokens": 23817,
+  "cost": 0.034119939999999994
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "SHOP-57 (`R-VOLUME-DISCOUNT`) is implemented. Tests pass, and `ostf check --base main` exits 0 with 115 valid links and no warnings. I haven't committed or opened a PR, since you didn't ask for one.\n\n**Interpretation:** the requirement text in `trace.yaml` is the source. I didn't have Jira access, so I couldn't confirm it against the issue, and the item is still at `revision: \"2\"`. Check that against SHOP-57 before merging.\n\n**What changed**\n- `pricing/volume.go` (new): `LineVolumeDiscount(unitPrice, qty)` gives 5% off a line of 10+ units, rounded down to the cent.\n- `cart/cart.go`: `Cart.VolumeDiscount()` sums that over all lines.\n- `pricing/quote.go`: `Price` now takes the volume total as a second argument. The code discount applies to the amount after volume. Volume plus code is capped at 50% of the subtotal. `Quote` gains a `Volume` field, and `Discount` still means the code discount only.\n- `cart/checkout.go`: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`.\n- Tests: new `pricing/volume_test.go` (per-line rule, code-after-volume, cap counting volume) and `TestVolumeDiscount` in `cart/cart_test.go`. Updated the one existing `Price` call in `tax_test.go` to pass `0`.\n- `trace.yaml`: linked `R-VOLUME-DISCOUNT` to the new code and tests. I did not change its text.\n- `trace.lock`: changed only by `ostf stamp`.\n\n**Links to note**\n- Changing `Price` made four existing links suspect: `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (via `PlaceOrder`), and `R-TAX-RATE` (via `Price` and `TestPrice`). I rechecked each against the code, and `go test` passed for them, before stamping.\n- New links to `R-VOLUME-DISCOUNT`, stamped after their tests passed: `Cart.VolumeDiscount`, `TestVolumeDiscount`, `Price`, `LineVolumeDiscount`, `TestLineVolumeDiscount`, and `TestPriceVolumeBeforeCodeAndCap`.\n- Impact against main: `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, and `R-TAX-RATE`.\n\n**Risk:** none of the touched code is linked to a `controls:` risk, so no approval was needed.",
+ "date": "2026-10-24"
+}

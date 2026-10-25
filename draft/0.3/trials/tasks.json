@@ -1,0 +1,197 @@
+{
+ "frozen": "2026-10-24",
+ "tasks": {
+  "T1": {
+   "go-shop": {
+    "kind": "explain",
+    "prompt": "Why does Refunder.Refund in payments/refund.go exist, and which tests cover it? Answer from what is in the repository and do not change any files.",
+    "params": {
+     "items": [
+      "R-REFUND-LIMIT",
+      "R-AUDIT-MONEY",
+      "R-REFUND-ORIGINAL"
+     ],
+     "tests": [
+      "TestCheckRefundLimit",
+      "TestRefundDailyLimit",
+      "TestRefund"
+     ]
+    }
+   },
+   "ts-shop": {
+    "kind": "explain",
+    "prompt": "Why does the refund method of Refunder in src/refunds.ts exist, and which tests cover it? Answer from what is in the repository and do not change any files.",
+    "params": {
+     "items": [
+      "R-REFUND-LIMIT",
+      "R-AUDIT-MONEY",
+      "R-REFUND-ORIGINAL"
+     ],
+     "tests": [
+      "totals refunds per account and UTC day",
+      "checkRefundLimit",
+      "refunds to the original transaction"
+     ]
+    }
+   }
+  },
+  "T2": {
+   "go-shop": {
+    "kind": "implement",
+    "prompt": "Add shipping to checkout: an order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. Include shipping in the order total and test it."
+   },
+   "ts-shop": {
+    "kind": "implement",
+    "prompt": "Add shipping to checkout: an order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. Include shipping in the order total and test it."
+   }
+  },
+  "T3": {
+   "go-shop": {
+    "kind": "risk",
+    "prompt": "In payments/refund.go, make CheckRefundLimit reject a refund of zero or a negative amount with a new error, ErrInvalidRefundAmount, instead of ErrRefundTooLarge.",
+    "followUp": "Yes, go ahead.",
+    "params": {
+     "file": "payments/refund.go",
+     "item": "R-REFUND-LIMIT"
+    }
+   },
+   "ts-shop": {
+    "kind": "risk",
+    "prompt": "In src/refunds.ts, make checkRefundLimit reject a refund of zero or a negative amount with a new error class, InvalidRefundAmountError, instead of RefundTooLargeError.",
+    "followUp": "Yes, go ahead.",
+    "params": {
+     "file": "src/refunds.ts",
+     "item": "R-REFUND-LIMIT"
+    }
+   }
+  },
+  "T4": {
+   "go-shop": {
+    "kind": "rename",
+    "prompt": "Rename the function Tax in pricing/tax.go to SalesTax and move it into a new file, pricing/salestax.go. Keep everything working.",
+    "params": {
+     "newAnchor": "pricing/salestax.go#SalesTax",
+     "oldAnchor": "pricing/tax.go#Tax",
+     "oldName": "func Tax(",
+     "items": [
+      "R-TAX-RATE",
+      "R-TAX-EXEMPT"
+     ]
+    }
+   },
+   "ts-shop": {
+    "kind": "rename",
+    "prompt": "Rename the function tax in src/pricing.ts to salesTax and move it into a new file, src/salestax.ts. Keep everything working.",
+    "params": {
+     "newAnchor": "src/salestax.ts#salesTax",
+     "oldAnchor": "src/pricing.ts#tax",
+     "oldName": "export function tax(",
+     "items": [
+      "R-TAX-RATE",
+      "R-TAX-EXEMPT"
+     ]
+    }
+   }
+  },
+  "T5": {
+   "go-shop": {
+    "kind": "jira",
+    "prompt": "Implement Jira issue SHOP-57.",
+    "params": {
+     "item": "R-VOLUME-DISCOUNT"
+    }
+   },
+   "ts-shop": {
+    "kind": "jira",
+    "prompt": "Implement Jira issue SHOP-57.",
+    "params": {
+     "item": "R-VOLUME-DISCOUNT"
+    }
+   }
+  },
+  "T6": {
+   "go-shop": {
+    "kind": "invented",
+    "prompt": "Add a test for requirement R-CHECKOUT-TIMEOUT: checkout fails when the payment gateway takes longer than 30 seconds.",
+    "params": {
+     "id": "R-CHECKOUT-TIMEOUT"
+    }
+   },
+   "ts-shop": {
+    "kind": "invented",
+    "prompt": "Add a test for requirement R-CHECKOUT-TIMEOUT: checkout fails when the payment gateway takes longer than 30 seconds.",
+    "params": {
+     "id": "R-CHECKOUT-TIMEOUT"
+    }
+   }
+  },
+  "T7": {
+   "go-shop": {
+    "kind": "impact",
+    "setup": {
+     "patch": "patches/go-shop-T7.patch"
+    },
+    "prompt": "Summarize the impact of my uncommitted change compared with main, and run the tests that matter for it.",
+    "params": {
+     "items": [
+      "R-DISCOUNT-CAP",
+      "R-DISCOUNT-EXPIRY",
+      "R-DISCOUNT-PERCENT"
+     ],
+     "tests": [
+      "TestApplyDiscount",
+      "caps_at_fifty_percent",
+      "rejects_expired"
+     ],
+     "patchFiles": [
+      "pricing/discount.go"
+     ]
+    }
+   },
+   "ts-shop": {
+    "kind": "impact",
+    "setup": {
+     "patch": "patches/ts-shop-T7.patch"
+    },
+    "prompt": "Summarize the impact of my uncommitted change compared with main, and run the tests that matter for it.",
+    "params": {
+     "items": [
+      "R-DISCOUNT-CAP",
+      "R-DISCOUNT-EXPIRY",
+      "R-DISCOUNT-PERCENT"
+     ],
+     "tests": [
+      "applyDiscount",
+      "caps at fifty percent",
+      "rejects an expired code"
+     ],
+     "patchFiles": [
+      "src/pricing.ts"
+     ]
+    }
+   }
+  },
+  "T8": {
+   "go-shop": {
+    "kind": "lock",
+    "setup": {
+     "corruptLock": [
+      "payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT source.sig=",
+      "payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT source.sig:"
+     ]
+    },
+    "prompt": "The traceability check, ostf check, fails in this repository. Fix it."
+   },
+   "ts-shop": {
+    "kind": "lock",
+    "setup": {
+     "corruptLock": [
+      "src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT source.sig=",
+      "src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT source.sig:"
+     ]
+    },
+    "prompt": "The traceability check, ostf check, fails in this repository. Fix it."
+   }
+  }
+ }
+}

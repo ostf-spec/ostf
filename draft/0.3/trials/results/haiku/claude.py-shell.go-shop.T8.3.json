@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.go-shop.T8.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4266,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 21966,
+  "cache_read_input_tokens": 181990,
+  "output_tokens": 4329,
+  "cost": 0.008379200000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check` now passes: 40 items, 109 links, 109 valid, exit 0.\n\n**What was failing**\n\nTwo problems on the same link, `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`:\n\n- **Malformed lock line.** The merge commit `998535b` (`Merge branch 'refund-tweaks'`) changed that line in `trace.lock` from `source.sig=` to `source.sig:`. That made the entry invalid (`LOCK_INVALID`), and the link then showed as unstamped.\n- **Nothing else.** The hashes are the same as before the merge, so the function body hasn't changed.\n\n**What I did**\n\n- Rechecked the item against the code. `CheckRefundLimit` rejects amounts that are zero, negative, or above what is left on the charge. It requires approval when the day's total would pass `DailyRefundLimit` (50_000 cents, which is 500.00). That matches the text of R-REFUND-LIMIT.\n- Ran its two linked tests, `TestCheckRefundLimit` and `TestRefundDailyLimit`. Both pass.\n- Ran `ostf stamp` on the link as check printed it. This is the sanctioned route, so I did not hand-edit `trace.lock`. The only change to that file is the separator on that one line.\n\n**Not changed**\n\n- No code, tests, or `trace/requirements.yaml` were touched. R-REFUND-LIMIT is marked risk-relevant, and it was not changed.\n- `ostf check --base main` reports no impact against main.\n- Nothing is committed.\n\n**Worth a look**\n\nThe merge commit is what broke the lock line. It may be worth checking whether the `refund-tweaks` branch had other hand-edits to `trace.lock` that didn't survive the merge.",
+ "date": "2026-10-24"
+}

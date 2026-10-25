@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 11,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 24990,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 73354,
+  "cache_read_input_tokens": 323415,
+  "output_tokens": 4517,
+  "cost": 0.020165049999999997
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check` now passes with no diagnostics. The only change is one line in `trace.lock`, and I did not edit that file by hand.\n\n**What was failing**\n- `trace.lock` line 86 (`payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`) had `source.sig:` where the Annex B format needs `source.sig=`. That produced `LOCK_INVALID`, and the link showed as unresolved.\n- Because the line was malformed, the link also counted as unstamped.\n\n**What I did**\n- Rechecked `R-REFUND-LIMIT` against `CheckRefundLimit`. The item is marked risk-relevant, so I checked this before stamping. The code rejects refunds above what is left on the charge and requires approval for more than 500.00 per account per UTC day, which matches the item text. I did not change any code.\n- Ran `TestCheckRefundLimit`, `TestRefund`, and `TestRefundDailyLimit` uncached. All pass.\n- Ran `ostf_stamp` on `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. The stamp rewrote that line in the correct format, and the diff touches nothing else.\n\n**Result of `ostf check --base main`**\n- Diagnostics: none.\n- Impact: no changed code, and no items or links added or removed. There are no new items or links to name in the summary, and no tests to run beyond the refund tests above.\n\nI did not commit, since you didn't ask me to. Let me know if you want a commit or PR for the `trace.lock` change.",
+ "date": "2026-10-24"
+}

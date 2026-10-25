@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 25486,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 45.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 76686,
+  "cache_read_input_tokens": 424709,
+  "output_tokens": 3922,
+  "cost": 0.44597590000000004
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` in `src/refunds.ts` now throws a new `InvalidRefundAmountError` for a refund of zero or a negative amount. A refund above what is left on the charge still throws `RefundTooLargeError`. All 37 tests pass.\n\n- **Tests:** I moved the zero-amount case out of the \"too large\" test, which expected `RefundTooLargeError`. A new test in `src/refunds.test.ts` covers zero and negative amounts.\n- **Trace:** I added `R-REFUND-POSITIVE` to `trace/requirements.yaml` with status `draft`. It is linked to `checkRefundLimit`, `InvalidRefundAmountError` and the new test, and it refines `N-REFUNDS` and controls `RISK-REFUND-ABUSE`.\n- **R-REFUND-LIMIT:** It stays true, because its text only covers refunds that are too large or need approval. I did not edit it.\n- **Stamping:** After the check flagged `checkRefundLimit`'s implements link and test link as suspect, I rechecked them against the code, the tests passed, and I stamped them. I also stamped the five new `R-REFUND-POSITIVE` links. `ostf check` now reports no errors.\n\n**For the pull request:** `ostf check --base main` reports one added item, `R-REFUND-POSITIVE`. It reports these added links:\n- `R-REFUND-POSITIVE controls RISK-REFUND-ABUSE`\n- `R-REFUND-POSITIVE refines N-REFUNDS`\n- `src/refunds.test.ts#checkRefundLimit > rejects a refund of zero or a negative amount verifies R-REFUND-POSITIVE`\n- `src/refunds.ts#InvalidRefundAmountError implements R-REFUND-POSITIVE`\n- `src/refunds.ts#checkRefundLimit implements R-REFUND-POSITIVE`\n\nThe check marked `R-REFUND-POSITIVE` as risk-relevant on its own, probably because it controls a risk. Its text is my wording, so please confirm it before moving it from draft. I haven't committed anything.",
+ "date": "2026-10-24"
+}

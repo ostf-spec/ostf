@@ -1,0 +1,49 @@
+ostf: "0.3"
+sources:
+  jira:
+    url: "https://example.atlassian.net/browse/{id}"
+include: ["trace/*.yaml"]
+items:
+  - id: N-BUY
+    type: need
+    text: Customers can put products in a cart and buy them in one checkout.
+  - id: N-FAIR-PRICE
+    type: need
+    text: Customers pay the advertised price, with discounts and sales tax computed exactly.
+  - id: N-NO-OVERSELL
+    type: need
+    text: The shop never sells stock that it does not have.
+  - id: N-REFUNDS
+    type: need
+    text: Customers get refunds quickly without the business losing money to abuse.
+  - id: N-ACCOUNT-SAFE
+    type: need
+    text: Customer accounts, and the money that moves through them, are protected from misuse.
+  - id: RISK-WRONG-CHARGE
+    type: risk
+    text: >-
+      A bug or a tampered request charges a customer nothing, a negative
+      amount, or far more than any order could cost.
+  - id: RISK-REFUND-ABUSE
+    type: risk
+    text: A compromised account or a mistaken operator drains funds through refunds.
+  - id: RISK-ACCOUNT-TAKEOVER
+    type: risk
+    text: >-
+      An attacker guesses a customer's password or reuses an old session, and
+      orders or refunds as that customer.
+  - id: R-IDEMPOTENT-CHARGE
+    external: jira:SHOP-41
+    revision: "3"
+    title: Idempotent charge
+    text: >-
+      A retry with the same idempotency key returns the first receipt
+      without creating a second charge.
+  - id: R-VOLUME-DISCOUNT
+    external: jira:SHOP-57
+    revision: "2"
+    title: Volume discount
+    text: >-
+      A cart line with 10 or more units gets 5 percent off that line, rounded
+      down to the cent, before any discount code applies. The volume discount
+      counts toward the fifty percent cap on discounts.

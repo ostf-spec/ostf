@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.go-shop.T3.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 0,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4105,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 53.199999999999996
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 25955,
+  "cache_read_input_tokens": 307602,
+  "output_tokens": 8942,
+  "cost": 0.016806440000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "The change is in. `CheckRefundLimit` now returns `ErrInvalidRefundAmount` for a zero or negative amount, and `ErrRefundTooLarge` only for an amount above what is left on the charge. `go test ./...` passes and `ostf check --base main` reports 113 of 113 links valid.\n\n**Changes**\n- `payments/refund.go`: added `ErrInvalidRefundAmount` (\"payments: refund amount must be positive\") and split the amount check so `amount <= 0` returns the new error.\n- `payments/refund_test.go`: the `zero` case now expects `ErrInvalidRefundAmount`, and I added a `negative` case.\n- `trace/requirements.yaml`: new item `R-REFUND-POSITIVE` (\"Positive refund amount\", `status: draft`). It refines `N-REFUNDS`, controls `RISK-REFUND-ABUSE`, and is linked to `payments/refund.go#CheckRefundLimit` and `payments/refund_test.go#TestCheckRefundLimit`.\n- `trace.lock`: changed by `ostf stamp`, not edited by hand.\n\n**Trace impact**\n- Item added: `R-REFUND-POSITIVE`.\n- Links added: `R-REFUND-POSITIVE` controls `RISK-REFUND-ABUSE`; `R-REFUND-POSITIVE` refines `N-REFUNDS`; `CheckRefundLimit` implements `R-REFUND-POSITIVE`; `TestCheckRefundLimit` verifies `R-REFUND-POSITIVE`.\n- Changed functions: `CheckRefundLimit` and `TestCheckRefundLimit`, which affect `R-REFUND-LIMIT` and `R-REFUND-POSITIVE`.\n- Suspect links: `CheckRefundLimit` implements `R-REFUND-LIMIT` and `TestCheckRefundLimit` verifies `R-REFUND-LIMIT`, both flagged because the function body changed. I rechecked the item text against the code, which still holds, and both tests pass, so I stamped them.\n\n**Decisions to check**\n- I treated the new error as new behavior, so it got its own draft item rather than being folded into `R-REFUND-LIMIT`. If you'd rather keep it under `R-REFUND-LIMIT`, I can drop the new item.\n- I added no `@req` comment to the code; the link lives in the `trace` files.\n- I didn't open a pull request. If you do, it should name `R-REFUND-POSITIVE` and the four links above, plus the two items and two tests in the impact list.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T6.2",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3854,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.8
+ },
+ "usage": {
+  "input_tokens": 127789,
+  "cached_input_tokens": 112384,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 577,
+  "reasoning_output_tokens": 62
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` does not exist in the trace files; OSTF reports `UNKNOWN_TARGET`. Checkout also has no timeout implementation.\n\nShould I create this as a new draft requirement and add a failing test, or is there an existing requirement ID to use?\n\n[AGENTS.md](AGENTS.md) says “Never invent an ID: link only IDs that exist,” so I need to resolve this before linking the test. No files changed.",
+ "date": "2026-10-24"
+}

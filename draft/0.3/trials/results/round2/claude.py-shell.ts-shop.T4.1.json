@@ -1,0 +1,58 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3162,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 14410,
+  "cache_read_input_tokens": 137483,
+  "output_tokens": 2867,
+  "cost": 0.10008629999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "I renamed `tax` to `salesTax` and moved it into the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` now reports 111 of 111 links valid with no errors.\n\n**Code changes**\n- `salesTax` and its helper `roundHalfUp` now live in `src/salestax.ts`. Nothing else used the helper, so it moved with the function.\n- `src/pricing.ts` imports `salesTax`. In `price` I renamed a local variable to `taxDue` so it doesn't shadow the import.\n- `src/pricing.test.ts` imports `salesTax` from the new file, and its `describe(\"tax\")` is now `describe(\"salesTax\")`.\n- `trace/requirements.yaml` points R-TAX-RATE and R-TAX-EXEMPT at `src/salestax.ts#salesTax` and the renamed tests. The item text is unchanged, and no item became false.\n\n**Impact reported by `ostf check`**\n- **Items:** R-TAX-RATE and R-TAX-EXEMPT.\n- **Tests:**\n  - `src/pricing.test.ts#price > taxes the subtotal after discounts`\n  - `src/pricing.test.ts#salesTax`\n  - `src/pricing.test.ts#salesTax > is zero for a tax-exempt customer`\n  - `src/pricing.test.ts#salesTax > rounds half up to the cent`\n- **Links added:**\n  - `src/salestax.ts#salesTax` implements R-TAX-EXEMPT\n  - `src/salestax.ts#salesTax` implements R-TAX-RATE\n  - `src/pricing.test.ts#salesTax > is zero for a tax-exempt customer` verifies R-TAX-EXEMPT\n  - `src/pricing.test.ts#salesTax > rounds half up to the cent` verifies R-TAX-RATE\n- **Links removed:** the four matching `src/pricing.ts#tax` and `…#tax > …` links.\n\nI stamped those four new links, plus the `src/pricing.ts#price` implements R-TAX-RATE link, which `check` had marked suspect. I did that after rechecking each against the code and running the tests. Nothing was committed.",
+ "date": "2026-10-24"
+}

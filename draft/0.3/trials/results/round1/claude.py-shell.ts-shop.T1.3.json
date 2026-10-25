@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 475,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 8.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7227,
+  "cache_read_input_tokens": 29510,
+  "output_tokens": 784,
+  "cost": 0.039707000000000006
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` in `src/refunds.ts` exists to meet three requirements. I got this from `ostf context src/refunds.ts#Refunder.refund`, and I didn't change any files.\n\n**Why it exists**\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it): a refund can't exceed what's left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval. This requirement controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds. It refines the need N-REFUNDS: customers get refunds quickly without the business losing money to abuse. The limit logic is in `checkRefundLimit` in the same file.\n- **R-REFUND-ORIGINAL**: a refund goes back to the payment method of the charge it refunds, never to another one. The related code is `Gateway` and `Processor.receipt` in `src/payments.ts`.\n- **R-AUDIT-MONEY**: every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt. `Processor.charge` in `src/payments.ts` is the code linked to this one.\n\n**Tests that cover it** (all links show as valid)\n- `src/refunds.test.ts#Refunder > totals refunds per account and UTC day` covers R-REFUND-LIMIT.\n- `src/refunds.test.ts#checkRefundLimit` covers R-REFUND-LIMIT.\n- `src/refunds.test.ts#Refunder > refunds to the original transaction` covers R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `src/payments.test.ts#Processor > appends an audit entry` is linked to R-AUDIT-MONEY. It tests the charge side, not `refund` directly.\n\nNothing in the output shows a test of the audit entry for a refund. The only refund test linked to R-AUDIT-MONEY is the \"refunds to the original transaction\" one. I didn't open the test files to check what each test asserts.",
+ "date": "2026-10-24"
+}

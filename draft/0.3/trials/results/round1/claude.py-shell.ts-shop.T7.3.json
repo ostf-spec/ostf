@@ -1,0 +1,54 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": false,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1482,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 116.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 9596,
+  "cache_read_input_tokens": 68576,
+  "output_tokens": 1289,
+  "cost": 0.05814760000000001
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "node_modules/",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change to `applyDiscount` in `src/pricing.ts` doesn't alter behavior, and the full suite passes (36 of 36). The three discount links it touches are now flagged suspect until someone restamps them.\n\n**The change:** `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became a `let` plus an `if` clamp. For every input the result is the same: a percentage above the cap is lowered to the cap, and anything else passes through unchanged. The expiry check and the `Math.floor` rounding are untouched.\n\n**Requirements affected (`ostf check --base main`):**\n- `R-DISCOUNT-CAP`: no discount takes more than 50% off. The clamp is the code that enforces this.\n- `R-DISCOUNT-EXPIRY`: expired codes are rejected. This one is only flagged because the function body changed.\n- `R-DISCOUNT-PERCENT`: the percentage comes off the subtotal, rounded down. This one is also flagged only because the body changed.\n\nAll three links report `BODY_CHANGED`. The check gives 40 items and 111 links, with 108 valid and these 3 suspect. Nothing is marked as a risk-relevant change, though `R-DISCOUNT-CAP` exists to guard against free orders (`RISK-WRONG-CHARGE`-type errors).\n\n**Tests that matter:**\n- The tests in `src/pricing.test.ts` that cover `applyDiscount` pass: \"caps at fifty percent\", \"rejects an expired code\", and the suite itself. The tax and price tests in that file pass too.\n- I ran everything with `npm test`, which uses `node --test`, and all 36 pass.\n- `vitest` can't run these files because they use `node:test`. My first attempt used it and reported \"no test suite found\", which is a runner mismatch and not a failure.\n\nI haven't run `ostf stamp` because you only asked for a summary, and stamping changes `trace.lock`. The code still matches all three requirement texts and their tests pass, so restamping looks justified. Do you want me to stamp the three links?",
+ "date": "2026-10-24"
+}

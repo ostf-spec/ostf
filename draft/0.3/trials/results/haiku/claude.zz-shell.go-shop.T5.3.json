@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.go-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 6,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 1,
+  "ostfOutputTokens": 9462,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 118.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 67348,
+  "cache_read_input_tokens": 922046,
+  "output_tokens": 25756,
+  "cost": 0.03557186
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "SHOP-57 (`R-VOLUME-DISCOUNT`) is implemented. Go tests pass, and `ostf check --base main` is clean: 40 items, 114 valid, exit 0. Nothing is committed or pushed, and no PR is open.\n\n**What changed**\n- `cart/cart.go`: `Cart.VolumeDiscount()` takes 5% off each line with 10 or more units, rounded down to the cent per line.\n- `pricing/quote.go`: `Price` takes the volume discount as a new argument. The discount code applies to the amount left after volume. Volume plus code together are capped at 50% of the subtotal, so volume counts toward the cap.\n- `cart/checkout.go`: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`.\n- Tests: `TestVolumeDiscount` (cart), and `TestPriceVolumeFirstThenCode` and `TestPriceVolumeCountsTowardCap` (pricing). `TestPrice` was updated for the new signature.\n\n**Decisions I made**\n- Volume is applied before the code, as the item says. A code is 10% of the post-volume amount, not of the full subtotal.\n- Rounding is per line, floored.\n- I did not add a separate volume field to `Quote`. Volume is folded into `Quote.Discount`.\n- `Price`'s signature changed. It is exported, but its only callers are in this repo and are updated.\n\n**Needs your decision: R-DISCOUNT-PERCENT may now be false**\nIts text says a code \"takes its percentage off the subtotal.\" For a cart with a 10+ unit line, the code now takes its percentage off less than the subtotal. `ostf check` does not flag this, because `ApplyDiscount` is unchanged. I did not rewrite the item. Either the item text should be changed to say the code applies after volume, or the volume rule should be reworded. Please pick one.\n\n**OSTF changes**\n- New links, all from `@req` comments: `Cart.VolumeDiscount implements R-VOLUME-DISCOUNT`, `Price implements R-VOLUME-DISCOUNT`, `TestVolumeDiscount`, `TestPriceVolumeFirstThenCode`, and `TestPriceVolumeCountsTowardCap` (verifies R-VOLUME-DISCOUNT).\n- Rechecked and stamped (the code still satisfies each item and its tests pass):\n  - `PlaceOrder implements R-CHECKOUT-ORDER`\n  - `PlaceOrder implements R-CHECKOUT-SESSION`\n  - `Price implements R-TAX-RATE`\n  - `TestPrice verifies R-TAX-RATE`\n- `trace.yaml` is unchanged. `trace.lock` changed only through `ostf stamp`.\n- Impact list from `ostf check`: changed `Cart.VolumeDiscount`, `Checkout.PlaceOrder`, `Price`, `TestVolumeDiscount`, and the pricing tests. Items affected: R-VOLUME-DISCOUNT, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION, R-TAX-RATE. Tests run: `TestVolumeDiscount`, `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPrice`, `TestPriceVolumeCountsTowardCap`, `TestPriceVolumeFirstThenCode`, `TestTax`.\n- Links added: the five listed above. Stamped: the four above.\n\nBefore any PR, settle the R-DISCOUNT-PERCENT question. If you want, I can commit on a branch and open the PR with this impact list.",
+ "date": "2026-10-24"
+}

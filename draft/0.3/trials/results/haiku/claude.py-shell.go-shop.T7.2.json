@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1946,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 12694,
+  "cache_read_input_tokens": 72517,
+  "output_tokens": 3029,
+  "cost": 0.00477927
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact of the uncommitted change**\n\nThe only change is in `pricing/discount.go`. `ApplyDiscount` now clamps the percentage with an `if` statement instead of the `min` builtin:\n\n```go\npercent := d.Percent\nif percent > MaxDiscountPercent {\n    percent = MaxDiscountPercent\n}\n```\n\n`Percent` is `int64` and `MaxDiscountPercent` is an untyped constant 50, so the two forms compute the same value for every input. Behavior is unchanged: expiry rejection, the 50% cap, and round-down are all the same. The diff only changes style, so the risk is low.\n\nBecause the function body changed, `ostf check --base main` marks three links as suspect (`BODY_CHANGED`):\n- `R-DISCOUNT-CAP`, the 50% cap. The item's rationale says it bounds losses from configuration errors, so it relates to the `RISK-WRONG-CHARGE` risk. The code change keeps the cap, but this is the risk-relevant link.\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\nImpact against main, as `ostf check` reports it:\n- Changed: `pricing/discount.go#ApplyDiscount`\n- Affected items: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`\n- Affected tests: `TestApplyDiscount`, `TestApplyDiscount/caps_at_fifty_percent`, `TestApplyDiscount/rejects_expired`\n\n`ostf check` reports 40 items, 109 links, 106 valid, and no errors. It added no new items or links.\n\n**Tests**\n\n- `go test -count=1 ./pricing/` passes, including `TestApplyDiscount` (all four subtests), `TestMoneyString`, `TestTax`, `TestTaxExempt`, and `TestPrice`.\n- `go test ./...` passes for accounts, cart, inventory, payments, and pricing. Those results came from the cache, but the cache is keyed on source content, so they reflect the current code.\n\n**Not done**\n\nI did not run `ostf stamp` on the three suspect links. AGENTS.md allows stamping only after rechecking each item against the code and running its tests. The tests pass, but the recheck is a judgment about the item, so I left that decision to you. I also did not edit `trace.lock`.",
+ "date": "2026-10-24"
+}

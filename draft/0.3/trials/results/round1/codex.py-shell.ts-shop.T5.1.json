@@ -1,0 +1,58 @@
+{
+ "run": "codex.py-shell.ts-shop.T5.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 9100,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.9
+ },
+ "usage": {
+  "input_tokens": 219625,
+  "cached_input_tokens": 193024,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2225,
+  "reasoning_output_tokens": 53
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Implemented SHOP-57:\n\n- Lines with 10+ units receive 5% off, rounded down per line.\n- Discount codes apply afterward; combined discounts stay capped at 50%.\n- Checkout charges the resulting total.\n\nValidation: all 39 tests pass; OSTF reports all 115 links valid. Added four links to existing requirement `R-VOLUME-DISCOUNT`: pricing implementation and three regression tests.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 3,
+  "ostfOutputTokens": 4522,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 55.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 21992,
+  "cache_read_input_tokens": 359407,
+  "output_tokens": 9573,
+  "cost": 0.01665442
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns `ErrInvalidRefundAmount` for zero or negative refunds, and `ErrRefundTooLarge` only when a refund exceeds what is left on the charge. The payments tests pass, and `ostf check --base main` reports 113 valid items with no errors. Nothing is committed.\n\n**Code changes**\n- `payments/refund.go`: added `ErrInvalidRefundAmount`. `CheckRefundLimit` checks `amount <= 0` first, then `amount > leftOnCharge`, and the daily approval rule is unchanged.\n- `payments/refund_test.go`: the existing `\"zero\"` case now expects `ErrInvalidRefundAmount`, and I added a `\"negative\"` case.\n\n**Trace changes**\n- `R-REFUND-LIMIT` is risk-relevant. Its text is still true, so I didn't change it. Its two links were suspect from the body change, and I rechecked the code and tests and stamped them.\n- The new error needed an item, so I added `R-REFUND-POSITIVE` as `status: draft` in `trace/requirements.yaml`. It refines `N-REFUNDS` and controls `RISK-WRONG-CHARGE`, and it links to `CheckRefundLimit` and `TestCheckRefundLimit`. The ID and wording are my choice, so rename them if you prefer.\n- I stamped the six links with `ostf stamp`. That changed `trace.lock`, which I did not edit by hand.\n\n**For the PR, if you open one**\n- Items: `R-REFUND-POSITIVE` (added, draft); `R-REFUND-LIMIT` (existing, rechecked).\n- Tests: `payments/refund_test.go#TestCheckRefundLimit` and `payments/refund_test.go#TestRefundDailyLimit`.\n- Links reported as added: `R-REFUND-POSITIVE controls RISK-WRONG-CHARGE`, `R-REFUND-POSITIVE refines N-REFUNDS`, `payments/refund.go#CheckRefundLimit implements R-REFUND-POSITIVE`, `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-POSITIVE`.\n- `ostf check` still lists `ErrInvalidRefundAmount` as \"no item\". The new item covers its behavior through `CheckRefundLimit`, not the variable itself.\n\nSince `R-REFUND-LIMIT` is risk-relevant, have a second engineer review this change before release. That is what `V-REFUND-REVIEW` requires.",
+ "date": "2026-10-24"
+}

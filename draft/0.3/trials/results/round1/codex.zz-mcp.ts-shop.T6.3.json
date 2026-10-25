@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T6.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 14510,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.1
+ },
+ "usage": {
+  "input_tokens": 115683,
+  "cached_input_tokens": 85888,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 481,
+  "reasoning_output_tokens": 30
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the requirement registry, and checkout currently has no payment timeout.\n\nShould this be a new draft requirement, or is there an existing ID I should use? [AGENTS.md](/tmp/ostf-trials/runs/codex.zz-mcp.ts-shop.T6.3/repo/AGENTS.md) requires linking only existing IDs.\n\nNo files changed. OSTF check against `main` passed.",
+ "date": "2026-10-24"
+}

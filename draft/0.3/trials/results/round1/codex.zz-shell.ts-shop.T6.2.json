@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.ts-shop.T6.2",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3631,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.6
+ },
+ "usage": {
+  "input_tokens": 126071,
+  "cached_input_tokens": 111360,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 488,
+  "reasoning_output_tokens": 21
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` does not exist in the trace files, and checkout currently has no timeout behavior.\n\nThe repository’s `AGENTS.md` forbids inventing requirement IDs. Should I create `R-CHECKOUT-TIMEOUT` as a draft requirement and add a failing test for it? No files changed.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 614,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 8936,
+  "cache_read_input_tokens": 86628,
+  "output_tokens": 1177,
+  "cost": 0.056200799999999995
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact:** the only uncommitted change is in `pricing/discount.go`, in `ApplyDiscount`. It replaces `percent := min(d.Percent, MaxDiscountPercent)` with an equivalent `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. This is a pure refactor with no behavior change. The expiry check and the `subtotal * percent / 100` rounding are untouched.\n\n**Traceability:** `ApplyDiscount` implements three items, and `ostf check --base main` now reports each of those links as suspect (`BODY_CHANGED`):\n- `R-DISCOUNT-CAP`: no discount takes more than 50% off.\n- `R-DISCOUNT-EXPIRY`: an expired code is rejected with an error that names the code.\n- `R-DISCOUNT-PERCENT`: the percentage comes off the subtotal, rounded down to the cent.\n\nTheir text still matches the code. I found no risk-relevant markers and no items that the change makes false.\n\n**Tests:**\n- `TestApplyDiscount` passes, including `caps_at_fifty_percent` and `rejects_expired`. These are the tests `ostf` lists as the ones to run.\n- `go test ./...` passes in all packages.\n\n**Not done:** I haven't run `ostf stamp`, because you only asked for a summary and test run, and stamping changes `trace.lock`. The tests pass and the items still hold, so stamping the three links is justified. Want me to do it?",
+ "date": "2026-10-24"
+}

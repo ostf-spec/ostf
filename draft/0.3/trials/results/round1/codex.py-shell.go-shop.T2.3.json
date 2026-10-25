@@ -1,0 +1,58 @@
+{
+ "run": "codex.py-shell.go-shop.T2.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6861,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 49.0
+ },
+ "usage": {
+  "input_tokens": 198735,
+  "cached_input_tokens": 146944,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1937,
+  "reasoning_output_tokens": 33
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "Implemented shipping: free for discounted subtotals of at least $100.00, otherwise $5.99. Shipping appears in the quote and is included in the charged total.\n\nBoundary and discount tests pass with `go test ./...`. `ostf check --base main` passes with all 112 links valid.\n\nAdded draft `R-SHIPPING`, linked to `N-BUY`, `Price`, and `TestPlaceOrderShipping`.",
+ "date": "2026-10-24"
+}

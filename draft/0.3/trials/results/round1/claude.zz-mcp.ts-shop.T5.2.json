@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 5,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5596,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 52.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 23585,
+  "cache_read_input_tokens": 325791,
+  "output_tokens": 5700,
+  "cost": 0.18397110000000003
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "I implemented the SHOP-57 volume discount. I had no Jira access, so I worked from the requirement text in `trace.yaml` (`R-VOLUME-DISCOUNT`, revision 2). The tests pass (38 of 38), and `ostf check --base main` reports no errors (40 items, 116 valid links). Nothing is committed.\n\n**What changed**\n- **`src/pricing.ts`:** the new `volumeDiscount(lines)` takes 5% off each cart line of 10 or more units. Each line's discount is rounded down to the cent.\n- **`price()`:** it takes a new optional `volume` argument. It applies the volume discount first, then the discount code on what's left. The two together can't exceed 50% of the subtotal. `Quote.discount` is the combined amount.\n- **`src/checkout.ts`:** `placeOrder` now passes `volumeDiscount(lines)` into `price`.\n- **`src/pricing.test.ts`:** two new tests cover the 10-unit threshold, per-line rounding, the order of the two discounts, and the 50% cap.\n\n**Trace links**\n- I added links to the existing `R-VOLUME-DISCOUNT` item in `trace.yaml` and left its text unchanged.\n- It now refines `N-FAIR-PRICE`, is implemented by `src/pricing.ts#volumeDiscount` and `src/pricing.ts#price`, and is verified by the two new tests.\n- Check reports these four as added, plus the `refines` link.\n- Three existing links went suspect because of the change: `Checkout.placeOrder` for `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, and `price` for `R-TAX-RATE`. I rechecked each item against the code, the tests pass, and I stamped all three. `trace.lock` changed only through `ostf stamp`.\n- No existing item became false.\n\n**Two choices to confirm**\n- I read \"before any discount code applies\" as the code's percentage applying to the subtotal after the volume discount.\n- I read \"counts toward the fifty percent cap\" as the volume and code discounts together being capped at 50% of the original subtotal.\n\nIf the Jira ticket says otherwise, tell me and I'll adjust.",
+ "date": "2026-10-24"
+}

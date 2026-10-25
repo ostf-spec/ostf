@@ -1,0 +1,58 @@
+{
+ "run": "claude.zz-shell.ts-shop.T4.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3820,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 35.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 15970,
+  "cache_read_input_tokens": 165019,
+  "output_tokens": 2868,
+  "cost": 0.10909390000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "I renamed `tax` to `salesTax` and moved it into the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` reports 40 items and 111 valid links, with no errors.\n\n- **Move:** `roundHalfUp` moved with it, since `tax` was its only caller. `src/pricing.ts` now imports `salesTax`. In `price`, the local variable that used to be called `salesTax` is now `taxDue`, so it doesn't clash with the import.\n- **Tests:** `src/pricing.test.ts` calls `salesTax`. I kept the `describe(\"tax\")` name so the existing test links stay valid.\n- **Links:** In `trace/requirements.yaml`, `R-TAX-RATE` and `R-TAX-EXEMPT` now point at `src/salestax.ts#salesTax`. `ostf context` didn't flag `tax` as risk-relevant, so I didn't stop to ask first.\n- **Stamps:** I rechecked both items against the code and ran their tests, which passed. I then stamped these five links with `ostf stamp`, and I didn't touch `trace.lock` myself:\n  - `src/salestax.ts#salesTax` implements `R-TAX-EXEMPT`\n  - `src/salestax.ts#salesTax` implements `R-TAX-RATE`\n  - `src/pricing.ts#price` implements `R-TAX-RATE`\n  - the test `tax > is zero for a tax-exempt customer` verifies `R-TAX-EXEMPT`\n  - the test `tax > rounds half up to the cent` verifies `R-TAX-RATE`\n\nFor the PR, `ostf check` reports these as added:\n- `src/salestax.ts#salesTax` implements `R-TAX-EXEMPT`\n- `src/salestax.ts#salesTax` implements `R-TAX-RATE`\n\nIt reports these as removed:\n- `src/pricing.ts#tax` implements `R-TAX-EXEMPT`\n- `src/pricing.ts#tax` implements `R-TAX-RATE`\n\nNo item became false. I haven't committed anything.",
+ "date": "2026-10-24"
+}

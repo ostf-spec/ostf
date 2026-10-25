@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.go-shop.T1.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3660,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 12.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17728,
+  "cache_read_input_tokens": 77691,
+  "output_tokens": 2115,
+  "cost": 0.00538081
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the entry point for refunding money to a customer. It takes a `RefundRequest` (receipt ID, amount, optional second approver) and does the following in `payments/refund.go:63-82`:\n\n1. Looks up the original charge by receipt ID. Unknown receipts return `ErrUnknownReceipt`.\n2. Works out how much is left on that charge and how much the account has already refunded that UTC day.\n3. Calls `CheckRefundLimit`, which enforces two rules. The refund must be positive and no more than what is left on the charge. And a refund that takes the account's daily total above `DailyRefundLimit` (50,000 minor units, i.e. 500.00) needs a second approver.\n4. Sends the money back through the gateway to the transaction that was charged, so it returns to the original card.\n5. Updates the per-charge and per-day totals and appends a `refund` entry to the audit log.\n\nThe requirements it serves are in `trace/requirements.yaml`:\n- **R-REFUND-LIMIT** (\"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval\"). It controls the risk RISK-REFUND-ABUSE.\n- **R-REFUND-ORIGINAL** (\"A refund goes back to the payment method of the charge it refunds\"). The refund is sent to `rcpt.Txn`, not to any card the caller names.\n- **R-AUDIT-MONEY**, which requires every refund to write an audit entry. `trace.lock` records this link, although the `@req` comment on `Refund` names only R-REFUND-ORIGINAL.\n\n**Tests that cover it:**\n- `TestRefund` (`payments/refund_test.go:34`): a partial refund goes to the original transaction, the audit entry is written, and a refund larger than the remaining balance fails with `ErrRefundTooLarge`. It is linked to R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `TestRefundDailyLimit` (`payments/refund_test.go:58`): a second refund that day over the limit fails with `ErrNeedsApproval`, and the same refund succeeds on the next UTC day. It is linked to R-REFUND-LIMIT and D-REFUND-LEDGER.\n- `TestCheckRefundLimit` (`payments/refund_test.go:12`): a table test of the pure `CheckRefundLimit` function. It covers the within-limits, too-large, zero, over-daily-limit, and approved cases. It is linked to R-REFUND-LIMIT.\n\nNothing else in the repo tests `Refunder.Refund` directly. `payments/charge_test.go` and `cart/checkout_test.go` only define fake gateways with a `Refund` method. I did not change any files, and I did not run the test suite.",
+ "date": "2026-10-24"
+}

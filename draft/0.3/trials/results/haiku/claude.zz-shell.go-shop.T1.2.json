@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4425,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17331,
+  "cache_read_input_tokens": 77256,
+  "output_tokens": 2487,
+  "cost": 0.00548306
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the one entry point that sends money back to a customer for an earlier charge. It enforces the refund rules, calls the gateway, and records the refund. Its doc comment says it refunds to the card that was charged, and it is tagged `@req R-REFUND-ORIGINAL` (refund.go:62). The steps are:\n\n1. Look up the charge by `ReceiptID`. Unknown receipts return `ErrUnknownReceipt`.\n2. Under a mutex, compute what is left on that charge (`Amount` minus what was already refunded) and today's refund total for the account. The day key is the account plus the UTC date (`dayKey`, tagged `@req D-REFUND-LEDGER`).\n3. Call `CheckRefundLimit`, which rejects non-positive or over-the-remaining amounts (`ErrRefundTooLarge`) and daily totals above 500.00 without a second approver (`ErrNeedsApproval`).\n4. Call `gateway.Refund` on the charge's original transaction.\n5. Update the per-charge and per-day totals and append a `refund` entry to the audit log.\n\nThe rules it serves come from `trace/requirements.yaml`:\n- **R-REFUND-ORIGINAL**: refunds go back to the original payment method.\n- **R-REFUND-LIMIT**: no refund above what is left on the charge, and daily refunds over 500.00 need a second approval. This addresses the risk RISK-REFUND-ABUSE.\n- **R-AUDIT-MONEY**: every refund is audited (and `Refund` is linked to it in `trace.lock`, though `trace.yaml` lists only `TestChargeAudited` as its test).\n- **D-REFUND-LEDGER** (`trace/design.yaml`): the two running totals kept by `Refunder`.\n\n**Tests covering it** (`payments/refund_test.go`):\n- `TestRefund`: a partial refund reaches the gateway for the right transaction, the last audit entry is the refund, and a refund larger than what is left returns `ErrRefundTooLarge`. It covers R-REFUND-ORIGINAL, and R-AUDIT-MONEY per `trace.lock`.\n- `TestRefundDailyLimit`: a second refund that pushes the day's total past the limit returns `ErrNeedsApproval`, and the same refund succeeds the next UTC day. It covers D-REFUND-LEDGER and R-REFUND-LIMIT.\n- `TestCheckRefundLimit`: a table test of the pure limit check, including the zero and over-balance cases. It covers R-REFUND-LIMIT.\n\nTwo gaps I noticed while reading:\n- `TestRefund` does not exercise the approval path, and no test checks that `Refund` skips the audit entry or the totals when the gateway fails. Both are reasonable to add, but I haven't changed anything.\n- The `ApprovedBy` field is only checked for being non-empty. No test checks who approved, and the code does not verify the approver.\n\nI read the files directly and did not run `ostf context` or the test suite, so the coverage above is from reading the code, not from a test run.",
+ "date": "2026-10-24"
+}

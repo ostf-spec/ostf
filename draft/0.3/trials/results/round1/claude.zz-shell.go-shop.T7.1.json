@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 722,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 8523,
+  "cache_read_input_tokens": 87625,
+  "output_tokens": 1090,
+  "cost": 0.053774499999999996
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact of your change**\n\nThe only change is in `pricing/discount.go`, in `ApplyDiscount`. It replaces `percent := min(d.Percent, MaxDiscountPercent)` with an explicit `if percent > MaxDiscountPercent` clamp. The behavior is the same: the cap is still 50%, and the expiry check and rounding are untouched. This looks like a refactor with no change to what customers are charged.\n\n**OSTF trace**\n\n`ostf check --base main` reports `ApplyDiscount` as changed and flags three links as suspect (`BODY_CHANGED`). They are suspect only because the function body changed. All three items refine `N-FAIR-PRICE`.\n- `R-DISCOUNT-CAP`: no discount takes more than 50% off the subtotal.\n- `R-DISCOUNT-EXPIRY`: an expired code is rejected with an error naming the code.\n- `R-DISCOUNT-PERCENT`: the code takes its percentage off the subtotal, rounded down to the cent.\n\nThe check reports no errors.\n\n**Tests**\n\n- The tests OSTF flagged are `TestApplyDiscount`, `/caps_at_fifty_percent` and `/rejects_expired`. All pass, along with the other two subtests, `takes_the_percentage` and `rounds_down`.\n- `go test ./...` passes in every package.\n\nI haven't run `ostf stamp` on the three suspect links, because you only asked for a summary and a test run. Stamping updates `trace.lock`. The items still match the code and their tests pass, so it looks safe. Do you want me to stamp them?",
+ "date": "2026-10-24"
+}

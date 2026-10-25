@@ -1,0 +1,53 @@
+{
+ "run": "codex.py-shell.ts-shop.T7.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3139,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 44.9
+ },
+ "usage": {
+  "input_tokens": 152808,
+  "cached_input_tokens": 131840,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 696,
+  "reasoning_output_tokens": 33
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Compared with `main`, your change replaces `Math.min` with an explicit cap in `applyDiscount`. Numeric inputs retain the same behavior: 50% maximum discount, rounding down, and expiry rejection.\n\n- Affected requirements: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`.\n- Ran `node --test src/pricing.test.ts src/checkout.test.ts`: **10 tests passed**.\n- OSTF check: **111/111 links valid**, no added items or links.\n\nNo source changes made. Per repository instructions, I stamped the three rechecked links, which updated `trace.lock`.",
+ "date": "2026-10-24"
+}

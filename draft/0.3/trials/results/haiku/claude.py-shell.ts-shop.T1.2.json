@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4174,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 15065,
+  "cache_read_input_tokens": 74717,
+  "output_tokens": 2393,
+  "cost": 0.00495747
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why `Refunder.refund` exists:** it is the one entry point for giving money back to a customer. It applies the refund limits, sends the money to the original payment, and records the refund in the audit log. The method's `@req` comment (`src/refunds.ts`, just above `refund`) points to `R-REFUND-ORIGINAL`, but the requirements say it is the enforcement point for `R-REFUND-LIMIT`, which is the control against `RISK-REFUND-ABUSE`. In order, it:\n\n1. Looks up the receipt by `receiptId` and throws `UnknownReceiptError` if it does not exist.\n2. Computes what is left on the charge and what the account has refunded today (UTC day, keyed by `dayKey`).\n3. Calls `checkRefundLimit`, which rejects a non-positive amount or one above what is left on the charge (`RefundTooLargeError`), and rejects a refund that takes the account's daily total above 500.00 without an `approvedBy` (`NeedsApprovalError`).\n4. Records the refund in the per-charge and per-day totals before awaiting the gateway, so a concurrent refund sees it. It rolls both totals back if the gateway call fails.\n5. Calls `processor.gateway.refund(receipt.txn, amount)`, so the money goes back to the original transaction (`R-REFUND-ORIGINAL`).\n6. Appends a `refund` entry to the audit log (`R-AUDIT-MONEY`).\n\nThe design item `D-REFUND-LEDGER` describes the two running totals that step 2 and step 4 depend on.\n\n**Tests that cover it** (`src/refunds.test.ts`):\n\n- **`Refunder > refunds to the original transaction`**: checks the gateway receives the refund on the charge's `txn`, the audit entry has action, amount and receipt ref, and refunding more than what is left throws `RefundTooLargeError`. The test carries `// @req R-AUDIT-MONEY`.\n- **`Refunder > totals refunds per account and UTC day`**: checks that a second charge's refund over the daily limit throws `NeedsApprovalError`, and that the same refund succeeds on the next UTC day. This is the test the trace links to `R-REFUND-LIMIT` and `D-REFUND-LEDGER`.\n- **`checkRefundLimit`** (the helper, tested directly): covers rejection of over-limit and non-positive amounts, the daily-limit rejection, and allowance when within limits or approved. This is linked to `R-REFUND-LIMIT`.\n\nIndirectly, `src/checkout.test.ts` and `src/payments.test.ts` define stub gateways with a no-op `refund`, but they do not test `Refunder.refund`.\n\n**Inconsistencies I noticed in the trace (not changed):**\n\n- `R-REFUND-ORIGINAL` lists `src/payments.ts#Gateway` as its code and the \"refunds to the original transaction\" test as its test, but `Refunder.refund` carries its `@req` tag. The test also carries `@req R-AUDIT-MONEY`, not `R-REFUND-ORIGINAL`, so the comment and the trace link disagree.\n- `R-REFUND-LIMIT` is the only requirement that lists `Refunder.refund` as code, and `V-REFUND-REVIEW` requires a second-engineer review of any change to it before release.\n\nI did not run `ostf context` or `ostf check`, since the question was read-only and I changed no files.",
+ "date": "2026-10-24"
+}

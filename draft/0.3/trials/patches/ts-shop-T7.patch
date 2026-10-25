@@ -1,0 +1,16 @@
+diff --git a/src/pricing.ts b/src/pricing.ts
+index 39e4014..206a2c9 100644
+--- a/src/pricing.ts
++++ b/src/pricing.ts
+@@ -42,7 +42,10 @@ export function applyDiscount(subtotal: Cents, d: Discount, now: Date): Cents {
+   if (now.getTime() >= d.expires.getTime()) {
+     throw new DiscountExpiredError(d.code);
+   }
+-  const percent = Math.min(d.percent, MAX_DISCOUNT_PERCENT);
++  let percent = d.percent;
++  if (percent > MAX_DISCOUNT_PERCENT) {
++    percent = MAX_DISCOUNT_PERCENT;
++  }
+   return Math.floor((subtotal * percent) / 100);
+ }
+ 

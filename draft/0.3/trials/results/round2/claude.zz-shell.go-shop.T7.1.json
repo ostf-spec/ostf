@@ -1,0 +1,54 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 827,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9061,
+  "cache_read_input_tokens": 87723,
+  "output_tokens": 1334,
+  "cost": 0.05837629999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your uncommitted change doesn't alter behavior. The tests that `ostf` lists for it pass, and `ostf check --base main` now reports no errors.\n\n**The change.** In `pricing/discount.go`, `ApplyDiscount` used `percent := min(d.Percent, MaxDiscountPercent)`. It now uses `percent := d.Percent` followed by an `if` that clamps it to `MaxDiscountPercent`. The cap is still 50, and the expiry check and rounding are untouched.\n\n**Impact against main.** `ostf` reports coverage as direct. The changed function `pricing/discount.go#ApplyDiscount` affects three items:\n- `R-DISCOUNT-CAP`\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\nNone of the three is made false by the change.\n\n**Tests run.** All passed:\n- `pricing/discount_test.go#TestApplyDiscount`, which covers `takes_the_percentage` and `rounds_down`\n- `pricing/discount_test.go#TestApplyDiscount/caps_at_fifty_percent`\n- `pricing/discount_test.go#TestApplyDiscount/rejects_expired`\n\n**Links.** The three `ApplyDiscount` links were flagged suspect (`BODY_CHANGED`) because the function body changed. I rechecked each item against the code, and the tests passed. I then stamped them with `ostf stamp`:\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-CAP`\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-EXPIRY`\n- `pricing/discount.go#ApplyDiscount implements R-DISCOUNT-PERCENT`\n\n`ostf check` now shows 40 items and 109 valid links, up from 106 valid and 3 suspect. No links or items were added.\n\nStamping updates `trace.lock`, so that file will also show as modified. I didn't edit it by hand. Nothing is committed.",
+ "date": "2026-10-24"
+}

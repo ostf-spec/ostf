@@ -1,0 +1,64 @@
+{
+ "run": "claude.zz-shell.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 34,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5777,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 131.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 73364,
+  "cache_read_input_tokens": 778453,
+  "output_tokens": 31098,
+  "cost": 0.038009329999999994
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 15,
+ "finalMessage": "SHOP-57 is implemented. The working tree has the change, but nothing is committed or pushed, since you didn't ask for that.\n\nI had no Jira access, so I built from the `R-VOLUME-DISCOUNT` item already in `trace.yaml` (SHOP-57, revision 2). Please confirm it matches the Jira issue.\n\n**Behavior**\n- A cart line with 10 or more units gets 5% off, rounded down to the cent (`pricing.VolumeDiscount`). `Cart.VolumeDiscount()` sums this over the lines.\n- The discount code applies to the subtotal after the volume discount.\n- Volume plus code is capped at 50% of the original subtotal, so the volume discount counts toward the cap.\n- `Price` takes the volume discount, reports it on a new `Quote.Volume` field, and taxes what remains. `PlaceOrder` passes it in, so the charge reflects it.\n\n**Changed signatures (internal callers only)**\n- `ApplyDiscount(subtotal, volume, d, now)`\n- `Price(subtotal, volume, d, r, exempt, now)`\n\n**Tests**\n- `go vet` is clean and `go test ./...` passes.\n- New tests: `TestVolumeDiscount`, `TestApplyDiscountAfterVolume`, `TestPriceWithVolume`, `TestCartVolumeDiscount`, `TestPlaceOrderVolumeDiscount`.\n- The existing discount and tax tests were updated for the new signatures and still pass.\n\n**OSTF**\n- Added to `R-VOLUME-DISCOUNT` in `trace.yaml`:\n  - Code: `pricing/discount.go#VolumeDiscount`, `pricing/discount.go#ApplyDiscount`, `pricing/quote.go#Price`, `cart/cart.go#Cart.VolumeDiscount`.\n  - Tests: the five tests above.\n- Impact list: `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`, `R-TAX-RATE`.\n- Links the check reported as suspect or unstamped were rechecked against the code and their tests, then stamped with `ostf stamp`. The stamps touched `trace.lock`.\n- `ostf check --base main` exits 0 with 118 valid links and no diagnostics.\n- No items were added or reworded, and no risk-relevant code was touched.\n\n**For the PR** (not opened, since you didn't ask):\n- Items: `R-VOLUME-DISCOUNT`, with the impacted items above.\n- Links added: the four code links and five test links above.\n- Links stamped: 19 in total, the ones listed in the impact list above.",
+ "date": "2026-10-24"
+}

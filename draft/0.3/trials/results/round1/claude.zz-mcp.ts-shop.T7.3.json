@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 12361,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 39489,
+  "cache_read_input_tokens": 90847,
+  "output_tokens": 1443,
+  "cost": 0.1814907
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change to `applyDiscount` in `src/pricing.ts` is a refactor that doesn't change behavior. The tests pass, and `ostf check` found three suspect links that need stamping.\n\n**The change**\n\nThe cap is the same as before. `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became a `let percent` with an `if` that clamps it. The expiry check and the `Math.floor((subtotal * percent) / 100)` rounding are untouched.\n\nThe one difference is that a `NaN` percent would now pass through unclamped, where `Math.min` returns `NaN`. Both versions give `NaN`, so the result is the same.\n\n**Callers and requirements**\n\nThe only caller is `price()` in `src/pricing.ts`, which `checkout` uses, so prices and charges go through this function. It implements three requirements:\n- `R-DISCOUNT-CAP`\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\nNone of them is marked risk-relevant, so I didn't need to ask before looking at it.\n\n**Tests**\n\nI ran `src/pricing.test.ts`, `src/checkout.test.ts` and `src/cart.test.ts` with `node --test`. All 14 tests passed, including the `applyDiscount` tests for the percentage, rounding, the 50% cap and an expired code.\n\n**Trace check**\n\n`ostf check --base main` reports no errors. It does report that all three `src/pricing.ts#applyDiscount` implements links are now suspect, with the reason `BODY_CHANGED`. That is expected, because the function body changed. No items or links were added or removed.\n\nThe tests I ran cover those links and pass, and my read of the diff is that behavior is unchanged. I haven't stamped the links, because that edits `trace.lock` and you only asked for a summary and a test run. If you want them stamped, I'll run `ostf stamp` on each of the three links as `check` prints them.",
+ "date": "2026-10-24"
+}

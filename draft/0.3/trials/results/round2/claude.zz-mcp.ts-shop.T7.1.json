@@ -1,0 +1,54 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 688,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9289,
+  "cache_read_input_tokens": 88400,
+  "output_tokens": 1307,
+  "cost": 0.05908599999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change is a behavior-preserving refactor, and all 36 tests pass.\n\n**The change:** in `src/pricing.ts#applyDiscount`, `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became an explicit `let percent` with an `if (percent > MAX_DISCOUNT_PERCENT)` clamp. The expiry check and the `Math.floor` rounding are untouched.\n\n**Items affected** (`ostf check --base main`, direct coverage):\n- `R-DISCOUNT-CAP`: no discount takes more than 50% off.\n- `R-DISCOUNT-EXPIRY`: an expired code is rejected with an error naming the code.\n- `R-DISCOUNT-PERCENT`: the percentage comes off the subtotal, rounded down to the cent.\n\nNone of the three is false after the change. `ostf context` did not mark the function risk-relevant.\n\n**Tests the impact lists** (`src/pricing.test.ts`), all passing:\n- `applyDiscount`\n- `applyDiscount > caps at fifty percent`\n- `applyDiscount > rejects an expired code`\n\nI ran the full suite with `npm test`, not just those three.\n\n**Links:** the check initially reported three suspect links (`BODY_CHANGED`), one per item above. I rechecked each item against the code and the tests passed, so I ran `ostf stamp` on each one. That changed `trace.lock`, which you didn't ask for. Re-running `ostf check --base main` now shows 40 items, 111 valid, no suspect links and no errors.\n\nThe check reported no added items or links.",
+ "date": "2026-10-24"
+}

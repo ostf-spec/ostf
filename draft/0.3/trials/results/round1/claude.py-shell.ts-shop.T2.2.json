@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T2.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6952,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 53.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 23498,
+  "cache_read_input_tokens": 254787,
+  "output_tokens": 4780,
+  "cost": 0.1673107
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 13,
+ "finalMessage": "Checkout now adds shipping to the order total. An order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. All 39 tests pass, and `ostf check --base main` reports no errors. I haven't committed anything.\n\n**Changes**\n- **Code:** `src/pricing.ts` has a new `shipping()` function. `price()` now returns a `shipping` field on the quote, and the total includes it.\n- **Tax:** shipping is not taxed. The spec didn't say either way, and this keeps the existing sales-tax item (`R-TAX-RATE`) true.\n- **Checkout:** `src/checkout.ts` needed no change. It already charges `quote.total`.\n- **Tests:** I added two shipping tests in `src/pricing.test.ts` and one in `src/checkout.test.ts`. They cover the 100.00 boundary, discounts pushing an order under the threshold, and shipping staying out of tax.\n- **Existing tests:** I updated two expected values because shipping now applies. A 100.00 cart with a 10% code is 90.00 after discount, so it pays shipping and its total is now 109.47. The 2-mug checkout order is now 28.99 instead of 23.00.\n\n**Trace items the check reports as added** (the new item is `status: draft`, in `trace/requirements.yaml`)\n- Item: `R-SHIPPING-FEE`\n- Link: `R-SHIPPING-FEE refines N-FAIR-PRICE`\n- Links:\n  - `src/pricing.ts#shipping` and `src/pricing.ts#price` implement `R-SHIPPING-FEE`.\n  - Three tests verify `R-SHIPPING-FEE`: the two in `src/pricing.test.ts` and the one in `src/checkout.test.ts`.\n\n`price` and two existing tests I edited showed up as suspect, so I stamped them after the tests passed: `price` implements `R-TAX-RATE`, the pricing test for it, and the \"places an order\" test for `R-CHECKOUT-ORDER`. I also stamped the new links. Those stamps are why `trace.lock` changed.\n\n**Heads-up:** the existing text of `R-CHECKOUT-ORDER` says an order is priced, reserved, charged and confirmed. It still holds, but the \"total\" it implies now includes shipping. I didn't change that text.",
+ "date": "2026-10-24"
+}

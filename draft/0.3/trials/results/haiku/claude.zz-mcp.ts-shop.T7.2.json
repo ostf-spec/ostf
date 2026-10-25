@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4952,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 19875,
+  "cache_read_input_tokens": 133652,
+  "output_tokens": 3821,
+  "cost": 0.00722322
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-preserving refactor, and all 36 tests pass.\n\n**What changed** (`src/pricing.ts`, `applyDiscount`): `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became an `if` that clamps `percent` to 50 when it is greater. For every input, including `NaN` and negative numbers, the result is identical to the old code, so the discount amount does not change.\n\n**Impact** (from `ostf check --base main`):\n- `applyDiscount` is linked to three items, and all three are now marked suspect with `BODY_CHANGED`:\n  - `R-DISCOUNT-CAP`, the fifty percent cap. This is the item the changed lines implement.\n  - `R-DISCOUNT-EXPIRY`\n  - `R-DISCOUNT-PERCENT`\n- Tests to run: `src/pricing.test.ts#applyDiscount` and its sub-tests \"caps at fifty percent\" and \"rejects an expired code\".\n- Indirect callers: `checkout.ts` calls `price()`, which calls `applyDiscount`. Checkout's tests are part of the full suite.\n- The requirements themselves are not made false by this change.\n\n**Tests run:**\n- `node --test src/pricing.test.ts`: 7 of 7 pass, including the cap test that exercises the changed line.\n- `npm test` (full suite): 36 of 36 pass.\n\n**Not done:** I did not run `ostf stamp`. The three suspect links are the expected result of the body change, and the repo's workflow says to recheck each item and stamp it once its tests pass. Both have happened here, but stamping edits `trace.lock`, which you did not ask for. Say the word and I'll stamp the three links. The `ostf check` output also lists the pull-request summary items above.",
+ "date": "2026-10-24"
+}

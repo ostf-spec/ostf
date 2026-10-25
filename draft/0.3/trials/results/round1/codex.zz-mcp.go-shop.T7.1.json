@@ -1,0 +1,53 @@
+{
+ "run": "codex.zz-mcp.go-shop.T7.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3455,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.2
+ },
+ "usage": {
+  "input_tokens": 152138,
+  "cached_input_tokens": 123904,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 752,
+  "reasoning_output_tokens": 25
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in `pricing/discount.go` is behavior-preserving: it replaces `min(d.Percent, MaxDiscountPercent)` with an equivalent conditional. Discount caps, rounding, expiry errors, and downstream checkout totals remain unchanged.\n\nAll relevant tests passed:\n\n- `TestApplyDiscount`, including percentage, rounding, cap, and expiry cases.\n- `TestPrice`.\n- All three `TestPlaceOrder*` checkout tests.\n\nRevalidated `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, and `R-DISCOUNT-PERCENT`. `ostf check --base main` passes with 109 valid links. OSTF stamping updated `trace.lock`; no source or tests were edited.",
+ "date": "2026-10-24"
+}

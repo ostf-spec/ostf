@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6575,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 57.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 31745,
+  "cache_read_input_tokens": 368787,
+  "output_tokens": 10458,
+  "cost": 0.015268270000000004
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "`tax` is now `salesTax` in its own module, `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` reports 111 of 111 links valid with exit 0. I haven't committed anything.\n\n**Changes**\n- **`src/salestax.ts`** (new): `salesTax` and its private helper `roundHalfUp`. Behavior is unchanged.\n- **`src/pricing.ts`**: `tax` and `roundHalfUp` are removed. `price` imports `salesTax`. `Region` and the `Quote.tax` field stay as they were.\n- **`src/salestax.test.ts`** (new): the `tax` tests moved here as `describe(\"salesTax\")`, with the `@req R-TAX-EXEMPT` comment.\n- **`src/pricing.test.ts`**: the `tax` block is removed. The `price` test is unchanged.\n- **`README.md`**: the module table has a row for `src/salestax.ts`.\n- **`trace/requirements.yaml`**: I updated the links for R-TAX-RATE and R-TAX-EXEMPT to the new symbol and test IDs. I didn't change any item text.\n\n**OSTF**\n- Before the rename, `ostf check` was clean. Afterward it reported one suspect link (`src/pricing.ts#price` implements R-TAX-RATE) and four unstamped links from the moved symbol and tests.\n- I rechecked R-TAX-RATE and R-TAX-EXEMPT against the code and ran their tests, which passed. Then I stamped the five links, quoting each one as check printed it.\n- `trace.lock` changed because `ostf stamp` wrote to it. I didn't edit it by hand.\n- Neither R-TAX item is risk-relevant, so I didn't need to ask before changing them.\n- Impact against `main`, for the PR: changed `src/pricing.ts#tax` and `src/pricing.ts#roundHalfUp` (removed), `src/pricing.ts#price`, `src/salestax.ts#salesTax`, and the moved tests `src/salestax.test.ts#salesTax` with its two subtests. Links added: `src/salestax.ts#salesTax` implements R-TAX-EXEMPT and R-TAX-RATE, and the two moved test IDs verify R-TAX-EXEMPT and R-TAX-RATE. Links removed: the matching `src/pricing.ts#tax` and `src/pricing.test.ts#tax` links.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1399,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 9.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 8771,
+  "cache_read_input_tokens": 29510,
+  "output_tokens": 852,
+  "cost": 0.04656300000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` exists to return money to customers safely. The repository traces it to three requirements (listed below), which in turn serve the need N-REFUNDS: \"Customers get refunds quickly without the business losing money to abuse.\"\n\n**Why it exists**\n\n- **R-REFUND-ORIGINAL, \"Refund to the original payment\".** This is the requirement marked with `@req` on the method. A refund goes back to the payment method of the charge it refunds, never to another one. The method looks up the receipt and calls `gateway.refund(receipt.txn, amount)` against the original transaction. It throws `UnknownReceiptError` if the receipt doesn't exist.\n- **R-REFUND-LIMIT, \"Refund limit\".** A refund can't exceed what is left of the original charge. Refunds above 500.00 per account per UTC day need a second approval. `refund` calls `checkRefundLimit` to enforce this. This item is marked **risk-relevant: ask before changing**. It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds.\n- **R-AUDIT-MONEY, \"Audit money movements\".** Every refund appends an audit entry, which `refund` does at the end through `audit.append`.\n\n**Behavior beyond those items**\n\n- It counts the refund before awaiting the gateway, so a concurrent refund sees it.\n- It rolls the counts back if the gateway call fails.\n\n**Tests that cover it**\n\n- `src/refunds.test.ts#Refunder > refunds to the original transaction` verifies R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `src/refunds.test.ts#Refunder > totals refunds per account and UTC day` verifies R-REFUND-LIMIT.\n- `src/refunds.test.ts#checkRefundLimit` verifies R-REFUND-LIMIT. It tests the limit helper that `refund` calls, not `refund` itself.\n\n`ostf context` reports all links as valid. I didn't read the test file itself, so I haven't confirmed what each test asserts.\n\nI didn't change any files.",
+ "date": "2026-10-24"
+}

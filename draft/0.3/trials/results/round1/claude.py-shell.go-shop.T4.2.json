@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T4.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1546,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 10891,
+  "cache_read_input_tokens": 109482,
+  "output_tokens": 2008,
+  "cost": 0.0746162
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in the new `pricing/salestax.go`, and everything still works. `go test ./...` passes, and `ostf check --base main` reports 109 of 109 links valid.\n\n- **Code:** `Region` stays in `pricing/tax.go`. I updated the call in `pricing/quote.go` and the calls and message in `pricing/tax_test.go`.\n- **Trace links:** the `code:` links for `R-TAX-RATE` and `R-TAX-EXEMPT` in `trace/requirements.yaml` now point to `pricing/salestax.go#SalesTax`. No item text changed, and both requirements are still true. The function body is identical.\n- **Stamps:** `ostf check` flagged five links as suspect or unstamped. I re-checked each item against the code, the tests passed, and I ran `ostf stamp` on all five. Those stamps are why `trace.lock` shows as modified. I didn't edit it by hand.\n\nFor the pull request, `ostf check` reports these as added:\n- `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n- `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n\nIt reports these as removed:\n- `pricing/tax.go#Tax implements R-TAX-EXEMPT`\n- `pricing/tax.go#Tax implements R-TAX-RATE`\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

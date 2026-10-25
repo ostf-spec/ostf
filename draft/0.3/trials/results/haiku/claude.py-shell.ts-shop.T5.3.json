@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": false,
+ "criteria": {
+  "codeLinked": false,
+  "testLinked": false,
+  "itemUnchanged": true,
+  "noDuplicateItem": false,
+  "checkPasses": false,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 28,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 10,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 5,
+  "ostfOutputTokens": 12810,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 135.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 63120,
+  "cache_read_input_tokens": 800172,
+  "output_tokens": 25784,
+  "cost": 0.03352112
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/design.yaml"
+ ],
+ "changedAnchors": 18,
+ "finalMessage": "SHOP-57 is implemented: a 5% volume discount on cart lines of 10 or more units, with the code discount applied after it. One requirement is now false for those carts, and that needs your decision before this is done.\n\n**Decision needed: `R-DISCOUNT-PERCENT`.** Its text says a code takes its percentage \"off the subtotal\". SHOP-57 says the volume discount comes \"before any discount code applies\", so the code now takes its percentage off the post-volume amount. For example, a 10-unit line at 1,000 with TEN: the code is 950, not 1,000. The item's test still passes, but its wording is false for qualifying carts. I didn't stamp its two links and didn't rewrite the item, as AGENTS.md requires. Options:\n- (a) Keep the code on the full subtotal, with the volume discount separate and only the combined 50% cap shared. This keeps `R-DISCOUNT-PERCENT` true but drops the \"before any code\" ordering from SHOP-57.\n- (b) Keep the ordering as implemented and update `R-DISCOUNT-PERCENT`'s text yourself.\n\nI implemented the ordering as SHOP-57 states it. Say which you want, and I'll adjust.\n\n**What changed**\n- `src/pricing.ts`: new `volumeDiscount(lines)` (5% of each line of 10+ units, floored per line). `applyDiscount` takes an optional `volume` argument, computes the code on the amount after it, and caps the combined discount at 50%. `price` takes `volume` as a new second argument.\n- `src/checkout.ts`: passes `volumeDiscount(lines)` into `price`.\n- Tests: `pricing.test.ts` covers the rounding, the 9-unit boundary, the combined cap and the quote total. `checkout.test.ts` checks the charged amount end to end (10,923).\n- `trace/design.yaml`: new `D-VOLUME-DISCOUNT` with `status: draft`, refining `R-VOLUME-DISCOUNT` (the item already mirrored from SHOP-57 in `trace.yaml`). It links four functions and five tests.\n\n**Verification**\n- `node --test`: 41 of 41 pass.\n- `ostf check --base main`: 41 items, 121 links, 119 valid. Two suspect links remain, both for `R-DISCOUNT-PERCENT`. The command still exits non-zero because of them.\n- Stamped after rechecking the item text against the code and running the tests: `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-TAX-RATE` on their changed functions, plus the new `D-VOLUME-DISCOUNT` links. `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` are the only ones among these that the stamp command didn't list as changed.\n- `ostf stamp` wrote `trace.lock`, which I did not edit by hand.\n- Impact against `main`: `D-VOLUME-DISCOUNT` (added); `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT` (flagged), `R-TAX-RATE`.\n\nI couldn't reach Jira from here, so the requirement text came from the copy in `trace.yaml`. Nothing is committed and no PR is open; say if you want either.",
+ "date": "2026-10-24"
+}

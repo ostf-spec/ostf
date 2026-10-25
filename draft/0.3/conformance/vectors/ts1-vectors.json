@@ -1,0 +1,418 @@
+[
+  {
+    "id": "ts-function",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.ts",
+    "source": "export function add(a: number, b: number): number {\n  return a + b;\n}\n",
+    "symbol": "add",
+    "sigTokens": "export function add ( a : number , b : number ) : number",
+    "bodyTokens": "export function add ( a : number , b : number ) : number { return a + b ; }",
+    "expect": {
+      "source.sig": "ts1:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE",
+      "source.body": "ts1:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc"
+    }
+  },
+  {
+    "id": "ts-whole-file",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "b.ts",
+    "source": "// header\nconst x = 1;\nexport { x };\n",
+    "symbol": "",
+    "sigTokens": "const x = 1 ; export { x } ;",
+    "expect": {
+      "source.sig": "ts1:Xi7tgY8TtnVeW5CZIIWTXWMVMxwH_VuRnpd-WUYv1Hg"
+    }
+  },
+  {
+    "id": "ts-overloads",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "o.ts",
+    "source": "function f(a: string): string;\nfunction f(a: number): number;\nfunction f(a: any): any { return a; }\n",
+    "symbol": "f",
+    "sigTokens": "function f ( a : string ) : string ; function f ( a : number ) : number ; function f ( a : any ) : any",
+    "bodyTokens": "function f ( a : string ) : string ; function f ( a : number ) : number ; function f ( a : any ) : any { return a ; }",
+    "expect": {
+      "source.sig": "ts1:XGJRDv6BjnK_b9Jmjj3r4cLem_xBg-DUVFBi4iHQVRU",
+      "source.body": "ts1:l9SgN9S73_Imv8kKQcRXO90h-HP9QE1AAXYcHI6a7K0"
+    }
+  },
+  {
+    "id": "ts-class-method",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart.add",
+    "sigTokens": "add ( item : string ) : void",
+    "bodyTokens": "add ( item : string ) : void { this . items . push ( item ) ; }",
+    "expect": {
+      "source.sig": "ts1:KqHmtzzM7uZF22iKzIw_dznvUd7FCP16g5rua3L_ggE",
+      "source.body": "ts1:HdCMcdh574B-5Sy2SKq2FNpQVve3BsbQWr6tGdME6qQ"
+    }
+  },
+  {
+    "id": "ts-member-last-component",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "add",
+    "sigTokens": "add ( item : string ) : void",
+    "bodyTokens": "add ( item : string ) : void { this . items . push ( item ) ; }",
+    "expect": {
+      "source.sig": "ts1:KqHmtzzM7uZF22iKzIw_dznvUd7FCP16g5rua3L_ggE",
+      "source.body": "ts1:HdCMcdh574B-5Sy2SKq2FNpQVve3BsbQWr6tGdME6qQ"
+    }
+  },
+  {
+    "id": "ts-class-decorated",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart",
+    "sigTokens": "@ Injectable ( ) export class Cart",
+    "bodyTokens": "@ Injectable ( ) export class Cart { items : string [ ] = [ ] ; add ( item : string ) : void { this . items . push ( item ) ; } }",
+    "expect": {
+      "source.sig": "ts1:r1lEqwKiynSnPIOVYcX930gXDa7Uud2ay9OVo7RN2GI",
+      "source.body": "ts1:MqcD-vu4muPksxMPzeHiJtxmDP08k2ZCyd0geg66Dj8"
+    }
+  },
+  {
+    "id": "ts-arrow-const",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d.ts",
+    "source": "export const double = (n: number) => n * 2;\n",
+    "symbol": "double",
+    "sigTokens": "export const double = ( n : number ) =>",
+    "bodyTokens": "export const double = ( n : number ) => n * 2 ;",
+    "expect": {
+      "source.sig": "ts1:6lCYOaoUY3TyYXXBs9hPnVy1i5zUlOzgMRhFywmD1lE",
+      "source.body": "ts1:wozCAWz9aH9O-CbTaTIgzsqAb9CgrFN9JFqF34UfZXo"
+    }
+  },
+  {
+    "id": "ts-several-declarators",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e.ts",
+    "source": "const a = 1, b = { x: 1, };\n",
+    "symbol": "b",
+    "sigTokens": "b = { x : 1 }",
+    "bodyTokens": "b = { x : 1 }",
+    "expect": {
+      "source.sig": "ts1:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U",
+      "source.body": "ts1:EUsEEhb8_q3JwFtk80TK7xLU9fW1JI-zxbcrrqkg9-U"
+    }
+  },
+  {
+    "id": "ts-template-regex",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "g.ts",
+    "source": "function greet(name: string) {\n  return `Hello, ${ name /* c */ }!`.replace(/\\s+/g, \" \");\n}\n",
+    "symbol": "greet",
+    "sigTokens": "function greet ( name : string )",
+    "bodyTokens": "function greet ( name : string ) { return `Hello, ${ name /* c */ }!` . replace ( /\\s+/g , \" \" ) ; }",
+    "expect": {
+      "source.sig": "ts1:-HO9uzzmy48KYT-GPtnbeovcIDJ5IXWtdRIy7QxepfI",
+      "source.body": "ts1:oBhFBENlo0n2s7VuQ57UPO35nn1ARhDMgacN1se7jYY"
+    }
+  },
+  {
+    "id": "ts-test",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart > adds an item",
+    "sigTokens": "it ( \"adds an item\" , ( ) =>",
+    "bodyTokens": "it ( \"adds an item\" , ( ) => { expect ( 1 + 1 ) . toBe ( 2 ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts1:OxM4PNDaq8psOrSF4MLOrVT2dQNxNP4ERQQXmUsl-OA",
+      "source.body": "ts1:bVO9hYz4ZXkwaV7fHbrzUNd7GhgCEk8CRJs1pmj5Hgs"
+    }
+  },
+  {
+    "id": "ts-suite",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart",
+    "sigTokens": "describe ( \"Cart\" , ( ) =>",
+    "bodyTokens": "describe ( \"Cart\" , ( ) => { it ( \"adds an item\" , ( ) => { expect ( 1 + 1 ) . toBe ( 2 ) ; } ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts1:Ud3U7mcKxi3A5fXfCkNgFnNq7qH6ZnSSrgcYIr-qg_c",
+      "source.body": "ts1:Ogd08nUMOW9BmPbnB2eahWruy-IZtbD2PjWbz3UXWa4"
+    }
+  },
+  {
+    "id": "ts-jsx",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "view.tsx",
+    "source": "export function View({ name }: { name: string }) {\n  return (\n    <div className=\"v\">\n      Hello,   {name}\n      <b>!</b>\n      <br />\n    </div>\n  );\n}\n",
+    "symbol": "View",
+    "sigTokens": "export function View ( { name } : { name : string } )",
+    "bodyTokens": "export function View ( { name } : { name : string } ) { return ( < div className = \"v\" > Hello, { name } < b > ! </ b > < br /> </ div > ) ; }",
+    "expect": {
+      "source.sig": "ts1:f9PpPjh7U8vawcvWWYWT5t27hCQTdOF9I5TvoRZDXtg",
+      "source.body": "ts1:RHCls401ALAzMVv0g3GTgkrxZjMI6b0xltZ9YwW6qMU"
+    }
+  },
+  {
+    "id": "ts-generics",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "t.ts",
+    "source": "type Pair<T> = Map<string, Array<T>>;\n",
+    "symbol": "Pair",
+    "sigTokens": "type Pair < T > = Map < string , Array < T > > ;",
+    "bodyTokens": "type Pair < T > = Map < string , Array < T > > ;",
+    "expect": {
+      "source.sig": "ts1:HuxCn5tcd5MCRf4bbWD5aNsYrFkjAwiKboor_pyYD-U",
+      "source.body": "ts1:HuxCn5tcd5MCRf4bbWD5aNsYrFkjAwiKboor_pyYD-U"
+    }
+  },
+  {
+    "id": "ts-namespace-member",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "n.ts",
+    "source": "export namespace Geo {\n  export function area(r: number) { return 3.14 * r * r; }\n}\n",
+    "symbol": "Geo.area",
+    "sigTokens": "export function area ( r : number )",
+    "bodyTokens": "export function area ( r : number ) { return 3.14 * r * r ; }",
+    "expect": {
+      "source.sig": "ts1:Shg3VfOv4PG8yW6KuRBzQcJ0CjDTT3A_1OqZ6JyJrDo",
+      "source.body": "ts1:H6u62fohgKonVOU7UjG6pumVbZ60cdBosNy_AJ5PORM"
+    }
+  },
+  {
+    "id": "ts-exports-assignment",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "lib.js",
+    "source": "exports.send = function (msg) { return msg; };\n",
+    "symbol": "exports.send",
+    "sigTokens": "exports . send = function ( msg )",
+    "bodyTokens": "exports . send = function ( msg ) { return msg ; } ;",
+    "expect": {
+      "source.sig": "ts1:y0kj62bTZlhYbot8MR5Zud2MCfnsQKN0Tv3vUdfe8ck",
+      "source.body": "ts1:ROBIn7yX8rnZpvnaBd1UkKdMBJoTGvcTpSAFnVpXdjo"
+    }
+  },
+  {
+    "id": "ts-trailing-commas",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "c.ts",
+    "source": "function f(a, b,) {\n  return [a, b,];\n}\n",
+    "symbol": "f",
+    "sigTokens": "function f ( a , b )",
+    "bodyTokens": "function f ( a , b ) { return [ a , b ] ; }",
+    "expect": {
+      "source.sig": "ts1:-ipj-ECTgRhm4wfAlqp_BavUGsxfpsRgX_0y4nGjXSo",
+      "source.body": "ts1:gxgbJ-U3O7m3jeeb-4Z5qX3Y4tb1HYEAMqFGkEaqufg"
+    }
+  },
+  {
+    "id": "ts-unicode",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "u.ts",
+    "source": "const café = \"naïve\";\n",
+    "symbol": "café",
+    "sigTokens": "const café = \"naïve\" ;",
+    "bodyTokens": "const café = \"naïve\" ;",
+    "expect": {
+      "source.sig": "ts1:_ptjeEufI7lXb-PCKgW96CphnopkgvyHn13rvvzsnu0",
+      "source.body": "ts1:_ptjeEufI7lXb-PCKgW96CphnopkgvyHn13rvvzsnu0"
+    }
+  },
+  {
+    "id": "ts-hashbang-whole-file",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "cli.js",
+    "source": "#!/usr/bin/env node\nconsole.log(\"hi\")\n",
+    "symbol": "",
+    "sigTokens": "console . log ( \"hi\" )",
+    "expect": {
+      "source.sig": "ts1:JR8E5gH8CeF4MkKBOsqd25zO-uh96WW_Vq4aUfuYqP8"
+    }
+  },
+  {
+    "id": "ts-getter-setter",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "gs.ts",
+    "source": "class C {\n  get x() { return 1; }\n  set x(v) {}\n}\n",
+    "symbol": "C.x",
+    "sigTokens": "get x ( ) set x ( v )",
+    "bodyTokens": "get x ( ) { return 1 ; } set x ( v ) { }",
+    "expect": {
+      "source.sig": "ts1:98Oku3S8ymcPJGmQKpNP5Qtf5WEOXrrUUWw50VaE764",
+      "source.body": "ts1:U-xvWoNF37G0cI2Arj4dcBF_AJ-DxNyuYdVg8rrKE1I"
+    }
+  },
+  {
+    "id": "ts-decorated-method",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "s.ts",
+    "source": "class S {\n  @log()\n  run() {}\n}\n",
+    "symbol": "S.run",
+    "sigTokens": "@ log ( ) run ( )",
+    "bodyTokens": "@ log ( ) run ( ) { }",
+    "expect": {
+      "source.sig": "ts1:dfIXsge0bTPB2bynS57vJEJlVG7CUaY-xOluAyhyDe0",
+      "source.body": "ts1:W8RCLrF3VosnS-YZ2Kuo42ZiZbHzMak1F1KDmjpkwIg"
+    }
+  },
+  {
+    "id": "ts-template-literal-type",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "t2.ts",
+    "source": "type Route<T extends string> = `/api/${T}`;\n",
+    "symbol": "Route",
+    "sigTokens": "type Route < T extends string > = `/api/${T}` ;",
+    "bodyTokens": "type Route < T extends string > = `/api/${T}` ;",
+    "expect": {
+      "source.sig": "ts1:C-0_KemMoGx4q-hdtF8QfmqpAo8etr1nuvSQ3iddI00",
+      "source.body": "ts1:C-0_KemMoGx4q-hdtF8QfmqpAo8etr1nuvSQ3iddI00"
+    }
+  },
+  {
+    "id": "ts-jsx-character-reference",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "p.tsx",
+    "source": "const V = <p>a&nbsp;b</p>;\n",
+    "symbol": "V",
+    "sigTokens": "const V = < p > a &nbsp; b </ p > ;",
+    "bodyTokens": "const V = < p > a &nbsp; b </ p > ;",
+    "expect": {
+      "source.sig": "ts1:KDJmopZ55qzfGO8iPkyQnQG9Ojgonvb0RAmgu7td-O4",
+      "source.body": "ts1:KDJmopZ55qzfGO8iPkyQnQG9Ojgonvb0RAmgu7td-O4"
+    }
+  },
+  {
+    "id": "ts-parenthesized-member-assignment",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "m.js",
+    "source": "exports.send = (() => 1);\n",
+    "symbol": "send",
+    "sigTokens": "exports . send = ( ( ) =>",
+    "bodyTokens": "exports . send = ( ( ) => 1 ) ;",
+    "expect": {
+      "source.sig": "ts1:7Dm6nZuYAKqFZXeXNq3AyN_GSBe5a1d3If6SpOCPbe4",
+      "source.body": "ts1:o9O_tukSXe-7pJ2jCRC84skjEJ1yM11kC2meLrtfUNg"
+    }
+  },
+  {
+    "id": "ts-destructuring",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "d2.ts",
+    "source": "const { x, y: z, ...rest } = obj;\n",
+    "symbol": "z",
+    "sigTokens": "const { x , y : z , ... rest } = obj ;",
+    "bodyTokens": "const { x , y : z , ... rest } = obj ;",
+    "expect": {
+      "source.sig": "ts1:4K816Ie3F-YaBEzFBeBFiEvKoVD0JluyS5kvc9lubKs",
+      "source.body": "ts1:4K816Ie3F-YaBEzFBeBFiEvKoVD0JluyS5kvc9lubKs"
+    }
+  },
+  {
+    "id": "ts-export-declare",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "e2.ts",
+    "source": "export declare function f(): void;\n",
+    "symbol": "f",
+    "sigTokens": "export declare function f ( ) : void ;",
+    "bodyTokens": "export declare function f ( ) : void ;",
+    "expect": {
+      "source.sig": "ts1:p3MQYJIquhIm7muvT5abModdNsfIPAodPyflkIeSg1M",
+      "source.body": "ts1:p3MQYJIquhIm7muvT5abModdNsfIPAodPyflkIeSg1M"
+    }
+  },
+  {
+    "id": "ts-comment-between-test-arguments",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "a.test.ts",
+    "source": "test(\"works\", /* why */ () => {\n  run();\n});\n",
+    "symbol": "works",
+    "sigTokens": "test ( \"works\" , ( ) =>",
+    "bodyTokens": "test ( \"works\" , ( ) => { run ( ) ; } ) ;",
+    "expect": {
+      "source.sig": "ts1:LfCmvt72tFpBpOj9doDjsgvZamJKyhRI-ZL9djUFcCg",
+      "source.body": "ts1:A6AAswS5Tt3uAS6DMf-lM5cU4fJGbvYLG_XF-R0gnis"
+    }
+  },
+  {
+    "id": "ts-comment-after-decorator",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "c2.ts",
+    "source": "class C {\n  @d()\n  /* note */\n  m() {}\n}\n",
+    "symbol": "C.m",
+    "sigTokens": "@ d ( ) m ( )",
+    "bodyTokens": "@ d ( ) m ( ) { }",
+    "expect": {
+      "source.sig": "ts1:-5kdkZKwfA4UppiV753txYrYo2U0C9FE25I2_lcmigM",
+      "source.body": "ts1:1Fc_wGAtFtFESThJOOpqsinR1WSq1Ked5ksREhY2DgQ"
+    }
+  },
+  {
+    "id": "ts-interface",
+    "requirements": [
+      "Annex K"
+    ],
+    "path": "i.ts",
+    "source": "export interface Item { id: string; qty?: number }\n",
+    "symbol": "Item",
+    "sigTokens": "export interface Item { id : string ; qty ? : number }",
+    "bodyTokens": "export interface Item { id : string ; qty ? : number }",
+    "expect": {
+      "source.sig": "ts1:DoLVBe2JvyGrndxU7jffYdtcBLgprdolLdM5BYuaEe4",
+      "source.body": "ts1:DoLVBe2JvyGrndxU7jffYdtcBLgprdolLdM5BYuaEe4"
+    }
+  }
+]

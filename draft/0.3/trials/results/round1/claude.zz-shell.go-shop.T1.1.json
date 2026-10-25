@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 694,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 12.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7606,
+  "cache_read_input_tokens": 29495,
+  "output_tokens": 858,
+  "cost": 0.0419615
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (payments/refund.go) exists to implement three requirements. I got this from `ostf context payments/refund.go#Refunder.Refund` and `trace.yaml`. I didn't read the function body or run the tests.\n\n**Why it exists**\n\n- **R-REFUND-LIMIT** is the main reason, and it is marked risk-relevant, so you must be asked before it is changed. A refund must not exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval. It controls RISK-REFUND-ABUSE (a compromised account or a mistaken operator drains funds through refunds). It refines N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n- **R-AUDIT-MONEY** says every charge and every refund appends an audit entry with the time, account, action, amount and receipt. It refines N-ACCOUNT-SAFE.\n- **R-REFUND-ORIGINAL** says a refund goes back to the payment method of the charge it refunds, never to another one. It refines N-REFUNDS.\n\n**Which tests cover it**\n\n- `payments/refund_test.go#TestCheckRefundLimit` covers R-REFUND-LIMIT.\n- `payments/refund_test.go#TestRefundDailyLimit` also covers R-REFUND-LIMIT, for the daily threshold.\n- `payments/refund_test.go#TestRefund` covers R-AUDIT-MONEY and R-REFUND-ORIGINAL.\n- `payments/charge_test.go#TestChargeAudited` covers the charge side of R-AUDIT-MONEY. It doesn't test `Refund`.\n\nThe trace links the limit requirement's code to `CheckRefundLimit`, not to `Refund` itself. The tests named for the limit therefore exercise the check, and `TestRefundDailyLimit` is the only one named for the daily rule. All the links `ostf context` printed show as valid.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.go-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 11,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 23726,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 74396,
+  "cache_read_input_tokens": 367517,
+  "output_tokens": 4923,
+  "cost": 0.021017670000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now reports zero diagnostics. The fix is one line in `trace.lock`, and I did not commit it.\n\n**What was wrong**\n\n- **`LOCK_INVALID`:** The `refund-tweaks` merge (`a969f2e`) changed the lock line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` from `source.sig=` to `source.sig:`. That separator is not valid under Annex B.\n- **`BROKEN_LINK` and `LINK_UNSTAMPED`:** The malformed line stopped that link from resolving, so it showed as unstamped.\n\n**What I did**\n\n- I did not edit `trace.lock` by hand.\n- I read `payments/refund.go#CheckRefundLimit` and the `R-REFUND-LIMIT` item. The code matches the item: the amount must be positive and no more than what is left on the charge, and daily totals above 500.00 need a second approval.\n- `go test ./payments/ -run 'TestCheckRefundLimit|TestRefund'` passes.\n- I ran `ostf stamp` on `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. The stamp rewrote that line in the correct form.\n\n**Result**\n\n- `trace.lock` has a single changed line, the `:` back to `=` on the `CheckRefundLimit` link.\n- No code, items or tests changed, so the impact lists are empty.\n- Items added: none. Links added: none. Tests affected: none.\n- The one link I stamped is `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. Its item, R-REFUND-LIMIT, is marked risk-relevant. I rechecked it against the code and tests and changed no code, so I did not ask first. Please look at the stamp if you want to be sure.\n\nThe `:` edit came from the merge, so someone may have hand-edited the lock. You may want to check how that happened before the next merge.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.go-shop.T1.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1161,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 11.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 9326,
+  "cache_read_input_tokens": 49548,
+  "output_tokens": 1221,
+  "cost": 0.054480799999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (payments/refund.go) refunds part or all of an earlier charge, within limits. It sends the refund through the payment gateway to the transaction that was charged. It then records the refund in the audit log. I didn't change any files.\n\n**Why it exists**\n\n`ostf context` ties it to three requirements, which all trace up to the goal that customers get refunds quickly without the business losing money to abuse.\n\n- **R-REFUND-LIMIT** (marked risk-relevant, so ask before changing it): a refund can't exceed what is left of the original charge. Refunds above 500.00 per account per UTC day need a second approval. This controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds. `Refund` enforces it by calling `CheckRefundLimit`, which `ostf context` lists as the implementing function.\n- **R-REFUND-ORIGINAL**: a refund goes back to the payment method of the charge it refunds, never to another one. This is the only requirement the `@req` comment on `Refund` names. It is implemented through `Refund` using the receipt's `Txn` with the gateway.\n- **R-AUDIT-MONEY**: every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt. `Refund` appends an entry with the account, the action, the amount and the receipt ID. The time isn't set in `Refund`, so presumably the audit log adds it.\n\n**Tests that cover it**\n\nBoth tests are in `payments/refund_test.go`, and `ostf context` reports all the links as valid.\n\n- **`TestRefund`** refunds 1,500 successfully, then checks that a further 4,000 fails with `ErrRefundTooLarge`. It is linked to R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- **`TestRefundDailyLimit`** refunds 40,000 on one account, then checks that a further 20,000 needs approval. It then checks that the same refund goes through with an approver. It is linked to R-REFUND-LIMIT.\n\n`TestCheckRefundLimit` covers `CheckRefundLimit` directly, not `Refund`.\n\n**Gaps**\n\n- `trace.yaml` doesn't list `Refunder.Refund` itself under R-REFUND-LIMIT or R-AUDIT-MONEY. It lists `CheckRefundLimit` and `Processor.Charge` as the implementing functions. The `@req` comment on `Refund` names only R-REFUND-ORIGINAL, even though `ostf context` shows it implementing all three. I only read the output of `ostf context` and the source, so I haven't confirmed why.\n- I only grepped the test file for the names. I didn't read the tests in full, so I haven't confirmed that they check the audit entry or that the refund goes to the original card.",
+ "date": "2026-10-24"
+}

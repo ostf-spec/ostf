@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2555,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 11789,
+  "cache_read_input_tokens": 77212,
+  "output_tokens": 2184,
+  "cost": 0.00422272
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.refund` (`src/refunds.ts:68`) is the one place that refunds an earlier charge. It:\n\n1. Looks up the charge by `receiptId` and throws `UnknownReceiptError` if it doesn't exist.\n2. Checks the refund against the charge's remaining balance and the account's daily limit (`checkRefundLimit`, which enforces R-REFUND-LIMIT).\n3. Reserves the amount in its running totals, then calls `gateway.refund(receipt.txn, amount)`. It rolls the totals back if the gateway throws.\n4. Appends a `refund` entry to the audit log.\n\nIt is tagged `// @req R-REFUND-ORIGINAL`, whose text is: \"A refund goes back to the payment method of the charge it refunds, never to another one.\" The method satisfies this by sending the refund to `receipt.txn`, the transaction of the original charge, rather than taking a destination from the caller. The same tag appears on `Processor.receipt` in `src/payments.ts:108`.\n\n**Tests covering it:**\n\n- `src/refunds.test.ts` › `Refunder` › \"refunds to the original transaction\". This is the direct test. It checks that the gateway refund is recorded against the charge's transaction, that the audit entry has the right action, amount and reference, and that refunding more than what is left throws `RefundTooLargeError`. The test's own `@req` comment names **R-AUDIT-MONEY**, not R-REFUND-ORIGINAL. `trace/requirements.yaml` (R-REFUND-ORIGINAL) and `trace.lock` do list this test as covering R-REFUND-ORIGINAL, so the comment and the trace links disagree.\n- `src/refunds.test.ts` › `Refunder` › \"totals refunds per account and UTC day\". This covers the daily limit and the second-approval path. It is linked to R-REFUND-LIMIT and D-REFUND-LEDGER, and it exercises `refund` only indirectly.\n\nThe stub gateways in `src/payments.test.ts` and `src/checkout.test.ts` implement `refund` but do not test the method. Nothing else in the repo calls `Refunder.refund`.\n\nI did not run `ostf` or change any files. The `trace.lock` entries above are the lock file's recorded state, not a fresh check.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,53 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T7.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3288,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.9
+ },
+ "usage": {
+  "input_tokens": 152701,
+  "cached_input_tokens": 137728,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 744,
+  "reasoning_output_tokens": 16
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in `src/pricing.ts#applyDiscount` replaces `Math.min` with an explicit conditional. Behavior is unchanged for numeric percentages; the 50% cap, rounding, and expiry handling remain intact.\n\nAffected requirements: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`. No items or links were added.\n\nValidation:\n- `node --test src/pricing.test.ts`: **7 passed**, including OSTF’s listed `applyDiscount` suite, `caps at fifty percent`, and `rejects an expired code`.\n- `ostf check --base main`: **111 valid links**, no suspects.\n\nRevalidated links were stamped through OSTF, updating `trace.lock`. Your source change was left untouched.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.go-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4283,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 21908,
+  "cache_read_input_tokens": 163255,
+  "output_tokens": 3624,
+  "cost": 0.00782755
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` passes now: 40 items, 109 valid, no errors, exit 0.\n\n**Cause:** The merge commit `5996056` (Merge branch 'refund-tweaks') changed one line in `trace.lock`. The `CheckRefundLimit` link had `source.sig=` rewritten as `source.sig:`, which is not valid Annex B. The code and its item were not the problem: `payments/refund.go` is unchanged since `main`.\n\n**Fix:**\n- I rechecked `R-REFUND-LIMIT` against the code. `CheckRefundLimit` is marked risk-relevant, so I did not change any code. Its verifying tests, `TestCheckRefundLimit` and `TestRefundDailyLimit`, both pass.\n- I ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`, which rewrote the line. The stamp command printed a `LOCK_INVALID` message for the malformed line before it stamped, and the final check is clean.\n- `trace.lock` now matches the pre-merge version (`git diff e63cd3c -- trace.lock` is empty). I did not edit it by hand.\n\n**Impact:** The check reports no added items or links, and the impact against `main` is direct coverage only. The one change is the restored lock line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. No items or tests were changed.\n\nThe fix is uncommitted in the working tree (`M trace.lock`). I have not committed or opened a PR, since you didn't ask for that. Say if you want a commit with the Co-Authored-By line.",
+ "date": "2026-10-24"
+}

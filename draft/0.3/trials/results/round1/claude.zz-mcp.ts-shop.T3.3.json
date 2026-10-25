@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12662,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 36.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 46268,
+  "cache_read_input_tokens": 235596,
+  "output_tokens": 3284,
+  "cost": 0.2991162
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws a new `InvalidRefundAmountError` for a refund of zero or a negative amount. It still throws `RefundTooLargeError` when the amount is above what's left on the charge. All 37 tests pass.\n\n- **Code:** the new error class and the check are in `src/refunds.ts`, and I updated the doc comment on `checkRefundLimit`. Nothing else in `src` catches `RefundTooLargeError`, so no callers needed changes.\n- **Tests:** in `src/refunds.test.ts` I moved the zero-amount assertion out of the \"too large\" test. A new test, \"rejects a zero or negative amount\", checks both 0 and -100 against the new error.\n- **Requirement:** `R-REFUND-LIMIT` stays true, because those amounts are still rejected. I didn't edit it.\n- **Stamped links:** two links had gone suspect (`BODY_CHANGED`). I rechecked them against the requirement, the tests passed, and I stamped both. They are `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` and `src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT`.\n- **Added:** `ostf check --base main` reports no items or links added or removed, so there is nothing new to list in a pull request.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T3.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 2680,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 32.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 20140,
+  "cache_read_input_tokens": 183932,
+  "output_tokens": 5878,
+  "cost": 0.01256829
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws `InvalidRefundAmountError` for a zero or negative amount. Amounts above what is left on the charge still throw `RefundTooLargeError`. The full suite passes (37/37), and `ostf check --base main` now reports 111 valid links with no errors.\n\n**Changes**\n- `src/refunds.ts`: added the `InvalidRefundAmountError` class, and the non-positive check now throws it before the \"exceeds what is left\" check.\n- `src/refunds.test.ts`: the zero-amount assertion now expects `InvalidRefundAmountError`. I added a test that covers a zero and a negative amount.\n\n**Traceability**\n- `ostf check` marked two links on R-REFUND-LIMIT as suspect because their bodies changed. I rechecked the item text against the code, ran the tests, and both held. I then stamped `src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT` and `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`.\n- `ostf stamp` changed `trace.lock`. I didn't edit that file by hand.\n- Items named in the impact list: R-REFUND-LIMIT, plus the `checkRefundLimit` and `Refunder` tests. No items or links were added.\n\n**Decision for you**\n- I did not add a new draft item for `InvalidRefundAmountError`. AGENTS.md asks for a draft item when new behavior is added. I treated this as a change to how an existing rejection is reported, not new behavior. If you want the new error traced, I can add a draft item linked to its check and test.\n\nI haven't committed or opened a pull request.",
+ "date": "2026-10-24"
+}

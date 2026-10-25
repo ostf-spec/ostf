@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.ts-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 2163,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 41.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 15624,
+  "cache_read_input_tokens": 160762,
+  "output_tokens": 3733,
+  "cost": 0.1523768
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws the new `InvalidRefundAmountError` for a refund of zero or a negative amount. A refund that exceeds what's left on the charge still throws `RefundTooLargeError`. All 37 tests pass, and `ostf check --base main` reports 41 items and 114 valid links, with no errors. I haven't committed anything.\n\n**Changes**\n- **`src/refunds.ts`:** I added `InvalidRefundAmountError`, and `checkRefundLimit` checks `amount <= 0` before the too-large check. I left the function's doc comment alone, so it doesn't mention the new error.\n- **`src/refunds.test.ts`:** the zero-amount assertion that expected `RefundTooLargeError` now sits in a new test. That test checks both zero and a negative amount against `InvalidRefundAmountError`.\n- **`trace/requirements.yaml`:** a new item, `R-REFUND-POSITIVE`, with `status: draft`. It's linked to `checkRefundLimit` and to the new test.\n- **`trace.lock`:** updated only by `ostf stamp`, not edited by hand.\n\n**Items and links `ostf check` reports as added**\n- item added: `R-REFUND-POSITIVE`\n- link added: `R-REFUND-POSITIVE refines N-REFUNDS`\n- link added: `src/refunds.ts#checkRefundLimit implements R-REFUND-POSITIVE`\n- link added: `src/refunds.test.ts#checkRefundLimit%20>%20rejects%20a%20refund%20of%20zero%20or%20a%20negative%20amount verifies R-REFUND-POSITIVE`\n\n**Stamps**\nThe check had flagged the `R-REFUND-LIMIT` links to `checkRefundLimit` and its test as suspect, because the code had changed. I rechecked the item against the code, and it's still true: the limit and approval rules are unchanged, and only the error for non-positive amounts moved. The tests passed, so I stamped those two links and the three new ones.\n\n**Behavior change for callers**\nAnything that catches `RefundTooLargeError` to handle a zero or negative refund will now see `InvalidRefundAmountError` instead. `Refunder.refund` goes through `checkRefundLimit`, so it's affected too. No other code in `src` catches `RefundTooLargeError`; I only searched for the name, and the one other mention was an existing assertion in `src/refunds.test.ts`.",
+ "date": "2026-10-24"
+}

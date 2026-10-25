@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 15211,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 46786,
+  "cache_read_input_tokens": 184029,
+  "output_tokens": 3350,
+  "cost": 0.23907889999999998
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "`tax` is now `salesTax` in the new `src/salestax.ts`, and the full test suite passes (36 tests). I haven't committed anything or opened a pull request.\n\n**What changed**\n- `salesTax` moved to `src/salestax.ts`, together with `roundHalfUp`, which only it used. The behaviour is the same.\n- `price` in `src/pricing.ts` now calls `salesTax`. I renamed its local variable from `salesTax` to `taxAmount` so the two names don't clash.\n- The two `tax` tests moved to a new `src/salestax.test.ts` under `describe(\"salesTax\")`, so the test and the function share a name.\n- `trace/requirements.yaml`: `R-TAX-RATE` and `R-TAX-EXEMPT` now point at `src/salestax.ts#salesTax` and the moved tests.\n- `README.md`: the module table has a new `salestax.ts` row, and `pricing.ts` no longer mentions sales tax.\n\n**OSTF**\n- None of the code involved is marked risk-relevant, so I didn't need to ask first.\n- `ostf check --base main` reported no errors or diagnostics. It named `R-TAX-RATE` and `R-TAX-EXEMPT` as the impacted items.\n- The tests it listed for impact were:\n  - `src/pricing.test.ts#price > taxes the subtotal after discounts`\n  - `src/salestax.test.ts#salesTax`\n  - `src/salestax.test.ts#salesTax > is zero for a tax-exempt customer`\n  - `src/salestax.test.ts#salesTax > rounds half up to the cent`\n- No items were added, changed or removed.\n- **Links added:**\n  - `src/salestax.ts#salesTax` implements `R-TAX-EXEMPT`\n  - `src/salestax.ts#salesTax` implements `R-TAX-RATE`\n  - `src/salestax.test.ts#salesTax > is zero for a tax-exempt customer` verifies `R-TAX-EXEMPT`\n  - `src/salestax.test.ts#salesTax > rounds half up to the cent` verifies `R-TAX-RATE`\n- **Links removed:** the four matching links on `src/pricing.ts#tax` and the old `tax` tests in `pricing.test.ts`.\n- **Stamped:** I rechecked those four new links and the suspect `src/pricing.ts#price` implements `R-TAX-RATE` link against the item text, and the tests pass. I stamped all five, and they now show as valid. No item text is made false by the change.\n\n`salestax.ts` imports the `Region` type from `pricing.ts`, and `pricing.ts` imports `salesTax` back. The type import is erased at runtime, so there's no real cycle. If you'd rather avoid the circular import, `Region` could move into `salestax.ts`.",
+ "date": "2026-10-24"
+}

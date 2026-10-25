@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2320,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 13985,
+  "cache_read_input_tokens": 97029,
+  "output_tokens": 2668,
+  "cost": 0.005102289999999999
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Summary: the change is a behavior-neutral refactor, but OSTF still flags three suspect links on `applyDiscount`.**\n\n**What changed:** In `src/pricing.ts`, `applyDiscount` replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if` that clamps to `MAX_DISCOUNT_PERCENT`. I checked the two forms against NaN, -0, negatives, 0, 50, 51, 100 and Infinity, and they return identical values in every case. The 50% cap is still enforced.\n\n**Tests:** `npm test` passes, 36 of 36. The pricing tests pass 7 of 7, including `caps at fifty percent` and `rejects an expired code`.\n\n**OSTF impact against main:**\n- Changed: `src/pricing.ts#applyDiscount`, which implements R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT.\n- Tests that matter: `src/pricing.test.ts#applyDiscount` and its subtests `caps at fifty percent` and `rejects an expired code`.\n- `ostf check --base main` reports 40 items and 111 links, 108 valid. It flags all three links as `suspect … BODY_CHANGED` and exits 1. It reports no added items or links.\n\n**Things you should decide on:**\n- **Suspect links:** The three links are suspect only because the function body changed. The tests pass, so per AGENTS.md they can be re-checked and stamped with `ostf stamp '<link>'`. I haven't stamped them because you asked for a summary, and stamping writes to `trace.lock`. Say the word and I'll do it, quoting each link as check prints it.\n- **Risk relevance:** R-DISCOUNT-CAP guards against a mistyped code giving orders away, which ties to RISK-WRONG-CHARGE. AGENTS.md says to ask before changing risk-relevant code. This edit is behavior-neutral, but you should confirm you're comfortable with it.\n- **Unchanged items:** I didn't edit any trace item or `trace.lock`.",
+ "date": "2026-10-24"
+}

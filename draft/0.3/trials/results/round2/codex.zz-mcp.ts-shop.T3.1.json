@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T3.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4020,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 69.3
+ },
+ "usage": {
+  "input_tokens": 221790,
+  "cached_input_tokens": 158080,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1845,
+  "reasoning_output_tokens": 56
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented `InvalidRefundAmountError` for zero and negative refunds.\n\nAll 37 tests pass. `ostf check --base main` passes with 115 valid links.\n\nTrace impact: `R-REFUND-LIMIT` and new draft `R-REFUND-AMOUNT`. Added links connect the draft to `N-REFUNDS`, `checkRefundLimit`, `InvalidRefundAmountError`, and the new test.\n\nImpact-listed tests passed:\n- `checkRefundLimit`\n- `rejects more than is left on the charge`\n- `rejects zero and negative amounts`\n- `Refunder > totals refunds per account and UTC day`",
+ "date": "2026-10-24"
+}

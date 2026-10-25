@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T1.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2640,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.4
+ },
+ "usage": {
+  "input_tokens": 72629,
+  "cached_input_tokens": 58752,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 570,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.Refund`](payments/refund.go:63) exists to provide refunds while protecting the business from abuse. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** Refunds cannot exceed the remaining charge; an account’s refunds above **500.00 per UTC day** require second approval. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Return money to the original payment method, using the stored charge transaction.\n- **R-AUDIT-MONEY:** Record the refund in the audit log.\n\nThese support the **N-REFUNDS** need: customers receive refunds quickly without the business losing money to abuse.\n\nThe tests covering it are:\n\n- [`TestRefund`](payments/refund_test.go:34): Directly exercises `Refund`, checking the original transaction receives the refund, the audit entry records its action/amount/receipt, and a subsequent refund exceeding the remaining charge is rejected.\n- [`TestRefundDailyLimit`](payments/refund_test.go:58): Directly verifies accumulation across charges for one account, rejection above the daily limit without approval, and allowance the next UTC day.\n- [`TestCheckRefundLimit`](payments/refund_test.go:12): Covers the helper indirectly supporting `Refund`: valid amounts, excess amounts, zero, daily-limit rejection, and approval allowing an over-limit refund.\n\nNo files changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

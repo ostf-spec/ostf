@@ -1,0 +1,61 @@
+{
+ "run": "claude.py-shell.go-shop.T2.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6662,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 22645,
+  "cache_read_input_tokens": 228383,
+  "output_tokens": 4824,
+  "cost": 0.16169430000000004
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "Checkout now adds shipping to the order total. An order with at least 100.00 left after discounts ships free, and any other order pays a flat 5.99. `go test ./...` passes and `ostf check --base main` reports no errors (115 of 115 links valid). I haven't committed anything or opened a PR.\n\n**What changed**\n- **Shipping rule:** the new `pricing/shipping.go` holds `Shipping(net)`, which returns 0 at 100.00 or more and 5.99 otherwise. The threshold is judged on the subtotal after discounts, before tax.\n- **Quote:** `pricing/quote.go` gets a `Shipping` field on `Quote`, and `Price` now includes it in `Total`. `PlaceOrder` charges `quote.Total`, so the customer is charged the shipping too.\n- **Tax:** tax is still computed on the discounted subtotal only, so shipping is untaxed. You didn't say either way, so say so if shipping should be taxed.\n- **New tests:** `TestShipping` covers 99.99, 100.00 and larger orders. `TestPriceShipping` covers a discount that drops the order below 100.00, one that leaves it at or above, and no discount.\n- **Existing tests updated:** `TestPrice` and `TestPlaceOrder` had their expected totals changed (10,947 and 28.99), because those orders are under 100.00 and now pay shipping.\n\n**Trace items**\n- **Added:** R-SHIPPING, with `status: draft`, linked to its code and tests in `trace/requirements.yaml`. It has these links:\n  - R-SHIPPING refines N-BUY\n  - `Shipping` and `Price` implement R-SHIPPING\n  - `TestShipping`, `TestPriceShipping` and `TestPlaceOrder` verify R-SHIPPING\n- **Impact lists:**\n  - **Items:** R-TAX-RATE and R-CHECKOUT-ORDER.\n  - **Tests:** `TestPlaceOrder`, `TestPriceShipping`, `TestShipping`, `TestPrice` and `TestTax`.\n- **Stamped:** I rechecked R-TAX-RATE and R-CHECKOUT-ORDER against the code and they are still true, so I stamped the suspect links (`Price` implements R-TAX-RATE, `TestPrice` verifies R-TAX-RATE, `TestPlaceOrder` verifies R-CHECKOUT-ORDER) and the new unstamped ones. `trace.lock` changed only through `ostf stamp`, not by hand.\n\n**Charge limit:** R-CHARGE-AMOUNT caps a charge at 10,000.00, and shipping is added to the charged total. An order whose pre-shipping total is between 9,994.01 and 10,000.00 can't both be under the 100.00 threshold and over that cap, so it's fine in practice. The catalog assumption behind that cap is worth a quick look from you.",
+ "date": "2026-10-24"
+}

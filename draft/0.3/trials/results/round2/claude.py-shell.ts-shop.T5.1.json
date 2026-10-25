@@ -1,0 +1,58 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 5690,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 46.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 21105,
+  "cache_read_input_tokens": 279990,
+  "output_tokens": 5238,
+  "cost": 0.16484700000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "I implemented SHOP-57, the volume discount. It's uncommitted, and I didn't open a PR. The tests pass (38 of 38) and `ostf check --base main` reports no errors (115 of 115 links valid).\n\nI had no Jira access, so I worked from `R-VOLUME-DISCOUNT` in `trace.yaml`, which cites `jira:SHOP-57`. That item is the only spec I had. It says a cart line of 10 or more units gets 5% off that line, rounded down to the cent, before any discount code, and that it counts toward the 50% cap.\n\n**What changed**\n- **`src/pricing.ts`:** new `volumeDiscount(lines)`. `price()` takes an optional trailing `volume` argument, so existing callers still work. The code discount is calculated on the subtotal after the volume discount. Both discounts together are limited to 50% of the original subtotal.\n- **`src/checkout.ts`:** `placeOrder` passes `volumeDiscount(lines)` to `price()`.\n- **`src/pricing.test.ts`:** two new tests, covering the rounding and 10-unit threshold, and the ordering and cap.\n\n**Trace**\n- **Items:** I linked the existing item `R-VOLUME-DISCOUNT` with `@req` comments. I didn't invent any IDs or edit any item text.\n- **Impact:** `check` lists these items as affected:\n  - `R-VOLUME-DISCOUNT`\n  - `R-TAX-RATE`\n  - `R-CHECKOUT-ORDER`\n  - `R-CHECKOUT-SESSION`\n- **Impact tests:** it lists these tests:\n  - `checkout.test.ts` > \"places an order\"\n  - `checkout.test.ts` > \"needs a valid session\"\n  - `pricing.test.ts` > \"price > taxes the subtotal after discounts\"\n  - `pricing.test.ts` > \"tax > rounds half up to the cent\"\n  - both new `volumeDiscount` tests\n- **Links added:**\n  - `pricing.ts#volumeDiscount` implements `R-VOLUME-DISCOUNT`\n  - `pricing.ts#price` implements `R-VOLUME-DISCOUNT`\n  - the two new tests verify `R-VOLUME-DISCOUNT`\n- **Stamps:** I rechecked each affected item against the code, ran the tests, then stamped the 7 links that `check` flagged as suspect or unstamped. That changed `trace.lock` through `ostf stamp`; I didn't edit it by hand.\n\nNo existing item became false. The pricing and checkout code isn't marked risk-relevant. The charge validation in `payments.ts` is the code tied to `RISK-WRONG-CHARGE`, and I didn't touch it.\n\n**Open question:** `R-VOLUME-DISCOUNT` is at revision 2 and not marked draft. If the Jira ticket says something the item text doesn't, tell me and I'll adjust.",
+ "date": "2026-10-24"
+}

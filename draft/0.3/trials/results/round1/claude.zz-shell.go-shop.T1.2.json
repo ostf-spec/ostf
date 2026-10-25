@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 705,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 11.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 7782,
+  "cache_read_input_tokens": 48679,
+  "output_tokens": 916,
+  "cost": 0.0451679
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (payments/refund.go) is linked to three requirements in `trace.yaml`. I got this from `ostf context payments/refund.go#Refunder.Refund` and read no other source. I changed no files.\n\n**Why it exists**\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it): a refund can't exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval. It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds. It refines the need N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n- **R-AUDIT-MONEY**: every charge and refund appends an audit entry with the time, account, action, amount and receipt. It refines N-ACCOUNT-SAFE.\n- **R-REFUND-ORIGINAL**: a refund goes back to the payment method of the charge it refunds, never to another one.\n\nThe context output only shows R-REFUND-LIMIT and R-AUDIT-MONEY as implemented by `Refund`. R-REFUND-ORIGINAL is listed with `Gateway` and `Processor.receipt` in `payments/charge.go` as its implementers, not `Refund`.\n\n**Tests**\n\n| Test | Requirement | Link to `Refund` |\n|---|---|---|\n| `TestCheckRefundLimit` (`payments/refund_test.go:12`) | R-REFUND-LIMIT | Verifies `CheckRefundLimit`, a helper, not `Refund` directly. |\n| `TestRefundDailyLimit` (`payments/refund_test.go:58`) | R-REFUND-LIMIT | Verifies `CheckRefundLimit`, a helper, not `Refund` directly. |\n| `TestRefund` (`payments/refund_test.go:34`) | R-AUDIT-MONEY and R-REFUND-ORIGINAL | Carries a `// @req R-AUDIT-MONEY` comment, and is the only test that exercises `Refund` itself. |\n\nI didn't open the test bodies, so I can't say how much of the limit logic `TestRefund` covers through `Refund`.",
+ "date": "2026-10-24"
+}

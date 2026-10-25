@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1816,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 11.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 11151,
+  "cache_read_input_tokens": 48060,
+  "output_tokens": 882,
+  "cost": 0.058242
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` in `src/refunds.ts` exists to carry out refunds under three requirements. I got this from the repo's OSTF trace data (`ostf context src/refunds.ts#Refunder.refund`). I didn't open the source file, so I haven't checked the code against these requirements.\n\n**Why it exists** (the requirements it implements):\n- **R-REFUND-LIMIT** (accepted, **risk-relevant**) says a refund can't exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account also need a second approval. It controls the risk RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds. It refines the need N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n- **R-REFUND-ORIGINAL** (accepted) says a refund goes back to the payment method of the charge it refunds, never to another one. The link is tagged in the code with `@req`. `Gateway` and `Processor.receipt` in `src/payments.ts` implement the same requirement.\n- **R-AUDIT-MONEY** (accepted) says every charge and refund appends an audit entry with the time, account, action, amount and receipt. It refines the need N-ACCOUNT-SAFE. `Processor.charge` implements it for charges.\n\nAll three links from `refund` are currently valid.\n\n**Tests that cover it:** these are the tests linked to those requirements. None is linked to `refund` directly.\n- `src/refunds.test.ts#Refunder > refunds to the original transaction` verifies R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `src/refunds.test.ts#Refunder > totals refunds per account and UTC day` verifies R-REFUND-LIMIT.\n- `src/refunds.test.ts#checkRefundLimit` verifies R-REFUND-LIMIT. It tests the helper `checkRefundLimit`, which also implements that requirement.\n- `src/payments.test.ts#Processor > appends an audit entry` verifies R-AUDIT-MONEY. It tests the charge side.\n\nR-REFUND-LIMIT is risk-relevant, so I'd ask you before changing `refund`. I didn't run the tests or change any files.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.ts-shop.T1.3",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3532,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.2
+ },
+ "usage": {
+  "input_tokens": 100100,
+  "cached_input_tokens": 85376,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 755,
+  "reasoning_output_tokens": 10
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](/tmp/ostf-trials/runs/codex.zz-shell.ts-shop.T1.3/repo/src/refunds.ts:68) exists to support **N-REFUNDS**: customers get refunds quickly without the business losing money to abuse. Its OSTF context links it to three requirements:\n\n- **R-REFUND-LIMIT:** prevent refunds exceeding the charge’s remaining balance; require second approval when an account’s UTC-day refunds exceed 500.00. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** refund through the original payment transaction.\n- **R-AUDIT-MONEY:** record the refund in the audit log.\n\nTwo tests directly exercise it:\n\n- [`Refunder > refunds to the original transaction`](/tmp/ostf-trials/runs/codex.zz-shell.ts-shop.T1.3/repo/src/refunds.test.ts:50): checks the gateway transaction and amount, audit action/amount/receipt reference, and rejection of a subsequent refund exceeding the remaining balance.\n- [`Refunder > totals refunds per account and UTC day`](/tmp/ostf-trials/runs/codex.zz-shell.ts-shop.T1.3/repo/src/refunds.test.ts:63): checks aggregation across charges for one account, rejection above the daily limit, and allowance the next day.\n\nThe [`checkRefundLimit` suite](/tmp/ostf-trials/runs/codex.zz-shell.ts-shop.T1.3/repo/src/refunds.test.ts:32) additionally tests excessive and zero amounts, required approval, and allowed or approved refunds.\n\nThe existing tests do not explicitly exercise unknown receipts, concurrent refunds, or rollback after gateway failure. No files were changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.go-shop.T1.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3250,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.5
+ },
+ "usage": {
+  "input_tokens": 73231,
+  "cached_input_tokens": 58752,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 592,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[Refunder.Refund](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.1/repo/payments/refund.go:63) exists to give customers refunds while protecting against abuse. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** Refunds cannot exceed the remaining charge; account totals above 500.00 per UTC day require second approval. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Money returns to the original payment method, using the stored transaction.\n- **R-AUDIT-MONEY:** Refunds produce an audit entry.\n\nThe covering tests are:\n\n- [TestRefund](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.1/repo/payments/refund_test.go:34): Directly verifies the original transaction receives the refund, checks audit action/amount/receipt, and rejects refunds exceeding the remaining charge.\n- [TestRefundDailyLimit](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.1/repo/payments/refund_test.go:58): Directly verifies aggregation across charges for one account, rejection above the daily limit, and acceptance the next UTC day.\n- [TestCheckRefundLimit](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.1/repo/payments/refund_test.go:12): Tests the helper’s valid, excessive, zero, and daily-limit cases, including approval.\n\nNo files changed. Tests were inspected, not run.",
+ "date": "2026-10-24"
+}

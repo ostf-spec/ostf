@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T4.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4810,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 27030,
+  "cache_read_input_tokens": 267818,
+  "output_tokens": 8562,
+  "cost": 0.01236718
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "The rename is done and everything passes. `Tax` is now `SalesTax`, living in `pricing/salestax.go`, and `go test ./...` is green in all five packages. I haven't committed or opened a PR, since you didn't ask for one.\n\n**What changed**\n- `pricing/salestax.go` (new): `SalesTax`, same body and doc comment with the new name.\n- `pricing/tax.go`: the function is removed. `Region` stays here, since you asked only for the function to move. Say if you want `Region` moved too.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: the calls and the error message use `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt` so their `@req` links and trace entries stay the same.\n- `trace/requirements.yaml`: the code links for R-TAX-RATE and R-TAX-EXEMPT now point at `pricing/salestax.go#SalesTax`. Item text is unchanged.\n\n**OSTF**\n- Before editing, `ostf context` showed `Tax` linked to R-TAX-RATE and R-TAX-EXEMPT. Neither item is risk-relevant, so I didn't need to ask first.\n- After the rename, `ostf check` reported 5 suspect or unstamped links. I rechecked both items against the code, and both still hold. The affected tests pass. I then ran `ostf stamp` on those five links.\n- `ostf check --base main` now reports 40 items, 109 links, 109 valid, with no errors.\n- Impact against main:\n  - Items: R-TAX-RATE and R-TAX-EXEMPT.\n  - Tests: `TestTax`, `TestTaxExempt`, `TestPrice`.\n  - Links added: `pricing/salestax.go#SalesTax implements R-TAX-RATE` and `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`.\n  - Links removed: the two `pricing/tax.go#Tax` links.\n- `trace.lock` changed only through `ostf stamp`. I did not edit it by hand.",
+ "date": "2026-10-24"
+}

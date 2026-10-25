@@ -1,0 +1,57 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T2.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 8348,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 45.5
+ },
+ "usage": {
+  "input_tokens": 218556,
+  "cached_input_tokens": 186624,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1762,
+  "reasoning_output_tokens": 44
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented shipping in checkout: free for discounted subtotals of $100.00 or more, otherwise $5.99. Shipping appears in the quote and is included in the total charged.\n\nTests cover threshold boundaries and discounts affecting eligibility. All 37 tests pass; `ostf check --base main` passes.\n\nAdded draft requirement `R-CHECKOUT-SHIPPING`, linked to `N-BUY`, checkout implementation, and shipping tests.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,61 @@
+{
+ "run": "codex.zz-mcp.go-shop.T5.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 8552,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 78.1
+ },
+ "usage": {
+  "input_tokens": 363905,
+  "cached_input_tokens": 338688,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3584,
+  "reasoning_output_tokens": 126
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 7,
+ "finalMessage": "Implemented SHOP-57: eligible lines receive 5% off, rounded down per line, before discount codes. Combined discounts stay capped at 50%; tax applies afterward.\n\nValidation: `go test ./...`, `git diff --check`, and `ostf check --base main` pass with 117 valid links.\n\nTrace impact: `R-VOLUME-DISCOUNT`, `R-DISCOUNT-CAP`, `R-TAX-RATE`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`.\n\nAdded links:\n- `R-VOLUME-DISCOUNT`: `Cart.VolumeDiscount`, `Checkout.PlaceOrder`, `PriceWithVolumeDiscount`, and their three new tests.\n- `PriceWithVolumeDiscount`: `R-DISCOUNT-CAP` and `R-TAX-RATE`.\n- No new items.\n\nImpact-listed tests passed: `TestVolumeDiscount`, `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderVolumeDiscount`, `TestApplyDiscount/caps_at_fifty_percent`, `TestPriceWithVolumeDiscount`, `TestPrice`, and `TestTax`.",
+ "date": "2026-10-24"
+}

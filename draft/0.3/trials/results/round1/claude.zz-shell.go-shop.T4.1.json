@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1804,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 11273,
+  "cache_read_input_tokens": 110535,
+  "output_tokens": 2116,
+  "cost": 0.0773295
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` and lives in the new `pricing/salestax.go`. The build and all package tests pass. After I re-stamped the five links `ostf check` flagged, it reports 40 items and 109 valid links, with no errors.\n\n- **Move:** `Region` stays in `pricing/tax.go`. I updated the caller in `pricing/quote.go` and the calls in `pricing/tax_test.go`.\n- **Trace links:** In `trace/requirements.yaml`, the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. I did not edit `trace.lock` by hand. The stamps were run through `ostf stamp`.\n- **Risk-relevant code:** The `ostf context` output for `Tax` showed no risk-relevant marking, so I didn't stop to ask first.\n- **Items made false:** None.\n\nFor the pull request, `ostf check` reports these links as added:\n- `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n- `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n\nIt reports these as removed:\n- `pricing/tax.go#Tax implements R-TAX-EXEMPT`\n- `pricing/tax.go#Tax implements R-TAX-RATE`\n\nI stamped these five links after rechecking each item against the code and running the tests:\n- `pricing/quote.go#Price implements R-TAX-RATE`\n- `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n- `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n- `pricing/tax_test.go#TestTax verifies R-TAX-RATE`\n- `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

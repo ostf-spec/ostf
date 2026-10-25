@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.go-shop.T1.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4847,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 18439,
+  "cache_read_input_tokens": 78269,
+  "output_tokens": 2410,
+  "cost": 0.0056762900000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` (`payments/refund.go:63`) is the one path that sends money back to a customer for an earlier charge. It does four things in order:\n\n1. Looks up the charge by receipt ID. Unknown receipts return `ErrUnknownReceipt`.\n2. Works out what is left on that charge and what the account has already refunded today (UTC), then calls `CheckRefundLimit`.\n3. Calls `gateway.Refund` against the transaction of the original charge, so money goes back to the same card.\n4. Updates the per-charge and per-day totals and appends an audit entry.\n\nIt is the code behind two requirements in `trace/requirements.yaml`:\n\n- **R-REFUND-LIMIT:** a refund cannot exceed what is left of the charge, and refunds above 500.00 per account per UTC day need a second approval. It controls the risk RISK-REFUND-ABUSE.\n- **R-REFUND-ORIGINAL:** a refund goes back to the payment method of the charge it refunds.\n\nIt also carries the audit requirement R-AUDIT-MONEY, which says every refund must append an audit entry. The design item **D-REFUND-LEDGER** (`trace/design.yaml:13`) describes the two running totals it keeps. Those totals are what make the daily limit work.\n\n**Tests that cover it:**\n\n- `payments/refund_test.go#TestRefund`: a partial refund goes to the original transaction and writes a \"refund\" audit entry. A refund larger than what is left returns `ErrRefundTooLarge`. It is linked to R-REFUND-ORIGINAL, and its `@req` comment also names R-AUDIT-MONEY.\n- `payments/refund_test.go#TestRefundDailyLimit`: exercises the per-account daily total through `Refund`. It is linked to D-REFUND-LEDGER and R-REFUND-LIMIT.\n- `payments/refund_test.go#TestCheckRefundLimit`: tests the pure `CheckRefundLimit` function directly (zero or excess amounts, daily limit with and without approval). It is linked to R-REFUND-LIMIT, but it does not call `Refund`.\n\nTwo gaps in the trace links, which I noticed but did not change:\n\n- `TestRefund` does not check the daily limit, and `TestRefundDailyLimit` does not check the original-payment routing. Each test covers only part of what `Refund` does.\n- R-REFUND-ORIGINAL's `code` field lists `payments/charge.go#Gateway`, not `Refunder.Refund`. The link to `Refund` comes only from the `@req` comment on the function.\n\nI answered from the source, requirement and design YAML, and the test files. I did not run `go test` or the `ostf` tools.",
+ "date": "2026-10-24"
+}

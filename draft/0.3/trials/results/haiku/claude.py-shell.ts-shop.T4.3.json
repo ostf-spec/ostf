@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 3,
+  "ostfOutputTokens": 7732,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 33788,
+  "cache_read_input_tokens": 376592,
+  "output_tokens": 11833,
+  "cost": 0.01644242
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "The function is now `salesTax` in `src/salestax.ts`, and all 36 tests pass. Nothing is committed.\n\n**Changes**\n- **`src/salestax.ts`** (new): `salesTax`, plus its private helper `roundHalfUp`, which only `tax` used. It imports the `Region` type from `pricing.ts`; that import is type-only, so there is no runtime cycle.\n- **`src/pricing.ts`**: removed `tax` and `roundHalfUp`, imports `salesTax`. In `price`, the local was renamed from `salesTax` to `tax` so it doesn't shadow the import. The `Quote.tax` field is unchanged.\n- **`src/pricing.test.ts`**: imports and calls `salesTax`. I kept `describe(\"tax\")` so the existing test IDs in the trace links still match.\n- **`README.md`**: the file table lists `src/salestax.ts`.\n- **`trace/requirements.yaml`**: repointed the code links for `R-TAX-RATE` and `R-TAX-EXEMPT` from `pricing.ts#tax` to `salestax.ts#salesTax`. No item text changed.\n\n**Trace check**\n- Before the change, `ostf check --base main` reported 111 valid links.\n- After the move it reported 5 suspect or unstamped links. I rechecked each against its item text and code. Both items still hold, and the tests they verify pass. I then stamped the five links exactly as check printed them.\n- `ostf check --base main` now reports 111 valid links and no errors.\n- `trace.lock` changed because `ostf stamp` writes to it. I did not edit it by hand.\n- Only the root `trace.yaml` exists, so there was one check directory.\n- No item was made false and no risk-relevant code was touched. `pricing.ts#tax` carried no risk marker.\n\n**Impact (direct, against main)**\n- Items: `R-TAX-RATE` and `R-TAX-EXEMPT`.\n- Tests: `src/pricing.test.ts#tax > rounds half up to the cent`, `#tax > is zero for a tax-exempt customer`, `#price > taxes the subtotal after discounts`, and the `#tax` suite.\n- Links added: `src/salestax.ts#salesTax implements R-TAX-RATE` and `src/salestax.ts#salesTax implements R-TAX-EXEMPT`.\n- Links removed: the two `src/pricing.ts#tax implements …` links.",
+ "date": "2026-10-24"
+}

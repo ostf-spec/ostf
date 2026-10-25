@@ -1,0 +1,54 @@
+{
+ "run": "claude.py-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 740,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9382,
+  "cache_read_input_tokens": 87918,
+  "output_tokens": 1398,
+  "cost": 0.06031979999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**The change:** in `pricing/discount.go`, `ApplyDiscount` now caps the percentage with an `if` instead of the builtin `min(d.Percent, MaxDiscountPercent)`. The behavior is the same. A percentage over 50 is still clamped to 50, and the expiry check and rounding are untouched. It's a refactor with no functional effect.\n\n**Traceability impact (`ostf check --base main`):** the changed function is `ApplyDiscount`, which implements three items. All three links were flagged suspect (`BODY_CHANGED`):\n- `R-DISCOUNT-CAP`\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\n**Tests:** `TestApplyDiscount` passes on an uncached run. That covers `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent` and `rejects_expired`. `go test ./...` also passes across accounts, cart, inventory, payments and pricing.\n\n**Stamping:** I compared each of the three items against the new code, and each is still true. The tests above passed, so I ran `ostf stamp` on all three links. `ostf check` now reports 109 of 109 links valid.\n\n`trace.lock` now shows as modified. That came from `ostf stamp`, which is the sanctioned way to change it; I didn't edit it by hand. Because of that, commit it together with `discount.go`. No items were added and none became false.",
+ "date": "2026-10-24"
+}

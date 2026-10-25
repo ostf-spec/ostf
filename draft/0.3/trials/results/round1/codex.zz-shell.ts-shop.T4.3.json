@@ -1,0 +1,57 @@
+{
+ "run": "codex.zz-shell.ts-shop.T4.3",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7620,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 49.8
+ },
+ "usage": {
+  "input_tokens": 254863,
+  "cached_input_tokens": 233600,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1207,
+  "reasoning_output_tokens": 10
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it with its rounding helper to `src/salestax.ts`. Updated callers, tests, and trace links without changing behavior.\n\nAll 36 tests pass. `ostf check --base main` passes with 111 valid links. Trace stamps were updated using `ostf stamp`.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T5.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 6,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 6,
+  "stampCalls": 1,
+  "ostfOutputTokens": 35475,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 68.6
+ },
+ "usage": {
+  "input_tokens": 353383,
+  "cached_input_tokens": 313728,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2548,
+  "reasoning_output_tokens": 64
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "Implemented SHOP-57: eligible lines receive 5% off before discount codes, rounded down per line, with combined discounts capped at 50%. Checkout uses the discounted total.\n\nValidation: all 42 tests pass. OSTF check against `main`: 118 valid links, no errors.\n\nImpacted items: `R-VOLUME-DISCOUNT`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-TAX-RATE`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`.\n\nImpact-listed tests passed:\n- Checkout: `needs a valid session`, `places an order`, `charges the volume-discounted checkout total`.\n- applyDiscount: `caps at fifty percent`, `rejects an expired code`.\n- price: `taxes the subtotal after discounts`.\n- tax: `rounds half up to the cent`.\n- `volume discount` suite: qualification, per-line rounding, code ordering and tax, combined cap, and expired-code rejection.\n\nSeven links added: pricing and checkout implementations plus both test groups to `R-VOLUME-DISCOUNT`; pricing and the combined-cap test to `R-DISCOUNT-CAP`; expired-code test to `R-DISCOUNT-EXPIRY`. No items added. Verified links stamped through OSTF.",
+ "date": "2026-10-24"
+}

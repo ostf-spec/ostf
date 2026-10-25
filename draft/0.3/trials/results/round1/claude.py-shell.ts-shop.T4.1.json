@@ -1,0 +1,58 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4241,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 16806,
+  "cache_read_input_tokens": 193713,
+  "output_tokens": 3049,
+  "cost": 0.11712130000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "I renamed `tax` to `salesTax` and moved it into the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` now reports 111 of 111 links valid with no errors.\n\n- **Code:** `roundHalfUp` was only used by `tax`, so it moved with it. `src/pricing.ts` now imports `salesTax`. Inside `price`, I renamed the local variable `salesTax` to `taxDue` so it wouldn't shadow the import.\n- **Tests:** `src/pricing.test.ts` now imports and calls `salesTax`, and its `describe` block is renamed to match. I left the tests in that file rather than moving them.\n- **Trace links:** In `trace/requirements.yaml`, R-TAX-RATE and R-TAX-EXEMPT now point at `src/salestax.ts#salesTax` and the renamed tests. The item text is unchanged, and no item became false.\n- **Stamps:** I confirmed the tax behavior is unchanged and the tests pass, then ran `ostf stamp` on the five links check flagged.\n\n**Links for the pull request** (`ostf check` reports them as added):\n- `src/salestax.ts#salesTax` implements R-TAX-EXEMPT\n- `src/salestax.ts#salesTax` implements R-TAX-RATE\n- `src/pricing.test.ts#salesTax > is zero for a tax-exempt customer` verifies R-TAX-EXEMPT\n- `src/pricing.test.ts#salesTax > rounds half up to the cent` verifies R-TAX-RATE\n\nThe old `src/pricing.ts#tax` links and the two `src/pricing.test.ts#tax > …` links are reported as removed. `src/pricing.ts#price` was flagged as suspect only because its body changed, and it is now stamped.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

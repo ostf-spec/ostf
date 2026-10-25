@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T4.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 13,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 1,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 1,
+  "ostfOutputTokens": 15778,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 50.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 55056,
+  "cache_read_input_tokens": 441249,
+  "output_tokens": 8221,
+  "cost": 0.01953639
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "I renamed `Tax` to `SalesTax` and moved it into `pricing/salestax.go`. Everything builds, `go vet` is clean, and `go test ./...` passes in all five packages.\n\n**What changed**\n- `pricing/salestax.go` (new): `SalesTax`, same body and doc comment, renamed.\n- `pricing/tax.go`: keeps only the `Region` type.\n- `pricing/quote.go`: `Price` calls `SalesTax`. The `Quote.Tax` field is unchanged.\n- `pricing/tax_test.go`: calls `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt` so their trace links don't change name.\n- `trace/requirements.yaml`: the `code:` anchors for R-TAX-RATE and R-TAX-EXEMPT now point at `pricing/salestax.go#SalesTax`. The item text is unchanged.\n\n**OSTF**\nTax is not risk-relevant, so I didn't need to ask. Before the change, `pricing/tax.go#Tax` had two valid links: R-TAX-EXEMPT and R-TAX-RATE, each verified by its test.\n\nI reviewed the moved code against both items. Both still describe what it does, and the tests passed. I then ran `ostf stamp` on the five links that needed it. `ostf check --base main` now reports 40 items, 109 valid links, no suspect or unstamped links, and exits 0.\n\n- **Links added:** `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT` and `pricing/salestax.go#SalesTax implements R-TAX-RATE`.\n- **Links removed:** `pricing/tax.go#Tax implements R-TAX-EXEMPT` and `pricing/tax.go#Tax implements R-TAX-RATE`.\n- **Items with changed code:** R-TAX-RATE (via `pricing/quote.go#Price`, `SalesTax`, and `TestTax`) and R-TAX-EXEMPT (via `SalesTax` and `TestTaxExempt`).\n- **Tests the impact lists:** `TestPrice`, `TestTax` and `TestTaxExempt`. All three pass.\n\n`ostf stamp` wrote to `trace.lock`, which is the sanctioned route; I did not edit that file by hand. The stamp run was the only change to it.",
+ "date": "2026-10-24"
+}

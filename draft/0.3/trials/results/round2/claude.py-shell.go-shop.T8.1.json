@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 462,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9436,
+  "cache_read_input_tokens": 107549,
+  "output_tokens": 1196,
+  "cost": 0.0604829
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes, with 40 items and 109 of 109 links valid.\n\n**What was wrong:** the lock entry for `payments/refund.go#CheckRefundLimit` implements `R-REFUND-LIMIT` no longer matched the function's source. The link showed up as `LOCK_INVALID` and unstamped.\n\n**What I did:**\n- I rechecked the item against the code. It says a refund can't exceed what's left of the charge, and refunds above 500.00 per account per UTC day need a second approval. `CheckRefundLimit` does that: it rejects amounts that are zero, negative or above what's left on the charge, and above `DailyRefundLimit` (50,000, i.e. 500.00) without approval. `dayKey` keys the daily total by UTC day.\n- I ran `TestCheckRefundLimit` and `TestRefundDailyLimit` uncached, and both passed.\n- I ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`.\n\n**Changes:** only `trace.lock` changed, and only through `ostf stamp`. I didn't touch any code, tests or items, and no items or links were added.\n\n**Impact:** `ostf check` lists nothing under \"impact against main (direct)\", so there are no impacted items or tests to name.\n\n`R-REFUND-LIMIT` is marked risk-relevant. I didn't change its code, only re-stamped the link. Still, you may want to review the stamp, because I don't know what changed in the function to invalidate it.",
+ "date": "2026-10-24"
+}

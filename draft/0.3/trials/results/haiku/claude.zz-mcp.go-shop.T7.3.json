@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 4,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 14376,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 46366,
+  "cache_read_input_tokens": 150714,
+  "output_tokens": 3158,
+  "cost": 0.012360540000000001
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is behavior-neutral. It rewrites the 50% cap in `ApplyDiscount` from `min(...)` to an explicit `if`, and every test in the repo passes.\n\n**The change** (`pricing/discount.go`, 4 lines added, 1 removed)\n\n`percent := min(d.Percent, MaxDiscountPercent)` became:\n\n```go\npercent := d.Percent\nif percent > MaxDiscountPercent {\n    percent = MaxDiscountPercent\n}\n```\n\nFor `int64` values this returns the same result as `min` for every input, including negative percentages and exactly 50. Nothing else in the diff changes.\n\n**Trace impact** (`ostf check --base main`, read-only)\n\n- Diagnostics: none.\n- Changed anchor: `pricing/discount.go#ApplyDiscount`.\n- Items impacted: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`.\n- Tests impacted: `pricing/discount_test.go#TestApplyDiscount`, `#TestApplyDiscount/caps_at_fifty_percent`, `#TestApplyDiscount/rejects_expired`.\n- Items and links added: none.\n- Links marked `suspect` (`BODY_CHANGED`): the three `ApplyDiscount implements` links, one per item above.\n\n**Tests run**\n\n- `go test -count=1 ./...`: all five packages pass (accounts, cart, inventory, payments, pricing).\n- `go vet` on `pricing` and `cart`: clean.\n- `TestApplyDiscount` and its subtests pass, including `caps_at_fifty_percent`.\n\n**What I did not do**\n\n- I did not run `ostf stamp`. The three suspect links need their items rechecked against the code. The code is equivalent and the tests pass, so you can stamp them, but that is your call.\n- I did not run `ostf context`. My call failed with an argument-schema error.\n- I did not edit `trace.lock` or any trace item.",
+ "date": "2026-10-24"
+}

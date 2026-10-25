@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.ts-shop.T1.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 475,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 10.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7230,
+  "cache_read_input_tokens": 29513,
+  "output_tokens": 820,
+  "cost": 0.0400793
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` in `src/refunds.ts` exists to implement three requirements. I got this from `ostf context src/refunds.ts#Refunder.refund`. I didn't change any files.\n\n**Why it exists**\n- **R-REFUND-LIMIT:** A refund must not exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval.\n  - This item is marked **risk-relevant**, so you would need to ask before changing the function.\n  - It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds.\n  - It refines N-REFUNDS: \"Customers get refunds quickly without the business losing money to abuse.\"\n  - The limit check itself is in `checkRefundLimit`.\n- **R-AUDIT-MONEY:** Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt. This refines N-ACCOUNT-SAFE.\n  - The code link for this item points to `Processor.charge` in `src/payments.ts`. `Refunder.refund` itself is not listed as an implementer.\n- **R-REFUND-ORIGINAL:** A refund goes back to the payment method of the charge it refunds, never to another one. This refines N-REFUNDS.\n  - The code links are `Gateway` and `Processor.receipt` in `src/payments.ts`.\n\n**Tests that cover it**\n\nAll of these are in `src/refunds.test.ts`, except the one marked otherwise.\n- `Refunder > totals refunds per account and UTC day` verifies R-REFUND-LIMIT.\n- `checkRefundLimit` verifies R-REFUND-LIMIT.\n- `Refunder > refunds to the original transaction` verifies both R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `Processor > appends an audit entry` in `src/payments.test.ts` verifies R-AUDIT-MONEY. It tests the charge path, not the refund.\n\nAll of these links show as valid. The tests are linked to the requirements rather than to `refund` itself, so coverage is traced at the requirement level.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6052,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 23257,
+  "cache_read_input_tokens": 172103,
+  "output_tokens": 4704,
+  "cost": 0.1573103
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "I implemented the volume discount from SHOP-57. I couldn't read the Jira issue itself, so I worked from the `R-VOLUME-DISCOUNT` item (revision 2) already in `trace.yaml`. All 38 tests pass, and `ostf check --base main` reports no errors (40 items, 115 valid links). I haven't committed anything or opened a PR.\n\n**What changed**\n- **`src/pricing.ts`:** the new `volumeDiscount(lines)` takes 5% off each cart line of 10 or more units, rounded down to the cent per line. `price()` has an optional trailing `volume` argument. It applies the volume discount first, then the discount code on what is left. The two together are capped at 50% of the subtotal.\n- **`src/checkout.ts`:** `placeOrder` passes `volumeDiscount(cart.lines())` into `price()`.\n- **`src/pricing.test.ts`:** two new tests cover the 10-unit threshold with rounding, and the discount ordering with the 50% cap.\n- **`trace.yaml`:** I added `code` and `tests` links to the existing `R-VOLUME-DISCOUNT` item and left its text alone.\n\n**Check this:** the item doesn't say what the discount code applies to. I read it as the subtotal after the volume discount, with the 50% cap on both discounts together. If product meant the code to apply to the full subtotal, `price()` needs a one-line change.\n\n**Impact that `ostf check` lists**\n- **Items:** `R-VOLUME-DISCOUNT`, `R-TAX-RATE`, `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`.\n- **Tests to run:** all passing.\n  - `checkout.test.ts`: `Checkout > places an order` and `Checkout > needs a valid session`.\n  - `pricing.test.ts`: `price > taxes the subtotal after discounts`, `tax > rounds half up to the cent`, and the two new `volumeDiscount` tests.\n- **Links added:** `R-VOLUME-DISCOUNT` is now linked to `price` and `volumeDiscount`, and to the two new `volumeDiscount` tests.\n- **Stamping:** `check` flagged three existing links as suspect (`placeOrder` to `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, and `price` to `R-TAX-RATE`). I rechecked them against the code, they still hold and their tests pass, so I stamped them. I stamped the four new links the same way.\n\nNo item became false, and I didn't touch any code marked risk-relevant.",
+ "date": "2026-10-24"
+}

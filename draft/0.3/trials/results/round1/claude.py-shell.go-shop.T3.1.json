@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3350,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 34.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 15027,
+  "cache_read_input_tokens": 184330,
+  "output_tokens": 3237,
+  "cost": 0.1513621
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. `ErrRefundTooLarge` is still returned for a refund above what's left on the charge.\n\n`go test ./...` passes. `ostf check --base main` ends with all 112 links valid and no errors. I haven't committed anything or opened a pull request.\n\n- **Tests:** in `TestCheckRefundLimit`, the existing \"zero\" case now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **New item:** `R-REFUND-POSITIVE` (`status: draft`) is in `trace/requirements.yaml`. It refines N-REFUNDS and is linked to `CheckRefundLimit` and `TestCheckRefundLimit`.\n- **R-REFUND-LIMIT:** its text is still true, so I left it unchanged. I rechecked it against the code and the passing tests.\n- **trace.lock:** it shows as modified because `ostf stamp` rewrote it. I didn't edit it by hand.\n- **Stamps:** `check` had flagged five links as suspect or unstamped, and I stamped each:\n  - `R-REFUND-POSITIVE` refines `N-REFUNDS`\n  - `CheckRefundLimit` implements `R-REFUND-LIMIT`\n  - `CheckRefundLimit` implements `R-REFUND-POSITIVE`\n  - `TestCheckRefundLimit` verifies `R-REFUND-LIMIT`\n  - `TestCheckRefundLimit` verifies `R-REFUND-POSITIVE`\n\n**Items and links `check` reports as added**, for the pull request:\n- Item added: `R-REFUND-POSITIVE`\n- Link added: `R-REFUND-POSITIVE` refines `N-REFUNDS`\n- Link added: `payments/refund.go#CheckRefundLimit` implements `R-REFUND-POSITIVE`\n- Link added: `payments/refund_test.go#TestCheckRefundLimit` verifies `R-REFUND-POSITIVE`\n\nAny caller that checks for `ErrRefundTooLarge` on a zero or negative amount will now get the new error instead. The only caller in the repo is `Refunder.Refund`, which passes the error straight through.",
+ "date": "2026-10-24"
+}

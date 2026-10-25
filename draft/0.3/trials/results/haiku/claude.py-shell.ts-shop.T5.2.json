@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 3,
+  "ostfOutputTokens": 11746,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 102.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 60098,
+  "cache_read_input_tokens": 888761,
+  "output_tokens": 21873,
+  "cost": 0.031847509999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 15,
+ "finalMessage": "SHOP-57 is implemented as `R-VOLUME-DISCOUNT`, and `ostf check --base main` is clean: 40 items, 119 links, 119 valid. I had no Jira access, so I took the issue text from the item already in `trace.yaml` (`external: jira:SHOP-57`, revision 2). All 41 tests pass. Nothing is committed.\n\n**What changed**\n- **`src/pricing.ts`**: new `volumeDiscount(lines)` takes 5% off each line with 10 or more units, rounded down to the cent per line. `price` now takes the priced lines instead of a subtotal. It applies the volume discount first, then the discount code to what's left, and caps total discounts at 50% of the subtotal.\n- **`src/checkout.ts`**: passes the cart lines to `price`.\n- **`src/pricing.test.ts`**: tests for the 10-unit threshold, per-line rounding, the discount ordering (a 10-unit line with a 10% code gives 1,450 off, not 1,500), and the combined 50% cap.\n- **`trace.yaml`**: `R-VOLUME-DISCOUNT` now has `refines: [N-FAIR-PRICE]`, its code links and its five test links.\n\n**Stamps and risk gate**\n- I stamped the links whose items still hold: `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` on `placeOrder`, `R-TAX-RATE` on `price` and its test, and the new `R-VOLUME-DISCOUNT` links.\n- The changed code isn't linked to any risk item, so I didn't need to ask before editing it.\n\n**Impact**\n- Direct impact: `checkout.ts#Checkout.placeOrder` (R-CHECKOUT-ORDER, R-CHECKOUT-SESSION) and `pricing.ts#price` (R-TAX-RATE, R-VOLUME-DISCOUNT).\n- Link added: `R-VOLUME-DISCOUNT refines N-FAIR-PRICE`, plus the code and test links above.\n\n**Item that may now be false**\n- `R-DISCOUNT-PERCENT` says a discount code \"takes its percentage off the subtotal\". For carts with a qualifying line, the code now applies after the volume discount, so the item is no longer literally true for those carts. I did not rewrite it. Please decide whether to amend it or accept the new wording.\n\n**Judgment calls to check**\n- The 50% cap is enforced on the combined discount in `price`, not in `applyDiscount`. `applyDiscount`'s own cap is unchanged.\n- The `refines: [N-FAIR-PRICE]` link on `R-VOLUME-DISCOUNT` is my choice. It matches the other pricing items, but you may want a different parent.\n- I didn't add a checkout-level test, so the volume discount is only covered at the pricing level.\n- `trace.lock` changed because `ostf stamp` writes to it. I did not edit it by hand.",
+ "date": "2026-10-24"
+}

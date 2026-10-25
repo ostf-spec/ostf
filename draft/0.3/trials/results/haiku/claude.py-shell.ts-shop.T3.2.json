@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T3.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5035,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 42.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 24284,
+  "cache_read_input_tokens": 251406,
+  "output_tokens": 8225,
+  "cost": 0.015374450000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "The change is in, and `ostf check --base main` now passes: 41 items, 114 links, 114 valid, exit 0. The 37 tests pass. I haven't committed or opened a PR.\n\n**Code**\n- `src/refunds.ts`: added `InvalidRefundAmountError`. `checkRefundLimit` now throws it when `amount <= 0`. A refund above what's left on the charge still throws `RefundTooLargeError`.\n- `src/refunds.test.ts`: the zero-amount case moved out of the \"rejects more than is left\" test into a new test, \"rejects a refund of zero or a negative amount\", which covers 0 and -1,000.\n\n**Trace**\n- Added `R-REFUND-AMOUNT-POSITIVE` (`status: draft`) to `trace/requirements.yaml`. It refines `N-REFUNDS`, is implemented by `src/refunds.ts#checkRefundLimit`, and is verified by the new test.\n- `ostf check` also flagged two suspect links on `R-REFUND-LIMIT`, because `checkRefundLimit` and its test body changed. I rechecked that item: it's still true, and its tests pass. I then stamped those links, plus the three new links. I did not edit the item text.\n- `trace.lock` changed only because `ostf stamp` wrote to it. I didn't edit it by hand.\n\n**For the pull request**\n- Impact list: `R-REFUND-LIMIT`, plus the changed `checkRefundLimit` tests and `InvalidRefundAmountError` in `src/refunds.ts`.\n- Items added: `R-REFUND-AMOUNT-POSITIVE`.\n- Links added: `R-REFUND-AMOUNT-POSITIVE refines N-REFUNDS`, `src/refunds.ts#checkRefundLimit implements R-REFUND-AMOUNT-POSITIVE`, and the new test verifying `R-REFUND-AMOUNT-POSITIVE`.\n\n`V-REFUND-REVIEW` requires a second engineer to review every refund-code change against `R-REFUND-LIMIT` before release, so this change needs that review.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.go-shop.T1.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2948,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.2
+ },
+ "usage": {
+  "input_tokens": 73120,
+  "cached_input_tokens": 48640,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 612,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.Refund`](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.3/repo/payments/refund.go:63) exists to refund customers while preventing abuse and recording money movements. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** Refunds cannot exceed the remaining charge; account refunds above 500.00 per UTC day require second approval. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Return money to the original payment method.\n- **R-AUDIT-MONEY:** Record refunds in the audit log.\n\nThese support the needs **N-REFUNDS** (quick refunds without losses to abuse) and **N-ACCOUNT-SAFE**.\n\nThe covering tests are:\n\n- [`TestRefund`](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.3/repo/payments/refund_test.go:34): Directly checks refunding the original transaction, the audit entry’s action/amount/receipt, and rejection above the remaining charge.\n- [`TestRefundDailyLimit`](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.3/repo/payments/refund_test.go:58): Directly checks aggregation across charges for one account, rejection above the daily limit, and allowance the following day.\n- [`TestCheckRefundLimit`](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T1.3/repo/payments/refund_test.go:12): Tests the helper used by `Refund`, covering valid amounts, zero, exceeding the remaining charge, and daily-limit handling with and without approval.\n\nNo files changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

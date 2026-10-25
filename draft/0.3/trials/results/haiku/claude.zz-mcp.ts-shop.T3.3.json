@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "ostfOutputTokens": 18630,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 46.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 61229,
+  "cache_read_input_tokens": 565820,
+  "output_tokens": 8149,
+  "cost": 0.0296891
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "The change is made and `ostf check --base main` is clean: 40 items, 111 valid, 0 suspect, no errors. I haven't committed or opened a PR, since you didn't ask for that.\n\n**Code changes**\n\n- `src/refunds.ts`: added `InvalidRefundAmountError`. `checkRefundLimit` now throws it when `amount <= 0`. Amounts above the charge's remainder still throw `RefundTooLargeError`, and the daily-limit check is unchanged.\n- `src/refunds.test.ts`: the zero-amount assertion now expects `InvalidRefundAmountError`, and a new test covers a negative amount (`-1`).\n\n**Tests:** the full suite passes (`npm test`: 37 pass, 0 fail).\n\n**OSTF**\n\n- `R-REFUND-LIMIT` is risk-relevant and controls `RISK-REFUND-ABUSE`. You approved the change.\n- Its two links were marked suspect (`BODY_CHANGED`). I rechecked that the item still holds: its text doesn't name the error for zero or negative refunds, and the tests pass. Then I stamped both links:\n  - `src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT`\n  - `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`\n- `ostf stamp` wrote to `trace.lock`, so that file shows as modified. I didn't edit it by hand.\n- No items or links were added, and no item text changed.\n- Impact to name in the summary and any PR: items `R-REFUND-LIMIT` (changed `checkRefundLimit`); tests `src/refunds.test.ts#checkRefundLimit` (and its two sub-tests) and `src/refunds.test.ts#Refunder > totals refunds per account and UTC day`. The new error class and its constructor have no items.\n\n**Open point:** earlier, `ostf context` returned `BROKEN_LINK` for `src/refunds.ts` and `src/refunds.ts#checkRefundLimit`. `ostf check` reports no diagnostics now, but I haven't rerun the context lookup to see whether that anchor-level problem is gone.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.go-shop.T6.3",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2939,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.3
+ },
+ "usage": {
+  "input_tokens": 124650,
+  "cached_input_tokens": 97408,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 505,
+  "reasoning_output_tokens": 48
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing: `ostf context R-CHECKOUT-TIMEOUT` returns `UNKNOWN_TARGET`. Checkout also has no timeout handling.\n\nShould I add this requirement as a draft and a failing regression test? The repository’s [AGENTS.md](AGENTS.md) requires linking only existing IDs, so I need this clarification before proceeding. No files changed.",
+ "date": "2026-10-24"
+}

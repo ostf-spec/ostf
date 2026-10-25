@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4928,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 19477,
+  "cache_read_input_tokens": 248626,
+  "output_tokens": 4672,
+  "cost": 0.14953460000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/cart.test.ts",
+  "src/cart.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "SHOP-57 is implemented: a cart line with 10 or more units now gets 5% off, and `ostf check --base main` is clean (40 items, 115 valid links). All 39 tests pass. Nothing is committed yet. I had no Jira access, so I worked from the `R-VOLUME-DISCOUNT` text in `trace.yaml`.\n\n- **Cart:** `Cart.volumeDiscount()` in `src/cart.ts` takes 5% off each line of 10 or more units, rounded down to the cent per line.\n- **Pricing:** `price()` in `src/pricing.ts` takes an optional `volume` amount. It takes the volume discount off first, then applies the discount code to what is left.\n- **Cap:** the two discounts together never exceed 50% of the subtotal. Without this, a 50% code on top of a volume discount would go over the cap.\n- **Checkout:** `placeOrder` in `src/checkout.ts` passes `cart.volumeDiscount()` into `price`.\n- **Tests:** I added one cart test and two pricing tests (ordering of the two discounts, and the cap).\n\n**For the PR description:**\n- **Links added:** `Cart.volumeDiscount` and `price` implement `R-VOLUME-DISCOUNT`. The new tests in `cart.test.ts` and `pricing.test.ts` verify it.\n- **Links re-stamped:** I rechecked `price → R-TAX-RATE`, `placeOrder → R-CHECKOUT-ORDER` and `placeOrder → R-CHECKOUT-SESSION`, which `check` flagged as suspect. They still hold, and I stamped them after the tests passed.\n- **Trace files:** `trace.lock` changed only through `ostf stamp`. `trace.yaml` is untouched.\n- **No item made false:** no existing item became false. `R-DISCOUNT-CAP` is still true, though its links point only at `applyDiscount` and not at the new capping in `price`. Say if you want that link added.",
+ "date": "2026-10-24"
+}

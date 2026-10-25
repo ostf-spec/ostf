@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T6.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5705,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 39.0
+ },
+ "usage": {
+  "input_tokens": 156201,
+  "cached_input_tokens": 138752,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 520,
+  "reasoning_output_tokens": 36
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files; OSTF reports `UNKNOWN_TARGET`. Checkout also has no payment timeout, so the requested test would currently fail.\n\nShould I register this requirement as a draft and add a failing regression test? [AGENTS.md](AGENTS.md) requires links to existing requirement IDs. No files changed.",
+ "date": "2026-10-24"
+}

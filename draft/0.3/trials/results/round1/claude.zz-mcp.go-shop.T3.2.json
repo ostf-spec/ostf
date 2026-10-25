@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T3.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12276,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 37.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 43566,
+  "cache_read_input_tokens": 200702,
+  "output_tokens": 2599,
+  "cost": 0.2768606
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. `ErrRefundTooLarge` is now only for refunds above what's left of the charge. The payments tests pass.\n\n- **`payments/refund.go`:** I added `ErrInvalidRefundAmount` and split the old combined check into two.\n- **`payments/refund_test.go`:** The \"zero\" case of `TestCheckRefundLimit` now expects the new error, and I added a \"negative\" case.\n- **OSTF check:** `ostf check --base main` reported no errors and no added or removed items or links. Two links were suspect because the code and test bodies changed: `CheckRefundLimit` implements `R-REFUND-LIMIT`, and `TestCheckRefundLimit` verifies it. I rechecked the item against the code, ran the tests, and stamped both. I did not edit `trace.lock` by hand.\n- **Requirement text:** `R-REFUND-LIMIT` is still true, so I left it alone.\n- **Callers:** Nothing else in the repo referenced `ErrRefundTooLarge` for zero or negative amounts. `Refunder.Refund` passes the error through, so any external caller that checks for `ErrRefundTooLarge` on those amounts will now see the new error.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

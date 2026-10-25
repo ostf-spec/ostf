@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 29,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 10,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 5,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "ostfOutputTokens": 55662,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 109.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 169740,
+  "cache_read_input_tokens": 1300205,
+  "output_tokens": 20038,
+  "cost": 0.18459496999999997
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 13,
+ "finalMessage": "SHOP-57 is implemented in the working tree. I haven't committed or opened a PR, since you didn't ask for that. All 39 tests pass, and `ostf check --base main` reports no diagnostics.\n\nThe requirement was already in `trace.yaml` as `R-VOLUME-DISCOUNT` (Jira SHOP-57, revision 2) with no code or test links. I left its text and revision alone.\n\n**What changed**\n- `src/pricing.ts`: added `volumeDiscount(lines)`, which takes 5% off each line of 10 or more units, rounded down to the cent. `price()` now takes cart lines instead of a subtotal. It applies the volume discount first, then the discount code to what remains. The total discount is capped at 50% of the subtotal, with the volume discount counted toward that cap.\n- `src/checkout.ts`: passes the cart lines to `price()`.\n- `src/pricing.test.ts`: updated the existing `price` call and added three tests: the volume discount rounding, volume plus code, and the combined cap.\n- `trace.yaml`: `R-VOLUME-DISCOUNT` now declares `code` and `tests` links.\n- `trace.lock`: updated by `ostf stamp`, not edited by hand.\n\n**Interpretation to confirm:** I read \"before any discount code applies\" as the code taking its percentage off the subtotal after the volume discount. The other reading is that the code takes its percentage off the full subtotal and only the cap counts the volume discount. Tell me if you meant that, and I'll change it.\n\n**Items and links from the impact list**\n- Impact items: R-CHECKOUT-ORDER and R-CHECKOUT-SESSION (via `Checkout.placeOrder`), R-TAX-RATE (via `pricing.ts#price` and its test), and R-VOLUME-DISCOUNT.\n- Tests in the impact list: `checkout.test.ts` \"needs a valid session\" and \"places an order\"; `pricing.test.ts` \"price\", \"price > applies the volume discount before the code\", \"price > caps the volume and code discounts together at fifty percent\", \"price > taxes the subtotal after discounts\", \"tax > rounds half up to the cent\", \"volumeDiscount\", and \"volumeDiscount > takes five percent off lines of ten or more units, rounded down\".\n- Links added (5): the three volume tests verifying R-VOLUME-DISCOUNT, and `pricing.ts#price` and `pricing.ts#volumeDiscount` implementing it.\n- Links that went suspect and were restamped (4): `placeOrder` implements R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, the tax test verifies R-TAX-RATE, and `pricing.ts#price` implements R-TAX-RATE. I reread each item against the code and the tests passed before stamping.\n\nNo risk-relevant code was touched; none of the changed anchors are marked risk-relevant.",
+ "date": "2026-10-24"
+}

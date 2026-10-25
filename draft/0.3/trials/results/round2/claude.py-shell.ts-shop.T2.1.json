@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T2.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7203,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 47.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 24089,
+  "cache_read_input_tokens": 231224,
+  "output_tokens": 5373,
+  "cost": 0.17324440000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "Checkout now adds shipping to the order total. An order is free to ship when its subtotal after discounts is at least 100.00. Any other order pays a flat 5.99. All 38 tests pass, and `ostf check --base main` reports 116 of 116 links valid. I haven't committed anything or opened a PR.\n\n**Changes**\n- **Pricing:** `src/pricing.ts` has a new `shipping()` function and constants for the 100.00 threshold and the 5.99 fee. `price()` adds the fee to the total, and `Quote` has a new `shipping` field. Checkout picks this up through `price()`, so `src/checkout.ts` is unchanged.\n- **Tax:** Shipping is not taxed. You didn't say either way, and this keeps R-TAX-RATE true as written. Tell me if shipping should be taxed.\n- **Tests:** The new tests cover the boundary (100.00 vs 99.99), a 10% discount that drops an order below the threshold, and a large order that ships free through checkout.\n\n**Existing tests I changed**\n- The \"places an order\" test in `src/checkout.test.ts` now expects 28.99 instead of 23.00, because that 20.00 order now pays shipping.\n- The \"taxes the subtotal after discounts\" test in `src/pricing.test.ts` now expects the `shipping: 599` field and a 109.47 total.\n\n**Trace**\n- **New item:** I added `R-SHIPPING-FEE` as `status: draft`, refining N-BUY. It links to `shipping` and `price`, and to the two new tests.\n- **No items made false:** R-TAX-RATE and R-CHECKOUT-ORDER are still true. I rechecked them, ran their tests, and stamped their links.\n- **Impact list from `ostf check`:**\n  - Items: R-SHIPPING-FEE, R-TAX-RATE, R-CHECKOUT-ORDER.\n  - Tests:\n    - `src/checkout.test.ts#Checkout > places an order`\n    - `src/checkout.test.ts#Checkout > ships a large order free`\n    - `src/pricing.test.ts#price > ships free from 100.00 after discounts and charges 5.99 below`\n    - `src/pricing.test.ts#price > taxes the subtotal after discounts`\n    - `src/pricing.test.ts#tax > rounds half up to the cent`\n- **Added by check:**\n  - Item: R-SHIPPING-FEE.\n  - Links: `R-SHIPPING-FEE refines N-BUY`; `src/pricing.ts#shipping` and `src/pricing.ts#price` each implement it; and the two new tests verify it.\n- **Lock file:** `ostf stamp` rewrote `trace.lock`. I didn't edit it by hand.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,61 @@
+{
+ "run": "claude.zz-mcp.go-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 29442,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 83861,
+  "cache_read_input_tokens": 301625,
+  "output_tokens": 4910,
+  "cost": 0.4147425
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "Checkout now adds shipping to the order total. The full test suite passes, and `ostf check --base main` reports no errors and no unresolved links.\n\n**How it works**\n- **Rule:** `pricing/shipping.go` has a `Shipping(amount)` function. It returns 0 when the subtotal after discounts is 100.00 or more, and 5.99 otherwise.\n- **Total:** `Price` in `pricing/quote.go` calls `Shipping` on the discounted subtotal. It stores the result in a new `Quote.Shipping` field and includes it in `Quote.Total`.\n- **Charge:** `PlaceOrder` charges `Quote.Total`, so it needed no change and the customer is billed the shipping.\n- **Tax:** I left shipping untaxed. The existing tax rule covers only the subtotal after discounts. Tell me if shipping should be taxed.\n\n**Tests**\n- New `pricing/shipping_test.go`:\n  - `TestShipping` covers 0, 99.99, exactly 100.00 and above.\n  - `TestPriceShipping` checks a 100.00 cart with a 10% discount (90.00 after discount, so it pays shipping) and the same cart without a discount (ships free).\n- I changed the expected values in two existing tests because the totals now include shipping:\n  - `TestPrice` now expects a total of 109.47.\n  - `TestPlaceOrder` now expects 28.99 (23.00 plus 5.99).\n\n**OSTF**\n- I added a new draft item, `R-SHIPPING`, in `trace/requirements.yaml`. It refines `N-FAIR-PRICE`. Its text states the rule and says shipping is untaxed. It is linked to the code and tests above.\n- Nothing I touched is marked risk-relevant, so I didn't need to ask first. No existing item became false.\n- **Links added:**\n  - `R-SHIPPING refines N-FAIR-PRICE`\n  - `pricing/quote.go#Price implements R-SHIPPING`\n  - `pricing/shipping.go#Shipping implements R-SHIPPING`\n  - `pricing/shipping_test.go#TestPriceShipping verifies R-SHIPPING`\n  - `pricing/shipping_test.go#TestShipping verifies R-SHIPPING`\n- **Stamped:** I rechecked and stamped the five new links. I also stamped three existing links that the edits made suspect:\n  - `Price implements R-TAX-RATE`\n  - `TestPrice verifies R-TAX-RATE`\n  - `TestPlaceOrder verifies R-CHECKOUT-ORDER`\n\n  Tax is still computed on the discounted subtotal and `PlaceOrder` still follows the same steps. Their tests pass.\n- **Not committed:** I haven't committed anything or opened a pull request. When you do, list the five added links above in its description.",
+ "date": "2026-10-24"
+}

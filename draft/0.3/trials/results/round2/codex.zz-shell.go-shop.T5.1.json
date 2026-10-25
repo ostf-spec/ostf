@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-shell.go-shop.T5.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7894,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 72.6
+ },
+ "usage": {
+  "input_tokens": 317082,
+  "cached_input_tokens": 293120,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2963,
+  "reasoning_output_tokens": 73
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "Implemented SHOP-57: qualifying lines receive 5% off, rounded down per line, before discount codes. Combined discounts stay within 50%; tax uses the discounted amount.\n\nValidation: `go test ./...` and `ostf check --base main` pass, with 118 valid links.\n\nOSTF impact: `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-TAX-RATE`.\n\nAdded links:\n- `Cart.VolumeDiscount` and `Checkout.PlaceOrder` → `R-VOLUME-DISCOUNT`.\n- `PriceWithVolumeDiscount` → volume discount, discount cap, tax rate.\n- `TestPlaceOrderVolumeDiscount` → volume discount, discount cap, expiry, tax rate.\n\nNo new items. All listed impacted tests passed: `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderVolumeDiscount`, `TestApplyDiscount/caps_at_fifty_percent`, `TestApplyDiscount/rejects_expired`, `TestPrice`, and `TestTax`.",
+ "date": "2026-10-24"
+}

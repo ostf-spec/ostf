@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.go-shop.T3.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3283,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 49.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 15127,
+  "cache_read_input_tokens": 207315,
+  "output_tokens": 3142,
+  "cost": 0.15290640000000003
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. A refund above what is left on the charge still returns `ErrRefundTooLarge`. `go test ./...` passes and `ostf check --base main` reports 113 of 113 links valid. I haven't committed anything or opened a PR.\n\n**Changes**\n- **`payments/refund.go`:** I added `ErrInvalidRefundAmount`, split the `amount <= 0` check from the too-large check, and updated the doc comment.\n- **`payments/refund_test.go`:** The \"zero\" case in `TestCheckRefundLimit` now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **`trace/requirements.yaml`:** I added a new item, `R-REFUND-POSITIVE` (status: draft). It is linked to `CheckRefundLimit` and `TestCheckRefundLimit`, and it refines `N-REFUNDS` and controls `RISK-REFUND-ABUSE`.\n\nI did not edit `R-REFUND-LIMIT`. Its text is still true, so I rechecked it, ran the tests, and stamped its two links that had gone suspect.\n\n**Items and links `ostf check` reports as added** (for the PR description)\n- Item: `R-REFUND-POSITIVE`\n- Link: `R-REFUND-POSITIVE controls RISK-REFUND-ABUSE`\n- Link: `R-REFUND-POSITIVE refines N-REFUNDS`\n- Link: `payments/refund.go#CheckRefundLimit implements R-REFUND-POSITIVE`\n- Link: `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-POSITIVE`\n\n**Review step:** `V-REFUND-REVIEW` in `trace/design.yaml` says a second engineer reviews every change to refund code before release. This change falls under it.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "codex.py-shell.ts-shop.T5.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 1,
+  "ostfOutputTokens": 11064,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.5
+ },
+ "usage": {
+  "input_tokens": 323143,
+  "cached_input_tokens": 296704,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2721,
+  "reasoning_output_tokens": 111
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "Implemented SHOP-57: eligible lines receive 5% off before discount codes, with per-line rounding and a combined 50% cap.\n\nValidation: 41 tests pass; `ostf check --base main` reports all 118 links valid.\n\nImpacted items: `R-VOLUME-DISCOUNT`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-TAX-RATE`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`. No items added.\n\nSeven links added: volume-discount implementation in pricing and checkout, volume verification in both test files, pricing cap implementation, and cap/expiry verification.\n\nImpacted tests:\n- Checkout: places an order; needs a valid session; charges the volume-discounted checkout total.\n- applyDiscount: caps at fifty percent; rejects an expired code.\n- price: taxes the subtotal after discounts.\n- tax: rounds half up to the cent.\n- volume discount suite: quantity threshold and rounding; code ordering and tax; combined cap; expired codes.",
+ "date": "2026-10-24"
+}

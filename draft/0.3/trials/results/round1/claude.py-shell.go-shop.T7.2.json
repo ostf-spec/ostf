@@ -1,0 +1,54 @@
+{
+ "run": "claude.py-shell.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 686,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9008,
+  "cache_read_input_tokens": 106568,
+  "output_tokens": 1190,
+  "cost": 0.05861280000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Your change:** in `pricing/discount.go`, `ApplyDiscount` now caps the percentage with an explicit `if` instead of the builtin `min(...)`. It still caps at `MaxDiscountPercent`, which is 50. The result is the same for every input. The change only matters if you need compatibility with Go versions older than 1.21, which don't have the builtin `min`.\n\n**What it touches:** `ApplyDiscount` implements three requirements, so ostf flagged all three:\n- `R-DISCOUNT-CAP`\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\nAll three refine `N-FAIR-PRICE`. None of them is marked risk-relevant, so I didn't need to ask before touching them.\n\n**Tests:**\n- `go test ./pricing -run TestApplyDiscount -v` passes, including the `caps_at_fifty_percent` and `rejects_expired` subtests.\n- `go test ./...` passes for all packages, and `go vet ./pricing` is clean.\n\n**ostf:** `ostf check --base main` first reported those three links as suspect (`BODY_CHANGED`). I rechecked each requirement against the code and ran its tests. All three still hold, so I ran `ostf stamp` on each link. That updated `trace.lock`. The check now shows 109 of 109 links valid. It reported no added items or links.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

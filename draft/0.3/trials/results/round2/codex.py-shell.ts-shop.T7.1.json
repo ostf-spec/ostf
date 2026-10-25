@@ -1,0 +1,53 @@
+{
+ "run": "codex.py-shell.ts-shop.T7.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3014,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 44.7
+ },
+ "usage": {
+  "input_tokens": 153591,
+  "cached_input_tokens": 137984,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 764,
+  "reasoning_output_tokens": 18
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in `src/pricing.ts#applyDiscount` replaces `Math.min` with an explicit conditional. No behavior change is expected: the 50% cap, cent rounding, and expiry rejection remain intact.\n\nOSTF reports these affected items and tests:\n\n- `R-DISCOUNT-CAP`: `applyDiscount > caps at fifty percent`\n- `R-DISCOUNT-EXPIRY`: `applyDiscount > rejects an expired code`\n- `R-DISCOUNT-PERCENT`: `applyDiscount` suite\n\nAll listed tests are in `src/pricing.test.ts`. No items or links were added.\n\nRan `node --test src/pricing.test.ts src/checkout.test.ts`: **10 passed, 0 failed**.\n\nRechecked and stamped the three affected links using OSTF, which updated `trace.lock`. Final `ostf check --base main` passed: **111/111 links valid**. Your source change was left untouched.",
+ "date": "2026-10-24"
+}

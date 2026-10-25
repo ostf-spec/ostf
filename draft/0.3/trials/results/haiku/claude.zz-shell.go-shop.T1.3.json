@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1935,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 16728,
+  "cache_read_input_tokens": 82453,
+  "output_tokens": 2893,
+  "cost": 0.0056174300000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the one entry point that refunds an earlier charge. It does four things in order:\n\n1. Looks up the charge by `ReceiptID` and returns `ErrUnknownReceipt` if it doesn't exist.\n2. Under a mutex, checks the request with `CheckRefundLimit`. That rejects a non-positive amount or one larger than what's left on the charge (`ErrRefundTooLarge`). It also rejects a refund that would push the account's UTC-day total above `DailyRefundLimit` (500.00) without a second approver (`ErrNeedsApproval`).\n3. Sends the refund to the gateway against the original charge's transaction (`rcpt.Txn`), so money goes back to the card that was charged.\n4. Updates the per-charge and per-account-per-day totals and appends a `\"refund\"` entry to the audit log.\n\nThe traced requirements it serves:\n- **R-REFUND-LIMIT** (refund limit, controls RISK-REFUND-ABUSE): the limit checks above.\n- **D-REFUND-LEDGER** (design, refines R-REFUND-LIMIT): the running totals kept by `Refunder`, and `dayKey`, which buckets them by account and UTC day.\n- **R-REFUND-ORIGINAL** (refund goes to the original payment method): the gateway refund against `rcpt.Txn`.\n- **R-AUDIT-MONEY** (every refund is audited): the `audit.Append` call.\n\nThe `@req` comment on `Refund` names only R-REFUND-ORIGINAL. The trace lock also links `Refund` to R-REFUND-LIMIT and R-AUDIT-MONEY, and `requirements.yaml` lists it under R-REFUND-LIMIT's code.\n\n**Tests that cover it** (all in `payments/refund_test.go`):\n- `TestRefund`: a 15.00 refund on a 50.00 charge reaches the gateway against the original transaction and writes the audit entry. A refund beyond what's left returns `ErrRefundTooLarge`. Covers R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `TestRefundDailyLimit`: a second same-day refund over the limit returns `ErrNeedsApproval`, and the same refund succeeds on the next UTC day. Covers D-REFUND-LEDGER and R-REFUND-LIMIT.\n- `TestCheckRefundLimit`: a table test of the pure `CheckRefundLimit` function. It covers the amount and daily-limit branches but calls the function directly, not through `Refund`.\n\nTwo things to be aware of:\n- `requirements.yaml` lists `TestChargeAudited` (in `charge_test.go`) as R-AUDIT-MONEY's test. The lock also records `TestRefund` as verifying it.\n- The `Gateway` link on R-REFUND-ORIGINAL points to `payments/charge.go#Gateway`, not to `Refund`. `Refund` is linked to that requirement in the lock.\n\nI didn't change any files and didn't run `ostf` or the Go tests.",
+ "date": "2026-10-24"
+}

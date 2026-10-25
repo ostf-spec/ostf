@@ -1,0 +1,62 @@
+{
+ "run": "claude.py-shell.go-shop.T2.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 28,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 8751,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 123.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 58,
+  "cache_creation_input_tokens": 50199,
+  "cache_read_input_tokens": 1250727,
+  "output_tokens": 22038,
+  "cost": 0.03357187
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "Shipping is in: orders with a discounted subtotal of at least $100.00 ship free, and all others pay a flat $5.99. The fee is part of `Quote.Total`, so checkout charges it. `go test ./...` passes and `ostf check --base main` is clean (41 items, 115 links, all valid). I did not commit or open a PR since you didn't ask for either.\n\n**What changed**\n- `pricing/shipping.go` (new): `Shipping(subtotal)` returns 0 at 10000 cents or more, otherwise 599. Tagged `@req R-SHIPPING-FEE`.\n- `pricing/quote.go`: `Quote` has a `Shipping` field, and `Price` computes it from the subtotal after discount and adds it to `Total`.\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE` (`status: draft`, refines `N-FAIR-PRICE`).\n- Tests: new `pricing/shipping_test.go` (threshold boundaries, plus `Price` with and without discounts) and `TestPlaceOrderShipping` in `cart/checkout_test.go` (free shipping, charged amount).\n- Existing expectations updated: `TestPrice` now expects shipping and a total of 109.47. `TestPlaceOrder` now expects $28.99 for a $20.00 cart, since it's below the threshold.\n- `README.md`: the pricing row mentions shipping.\n\n**Choices I made**\n- Shipping is not taxed. R-TAX-RATE puts tax on the subtotal after discounts, and I kept that base unchanged.\n- The threshold is checked after the discount and before tax, and \"at least\" is inclusive.\n\n**OSTF**\n- `ostf check` reported `R-CHECKOUT-ORDER` and `R-TAX-RATE` as suspect because I changed their functions and tests. I rechecked that their text still matches the code and that their tests pass, then stamped them.\n- I stamped the new item's links after confirming the tests pass.\n- `trace.lock` changed because `ostf stamp` writes to it. I did not edit it by hand.\n\n**For the PR** (if you open one)\n- Impact: `Price`, `Quote`, `Shipping`, `TestPrice`, `TestPlaceOrder`, and the new tests `TestShipping`, `TestPriceShipping`, `TestPlaceOrderShipping`.\n- Items added: `R-SHIPPING-FEE`, with the link to `N-FAIR-PRICE` and links to `Shipping`, `Price` and the three tests.\n\n**Worth knowing**\n- The existing `R-CHARGE-AMOUNT` cap of 10,000.00 was already exceeded by tax-inclusive totals from roughly an $8,700 subtotal. Shipping shifts that boundary by about $6. I did not change the cap or the charge validation, since those are risk-relevant.",
+ "date": "2026-10-24"
+}

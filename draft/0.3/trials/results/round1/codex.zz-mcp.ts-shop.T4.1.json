@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T4.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6423,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.2
+ },
+ "usage": {
+  "input_tokens": 205472,
+  "cached_input_tokens": 184576,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1277,
+  "reasoning_output_tokens": 9
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it into `src/salestax.ts`. Updated callers, tests, documentation, and trace links while preserving behavior.\n\nValidation: all 36 tests pass; `ostf check --base main` passes with 111 valid links.",
+ "date": "2026-10-24"
+}

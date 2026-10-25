@@ -1,0 +1,195 @@
+ostf: "0.3"
+items:
+  - id: R-CART-ADD
+    title: Add to cart
+    text: >-
+      Adding a product that is already in the cart increases the quantity of
+      its line instead of adding a second line.
+    refines: [N-BUY]
+    code: [src/cart.ts#Cart.add]
+  - id: R-CART-QTY
+    title: Line quantity
+    text: >-
+      A cart line holds between 1 and 99 units. A request that would leave
+      that range is rejected and leaves the cart unchanged.
+    refines: [N-BUY]
+    code: [src/cart.ts#Cart.add]
+    tests:
+      - "src/cart.test.ts#Cart > rejects a quantity outside 1 to 99"
+  - id: R-CART-REMOVE
+    title: Remove from cart
+    text: >-
+      Removing a product deletes its line. Removing a product that is not in
+      the cart is not an error.
+    refines: [N-BUY]
+    tests:
+      - "src/cart.test.ts#Cart > removes a line"
+  - id: R-CART-SUBTOTAL
+    title: Cart subtotal
+    text: The cart subtotal is the sum over its lines of unit price times quantity.
+    refines: [N-BUY]
+    tests:
+      - "src/cart.test.ts#Cart > sums the subtotal"
+  - id: R-MONEY-CENTS
+    title: Integer cents
+    text: Every amount of money is an integer number of cents.
+    rationale: >-
+      Binary floating point cannot represent most decimal fractions, so sums
+      of prices drift by fractions of a cent and totals stop matching the
+      payment gateway's.
+    refines: [N-FAIR-PRICE]
+    code: [src/money.ts#Cents, src/money.ts#cents]
+  - id: R-DISCOUNT-PERCENT
+    title: Percentage discount
+    text: A discount code takes its percentage off the subtotal, rounded down to the cent.
+    refines: [N-FAIR-PRICE]
+    code: [src/pricing.ts#applyDiscount]
+    tests: [src/pricing.test.ts#applyDiscount]
+  - id: R-DISCOUNT-CAP
+    title: Discount cap
+    text: No discount takes more than fifty percent off an order's subtotal.
+    rationale: >-
+      A code mistyped as 100 percent instead of 10 once gave orders away for
+      free. The cap bounds the loss from any such configuration error.
+    refines: [N-FAIR-PRICE]
+    code: [src/pricing.ts#applyDiscount]
+    tests:
+      - "src/pricing.test.ts#applyDiscount > caps at fifty percent"
+  - id: R-DISCOUNT-EXPIRY
+    title: Expired discount
+    text: >-
+      An expired discount code is rejected, and checkout fails with an error
+      that names the code.
+    refines: [N-FAIR-PRICE]
+    tests:
+      - "src/pricing.test.ts#applyDiscount > rejects an expired code"
+  - id: R-TAX-RATE
+    title: Sales tax
+    text: >-
+      Sales tax is charged on the subtotal after discounts, at the rate of the
+      shipping region, rounded half up to the cent.
+    refines: [N-FAIR-PRICE]
+    code: [src/pricing.ts#tax, src/pricing.ts#price]
+    tests:
+      - "src/pricing.test.ts#tax > rounds half up to the cent"
+      - "src/pricing.test.ts#price > taxes the subtotal after discounts"
+  - id: R-TAX-EXEMPT
+    title: Tax exemption
+    text: A customer registered as tax exempt pays no sales tax.
+    refines: [N-FAIR-PRICE]
+    code: [src/pricing.ts#tax]
+  - id: R-STOCK-RESERVE
+    title: Reserve stock
+    text: >-
+      Checkout reserves stock for every line before it charges the customer.
+      If any line cannot be reserved, nothing is reserved and the order fails.
+    refines: [N-NO-OVERSELL]
+    code: [src/inventory.ts#Stock.reserve]
+  - id: R-STOCK-RELEASE
+    title: Release stock
+    text: Reserved stock returns to the available count when the charge for its order fails.
+    refines: [N-NO-OVERSELL]
+    code: [src/inventory.ts#Stock.release]
+    tests:
+      - "src/inventory.test.ts#Stock > releases a reservation"
+  - id: R-STOCK-EXPIRY
+    title: Reservation expiry
+    text: >-
+      A reservation that is not confirmed within 15 minutes expires, and its
+      stock returns to the available count.
+    refines: [N-NO-OVERSELL]
+    code:
+      - src/inventory.ts#HOLD_MS
+      - src/inventory.ts#Stock.available
+      - src/inventory.ts#Stock.confirm
+  - id: R-CHECKOUT-ORDER
+    title: Place order
+    text: >-
+      Placing an order prices the cart, reserves its stock, charges the
+      customer and confirms the reservation, in that order. An empty cart
+      cannot be checked out.
+    refines: [N-BUY]
+    code: [src/checkout.ts#Checkout.placeOrder]
+  - id: R-CHECKOUT-SESSION
+    title: Checkout needs a session
+    text: >-
+      Only a customer with a valid session can place an order, and the order
+      is placed for that customer's account.
+    refines: [N-ACCOUNT-SAFE]
+  - id: R-CHARGE-AMOUNT
+    title: Charge amount
+    text: >-
+      A charge must be more than zero and at most 10,000.00. Any other amount
+      is rejected before the payment gateway is called.
+    rationale: >-
+      No order in the catalog can cost more than 10,000.00, so a larger amount
+      is a bug or tampering.
+    refines: [N-FAIR-PRICE]
+    controls: [RISK-WRONG-CHARGE]
+    code: [src/payments.ts#validateAmount, src/payments.ts#Processor.charge]
+    tests:
+      - "src/payments.test.ts#validateAmount > rejects amounts out of range"
+      - "src/payments.test.ts#validateAmount > accepts one cent and the maximum"
+  - id: R-CHARGE-DECLINE
+    title: Declined charge
+    text: >-
+      A declined charge returns an error with the gateway's reason and is not
+      stored under its idempotency key, so the customer can retry with the
+      same key.
+    refines: [N-BUY]
+    code: [src/payments.ts#Processor.charge, src/payments.ts#DeclineError]
+  - id: R-REFUND-LIMIT
+    title: Refund limit
+    text: >-
+      A refund must not exceed what is left of the original charge, and
+      refunds above 500.00 in one UTC day for an account need a second
+      approval.
+    refines: [N-REFUNDS]
+    controls: [RISK-REFUND-ABUSE]
+    code: [src/refunds.ts#checkRefundLimit, src/refunds.ts#Refunder.refund]
+    tests:
+      - src/refunds.test.ts#checkRefundLimit
+      - "src/refunds.test.ts#Refunder > totals refunds per account and UTC day"
+  - id: R-REFUND-ORIGINAL
+    title: Refund to the original payment
+    text: A refund goes back to the payment method of the charge it refunds, never to another one.
+    refines: [N-REFUNDS]
+    code: [src/payments.ts#Gateway]
+    tests:
+      - "src/refunds.test.ts#Refunder > refunds to the original transaction"
+  - id: R-SESSION-EXPIRY
+    title: Session expiry
+    text: >-
+      A session expires after 30 minutes without use. An expired session is
+      rejected and the customer must log in again.
+    refines: [N-ACCOUNT-SAFE]
+  - id: R-LOGIN-LOCKOUT
+    title: Login lockout
+    text: >-
+      After five consecutive failed logins an account is locked for 15
+      minutes, and a correct password is refused while it is locked.
+    refines: [N-ACCOUNT-SAFE]
+    controls: [RISK-ACCOUNT-TAKEOVER]
+    code: [src/accounts.ts#Sessions.login]
+  - id: R-PASSWORD-HASH
+    title: Password storage
+    text: Passwords are stored only as salted, slow hashes and are compared in constant time.
+    refines: [N-ACCOUNT-SAFE]
+    code: [src/accounts.ts#Sessions.register]
+    tests:
+      - "src/accounts.test.ts#Sessions > logs in with the right password only"
+  - id: R-AUDIT-MONEY
+    title: Audit money movements
+    text: >-
+      Every charge and every refund appends an audit entry with the time, the
+      account, the action, the amount and the receipt.
+    refines: [N-ACCOUNT-SAFE]
+    code: [src/payments.ts#Processor.charge, src/refunds.ts#Refunder.refund]
+    tests:
+      - "src/payments.test.ts#Processor > appends an audit entry"
+  - id: R-AUDIT-APPEND-ONLY
+    title: Append-only audit log
+    text: Audit entries cannot be changed or removed once written. Reading the log returns a copy.
+    refines: [N-ACCOUNT-SAFE]
+    code: [src/audit.ts]
+    tests: [src/audit.test.ts]

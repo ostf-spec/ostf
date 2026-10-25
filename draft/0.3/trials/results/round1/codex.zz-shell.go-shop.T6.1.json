@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.go-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5757,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.4
+ },
+ "usage": {
+  "input_tokens": 156627,
+  "cached_input_tokens": 139008,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 584,
+  "reasoning_output_tokens": 85
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing: OSTF reports `UNKNOWN_TARGET`. Checkout also has no timeout implementation, so the requested test would fail.\n\nShould I add this requirement as a draft and a failing test, or is there an existing requirement ID to use?\n\n[AGENTS.md](/tmp/ostf-trials/runs/codex.zz-shell.go-shop.T6.1/repo/AGENTS.md) requires linking only existing IDs. No files changed.",
+ "date": "2026-10-24"
+}

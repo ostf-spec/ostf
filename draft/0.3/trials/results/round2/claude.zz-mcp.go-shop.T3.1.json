@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 14565,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 36.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 47576,
+  "cache_read_input_tokens": 207587,
+  "output_tokens": 3416,
+  "cost": 0.3018972
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. A refund larger than what's left on the charge still returns `ErrRefundTooLarge`. `go test ./payments/` passes. I haven't committed anything or opened a PR.\n\n**What changed**\n- **`payments/refund.go`:** I added `ErrInvalidRefundAmount` and split the amount check in two. I also updated the doc comment.\n- **`payments/refund_test.go`:** The \"zero\" case in `TestCheckRefundLimit` now expects the new error, and I added a \"negative\" case.\n- **`trace/requirements.yaml`:** I added `R-REFUND-POSITIVE` with status `draft`. It refines `N-REFUNDS` and links to `CheckRefundLimit` and `TestCheckRefundLimit`. I did not edit `R-REFUND-LIMIT`, because it is still true.\n\n**`ostf check --base main`** (no errors)\n- **Impacted items:** `R-REFUND-LIMIT` and `R-REFUND-POSITIVE`.\n- **Tests to run:** `TestCheckRefundLimit` and `TestRefundDailyLimit`. I ran the whole `payments` package, and both pass.\n- **Items added:** `R-REFUND-POSITIVE`.\n- **Links added:**\n  - `R-REFUND-POSITIVE refines N-REFUNDS`\n  - `payments/refund.go#CheckRefundLimit implements R-REFUND-POSITIVE`\n  - `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-POSITIVE`\n- **Links stamped:**\n  - The three new links above.\n  - Two existing links flagged as suspect (`BODY_CHANGED`): `CheckRefundLimit implements R-REFUND-LIMIT` and `TestCheckRefundLimit verifies R-REFUND-LIMIT`.\n  - I stamped them after rechecking the item text against the code and running the tests.\n\n**Behavior change:** `Refunder.Refund` passes the error through, so any caller that checks for `ErrRefundTooLarge` on a zero or negative refund will now get `ErrInvalidRefundAmount` instead. No other code in the repo references it.\n\n`V-REFUND-REVIEW` says a second engineer reviews every change to refund code before release. This change needs that review.",
+ "date": "2026-10-24"
+}

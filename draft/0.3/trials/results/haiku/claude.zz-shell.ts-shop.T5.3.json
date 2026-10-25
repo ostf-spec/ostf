@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 26,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 13460,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 113.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 36,
+  "cache_creation_input_tokens": 57969,
+  "cache_read_input_tokens": 801837,
+  "output_tokens": 24771,
+  "cost": 0.032001270000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 17,
+ "finalMessage": "SHOP-57 is implemented, and `ostf check --base main` now exits 0 with 116 valid links and no suspect or unstamped entries. I did not commit or open a PR; say the word and I'll do both.\n\nI couldn't open Jira from here, so the spec I implemented is the item text already in `trace.yaml` (`R-VOLUME-DISCOUNT`, revision 2). If SHOP-57 has moved past revision 2, check the ticket.\n\n**What changed**\n- **`src/pricing.ts`**: new `volumeDiscount(lines)` takes 5% off each line with 10 or more units, rounded down to the cent. `price()` now takes the volume discount as a new argument. Volume plus code discount is capped at 50% of the subtotal together.\n- **`src/checkout.ts`**: `placeOrder` passes `volumeDiscount(lines)` into `price`.\n- **Tests**: `pricing.test.ts` covers the volume rules and the combined cap, and `checkout.test.ts` checks a 10-unit order totals 10,923 cents. All 43 tests pass.\n- **`trace.yaml`**: added `code` and `tests` links to `R-VOLUME-DISCOUNT`. `trace.lock` changed only through `ostf stamp`.\n\n**Judgment calls to review**\n- **Code discount base:** the discount code still takes its percentage off the full subtotal, as `R-DISCOUNT-PERCENT` says. The item text (\"before any discount code applies\") could also mean the code applies after the volume discount. I chose the reading that keeps existing items true. Switching would make `R-DISCOUNT-PERCENT` false, so I didn't do it.\n- **Cap:** the combined 50% cap is enforced in `price`, so the code's own cap in `applyDiscount` is still there but no longer the only limit.\n\n**Items and links for the PR**\n- **Impact:** `R-VOLUME-DISCOUNT` (new code and tests), `R-TAX-RATE` (`price` changed), `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (`placeOrder` changed). I reran each affected item's tests, and they passed before stamping.\n- **Added links:** `pricing.ts#volumeDiscount` and `pricing.ts#price` implement `R-VOLUME-DISCOUNT`. The volume and cap tests and the checkout test verify it.\n- **Stamped:** the three suspect items and the new links above.\n\nNo risk-controlled code was touched, so I didn't need to ask before editing.",
+ "date": "2026-10-24"
+}

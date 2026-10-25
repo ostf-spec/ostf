@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4528,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 15015,
+  "cache_read_input_tokens": 80737,
+  "output_tokens": 2354,
+  "cost": 0.00498817
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (payments/refund.go:63) refunds part or all of an earlier card charge, enforces the refund limits, and writes an audit entry. It is the only place in the repo that does all three together.\n\n**What it does, in order:**\n1. Looks up the charge by `req.ReceiptID` and returns `ErrUnknownReceipt` if it doesn't exist.\n2. Takes the refunder's mutex.\n3. Computes how much is left on the charge (`rcpt.Amount` minus what was already refunded) and today's refund total for the account, keyed by UTC day via `dayKey`.\n4. Calls `CheckRefundLimit`, which rejects non-positive or over-remaining amounts (`ErrRefundTooLarge`) and daily totals above 500.00 without a second approver (`ErrNeedsApproval`).\n5. Sends the money back through `processor.gateway.Refund` to the same transaction as the original charge.\n6. Updates the two running totals and appends a `refund` entry to the audit log.\n\n**Why it exists, per the trace files:**\n- **R-REFUND-LIMIT** (trace/requirements.yaml:131): a refund must not exceed what is left of the charge, and refunds above 500.00 per account per UTC day need a second approval. It refines N-REFUNDS and controls RISK-REFUND-ABUSE. `Refund` is listed as implementing code for this item.\n- **R-REFUND-ORIGINAL** (trace/requirements.yaml:141): a refund goes back to the payment method of the charge it refunds. The doc comment on `Refund` carries `@req R-REFUND-ORIGINAL`.\n- **D-REFUND-LEDGER** (trace/design.yaml:13): the design for the two running totals, which `Refund` uses. It refines R-REFUND-LIMIT.\n- The audit append also relates to R-AUDIT-MONEY, according to trace.lock, though I didn't read that item's text.\n\n**Tests that cover it** (payments/refund_test.go):\n- `TestRefund`: a partial refund goes to the original transaction and is audited, and a refund beyond the charge returns `ErrRefundTooLarge`. This covers R-REFUND-ORIGINAL and the audit requirement.\n- `TestRefundDailyLimit`: a second same-day refund over the limit returns `ErrNeedsApproval`, and the same refund succeeds the next UTC day. This covers the daily-limit behavior and D-REFUND-LEDGER.\n- `TestCheckRefundLimit`: a table test of the pure `CheckRefundLimit` function, including the \"more than is left\" and \"zero\" cases. This covers the per-charge and approval rules.\n\nI only read the files and did not run the tests or `ostf`. One note: `Refund` is marked with `@req R-REFUND-ORIGINAL` in its comment, but its requirement links in `trace.lock` also include R-REFUND-LIMIT and R-AUDIT-MONEY. `TestRefundDailyLimit` is the only test linked to the daily-limit part of `Refund`.",
+ "date": "2026-10-24"
+}

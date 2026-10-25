@@ -1,0 +1,62 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 34,
+  "callsBeforeFirstEdit": 22,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 14,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 4,
+  "stampCalls": 1,
+  "ostfOutputTokens": 37951,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 94.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 141495,
+  "cache_read_input_tokens": 1249675,
+  "output_tokens": 20515,
+  "cost": 0.12391913
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "SHOP-57 is implemented. Changes are uncommitted, and no PR was opened, since you didn't ask for either. Go tests, vet, and `ostf check --base main` are clean.\n\n**Spec source:** I don't have a Jira tool here, so I used `R-VOLUME-DISCOUNT` in `trace.yaml` (external `jira:SHOP-57`, revision 2). It is `accepted` and not risk-relevant, so I went ahead without asking.\n\n**What changed**\n- `pricing/discount.go`: new `VolumeOff(unitPrice, qty)`. A line with 10+ units gets 5% off, floored to the cent per line.\n- `cart/cart.go`: new `Cart.VolumeDiscount()`, the sum of `VolumeOff` over the lines. `Subtotal()` is unchanged.\n- `pricing/quote.go`: `Price` now takes the volume discount as a parameter. The code's percentage applies to the subtotal after the volume discount, and volume plus code is capped at 50% of the list subtotal. `Quote` gained a `Volume` field.\n- `cart/checkout.go`: passes `c.VolumeDiscount()` into `Price`.\n- Tests: `TestVolumeOff` (below threshold, rounding), `TestPriceVolumeCountsTowardCap`, and `TestVolumeDiscount`. `TestPrice` was updated for the new signature.\n\n**OSTF**\n- The new links are tagged with `@req R-VOLUME-DISCOUNT`. I stamped the 6 new links, plus 4 existing links that went suspect because their code changed: `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, and `R-TAX-RATE` (two links). I re-read each item against the code and ran its tests before stamping.\n- `trace.lock` changed because `ostf stamp` wrote it. I did not edit it by hand.\n- No items were added or rewritten.\n\n**Needs your decision:** `R-DISCOUNT-PERCENT` says a code takes its percentage \"off the subtotal.\" With the volume discount, a code now takes its percentage off the subtotal after the volume discount. For any order with a 10+ unit line, that item's text is now literally false. I did not rewrite it. Either the item needs wording that says the code applies after the volume discount, or the volume discount should be read differently. Please pick one.\n\n**Also worth knowing:** the `ostf context` tool reported `BROKEN_LINK` for every file#symbol anchor I tried, even ones that `ostf check` resolves fine. I relied on `ostf check` as the authority.",
+ "date": "2026-10-24"
+}

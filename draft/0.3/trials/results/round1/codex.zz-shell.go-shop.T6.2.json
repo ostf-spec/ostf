@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.go-shop.T6.2",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5343,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.8
+ },
+ "usage": {
+  "input_tokens": 153570,
+  "cached_input_tokens": 136448,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 612,
+  "reasoning_output_tokens": 112
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no payment timeout.\n\nShould I add it as a draft requirement with a failing regression test? No files changed.\n\n[AGENTS.md](/tmp/ostf-trials/runs/codex.zz-shell.go-shop.T6.2/repo/AGENTS.md) requires “link only IDs that exist,” so I need to resolve the missing requirement before linking the test.",
+ "date": "2026-10-24"
+}

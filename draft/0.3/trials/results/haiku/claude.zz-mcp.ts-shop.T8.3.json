@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 9,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7209,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 27101,
+  "cache_read_input_tokens": 269588,
+  "output_tokens": 5102,
+  "cost": 0.01066908
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid, no diagnostics, exit 0. The fix is a single line in `trace.lock`, and I haven't committed it.\n\n**What was failing**\n\n- **`LOCK_INVALID`**: the lock line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` had `source.sig:` with a colon where Annex B requires `source.sig=`. That made the line unparseable.\n- **`LINK_UNSTAMPED`**: the same link therefore had no valid stamp.\n\n**What I did**\n\n1. Read `ostf context src/refunds.ts#checkRefundLimit`. It is risk-relevant (controls `RISK-REFUND-ABUSE`). I did not change any code.\n2. Rechecked R-REFUND-LIMIT against the code. \"Must not exceed what is left of the charge\" matches `amount > leftOnCharge`. \"Above 500.00 per UTC day needs a second approval\" matches `refundedToday + amount > DAILY_REFUND_LIMIT && !approved`, and `DAILY_REFUND_LIMIT` is 50_000 cents.\n3. Ran the tests. `node --test` passes 36/36, and the refund suite passes 5/5.\n4. Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. It rewrote the malformed line, changing only `source.sig:` to `source.sig=`. I did not hand-edit `trace.lock`.\n\n**Impact against main**\n\n- Items added: none. Items changed: none. Items removed: none.\n- Links added: none. Links removed: none.\n- Tests in impact: none.\n- The only working-tree change is the `trace.lock` line above.\n\n**Not done**\n\n- I did not commit, push, or open a PR, since you didn't ask for one. If you want one, the PR text should say the fix is the `trace.lock` line for R-REFUND-LIMIT and that no items or links were added.\n- Unrelated to the check: the test at `src/refunds.test.ts` titled \"refunds to the original transaction\" is annotated `@req R-AUDIT-MONEY`. The item R-REFUND-ORIGINAL lists that test as its verifier. The check doesn't flag this, so I left it alone.",
+ "date": "2026-10-24"
+}

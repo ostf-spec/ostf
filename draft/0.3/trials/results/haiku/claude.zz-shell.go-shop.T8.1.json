@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 6,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3382,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 16813,
+  "cache_read_input_tokens": 181934,
+  "output_tokens": 4082,
+  "cost": 0.00722454
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes (exit 0, 109 valid links, no errors), and the full `go test ./...` suite passes.\n\n**What was wrong:** `trace.lock` had a malformed line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. It used `source.sig:go1:…` where every other line uses `source.sig=go1:…`. Check flagged that as `LOCK_INVALID` and also reported the link as unstamped.\n\n**What I did:**\n- Read `ostf context payments/refund.go#CheckRefundLimit`. The item R-REFUND-LIMIT is marked risk-relevant, so I checked before touching anything. I did not change any code.\n- Checked the item against the code. The 500.00 limit is `DailyRefundLimit = 50_000` in cents, and the second-approval and remaining-on-charge rules match `CheckRefundLimit`. The item is not false, so I left its text alone.\n- Ran `TestCheckRefundLimit` and `TestRefundDailyLimit`. Both pass, and so does the full suite.\n- Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one line with the correct `=`. I did not edit `trace.lock` by hand.\n\n**Impact and links (for the summary and PR):**\n- Items added: none. Items changed: none. Items removed: none.\n- Links added: none. Links removed: none.\n- Tests impacted: none listed.\n- The only change in the working tree is the one-line stamp in `trace.lock`, which is uncommitted. Check's impact view reads item and link state against `main`, so it reports nothing changed.\n\nThe only directory with a `trace.yaml` is the repo root, so that is the only check I ran. I did not commit or open a PR, since you didn't ask for either.",
+ "date": "2026-10-24"
+}

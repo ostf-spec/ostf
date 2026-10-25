@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.go-shop.T1.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3950,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.6
+ },
+ "usage": {
+  "input_tokens": 76569,
+  "cached_input_tokens": 61568,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 638,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[Refunder.Refund](/tmp/ostf-trials/runs2/codex.zz-shell.go-shop.T1.1/repo/payments/refund.go:63) exists to refund earlier charges safely. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** prevent refunds exceeding the remaining charge and require second approval above 500.00 per account per UTC day. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** return money to the original payment method.\n- **R-AUDIT-MONEY:** record refunds in the audit log.\n\nThese support **N-REFUNDS** (quick refunds without abuse) and **N-ACCOUNT-SAFE** (protect accounts and money).\n\nIts coverage is:\n\n- [TestRefund](/tmp/ostf-trials/runs2/codex.zz-shell.go-shop.T1.1/repo/payments/refund_test.go:34): directly checks refunding the original transaction, audit action/amount/receipt, and rejecting a refund exceeding the remaining charge.\n- [TestRefundDailyLimit](/tmp/ostf-trials/runs2/codex.zz-shell.go-shop.T1.1/repo/payments/refund_test.go:58): directly checks cumulative refunds across two charges, rejection above the daily limit, and acceptance the next UTC day.\n- [TestCheckRefundLimit](/tmp/ostf-trials/runs2/codex.zz-shell.go-shop.T1.1/repo/payments/refund_test.go:12): tests the helper’s valid, excessive, zero, daily-limit, and second-approval cases.\n\nThe listed tests do not exercise unknown receipts or gateway failures. I inspected the repository without changing files or running tests.",
+ "date": "2026-10-24"
+}

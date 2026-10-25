@@ -1,0 +1,60 @@
+ostf: "0.3"
+items:
+  - id: D-IDEMPOTENCY-STORE
+    type: design
+    title: Idempotency store
+    text: >-
+      The payment processor keeps the receipt of each successful charge under
+      its idempotency key. A retry under a known key with a different account
+      or amount is rejected instead of charged.
+    refines: [R-IDEMPOTENT-CHARGE]
+    code: [src/payments.ts#Processor]
+    tests:
+      - "src/payments.test.ts#Processor > rejects a reused key with another amount"
+  - id: D-REFUND-LEDGER
+    type: design
+    title: Refund ledger
+    text: >-
+      The refunder keeps two running totals: what has been refunded of each
+      charge, and what has been refunded to each account on the current UTC
+      day.
+    refines: [R-REFUND-LIMIT]
+    code: [src/refunds.ts#Refunder]
+    tests:
+      - "src/refunds.test.ts#Refunder > totals refunds per account and UTC day"
+  - id: D-RESERVATION-HOLD
+    type: design
+    title: Reservation holds
+    text: >-
+      A reservation holds quantities per SKU until an expiry time. Available
+      stock is the stock on hand minus unexpired holds, and confirming a hold
+      removes its quantities from the stock on hand.
+    refines: [R-STOCK-RESERVE, R-STOCK-EXPIRY]
+    code: [src/inventory.ts#Stock.confirm]
+    tests:
+      - "src/inventory.test.ts#Stock > confirms a reservation as a sale"
+  - id: D-CLOCK
+    type: design
+    title: Injected clock
+    text: >-
+      Code whose behavior depends on the time reads it from a clock function
+      passed to its constructor, so that tests control expiry without
+      sleeping.
+    refines: [R-SESSION-EXPIRY, R-STOCK-EXPIRY]
+    code: [src/accounts.ts#Sessions.constructor, src/inventory.ts#Stock.constructor]
+  - id: V-REFUND-REVIEW
+    type: verification
+    title: Refund code review
+    text: >-
+      Before each release, a second engineer reviews every change to refund
+      code against R-REFUND-LIMIT and records the outcome in the release
+      checklist.
+    verifies: [R-REFUND-LIMIT]
+  - id: V-AUDIT-SAMPLE
+    type: verification
+    title: Monthly audit sample
+    text: >-
+      Each month an operator picks 20 charges and refunds from the payment
+      gateway's report and confirms that each has an audit entry with the
+      same account and amount.
+    verifies: [R-AUDIT-MONEY]

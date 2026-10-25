@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3633,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19315,
+  "cache_read_input_tokens": 156711,
+  "output_tokens": 3482,
+  "cost": 0.00717251
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes with 40 items and 111 valid links, and no errors or unstamped links.\n\n**What was failing:** `trace.lock` had a malformed line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`. It wrote `source.sig:` where it should have `source.sig=`, which gave `LOCK_INVALID`. That same link was also unstamped.\n\n**What I did:**\n- **Recheck:** `ostf context` shows `R-REFUND-LIMIT` as risk-relevant. I didn't change any code. I compared the item text with `checkRefundLimit`: it rejects refunds above what's left on the charge, and it requires a second approval above the 500.00 daily limit. The code matches that. `npm test` passes, 36 of 36, including the `checkRefundLimit` tests.\n- **Stamp:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. The stamp rewrote that one lock line, changing `:` to `=`. I did not edit `trace.lock` by hand. The diff is that single line.\n\n**Items and links:** I added no items and no links. The change is only the stamp on the existing `R-REFUND-LIMIT` link. The `check` impact line reads only \"impact against main (coverage: direct)\" and lists no items or tests. The branch has no diff against `main`, so there's nothing new to list.\n\n**Not done:** The `trace.lock` change is uncommitted. I didn't create a branch, commit, or open a PR, since you didn't ask for one. If you want the change committed, I can do that. The commit and PR would need to name `R-REFUND-LIMIT` and its tests (`checkRefundLimit` and `Refunder > totals refunds per account and UTC day`).",
+ "date": "2026-10-24"
+}

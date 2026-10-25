@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-mcp.go-shop.T5.2",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 8753,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 70.3
+ },
+ "usage": {
+  "input_tokens": 292535,
+  "cached_input_tokens": 264576,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3093,
+  "reasoning_output_tokens": 81
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented SHOP-57 using its requirement in `trace.yaml`.\n\n- Added 5% discounts for lines with 10+ units, rounded down per line.\n- Applied discount codes afterward, capped combined discounts at 50%.\n- Added pricing and checkout regression tests.\n\nValidation passed: `go test ./...`, `git diff --check`, and `ostf check --base main`. All 120 trace links are valid.",
+ "date": "2026-10-24"
+}

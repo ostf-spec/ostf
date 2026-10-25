@@ -1,0 +1,60 @@
+{
+ "run": "codex.zz-shell.go-shop.T5.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 9494,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 68.0
+ },
+ "usage": {
+  "input_tokens": 261282,
+  "cached_input_tokens": 235776,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2930,
+  "reasoning_output_tokens": 156
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented SHOP-57:\n\n- 5% off lines with 10+ units, rounded down per line.\n- Discount codes apply afterward; combined discounts capped at 50%.\n- Added regression tests and verified trace links.\n\nValidation passed: `go test ./...`, `ostf check --base main` (119 valid links), and `git diff --check`.",
+ "date": "2026-10-24"
+}

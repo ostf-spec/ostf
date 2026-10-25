@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T2.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 30,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5914,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 99.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 53748,
+  "cache_read_input_tokens": 620171,
+  "output_tokens": 22006,
+  "cost": 0.02795711
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "finalMessage": "Shipping is in: orders with a subtotal after discounts of 100.00 or more ship free, and all others pay a flat 5.99. The shipping charge is included in the order total that gets charged. All 40 tests pass, and `ostf check --base main` reports 118 of 118 links valid with exit 0.\n\n**What changed**\n- `src/pricing.ts`: added `FREE_SHIPPING_MIN` (10,000 cents), `FLAT_SHIPPING` (599) and `shippingFee()`. `price()` now judges the threshold on the subtotal after discounts, adds `shipping` to the `Quote`, and includes it in `total`. `checkout.ts` needed no change because it already charges `quote.total`.\n- Sales tax is still computed on the subtotal after discounts and not on shipping. I kept that because R-TAX-RATE says so. Tell me if shipping should be taxed.\n- `src/pricing.test.ts`: the existing \"taxes the subtotal after discounts\" expectation now includes shipping (total 10,947). I added tests for the fee boundaries (9,999 and 10,000) and for a discount that drops a 105.00 order under 100.00, which still pays shipping.\n- `src/checkout.test.ts`: the \"places an order\" expectation is now 2,899 (20.00 + 5.99 + 3.00 tax). New tests check that shipping is in the order total and charged, and that an order at exactly 100.00 ships free.\n- `trace/requirements.yaml`: new item **R-SHIPPING-FEE** with `status: draft`, refining N-FAIR-PRICE. Its code links are `src/pricing.ts#shippingFee` and `src/pricing.ts#price`. Its tests are the two new pricing tests and the two new checkout tests.\n- `README.md`: the pricing row mentions shipping.\n\n**OSTF impact**\n- Item added: R-SHIPPING-FEE (refines N-FAIR-PRICE).\n- Links added: `pricing.ts#shippingFee` and `pricing.ts#price` implement R-SHIPPING-FEE. Four tests verify it: `shippingFee > charges 5.99 under 100.00 and nothing from 100.00 up`, `price > judges the free-shipping threshold after discounts`, `Checkout > adds shipping to the order total`, and `Checkout > ships free at 100.00`.\n- Existing items affected: R-TAX-RATE (via `price` and `price > taxes the subtotal after discounts`) and R-CHECKOUT-ORDER (via `Checkout > places an order`). Both still hold. Their bodies changed, so `check` flagged them as suspect. I rechecked them against the code and their tests passed, then ran `ostf stamp` on those links.\n- Stamped links: the R-SHIPPING-FEE refines link, the four new test links, the two new code links, and the suspect R-TAX-RATE and R-CHECKOUT-ORDER links.\n- `ostf stamp` wrote `trace.lock`. I did not edit that file by hand.\n\n**Things to know**\n- R-CHARGE-AMOUNT caps a charge at 10,000.00, and shipping adds to the total. An order whose subtotal is near 9,990.00 can now go over the cap and be rejected at charge time. The same applies to tax already, so this is pre-existing in kind, but shipping makes it slightly more likely.\n- I did not touch `payments.ts`, `refunds.ts` or `accounts.ts`, and none of the code I changed is linked to a risk item. The `price` change does alter the amount charged, so flag it for review if your process requires it.\n- I did not commit or open a PR since you didn't ask. If you want a PR, the description should name the items and links above.",
+ "date": "2026-10-24"
+}

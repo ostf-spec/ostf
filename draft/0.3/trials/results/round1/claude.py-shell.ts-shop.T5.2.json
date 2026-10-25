@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5629,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 48.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 22003,
+  "cache_read_input_tokens": 340789,
+  "output_tokens": 5775,
+  "cost": 0.1798969
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "SHOP-57 (R-VOLUME-DISCOUNT) is implemented. All 38 tests pass, and `ostf check --base main` reports 115 links, all valid, with no errors. I haven't committed or opened a PR.\n\nI had no Jira access, so I used the item text already in `trace.yaml`. I didn't confirm it against the ticket itself.\n\n**Behaviour**\n- A cart line with 10 or more units gets 5% off that line, rounded down to the cent for each line. This is the new `volumeDiscount(lines)` in `src/pricing.ts`.\n- `price()` takes a new optional `volume` argument. It takes the volume discount off first, then applies the discount code to what is left.\n- The volume discount and the code discount together are capped at 50% of the subtotal.\n- `placeOrder` in `src/checkout.ts` now passes `volumeDiscount(lines)` into `price()`.\n- Quotes are unchanged when no line reaches 10 units.\n\n**Tests:** I added two tests in `src/pricing.test.ts`. One covers the 5% rule and the rounding. The other covers the order of application and the shared cap.\n\n**Links for the pull request**\n- Added: `src/pricing.ts#volumeDiscount` and `src/pricing.ts#price` implement R-VOLUME-DISCOUNT.\n- Added: the two new `volumeDiscount` tests verify R-VOLUME-DISCOUNT.\n- I added these links under R-VOLUME-DISCOUNT in `trace.yaml`. I did not change the item's text.\n\n**Stamped after rechecking:** The code changes made two existing links suspect, and I stamped both after rerunning their tests.\n- `price` implements R-TAX-RATE. Tax is still charged on the subtotal after discounts.\n- `placeOrder` implements R-CHECKOUT-ORDER and R-CHECKOUT-SESSION. The order of steps and the session check are unchanged.\n\nNo item became false. R-DISCOUNT-PERCENT and R-DISCOUNT-CAP still describe `applyDiscount`, which I did not change. The combined cap is enforced in `price()`.\n\n`trace.lock` changed only through `ostf stamp`.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T6.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2438,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 11396,
+  "cache_read_input_tokens": 88494,
+  "output_tokens": 1166,
+  "cost": 0.0661134
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "I haven't added a test. The request can't be done as written, for two reasons.\n\n1. **`R-CHECKOUT-TIMEOUT` doesn't exist.** It isn't in `trace.yaml`, `trace/requirements.yaml` or `trace/design.yaml`. The checkout requirements that do exist are `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. Our rules say never to invent an ID and to link only IDs that exist.\n2. **The code has no 30-second timeout.** `Checkout.placeOrder` and `Processor.charge` just wait on the gateway. A test asserting that checkout fails after 30 seconds would fail today.\n\nWhich of these do you want?\n\n- **A. Add the behavior and the test.** I'd add a timeout around the gateway charge. Checkout would then release the reserved stock and throw a new `TimeoutError`. I'd add a new `R-CHECKOUT-TIMEOUT` item with `status: draft`, refining `N-BUY`, linked to the code and the test. The test would use a never-resolving gateway and fake timers. This changes `placeOrder` and possibly `Processor.charge`. I'd run `ostf context` on them first and ask you before touching anything marked risk-relevant, since payments sit near `RISK-WRONG-CHARGE`.\n- **B. Link to an existing ID.** If the requirement lives under another name or in another branch, tell me the ID. I'd write the test against it, but it would still need the timeout behavior to pass.\n\nI recommend A.",
+ "date": "2026-10-24"
+}

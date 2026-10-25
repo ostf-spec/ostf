@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1485,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 10677,
+  "cache_read_input_tokens": 109689,
+  "output_tokens": 1814,
+  "cost": 0.0718409
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in the new `pricing/salestax.go`. `go test ./...` passes, and `ostf check --base main` reports no errors (40 items, 109 valid links). I haven't committed anything or opened a pull request.\n\n- **Code:** `pricing/tax.go` now holds only the `Region` type. I updated the callers in `pricing/quote.go` (`Price`) and `pricing/tax_test.go`. The `Quote.Tax` field keeps its name.\n- **Trace:** In `trace/requirements.yaml`, the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. I didn't change any item text. Neither item is linked to a risk, so I didn't need to ask first.\n- **Stamping:** The check flagged five links as suspect or unstamped because the code moved. I reran `TestPrice`, `TestTax` and `TestTaxExempt`, which passed, and then ran `ostf stamp` on each link:\n  - `pricing/quote.go#Price` implements R-TAX-RATE\n  - `pricing/salestax.go#SalesTax` implements R-TAX-EXEMPT\n  - `pricing/salestax.go#SalesTax` implements R-TAX-RATE\n  - `pricing/tax_test.go#TestTax` verifies R-TAX-RATE\n  - `pricing/tax_test.go#TestTaxExempt` verifies R-TAX-EXEMPT\n\n**Impact listed by `ostf check`:**\n- Items: R-TAX-RATE and R-TAX-EXEMPT.\n- Tests to run: `TestPrice`, `TestTax` and `TestTaxExempt`, all in `pricing/tax_test.go`.\n- Links added: `SalesTax` implements R-TAX-EXEMPT and `SalesTax` implements R-TAX-RATE.\n- Links removed: `Tax` implements R-TAX-EXEMPT and `Tax` implements R-TAX-RATE.",
+ "date": "2026-10-24"
+}

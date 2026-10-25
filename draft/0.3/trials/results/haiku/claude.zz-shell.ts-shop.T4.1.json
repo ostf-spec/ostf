@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7664,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 31838,
+  "cache_read_input_tokens": 293995,
+  "output_tokens": 12097,
+  "cost": 0.01535805
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "I moved `tax` out of `src/pricing.ts`, renamed it to `salesTax`, and put it in the new `src/salestax.ts`. All 36 tests pass, the same count as before, and `ostf check --base main` exits 0 with 111 valid items.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` plus its private `roundHalfUp` helper, which only the tax code used. It imports the `Region` type from `pricing.ts`, which is erased at runtime, so there's no runtime import cycle.\n- **`src/pricing.ts`**: removed the tax code and imports `salesTax`. `price()` still returns `tax`, so the `Quote` shape and callers are unchanged.\n- **`src/salestax.test.ts`** (new): the two `tax` tests moved here and are now under `describe(\"salesTax\")`, with the `// @req R-TAX-EXEMPT` comment kept.\n- **`src/pricing.test.ts`**: the tax tests and the `tax` import are removed.\n- **`trace/requirements.yaml`**: I updated the code and test links for R-TAX-RATE and R-TAX-EXEMPT to the new symbols and file. I didn't touch any item text.\n- **`README.md`**: the module table now lists `src/salestax.ts`.\n\n**Trace impact**\n- Items: R-TAX-RATE and R-TAX-EXEMPT.\n- Tests: `src/pricing.test.ts#price > taxes the subtotal after discounts`, and the three `src/salestax.test.ts#salesTax` tests.\n- Links added: `src/salestax.ts#salesTax implements R-TAX-RATE` and `... implements R-TAX-EXEMPT`, plus the two `salesTax` test links.\n- Links removed: the four `src/pricing.ts#tax` and `src/pricing.test.ts#tax` links.\n- Before stamping, `ostf check` reported one suspect link (`src/pricing.ts#price implements R-TAX-RATE`) and four unstamped links. I rechecked each item against the code. Both items still hold, and their tests pass. Then I stamped those five links. This is why `trace.lock` shows as modified; it was changed only through `ostf stamp`.\n- No new items were added. This is a move, not new behavior.\n\n**Choices I made**\n- Moved the tests into `salestax.test.ts` to match the new module, instead of leaving them in `pricing.test.ts`.\n- Kept the `tax` property name on `Quote` so callers don't change.\n\nNothing is committed. The tax code isn't marked risk-relevant, so no approval was needed for the change.",
+ "date": "2026-10-24"
+}

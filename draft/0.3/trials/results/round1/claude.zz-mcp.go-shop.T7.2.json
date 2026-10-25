@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1022,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 9155,
+  "cache_read_input_tokens": 69138,
+  "output_tokens": 938,
+  "cost": 0.052929800000000006
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**What changed:** the only edit is in `pricing/discount.go`, in `ApplyDiscount`. It replaces `percent := min(d.Percent, MaxDiscountPercent)` with an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. Behavior is the same, because both versions cap the percentage at the maximum. This is a refactor, and it doesn't change the expiry check or the rounding.\n\n**Requirements affected** (from `ostf check --base main`):\n- `R-DISCOUNT-CAP`: no discount takes more than 50% off.\n- `R-DISCOUNT-EXPIRY`: an expired code is rejected with an error that names the code.\n- `R-DISCOUNT-PERCENT`: the percentage comes off the subtotal, rounded down.\n\nAll three links are now **suspect** (`BODY_CHANGED`). The check ends at \"40 items, 106 valid, 3 suspect\".\n\n**Tests:** I ran `TestApplyDiscount` uncached, and all four subtests passed:\n- `takes_the_percentage`\n- `rounds_down`\n- `caps_at_fifty_percent`\n- `rejects_expired`\n\nThe `pricing` and `cart` packages also pass.\n\n**Not done:** I haven't run `ostf stamp` on the three suspect links, so `ostf check` will keep flagging them. The code and tests agree with the items, so stamping looks justified. It rewrites `trace.lock`, so tell me if you want me to do it.",
+ "date": "2026-10-24"
+}

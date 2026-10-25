@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T6.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5153,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.7
+ },
+ "usage": {
+  "input_tokens": 127572,
+  "cached_input_tokens": 110976,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 494,
+  "reasoning_output_tokens": 21
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no payment timeout.\n\nShould I create it as a draft requirement and add a failing test, or is there an existing requirement ID you intended?\n\n`AGENTS.md` requires links to existing IDs only. No files changed.",
+ "date": "2026-10-24"
+}

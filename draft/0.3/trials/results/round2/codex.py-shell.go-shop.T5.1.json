@@ -1,0 +1,59 @@
+{
+ "run": "codex.py-shell.go-shop.T5.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7530,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 72.2
+ },
+ "usage": {
+  "input_tokens": 285412,
+  "cached_input_tokens": 262144,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2981,
+  "reasoning_output_tokens": 184
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "Implemented SHOP-57: qualifying lines receive 5% off, rounded down per line, before coupons. Combined discounts respect the 50% cap; tax applies afterward.\n\nValidation: `go test ./...`, `git diff --check`, and `ostf check --base main` passed; all 113 links are valid.\n\nOSTF impact:\n- Items: `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-TAX-RATE`.\n- Tests: `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderVolumeDiscount`, `TestPrice`, `TestTax`.\n- Added links: `Cart.VolumeDiscount`, `Checkout.PlaceOrder`, `PriceWithVolumeDiscount`, and `TestPlaceOrderVolumeDiscount` to `R-VOLUME-DISCOUNT`. No new items.",
+ "date": "2026-10-24"
+}

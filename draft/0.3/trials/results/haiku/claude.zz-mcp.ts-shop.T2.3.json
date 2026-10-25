@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T2.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 30,
+  "callsBeforeFirstEdit": 15,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 12,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 9807,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 92.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 46,
+  "cache_creation_input_tokens": 52666,
+  "cache_read_input_tokens": 946641,
+  "output_tokens": 18405,
+  "cost": 0.029206710000000004
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "finalMessage": "Shipping is in checkout. An order with a subtotal after discounts of at least 100.00 ships free. Any other order pays a flat 5.99, and that charge is included in the total that gets charged. All 40 tests pass (36 before, plus 4 new), and `ostf check --base main` exits 0 with no errors, suspect or unstamped links. I have not committed or opened a PR, since you didn't ask for that.\n\n**Choices I made**\n- The threshold is checked on the subtotal after discounts and before tax, and it is inclusive: exactly 100.00 ships free.\n- Shipping is not taxed. Tax stays on the subtotal after discounts, as R-TAX-RATE already says.\n- Total = subtotal − discount + tax + shipping. `Quote` gained a `shipping` field.\n\n**Code**\n- `src/pricing.ts`: `FREE_SHIPPING_MIN`, `FLAT_SHIPPING`, a new `shipping()` function, and `price()` now includes shipping.\n- `src/checkout.ts` needed no change, since it already charges `quote.total`.\n\n**Tests**\n- New: four tests for `shipping()` and `price()` covering the boundary, plus a checkout test for a flat-rate order (total 1,749) and a free-shipping order (total 11,498).\n- Two existing expectations changed because they now include shipping. \"taxes the subtotal after discounts\" went from 10,348 to 10,947. \"places an order\" went from 2,300 to 2,899. Both changes are the new behavior, not a weakened assertion.\n\n**OSTF**\n- New item `R-SHIPPING-FEE` in `trace/requirements.yaml`, with `status: draft`, refining N-FAIR-PRICE. It links to `pricing.ts#shipping` and `pricing.ts#price`, and to four tests.\n- `R-TAX-RATE` and `R-CHECKOUT-ORDER` were flagged suspect because their linked code or test bodies changed. I rechecked both against the code, and their text still holds. Then I ran `ostf stamp` on the flagged links. I did not edit `trace.lock` by hand.\n- `R-SHIPPING-FEE` is not risk-relevant, and none of the touched symbols are linked to a risk item, so I didn't need your sign-off to change them.\n\n**Needs your decision**\n- `R-CHARGE-AMOUNT` caps a charge at 10,000.00 and is linked to RISK-WRONG-CHARGE, so I did not change it. Shipping can push an order just under the cap over it. Its rationale says \"No order in the catalog can cost more than 10,000.00\", and that was already loose once tax is counted. It is now more clearly untrue. Per AGENTS.md I did not rewrite the item. Should the cap be raised, or should shipping be exempt from it?",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.ts-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5492,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 15776,
+  "cache_read_input_tokens": 80315,
+  "output_tokens": 2555,
+  "cost": 0.00523665
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why `Refunder.refund` exists**\n\n`Refunder.refund` (`src/refunds.ts:68`) is the one entry point for giving money back to a customer. It exists to enforce the refund rules from the requirements, and to keep money moving only in safe ways:\n\n- **Goes back to the original payment.** It looks up the receipt and sends the refund to the gateway transaction that charged it (`R-REFUND-ORIGINAL`, `src/refunds.ts:69, 81`).\n- **Enforces the refund limit.** It calls `checkRefundLimit` with what is left on the charge and the account's total for the UTC day. Refunds above what is left, or above 500.00 per account per day without a second approver, are rejected (`R-REFUND-LIMIT`, `src/refunds.ts:76`). This is the control for `RISK-REFUND-ABUSE` in `trace/requirements.yaml:144-152`.\n- **Keeps running totals.** The two totals (per charge and per account per UTC day) are the refund ledger design, `D-REFUND-LEDGER` (`trace/design.yaml:15-24`).\n- **Records the refund.** It appends a `refund` entry to the audit log after the gateway call succeeds (`R-AUDIT-MONEY`, `src/refunds.ts:87`).\n\nIt also reserves the amount before awaiting the gateway, so a concurrent refund sees it. If the gateway call fails, it rolls both totals back and rethrows (`src/refunds.ts:77-86`).\n\n**Tests that cover it**\n\nBoth are in `src/refunds.test.ts`:\n\n1. **`Refunder > refunds to the original transaction`** (lines 50-61). It checks that the gateway receives the refund on the original transaction, that the audit entry is written, and that refunding more than what is left throws `RefundTooLargeError`. `trace/requirements.yaml` links it to `R-REFUND-ORIGINAL`. Its `@req` comment says `R-AUDIT-MONEY` instead, and `trace.lock` records it verifying both.\n2. **`Refunder > totals refunds per account and UTC day`** (lines 63-73). It checks that a second refund on the same account and day needs approval (`NeedsApprovalError`), and that it is allowed the next UTC day. This is linked to `R-REFUND-LIMIT` and `D-REFUND-LEDGER`.\n\nThe `checkRefundLimit` tests (lines 41-52) cover the pure limit check that `refund` calls. They are linked to `R-REFUND-LIMIT`, but they test the helper rather than the method itself.\n\nNothing else calls `Refunder.refund` in the repo. The `refund` stubs in `checkout.test.ts` and `payments.test.ts` are gateway stubs, not calls to this method.\n\n**Things you may want to look at**\n\n- The `@req` comment on the first test (`R-AUDIT-MONEY`) does not match its `trace.yaml` link (`R-REFUND-ORIGINAL`). The test covers both, but the annotation and the link disagree.\n- Nothing in the tests covers the rollback path in the `catch` block (gateway failure). No test makes the gateway throw.\n\nI did not change any files, and I did not run `ostf`.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T3.2",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6954,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 65.4
+ },
+ "usage": {
+  "input_tokens": 333403,
+  "cached_input_tokens": 266368,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1801,
+  "reasoning_output_tokens": 75
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented `InvalidRefundAmountError` for zero and negative refunds. Positive refunds exceeding the remaining charge still throw `RefundTooLargeError`.\n\nAdded regression coverage and draft requirement `R-REFUND-AMOUNT` with verified trace links.\n\nValidation: all 37 tests pass; `ostf check --base main` passes.",
+ "date": "2026-10-24"
+}

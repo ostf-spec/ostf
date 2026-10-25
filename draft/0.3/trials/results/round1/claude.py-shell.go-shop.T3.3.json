@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T3.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1816,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 22.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 11109,
+  "cache_read_input_tokens": 112866,
+  "output_tokens": 1824,
+  "cost": 0.1145958
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. Amounts above what's left on the charge still return `ErrRefundTooLarge`. `go test ./payments/` passes.\n\n- **Code:** I added `ErrInvalidRefundAmount` to `payments/refund.go` and split the old `amount <= 0 || amount > leftOnCharge` check in two.\n- **Tests:** In `TestCheckRefundLimit`, the \"zero\" case now expects `ErrInvalidRefundAmount`. I added a \"negative\" case with the same expectation.\n- **Trace check:** `ostf check --base main` first flagged two links as suspect (`BODY_CHANGED`). I rechecked `R-REFUND-LIMIT` against the new code and it's still true, so I didn't edit it. The tests passed, so I ran `ostf stamp` on both links. The check now shows 109 of 109 links valid.\n- **`trace.lock`:** It shows as modified because of those stamps. I didn't edit it by hand.\n\nThe check reports no added items or links, so there's nothing new to list for a pull request. It reports these changes against `main`:\n- `CheckRefundLimit`, linked to `R-REFUND-LIMIT`\n- `ErrInvalidRefundAmount`, which isn't linked to any item\n- `TestCheckRefundLimit`, linked to `R-REFUND-LIMIT`\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T4.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 5632,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 27968,
+  "cache_read_input_tokens": 306800,
+  "output_tokens": 8773,
+  "cost": 0.0130503
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax`, in its own file `pricing/salestax.go`. `Region` stays in `pricing/tax.go`. `go test ./...`, `go vet`, and `gofmt` are all clean. I did not commit or open a PR, since you didn't ask for one.\n\n**Changes**\n- `pricing/salestax.go` (new): `SalesTax`, with the same body and doc comment.\n- `pricing/tax.go`: the function is removed; `Region` remains.\n- `pricing/quote.go`: `Price` calls `SalesTax`. The `Quote.Tax` field is unchanged.\n- `pricing/tax_test.go`: calls and error messages now use `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt`, because `trace/requirements.yaml` links to them and renaming would break those links.\n- `trace/requirements.yaml`: the `code:` links for `R-TAX-RATE` and `R-TAX-EXEMPT` now point to `pricing/salestax.go#SalesTax`. Item text is unchanged.\n\n**Traceability (`ostf check --base main`)**\n- Before my changes, `check` reported 3 suspect and 2 unstamped links, all in the tax area.\n- I rechecked `R-TAX-RATE` and `R-TAX-EXEMPT` against the new code and ran `TestTax`, `TestTaxExempt` and `TestPrice`. All pass.\n- I stamped the five links, quoted as `check` printed them:\n  - `pricing/quote.go#Price implements R-TAX-RATE`\n  - `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n  - `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n  - `pricing/tax_test.go#TestTax verifies R-TAX-RATE`\n  - `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`\n- Final check: 40 items, 109 valid, exit 0. No errors remain.\n- Impact against main: items `R-TAX-RATE` and `R-TAX-EXEMPT`; tests `TestTax`, `TestTaxExempt`, `TestPrice`.\n- Links added: `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT` and `pricing/salestax.go#SalesTax implements R-TAX-RATE`.\n- Links removed: `pricing/tax.go#Tax implements R-TAX-EXEMPT` and `pricing/tax.go#Tax implements R-TAX-RATE`.\n- No new items were added and no item became false.\n\n`R-TAX-RATE` and `R-TAX-EXEMPT` are not risk-relevant, so I didn't need to ask before changing `Tax`.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4899,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 47.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 20968,
+  "cache_read_input_tokens": 207184,
+  "output_tokens": 5770,
+  "cost": 0.16232639999999998
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "pricing/discount.go",
+  "pricing/quote.go",
+  "pricing/volume_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "I implemented SHOP-57 (R-VOLUME-DISCOUNT): a cart line with 10 or more units now gets 5% off that line, rounded down to the cent. The `go test ./...` run passes. The final `ostf check --base main` has no errors or warnings (40 items, 115 valid). I couldn't reach Jira, so I worked from the R-VOLUME-DISCOUNT text in `trace.yaml` (revision 2). I haven't committed or opened a PR.\n\n**What changed**\n- `pricing.VolumeDiscount` computes the per-line discount (`pricing/discount.go`).\n- `Cart.VolumeDiscount` sums it over the cart's lines (`cart/cart.go`).\n- `pricing.PriceWithVolume` takes the volume discount off first, then applies the discount code to what's left, then adds tax. The two discounts together are limited to 50% of the subtotal, so the volume discount counts toward the cap (`pricing/quote.go`).\n- `Price` keeps its signature and now calls `PriceWithVolume` with no volume discount.\n- `Checkout.PlaceOrder` now prices with the cart's volume discount (`cart/checkout.go`).\n- `Cart.Subtotal` and `ApplyDiscount` are unchanged.\n- New tests are in `pricing/volume_test.go`: `TestVolumeDiscount` and `TestPriceWithVolume`.\n\n**OSTF**\n- **Links added** (all implement or verify R-VOLUME-DISCOUNT):\n  - `cart/cart.go#Cart.VolumeDiscount`\n  - `cart/checkout.go#Checkout.PlaceOrder`\n  - `pricing/discount.go#VolumeDiscount`\n  - `pricing/quote.go#PriceWithVolume`\n  - `pricing/volume_test.go#TestVolumeDiscount`\n  - `pricing/volume_test.go#TestPriceWithVolume`\n- **Items the impact lists:** R-VOLUME-DISCOUNT, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION and R-TAX-RATE. Neither new constant, `VolumeMinUnits` and `VolumePercent`, is linked to an item.\n- **Tests the impact lists:**\n  - `cart/checkout_test.go#TestPlaceOrder`\n  - `cart/checkout_test.go#TestPlaceOrderNeedsSession`\n  - `pricing/tax_test.go#TestPrice`\n  - `pricing/tax_test.go#TestTax`\n  - `pricing/volume_test.go#TestVolumeDiscount`\n  - `pricing/volume_test.go#TestPriceWithVolume`\n- **Stamped:** `PlaceOrder` still validates the session, prices, reserves, charges and confirms in that order. `Price` still taxes the post-discount amount. After rechecking those against the code and running the tests, I ran `ostf stamp` on the 9 suspect or unstamped links, which updated `trace.lock`.\n\nNo item became false, and I didn't edit any item text.\n\n**For you to confirm**\n- I read \"before any discount code applies\" to mean the code's percentage applies to the subtotal after the volume discount. Say so if it should apply to the full subtotal instead.\n- None of the code I touched is marked risk-relevant, so I didn't need to ask before changing it.",
+ "date": "2026-10-24"
+}

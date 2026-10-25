@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.ts-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3338,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.3
+ },
+ "usage": {
+  "input_tokens": 125123,
+  "cached_input_tokens": 110848,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 456,
+  "reasoning_output_tokens": 11
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` does not exist in the trace registry, and checkout currently has no payment timeout.\n\nThe repository’s `AGENTS.md` forbids linking nonexistent requirement IDs. Should I create `R-CHECKOUT-TIMEOUT` as a draft requirement and add a failing test for the 30-second timeout? No files changed.",
+ "date": "2026-10-24"
+}

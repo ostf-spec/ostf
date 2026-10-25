@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T1.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5094,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.2
+ },
+ "usage": {
+  "input_tokens": 108828,
+  "cached_input_tokens": 89856,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 624,
+  "reasoning_output_tokens": 9
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](src/refunds.ts:68) exists to give customers refunds while protecting against abuse. OSTF links it to three requirements:\n\n- **R-REFUND-LIMIT:** Refunds cannot exceed the charge’s remaining balance; account totals above **500.00 per UTC day** require second approval. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Send refunds back through the original payment transaction.\n- **R-AUDIT-MONEY:** Record each refund in the audit log.\n\nTwo tests exercise the method directly:\n\n- [`refunds to the original transaction`](src/refunds.test.ts:50): checks the original transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining balance.\n- [`totals refunds per account and UTC day`](src/refunds.test.ts:63): checks aggregation across charges for one account, rejects exceeding the daily limit without approval, and allows a refund the next day.\n\nThe [`checkRefundLimit` suite](src/refunds.test.ts:32) provides supporting coverage for excessive or zero amounts, required approval, and permitted refunds.\n\nOSTF reports these trace links as **valid**. I inspected the code and tests without running tests or changing files.",
+ "date": "2026-10-24"
+}

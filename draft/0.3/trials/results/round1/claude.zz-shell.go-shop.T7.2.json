@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 832,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 8713,
+  "cache_read_input_tokens": 66775,
+  "output_tokens": 1213,
+  "cost": 0.0536755
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change doesn't alter behavior, and the relevant tests pass. The only open item is three trace links that `ostf check` marks suspect.\n\n**The change** is in `pricing/discount.go`, in `ApplyDiscount`. It replaces the builtin `min(d.Percent, MaxDiscountPercent)` with an explicit `if percent > MaxDiscountPercent` clamp. Both versions return the same result for every input. The expiry check and the `subtotal * percent / 100` rounding are untouched. The only caller outside the tests is `pricing/quote.go:19`, and its behavior is unchanged.\n\n**Requirements the function implements** (all under N-FAIR-PRICE):\n- R-DISCOUNT-CAP: no discount takes more than 50% off.\n- R-DISCOUNT-EXPIRY: an expired code is rejected with an error that names the code.\n- R-DISCOUNT-PERCENT: the percentage comes off the subtotal, rounded down to the cent.\n\n**Tests**\n- `go test ./pricing -run TestApplyDiscount -v` passes. That covers `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent` and `rejects_expired`, which are the tests `ostf check` says to run.\n- `go test ./...` passes in every package.\n\n**`ostf check --base main`** reports no errors. It lists the three links above as suspect (`BODY_CHANGED`) because the function body changed.\n\nI haven't run `ostf stamp`, because you didn't ask me to touch the trace state. The code still matches all three requirements and the tests pass, so stamping would be justified. Do you want me to stamp them?",
+ "date": "2026-10-24"
+}

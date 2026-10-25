@@ -1,0 +1,15 @@
+diff --git a/pricing/discount.go b/pricing/discount.go
+index 1a4e422..52e2028 100644
+--- a/pricing/discount.go
++++ b/pricing/discount.go
+@@ -27,6 +27,9 @@ func ApplyDiscount(subtotal Money, d Discount, now time.Time) (Money, error) {
+ 	if !now.Before(d.Expires) {
+ 		return 0, fmt.Errorf("%w: %s", ErrDiscountExpired, d.Code)
+ 	}
+-	percent := min(d.Percent, MaxDiscountPercent)
++	percent := d.Percent
++	if percent > MaxDiscountPercent {
++		percent = MaxDiscountPercent
++	}
+ 	return subtotal * Money(percent) / 100, nil
+ }

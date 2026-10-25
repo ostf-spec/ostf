@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2980,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 23.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 17424,
+  "cache_read_input_tokens": 126633,
+  "output_tokens": 4008,
+  "cost": 0.0067563300000000005
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Impact: no behavior change.** The working-tree edit in `src/pricing.ts` replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if` that clamps `percent` to 50. I checked the values that could differ (0, 10, 50, 50.5, 100, -5, NaN, -0, Infinity) and both forms return the same result for each, so discount amounts, expiry handling and tax are unchanged.\n\n**What `ostf` reports against main:**\n- `ostf check --base main` exits 1 with 3 suspect links, all `BODY_CHANGED` on `src/pricing.ts#applyDiscount`:\n  - `R-DISCOUNT-CAP` (discount cap, the 50% limit)\n  - `R-DISCOUNT-EXPIRY` (expired code is rejected)\n  - `R-DISCOUNT-PERCENT` (percentage taken off, rounded down)\n- Impact lists `src/pricing.test.ts#applyDiscount` and its two child tests, \"caps at fifty percent\" and \"rejects an expired code\".\n- No items were added, and nothing was stamped. The suspect links are only stale because the body text changed.\n\n**Tests run:**\n- `node --test src/pricing.test.ts`: 7/7 pass.\n- `npm test` (full suite): 36/36 pass, 0 failures.\n\n**Not done:**\n- I did not run `ostf stamp`. AGENTS.md allows stamping a suspect link only after its item is rechecked against the code and its tests pass. The tests pass, and the cap rationale (it bounds the loss from configuration errors) still holds, so the three links can be stamped. I can do that if you want, or you can review the three items first.\n- The change has no test of its own. The existing tests cover the clamp, so the new `if` is exercised by \"caps at fifty percent\".",
+ "date": "2026-10-24"
+}

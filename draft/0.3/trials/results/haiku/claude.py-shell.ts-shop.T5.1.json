@@ -1,0 +1,58 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 12618,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 96.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 60298,
+  "cache_read_input_tokens": 752126,
+  "output_tokens": 20365,
+  "cost": 0.029766360000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "SHOP-57 (`R-VOLUME-DISCOUNT`) is implemented in the working tree. I did not commit, push, or open a PR. All 39 tests pass (36 before), and `ostf check --base main` reports 116/116 valid links with no diagnostics.\n\n**What changed**\n- **`src/pricing.ts`**\n  - New `volumeDiscount(lines)`: 5% off each line with 10 or more units, rounded down to the cent per line.\n  - `price` now takes the cart lines instead of a subtotal. It takes the volume discount first, then the discount code off what remains, and caps the combined discount at 50% of the subtotal. Tax is charged on what is left.\n- **`src/checkout.ts`**: passes `lines` to `price`. This is the only caller.\n- **`src/pricing.test.ts`**: updated the existing `price` test for the new signature. Added tests for rounding, the 10-unit threshold, the volume discount applied before the code, and the combined cap.\n- **`trace.lock`**: changed only by `ostf stamp`. I did not edit it by hand.\n\n**Items and links**\n- Impact: `R-VOLUME-DISCOUNT` (new code and tests), plus `R-TAX-RATE`, `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (their functions changed; I rechecked them and their tests pass).\n- New links, all stamped: `src/pricing.ts#volumeDiscount` and `src/pricing.ts#price` implement `R-VOLUME-DISCOUNT`. Three tests verify it: `volumeDiscount > takes 5 percent off a line of 10 or more units, rounded down`, `volumeDiscount > gives nothing to a line under 10 units`, and `price > takes the volume discount before the code and counts it toward the cap`.\n- Re-stamped suspect links: `checkout.ts#Checkout.placeOrder` for `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, `pricing.ts#price` for `R-TAX-RATE`, and the `price > taxes the subtotal after discounts` test for `R-TAX-RATE`.\n\n**Needs your decision: `R-DISCOUNT-PERCENT` may now be false**\nIts text says \"A discount code takes its percentage off the subtotal.\" For a cart with a 10+ unit line, the code now takes its percentage off the subtotal minus the volume discount, so the text no longer matches the code. I did not edit the item, as AGENTS.md requires. Either the item text should say the code applies after the volume discount, or the code should stay on the full subtotal and the volume discount should be handled differently. Tell me which, and I'll make the change.\n\n**Other notes**\n- `R-VOLUME-DISCOUNT` is not risk-relevant, so no confirmation was needed. None of the pricing functions carry `RISK-*` controls.\n- I didn't create a new item. SHOP-57 already exists in `trace.yaml` as `R-VOLUME-DISCOUNT`, revision 2, so I linked to it rather than inventing an ID.\n- Jira itself was not available here. I took the requirement text from `trace.yaml`.\n\nOnce you confirm the `R-DISCOUNT-PERCENT` direction, I can create a branch, commit with the requested attribution, and open the PR. The PR description will name the impact items and the added links above.",
+ "date": "2026-10-24"
+}

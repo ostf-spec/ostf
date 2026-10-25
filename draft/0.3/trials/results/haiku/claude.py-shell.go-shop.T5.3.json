@@ -1,0 +1,61 @@
+{
+ "run": "claude.py-shell.go-shop.T5.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 2,
+  "ostfOutputTokens": 14410,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 112.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 63895,
+  "cache_read_input_tokens": 1099961,
+  "output_tokens": 22863,
+  "cost": 0.035214310000000006
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "SHOP-57 is implemented in `R-VOLUME-DISCOUNT`, and `ostf check --base main` now passes (114/114 links valid). Nothing is committed and no PR is open. I couldn't reach Jira from here, so I worked from the requirement text already in `trace.yaml` (`jira:SHOP-57`, revision 2).\n\n**What changed**\n- **`pricing/discount.go`**: new `VolumeDiscount(lines)`. Each line with 10+ units takes 5% off, floored to the cent per line.\n- **`pricing/quote.go`**: `Price` now takes the cart lines instead of a subtotal. It takes the volume discount first, then the code applies to what's left. The combined discount is clamped to 50% of the subtotal, so volume counts toward the cap. Tax is still charged on the post-discount amount.\n- **`cart/checkout.go`**: passes the cart's lines to `Price`.\n- **Tests**: `TestVolumeDiscount`, `TestPriceVolumeBeforeCode` and `TestPriceVolumeCountsTowardCap` in `pricing/discount_test.go`. `TestPrice` was updated for the new signature. `go test ./...` passes.\n- **`trace.yaml`**: added `code: [pricing/quote.go#Price]` to `R-VOLUME-DISCOUNT`. The other links come from `@req` comments.\n- **`trace.lock`**: changed only by `ostf stamp`. I stamped the 9 links I verified: the volume links, `Price`↔`R-TAX-RATE`, `TestPrice`↔`R-TAX-RATE`, and `PlaceOrder`↔`R-CHECKOUT-ORDER` / `R-CHECKOUT-SESSION`.\n\n**Impact (from `ostf check`)**\n- Items: `R-VOLUME-DISCOUNT` (new links), `R-TAX-RATE`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`.\n- Added links: `VolumeDiscount`→`R-VOLUME-DISCOUNT`, `Price`→`R-VOLUME-DISCOUNT`, and the three `TestVolumeDiscount` / `TestPriceVolume*` tests→`R-VOLUME-DISCOUNT`.\n- Tests: `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPrice`, `TestTax`, and the three new tests.\n\n**Decisions for you to check**\n- **Discount order:** I read \"before any discount code applies\" as the code taking its percentage off the amount after volume. The 50% cap covers both discounts together.\n- **`R-DISCOUNT-PERCENT` is now false for some carts.** It says the code takes its percentage \"off the subtotal\". With a qualifying volume line, the code is taken off the post-volume amount. I did not rewrite the item. Its links still show valid because `ApplyDiscount` itself didn't change. Someone should decide whether to revise that item.\n- **Status:** `R-VOLUME-DISCOUNT` already existed in `trace.yaml` without a `status:` field, so I didn't add `status: draft`.\n- **Risk:** none of the changed code carries `controls` links, so no risk-relevant code was touched.\n\n**Gap:** there's no end-to-end checkout test with volume lines. The wiring in `checkout.go` is covered only by compilation and the existing checkout tests. Adding one would need more stock in the test fixture.",
+ "date": "2026-10-24"
+}

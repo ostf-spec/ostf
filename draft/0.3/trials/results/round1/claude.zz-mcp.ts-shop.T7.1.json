@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 11957,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 38907,
+  "cache_read_input_tokens": 99057,
+  "output_tokens": 1276,
+  "cost": 0.1783137
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your uncommitted change to `applyDiscount` in `src/pricing.ts` doesn't change its behavior, and the pricing tests pass.\n\n**What changed:** the only edit is in `applyDiscount`. The cap on the discount percentage was `Math.min(d.percent, MAX_DISCOUNT_PERCENT)`. It is now `let percent = d.percent; if (percent > MAX_DISCOUNT_PERCENT) percent = MAX_DISCOUNT_PERCENT;`. Both versions give the same result for every input. The expiry check and the `Math.floor((subtotal * percent) / 100)` rounding are untouched. No other files are modified.\n\n**Requirements affected:** `ostf check --base main` reports direct coverage of three accepted requirements, none marked risk-relevant:\n- R-DISCOUNT-CAP: no more than 50% off.\n- R-DISCOUNT-EXPIRY: expired codes are rejected with an error that names the code.\n- R-DISCOUNT-PERCENT: the percentage comes off the subtotal, rounded down to the cent.\n\nNo items or links were added or removed.\n\n**Tests:** `node --test src/pricing.test.ts` passes (7 of 7). That includes the three tests OSTF says matter here: `applyDiscount`, `applyDiscount > caps at fifty percent` and `applyDiscount > rejects an expired code`.\n\n**Open item:** the three `implements` links from `applyDiscount` to those requirements are now `suspect` with reason `BODY_CHANGED`. That is expected, because the function body changed. I rechecked the new body against the requirement text, and it still satisfies all three. I haven't run `ostf stamp` because it rewrites `trace.lock` and you only asked for a summary and a test run. Want me to stamp the three links? The `implements` links are:\n- `src/pricing.ts#applyDiscount` → R-DISCOUNT-CAP\n- `src/pricing.ts#applyDiscount` → R-DISCOUNT-EXPIRY\n- `src/pricing.ts#applyDiscount` → R-DISCOUNT-PERCENT",
+ "date": "2026-10-24"
+}

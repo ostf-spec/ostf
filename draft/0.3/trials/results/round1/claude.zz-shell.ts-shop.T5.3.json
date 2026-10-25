@@ -1,0 +1,58 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5986,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 60.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 23163,
+  "cache_read_input_tokens": 276046,
+  "output_tokens": 5519,
+  "cost": 0.1754906
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "SHOP-57 (volume discount) is implemented. All 39 tests pass, and `ostf check --base main` now reports 40 items, 116 valid, with no errors. I haven't committed or opened a PR. I couldn't reach Jira, so I worked from the `R-VOLUME-DISCOUNT` item text (revision 2) in `trace.yaml`.\n\n**Changes**\n- **`src/pricing.ts`:** the new `volumeDiscount(lines)` takes 5% off each cart line of 10 or more units, rounded down to the cent per line. `price()` has a new optional `volume` argument. The volume discount comes off first, the code applies to what is left, and the two together are capped at 50% of the subtotal.\n- **`src/checkout.ts`:** `placeOrder` passes `volumeDiscount(lines)` into `price`.\n- **`src/pricing.test.ts`:** three new tests cover rounding, lines under 10 units, and the ordering and cap.\n- **`trace.yaml`:** I added `code:` and `tests:` links to the existing `R-VOLUME-DISCOUNT` item and left its text alone. I created no new IDs.\n\n**For the PR description**\n`ostf check` reported these links as added:\n- `src/pricing.ts#volumeDiscount` and `src/pricing.ts#price` implement R-VOLUME-DISCOUNT.\n- Three tests in `src/pricing.test.ts#volumeDiscount` verify R-VOLUME-DISCOUNT. They are the rounding test, the \"ignores lines under 10 units\" test, and the \"applies before a discount code and counts toward the cap\" test.\n\n**Stamping**\nI rechecked and stamped 8 links with `ostf stamp`:\n- The 5 new links above.\n- Three existing links that went suspect because the code around them changed: `price` implements R-TAX-RATE, and `Checkout.placeOrder` implements R-CHECKOUT-ORDER and R-CHECKOUT-SESSION. Those items still hold.\n\n`trace.lock` changed only through `ostf stamp`; I didn't edit it by hand.\n\n**Decision for you:** the item says the volume discount applies \"before any discount code\" and counts toward the cap. I read that as the code percentage applying to the subtotal after the volume discount, with the combined discount held to 50% of the original subtotal. If product meant the code to apply to the full subtotal instead, that's a small change in `price()`.",
+ "date": "2026-10-24"
+}

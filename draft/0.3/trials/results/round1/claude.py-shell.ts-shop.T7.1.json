@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 662,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 8392,
+  "cache_read_input_tokens": 67075,
+  "output_tokens": 1023,
+  "cost": 0.0505215
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is behavior-preserving, and the tests that cover it pass.\n\n**What changed:** the diff touches one function, `applyDiscount` in `src/pricing.ts`. It replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an equivalent `let` plus an `if` clamp. The expiry check and the `Math.floor((subtotal * percent) / 100)` calculation are unchanged. Percent values are clamped the same way as before, including the 50% cap.\n\n**Requirements affected** (from `ostf context` and `ostf check --base main`):\n- R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT each have `applyDiscount` as an implementing function. All three links are now `suspect` (`BODY_CHANGED`) because the function body changed.\n- The linked item N-FAIR-PRICE is not affected, and none of the items is made false by the change.\n\n**Tests run:** I ran `src/pricing.test.ts` and `src/checkout.test.ts`. Checkout is included because it calls pricing. All 10 tests passed, including the ones tied to this function: \"caps at fifty percent\", \"rejects an expired code\", and \"takes the percentage off\" / \"rounds down to the cent\".\n\n**Not done:** I haven't run `ostf stamp` on the three suspect links. Stamping rewrites `trace.lock`, which you didn't ask for. I rechecked the three items against the new code and the linked tests pass, so stamping looks justified. Do you want me to run it?",
+ "date": "2026-10-24"
+}

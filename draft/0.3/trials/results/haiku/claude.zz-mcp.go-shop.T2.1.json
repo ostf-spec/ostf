@@ -1,0 +1,62 @@
+{
+ "run": "claude.zz-mcp.go-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 37,
+  "callsBeforeFirstEdit": 19,
+  "edited": true,
+  "ostfCalls": 12,
+  "ostfCallsBeforeFirstEdit": 8,
+  "firstOstfCall": 5,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 7,
+  "stampCalls": 1,
+  "ostfOutputTokens": 54111,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 109.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 165827,
+  "cache_read_input_tokens": 1129347,
+  "output_tokens": 20889,
+  "cost": 0.16812533
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "Shipping is in. An order whose subtotal after discounts is at least 100.00 ships free, and any other order pays 5.99. The shipping fee is part of the order total that gets charged. Everything is uncommitted on `main`.\n\n**Changes**\n- `pricing/shipping.go` (new): `Shipping(afterDiscount)` returns 0 at or above 10,000 cents, otherwise 599.\n- `pricing/quote.go`: `Quote` has a `Shipping` field. `Price` computes shipping on the subtotal after discounts, and `Total` = after-discount subtotal + tax + shipping.\n- `pricing/shipping_test.go` (new): `TestShipping` covers the threshold edges (9,999 pays, 10,000 is free). `TestPriceShipping` checks full quotes for a free and a paid order.\n- `pricing/tax_test.go`: `TestPrice` now expects the 5.99 fee and a total of 109.47.\n- `cart/checkout_test.go`: `TestPlaceOrder` now expects a 28.99 total and charge (20.00 + 3.00 tax + 5.99 shipping).\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE`, `status: draft`, refining `N-FAIR-PRICE`, linked to `Shipping`, `Price`, `TestShipping` and `TestPriceShipping`.\n- `README.md`: the `pricing` row mentions the shipping fee.\n- `trace.lock`: changed only by `ostf stamp`.\n\n**Choices I made**\n- Tax is not charged on shipping. This follows the existing `R-TAX-RATE` wording, \"subtotal after discounts\". Tell me if shipping should be taxed.\n- The threshold is checked against the amount after the discount, before tax, as you specified.\n- I did not change any risk-relevant code (`ValidateAmount`, `Processor.Charge`, refund and login code).\n\n**Tests**\n- `go vet` is clean, `gofmt` reports nothing, and `go test -count=1 ./...` passes in all packages.\n\n**OSTF**\n- `ostf check --base main` reports no diagnostics. The impact lists `R-SHIPPING-FEE` as added, with the code `pricing/shipping.go#Shipping` and `pricing/quote.go#Price`, and the tests `pricing/shipping_test.go#TestShipping`, `pricing/shipping_test.go#TestPriceShipping`, `pricing/tax_test.go#TestPrice`, `pricing/tax_test.go#TestTax` and `cart/checkout_test.go#TestPlaceOrder`.\n- Links added: `R-SHIPPING-FEE refines N-FAIR-PRICE`, `pricing/quote.go#Price implements R-SHIPPING-FEE`, `pricing/shipping.go#Shipping implements R-SHIPPING-FEE`, `pricing/shipping_test.go#TestPriceShipping verifies R-SHIPPING-FEE`, and `pricing/shipping_test.go#TestShipping verifies R-SHIPPING-FEE`.\n- Three existing links turned suspect because their bodies changed: `pricing/quote.go#Price implements R-TAX-RATE`, `pricing/tax_test.go#TestPrice verifies R-TAX-RATE`, and `cart/checkout_test.go#TestPlaceOrder verifies R-CHECKOUT-ORDER`. I rechecked each item against the code and reran its tests, then stamped them. No item text was changed, and none of the existing items became false.\n\n**Not done**\n- No pull request was opened and nothing was committed. If you open one, list the items and links above in it.\n- `R-VOLUME-DISCOUNT` in `trace.yaml` has no code link. That was already true before this change and I left it alone. When it is implemented, its discounted amounts will count toward the free-shipping threshold.",
+ "date": "2026-10-24"
+}

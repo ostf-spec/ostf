@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T1.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3044,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.5
+ },
+ "usage": {
+  "input_tokens": 72981,
+  "cached_input_tokens": 59008,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 581,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](src/refunds.ts:68) exists to fulfill three traced requirements:\n\n- **R-REFUND-LIMIT:** Prevent refunds exceeding the remaining charge, and require second approval when an account’s refunds exceed 500.00 in one UTC day.\n- **R-REFUND-ORIGINAL:** Return money to the original payment transaction.\n- **R-AUDIT-MONEY:** Record each successful refund in the audit log.\n\nThese support **N-REFUNDS**, quick refunds without losses from abuse, and control **RISK-REFUND-ABUSE**, funds drained by compromised accounts or operator mistakes. `ostf context` reports these links as valid.\n\nTwo tests directly exercise the method:\n\n- [`Refunder > refunds to the original transaction`](src/refunds.test.ts:50): checks the original transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining charge.\n- [`Refunder > totals refunds per account and UTC day`](src/refunds.test.ts:63): checks cumulative refunds across two charges trigger approval requirements, and allows another refund the following UTC day.\n\nThe [`checkRefundLimit` tests](src/refunds.test.ts:32) additionally cover zero/excessive amounts, approval requirements, and permitted refunds with or without approval.\n\nThe tests do not exercise unknown receipts, gateway-failure rollback, or concurrent refunds. No files were changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

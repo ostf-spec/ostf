@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1415,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 22.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 11345,
+  "cache_read_input_tokens": 133753,
+  "output_tokens": 2073,
+  "cost": 0.1202066
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. `ErrRefundTooLarge` is returned only when the amount is more than what's left on the charge.\n\nThe `payments` tests pass, and `ostf check --base main` reports no errors. I haven't committed anything.\n\n- **Code:** `payments/refund.go` has the new error, the non-positive check (which runs first), and an updated doc comment.\n- **Test:** in `payments/refund_test.go`, the \"zero\" case in `TestCheckRefundLimit` now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **Stamps:** `check` flagged two suspect links. I rechecked `R-REFUND-LIMIT` against the code and stamped them:\n  - `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`\n  - `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-LIMIT`\n  The stamping updated `trace.lock`. I didn't edit it by hand.\n- **Trace items:** `R-REFUND-LIMIT` is still true, so I left it as is. `check` reports no items or links as added, and the new `ErrInvalidRefundAmount` isn't linked to any item.\n- **Callers:** nothing else in the repo references `ErrRefundTooLarge`. `Refunder.Refund` passes the error through, so it will now return `ErrInvalidRefundAmount` for non-positive amounts.",
+ "date": "2026-10-24"
+}

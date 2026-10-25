@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T6.2",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4182,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 31.7
+ },
+ "usage": {
+  "input_tokens": 102385,
+  "cached_input_tokens": 86016,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 507,
+  "reasoning_output_tokens": 58
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace registry, and checkout currently has no payment timeout.\n\nShould I create that requirement as a draft and add a failing test for the 30-second limit? `AGENTS.md` requires links to existing requirement IDs, so I haven’t changed any files.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: Apache-2.0
+# Installs the OSTF 0.3 reference reader as the `ostf` command, which implements the command
+# profile of Annex I: `pipx install git+https://github.com/ostf-spec/ostf`.
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ostf-reader"
+version = "0.3.0.dev1"
+description = "Reference reader for the Open Software Traceability Format (OSTF) wire 0.3: check, context and stamp"
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.12"
+dependencies = [
+    "PyYAML==6.0.3",
+    "tree-sitter==0.26.0",
+    "tree-sitter-go==0.25.0",
+    "tree-sitter-javascript==0.25.0",
+    "tree-sitter-typescript==0.23.2",
+    "rfc8785==0.1.4",
+]
+
+[project.scripts]
+ostf = "ostf_reader.reader:main"
+
+[project.urls]
+Specification = "https://github.com/ostf-spec/ostf/blob/main/draft/0.3/ostf.md"
+
+[tool.setuptools]
+package-dir = {"ostf_reader" = "draft/0.3/conformance"}
+packages = ["ostf_reader"]
+include-package-data = false

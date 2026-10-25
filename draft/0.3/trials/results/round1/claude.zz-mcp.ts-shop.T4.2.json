@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T4.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 3,
+  "ostfOutputTokens": 14773,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 46722,
+  "cache_read_input_tokens": 293142,
+  "output_tokens": 3357,
+  "cost": 0.2498122
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "I renamed `tax` to `salesTax` and moved it into the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` reports no errors.\n\n**Code changes**\n- `src/salestax.ts` is new. It holds `salesTax`, with `roundHalfUp` moved along with it because only the tax code used it.\n- `src/pricing.ts` now imports `salesTax` as `taxOn`. A local variable in `price` is already named `salesTax`, so the alias avoids a clash.\n- `src/pricing.test.ts` imports `salesTax` from the new file. I kept the `describe(\"tax\")` name so the test links keep their names.\n- `README.md` has a new row for `src/salestax.ts`. I also removed \"sales tax by region\" from the `pricing.ts` row.\n- `trace/requirements.yaml` now points the `code:` links of `R-TAX-RATE` and `R-TAX-EXEMPT` at `src/salestax.ts#salesTax`.\n\n**OSTF links**\n- **Added:** `src/salestax.ts#salesTax implements R-TAX-EXEMPT` and `src/salestax.ts#salesTax implements R-TAX-RATE`.\n- **Removed:** the same two links from `src/pricing.ts#tax`.\n- **Rechecked and stamped:** the two new links, `pricing.ts#price implements R-TAX-RATE`, and the two `tax` tests that verify R-TAX-EXEMPT and R-TAX-RATE.\n\nI stamped those five links after confirming the tax behavior is unchanged and the tests pass. Neither item is marked risk-relevant, and no item text was changed.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

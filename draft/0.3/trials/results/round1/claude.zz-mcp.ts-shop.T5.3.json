@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 7,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 3,
+  "stampCalls": 2,
+  "ostfOutputTokens": 17610,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 46.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 56328,
+  "cache_read_input_tokens": 351149,
+  "output_tokens": 5280,
+  "cost": 0.3132789
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/cart.test.ts",
+  "src/cart.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "SHOP-57 (volume discount) is implemented and the tests pass (38/38). Nothing is committed and no PR is open. I couldn't read the Jira ticket, so I worked from the `R-VOLUME-DISCOUNT` text in `trace.yaml` (revision 2).\n\n**What changed**\n- **`src/cart.ts`:** added `Cart.volumeDiscount()`. It takes 5% off every line with 10 or more units, rounded down to the cent per line. It uses two new constants, `VOLUME_MIN_QUANTITY` and `VOLUME_PERCENT`.\n- **`src/pricing.ts`:** `price()` takes a new optional last argument, `volume`. The discount code applies to the subtotal after the volume discount, and the two discounts together are capped at 50% of the original subtotal.\n- **`src/checkout.ts`:** `placeOrder` now passes `cart.volumeDiscount()` to `price()`.\n- **Tests:** one new test in `src/cart.test.ts` and one in `src/pricing.test.ts`.\n\n**Trace items and links**\n- **No new items:** `R-VOLUME-DISCOUNT` already existed, so I added no new item or ID.\n- **Links added (4, now valid):**\n  - `src/cart.ts#Cart.volumeDiscount` implements `R-VOLUME-DISCOUNT`.\n  - `src/pricing.ts#price` implements `R-VOLUME-DISCOUNT`.\n  - The new cart test verifies `R-VOLUME-DISCOUNT`.\n  - The new pricing test verifies `R-VOLUME-DISCOUNT`.\n- **Links stamped:** the four new ones, plus three that `ostf check` flagged suspect because I edited the code they point to: `price` implements `R-TAX-RATE`, and `placeOrder` implements `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. I rechecked each against the code and the tests pass.\n- **Risk-relevant code:** none of the touched code is marked risk-relevant, so I didn't need to ask first.\n- **Existing items:** none became false.\n\n**Judgment calls**\n- **Cap on combined discounts:** a code applied to the post-volume amount could otherwise push the total past 50%, so `price()` clamps the combined discount. That is how I read \"counts toward the cap\".\n- **Cap item text:** `R-DISCOUNT-CAP` still says \"no discount takes more than fifty percent\". That holds, but its link still points only at `applyDiscount`, not at the new clamp in `price()`. You may want to link it.\n\nI never ran `ostf check` in the terminal, only through the MCP tool, and I haven't re-run it since stamping. Run `ostf check --base main` again to confirm it comes back clean.",
+ "date": "2026-10-24"
+}

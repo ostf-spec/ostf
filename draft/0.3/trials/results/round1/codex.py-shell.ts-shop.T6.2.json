@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T6.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5397,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.5
+ },
+ "usage": {
+  "input_tokens": 127704,
+  "cached_input_tokens": 95488,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 463,
+  "reasoning_output_tokens": 28
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace registry, and checkout currently has no timeout logic.\n\nShould I register it as a new draft requirement and add a failing test? No files changed: `AGENTS.md` says to link only existing requirement IDs.",
+ "date": "2026-10-24"
+}

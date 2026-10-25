@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3201,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 62.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 15625,
+  "cache_read_input_tokens": 237889,
+  "output_tokens": 3798,
+  "cost": 0.16644810000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. A refund larger than what's left of the charge still returns `ErrRefundTooLarge`. I haven't committed anything, and there's no pull request yet.\n\n`go test ./payments` passes. `ostf check --base main` reports no errors: 41 items, 112 links valid.\n\n**Changes**\n- **`payments/refund.go`:** added `ErrInvalidRefundAmount` and split the amount check in two.\n- **`payments/refund_test.go`:** `TestCheckRefundLimit` now expects `ErrInvalidRefundAmount` for the zero case, and I added a negative-amount case.\n- **`trace/requirements.yaml`:** added **R-REFUND-POSITIVE** with `status: draft`. It refines N-REFUNDS and is linked to `CheckRefundLimit` and `TestCheckRefundLimit`.\n\n**Impact listed by check**\n- **Items:** R-REFUND-LIMIT and R-REFUND-POSITIVE.\n- **Changed symbols:** `CheckRefundLimit` and `TestCheckRefundLimit`. `ErrInvalidRefundAmount` maps to no item.\n- **Tests to run:** `TestCheckRefundLimit` and `TestRefundDailyLimit`. Both pass.\n\n**Added by check**\n- **Item:** R-REFUND-POSITIVE.\n- **Links:**\n  - R-REFUND-POSITIVE refines N-REFUNDS\n  - `CheckRefundLimit` implements R-REFUND-POSITIVE\n  - `TestCheckRefundLimit` verifies R-REFUND-POSITIVE\n\n**Stamped**\n- The two links that had gone suspect on R-REFUND-LIMIT (`CheckRefundLimit` implements it, `TestCheckRefundLimit` verifies it). I rechecked the item text against the code first. Its limits are unchanged, so it is still true.\n- The three new links above.\n\nNo item became false. The new `ErrInvalidRefundAmount` isn't linked to an item by itself. I didn't edit `trace.lock` by hand; `ostf stamp` updated it.",
+ "date": "2026-10-24"
+}

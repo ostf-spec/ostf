@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.go-shop.T6.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5746,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.0
+ },
+ "usage": {
+  "input_tokens": 130577,
+  "cached_input_tokens": 113408,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 503,
+  "reasoning_output_tokens": 56
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is absent from the trace files, and checkout currently has no timeout logic. No files changed.\n\nShould I add it as a draft requirement with a failing test, or is there an existing requirement ID to use?\n\n[AGENTS.md](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T6.2/repo/AGENTS.md) requires linking only existing IDs, so I need to resolve that before adding the test.",
+ "date": "2026-10-24"
+}

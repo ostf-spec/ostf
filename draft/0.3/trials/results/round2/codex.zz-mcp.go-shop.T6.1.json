@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5917,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.8
+ },
+ "usage": {
+  "input_tokens": 154585,
+  "cached_input_tokens": 109952,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 518,
+  "reasoning_output_tokens": 30
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no gateway timeout.\n\nShould I create it as a draft requirement and add a failing test, or did you intend an existing requirement ID?\n\n`AGENTS.md` requires links to existing IDs, so I haven’t changed files. `ostf check --base main` passes with no impacted items or added links.",
+ "date": "2026-10-24"
+}

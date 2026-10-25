@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2864,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 12914,
+  "cache_read_input_tokens": 75995,
+  "output_tokens": 3083,
+  "cost": 0.00488505
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The uncommitted change is a behavior-preserving refactor of the discount cap in `src/pricing.ts`. All 36 tests pass, but `ostf check` reports three suspect links that I have not resolved.\n\n**The change**\n\n`applyDiscount` used `Math.min(d.percent, MAX_DISCOUNT_PERCENT)`. It now uses an `if` that clamps `percent` to `MAX_DISCOUNT_PERCENT` (50) when it is larger. I checked the edge cases by reading the code, not by running them: for normal values, negatives, `-0`, and `NaN` the two forms give the same result, so the discount amount does not change. The cap rule itself is unchanged.\n\n**Impact against main (from `ostf check --base main`)**\n\n- Changed: `src/pricing.ts#applyDiscount`\n- Items whose links are now suspect (`BODY_CHANGED`):\n  - `R-DISCOUNT-CAP` (discount cap, 50% max; its rationale ties to the wrong-charge risk)\n  - `R-DISCOUNT-EXPIRY` (expired codes are rejected)\n  - `R-DISCOUNT-PERCENT` (percentage off, rounded down to the cent)\n- Tests in the impact list: `src/pricing.test.ts#applyDiscount`, `…> caps at fifty percent`, `…> rejects an expired code`\n- Trace totals: 40 items, 111 links, 108 valid, 3 suspect. The check exits 1 because of the suspect links, and it reports no other errors.\n\n**Tests**\n\n- `node --test` (full suite): 36 pass, 0 fail.\n- `node --test src/pricing.test.ts`: 7 pass, 0 fail.\n\n**What I did not do**\n\n- I did not run `ostf stamp`. AGENTS.md allows stamping only after rechecking each item against the code and its tests. Those tests pass, but stamping records that review in `trace.lock`, so I left it for you to decide.\n- AGENTS.md also says to ask before changing risk-relevant code. `applyDiscount` is tied to the wrong-charge risk through `R-DISCOUNT-CAP`, so I treated this as a read-only summary and changed nothing.\n\nIf you want to close this out, I can recheck the three items, run their tests, and stamp them. I would then also list them in the summary and PR text, as AGENTS.md requires.",
+ "date": "2026-10-24"
+}

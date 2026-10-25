@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.go-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7239,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 34858,
+  "cache_read_input_tokens": 218241,
+  "output_tokens": 4003,
+  "cost": 0.01115691
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no diagnostics. The only file changed is `trace.lock`, and only the one line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`.\n\n**What was failing**\n- `LOCK_INVALID`: that lock line had `source.sig:go1:…` where Annex B expects `source.sig=go1:…`.\n- `LINK_UNSTAMPED`: the same link had no valid recheck record, so it was reported as unstamped.\n\n**What I did**\n- Read `CheckRefundLimit` and its item, R-REFUND-LIMIT. The code does what the item says: a refund must be positive and no more than what is left on the charge, and refunds that take an account past 500.00 in one UTC day need a second approval. The item is marked risk-relevant, so I checked it before stamping and did not change any code.\n- Ran the refund tests uncached (`TestCheckRefundLimit`, `TestRefund`, `TestRefundDailyLimit`). All pass.\n- Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`. That rewrote the malformed line. I did not edit `trace.lock` by hand.\n\n**Impact and additions**\n- No items or links were added, and no tests were added or changed. The impact section reports no changed items, links or tests against `main`.\n- There was nothing new to add to a PR description beyond the restamp itself.\n\nI have not committed anything. Say if you want a commit, and I'll use the attribution line from the system reminder.",
+ "date": "2026-10-24"
+}

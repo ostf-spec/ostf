@@ -1,0 +1,62 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 29,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 5,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 43289,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 93.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 133868,
+  "cache_read_input_tokens": 1402639,
+  "output_tokens": 17835,
+  "cost": 0.14352412999999997
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "SHOP-57 is implemented and `ostf check --base main` reports no diagnostics. I couldn't reach Jira from here (no Jira tool, no network), so I worked from the requirement text already in `trace.yaml` (`R-VOLUME-DISCOUNT`, jira:SHOP-57, rev 2). If the Jira ticket says something different, tell me and I'll adjust.\n\n**Behavior**\n- Each cart line with 10+ units gets 5% off its amount, rounded down to the cent (`pricing/volume.go`).\n- The volume discount comes off the subtotal first. The discount code then applies to the remainder.\n- The volume discount and the code together are capped at 50% of the subtotal. This is my reading of \"counts toward the fifty percent cap\".\n- `pricing.Price` now takes the volume discount as a parameter, and `Cart.VolumeDiscount()` sums it over the lines. `Checkout.PlaceOrder` passes it in. Price is only called from checkout.\n\n**Files changed**\n- `pricing/volume.go` (new): `VolumeDiscount`, marked `@req R-VOLUME-DISCOUNT`.\n- `pricing/quote.go`: `Price` signature and combined cap.\n- `cart/cart.go`: `Cart.VolumeDiscount`.\n- `cart/checkout.go`: passes the volume discount to `Price`.\n- `pricing/tax_test.go`: updated the `Price` call.\n- `pricing/volume_test.go` (new) and `cart/cart_test.go`: tests for the rule and for combined pricing and the cap.\n- `trace.lock`: written by `ostf_stamp`. I did not edit it by hand.\n- `trace.yaml` is unchanged. Adding `code:`/`tests:` fields duplicated the `@req` links and produced warnings, so I removed them.\n\n**OSTF impact**\n- Item with links added: `R-VOLUME-DISCOUNT`. Six links, all now stamped: `Cart.VolumeDiscount`, `Price`, `VolumeDiscount`, and tests `TestVolumeDiscount` (pricing and cart) and `TestPriceVolume`.\n- Existing items whose links were suspect because `Price` or `PlaceOrder` changed, and which I rechecked and stamped: `R-TAX-RATE` (`Price`, `TestPrice`), and `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (`PlaceOrder`).\n- Items and links removed: none. Item text is unchanged.\n- Tests run: `go test -count=1 ./...` passes, `gofmt` is clean, and `go vet` passes.\n\nNothing is committed and no PR is open. Say the word and I'll commit, and open the PR with the item and test lists above.",
+ "date": "2026-10-24"
+}

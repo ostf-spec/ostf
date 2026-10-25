@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T1.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2650,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.2
+ },
+ "usage": {
+  "input_tokens": 72453,
+  "cached_input_tokens": 45696,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 635,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.Refund`](/tmp/ostf-trials/runs/codex.zz-mcp.go-shop.T1.1/repo/payments/refund.go:63) exists to provide refunds while protecting against abuse. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** Never refund more than remains on the charge; account refunds above 500.00 per UTC day require second approval. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Return funds to the original payment method, using the original transaction.\n- **R-AUDIT-MONEY:** Record every refund in the audit log.\n\nThese support the needs for quick refunds without abuse (**N-REFUNDS**) and protected customer accounts (**N-ACCOUNT-SAFE**).\n\nThe covering tests are:\n\n- [`TestRefund`](/tmp/ostf-trials/runs/codex.zz-mcp.go-shop.T1.1/repo/payments/refund_test.go:34): Checks the original transaction receives the refund, the audit entry contains the refund action, amount and receipt, and a subsequent refund exceeding the remaining charge is rejected.\n- [`TestRefundDailyLimit`](/tmp/ostf-trials/runs/codex.zz-mcp.go-shop.T1.1/repo/payments/refund_test.go:58): Checks refunds across charges accumulate per account, exceeding the daily limit requires approval, and a refund succeeds the following UTC day.\n- [`TestCheckRefundLimit`](/tmp/ostf-trials/runs/codex.zz-mcp.go-shop.T1.1/repo/payments/refund_test.go:12): Covers the helper indirectly supporting `Refund`: valid amounts, excessive amounts, zero, and daily-limit rejection or acceptance with approval.\n\nI inspected the code and trace links; I did not run tests or change files.",
+ "date": "2026-10-24"
+}

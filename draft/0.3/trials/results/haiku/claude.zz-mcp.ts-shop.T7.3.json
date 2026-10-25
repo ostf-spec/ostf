@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 14148,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 44171,
+  "cache_read_input_tokens": 120391,
+  "output_tokens": 4415,
+  "cost": 0.01224681
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-neutral refactor of the discount cap in `src/pricing.ts`. All 36 tests pass, and `ostf check` reports no errors.\n\n**What changed:** `applyDiscount` replaced `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if` that clamps `percent` to 50. I checked the edge cases: for `NaN`, `Infinity`, and values at or below 50, both forms return the same result. There is no change to the rounding, the expiry check, or the signature.\n\n**Impact (per `ostf check --base main`):**\n- Changed anchor: `src/pricing.ts#applyDiscount`\n- Items it touches: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`\n- Tests it covers: `src/pricing.test.ts#applyDiscount`, `#applyDiscount > caps at fifty percent`, `#applyDiscount > rejects an expired code`\n- Items and links added or removed: none\n- Diagnostics: none\n- Suspect links: `applyDiscount` → `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, and `R-DISCOUNT-PERCENT` are marked `suspect` (`BODY_CHANGED`). The tests for those items pass, but I did not run `ostf stamp`, because the link stamps are a write to `trace.lock` and you asked only for a summary. If you want them stamped, I can do it now with the links quoted exactly as check prints them.\n\n**Tests run:**\n- `node --test src/pricing.test.ts`: 7/7 pass\n- `npm test` (full suite): 36/36 pass\n\n**Other notes:**\n- `R-VOLUME-DISCOUNT` (SHOP-57) says the volume discount counts toward the 50% cap. Nothing in the code implements a volume discount, and no link points to it. This predates your change.\n- `ostf context` failed on my call because the tool rejected the `file` argument. I did not retry it, since I'm not editing a function.\n- No `risk-relevant` items are touched by this change.",
+ "date": "2026-10-24"
+}

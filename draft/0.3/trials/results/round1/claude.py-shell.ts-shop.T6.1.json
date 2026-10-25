@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T6.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2320,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 10969,
+  "cache_read_input_tokens": 68734,
+  "output_tokens": 1129,
+  "cost": 0.0620554
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "I can't write this test as asked, for two reasons:\n\n1. **`R-CHECKOUT-TIMEOUT` doesn't exist.** It isn't in `trace.yaml`, `trace/requirements.yaml` or `trace/design.yaml`. The checkout requirements are only `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. The project rules say never to invent an ID.\n2. **The behavior isn't implemented.** Nothing in `src/` mentions a timeout. `Checkout.placeOrder` awaits `payments.charge(...)` with no time limit. A test that expects a 30-second failure would fail against the current code. Passing it would mean changing `src/checkout.ts`, which I haven't been asked to do.\n\nHere are the ways I could go:\n\n- **A.** If the ID is a typo or lives on another branch, tell me the right one and I'll link to it.\n- **B.** I add a new draft item (for example `R-CHECKOUT-TIMEOUT`, status `draft`) to `trace/requirements.yaml`. I also add the test, and the implementation in `Checkout.placeOrder`: a 30-second limit that releases the reserved stock and throws a `TimeoutError`. The test would use fake timers rather than waiting 30 real seconds. The AGENTS.md rules ask me to link the new item to its code and tests in the same change, so I'd do that too. I'd also run `ostf check --base main` and list the added items and links.\n- **C.** I write only a test with no implementation. It would fail, so I don't recommend it.\n\nWhich do you want? If it's B, say whether you want the item ID and wording above or your own. I'd also check with you before touching `Checkout.placeOrder` if it's marked risk-relevant. It isn't marked in the `ostf context` output I ran.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,16 @@
+active: true
+derived: false
+header: |
+  Charge once
+level: 1.0
+links:
+- SYS001: Ok-buI2oFo4IJvhboK12rpUoSbBnec_qKOQX1pfHepE=
+normative: true
+priority: high
+ref: ''
+references:
+- path: src/payments.py
+  type: file
+reviewed: UZzQ37BIM480x09yzI1S0pM-cQf2_w2ZxlTHA9Yloog=
+text: |
+  A retried charge with the same key is not charged twice.

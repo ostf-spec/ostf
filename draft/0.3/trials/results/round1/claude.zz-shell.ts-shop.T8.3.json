@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 522,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9102,
+  "cache_read_input_tokens": 107100,
+  "output_tokens": 1126,
+  "cost": 0.05840200000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links valid, no errors.\n\n- **Cause:** the `trace.lock` line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` was malformed. It had `source.sig:` where the format needs `source.sig=`. That made the link unstamped.\n- **Recheck:** the code matches the item text. A refund can't exceed what's left on the charge, and it needs a second approval once the day's total passes 500.00 (`DAILY_REFUND_LIMIT` is 50_000 cents). All 36 tests pass.\n- **Fix:** I ran `ostf stamp` on that link, which rewrote the one lock line. That is the only file changed (`trace.lock`, 1 line). I didn't edit it by hand and I didn't change any code.\n\nNothing was added to the traceability data. It's uncommitted, so say so if you want a commit.",
+ "date": "2026-10-24"
+}

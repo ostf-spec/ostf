@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5098,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 16153,
+  "cache_read_input_tokens": 80862,
+  "output_tokens": 3015,
+  "cost": 0.00554752
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` (`payments/refund.go:63`) is the one place that carries out a refund. It does four things in order:\n\n1. Looks up the charge by `ReceiptID`. Unknown IDs return `ErrUnknownReceipt`.\n2. Computes what is left on that charge and today's account total, then calls `CheckRefundLimit`. That rejects non-positive or over-charge amounts, and daily totals above `DailyRefundLimit` (50,000 cents) without a second approver.\n3. Sends the money to the gateway using the charge's own transaction (`rcpt.Txn`), so it goes back to the original payment method.\n4. Updates the per-charge and per-day totals and appends a `refund` audit entry.\n\nThe requirements it serves, from `trace/requirements.yaml` and `trace/design.yaml`:\n- **R-REFUND-ORIGINAL** (refund goes to the original payment method). Its doc comment cites this one.\n- **R-REFUND-LIMIT** (the refund cap; controls RISK-REFUND-ABUSE). Its `code` list includes `Refunder.Refund`.\n- **R-AUDIT-MONEY** (every refund is audited). The lock file links `Refund` to it.\n- **D-REFUND-LEDGER** (the two running totals), which refines R-REFUND-LIMIT.\n\n**Tests that cover it:**\n- `TestRefund` (`payments/refund_test.go:34`): a partial refund goes to the original transaction, a refund entry lands in the audit log, and a refund beyond what is left of the charge returns `ErrRefundTooLarge`. The requirements list this test for R-REFUND-ORIGINAL, and the lock links it to R-AUDIT-MONEY.\n- `TestRefundDailyLimit` (`payments/refund_test.go:58`): a second refund over the daily limit on the same UTC day returns `ErrNeedsApproval`, and the same refund succeeds the next day. This is the test for R-REFUND-LIMIT and D-REFUND-LEDGER.\n\n`TestCheckRefundLimit` also covers R-REFUND-LIMIT, but it exercises the `CheckRefundLimit` helper directly, not `Refund`. `cart/checkout_test.go` has a stub gateway with a `Refund` method, but it does not exercise `Refunder`.\n\n**Notes:**\n- The doc comment on `Refund` only cites R-REFUND-ORIGINAL. The trace links it to R-REFUND-LIMIT and R-AUDIT-MONEY as well.\n- R-REFUND-LIMIT is tied to RISK-REFUND-ABUSE, and V-REFUND-REVIEW requires a second-engineer review of any change to refund code. `AGENTS.md` also says to ask before changing risk-relevant code.\n- I did not run the tests. The answer comes from reading the code, the trace files and the test file, and I changed nothing.",
+ "date": "2026-10-24"
+}

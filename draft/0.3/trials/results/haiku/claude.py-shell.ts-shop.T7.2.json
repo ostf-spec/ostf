@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5039,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 24492,
+  "cache_read_input_tokens": 150423,
+  "output_tokens": 3989,
+  "cost": 0.008398329999999999
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-preserving refactor of the discount cap, but it leaves three trace links marked suspect, so `ostf check` exits 1. All 36 tests pass.\n\n**What changed (`src/pricing.ts`, `applyDiscount`)**\n\nThe cap was `Math.min(d.percent, MAX_DISCOUNT_PERCENT)`. It is now a `let` plus an `if` that clamps to 50. I checked by reasoning, not by running code, that the results match for every input, including NaN, Infinity and -0. Nothing else in the diff changed.\n\n**Impact**\n\n- **Trace items:** `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT` are all implemented by `applyDiscount`. Their links are now suspect (`BODY_CHANGED`). `ostf check --base main` reports 40 items, 111 links, 108 valid.\n- **Tests that matter:** `src/pricing.test.ts#applyDiscount` and its three cases: \"takes the percentage off\", \"rounds down to the cent\", \"caps at fifty percent\", \"rejects an expired code\". All pass.\n- **Callers:** `price()` in the same file calls `applyDiscount`, and `checkout.ts` calls `price()`. The `price` and checkout tests passed in the full run.\n- **Risk relevance:** `R-DISCOUNT-CAP` does not `controls` any `RISK-*` item in `trace/requirements.yaml`, so AGENTS.md's ask-first rule for risk-relevant code does not apply here.\n- **Not affected:** `R-VOLUME-DISCOUNT` in `trace.yaml` says the volume discount counts toward the 50% cap. No code in this diff implements it, so nothing changed there.\n\n**Test run**\n\n`npm test`: 36 tests, 13 suites, 36 pass, 0 fail.\n\n**What I did not do**\n\nI did not run `ostf stamp`, and I did not edit `trace.lock` or any trace file. Stamping the three suspect links would clear the `ostf check` errors. AGENTS.md allows it only after rechecking each item against the code and its tests, and those tests pass. Say the word and I'll do the recheck and stamp, then rerun `ostf check`.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1124,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 11594,
+  "cache_read_input_tokens": 92376,
+  "output_tokens": 978,
+  "cost": 0.0654136
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no errors.\n\n- **Cause:** the `trace.lock` entry for `CheckRefundLimit implements R-REFUND-LIMIT` was malformed. It had `source.sig:go1:` where it should have `source.sig=go1:`. That made the link show as unstamped.\n- **Recheck:** I read `CheckRefundLimit` against the R-REFUND-LIMIT text. It rejects a refund above what is left on the charge, and one that takes the day's total over 500.00 without a second approval. That matches the item. `go test -count=1 ./payments/` passed.\n- **Fix:** I ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`. It rewrote that lock line, so `trace.lock` is the only modified file. I didn't edit the file by hand.\n\nThe refund code is marked risk-relevant, and I didn't change it. No source, test or `trace.yaml` edits were needed, so the check reports no links as added. I haven't committed anything.",
+ "date": "2026-10-24"
+}

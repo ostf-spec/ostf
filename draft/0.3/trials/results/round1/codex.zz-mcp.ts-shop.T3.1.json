@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T3.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 9112,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 58.8
+ },
+ "usage": {
+  "input_tokens": 314774,
+  "cached_input_tokens": 250752,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1847,
+  "reasoning_output_tokens": 76
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Updated `checkRefundLimit` to throw the exported `InvalidRefundAmountError` for zero or negative amounts. Added regression tests and draft requirement `R-REFUND-AMOUNT` with code and test links.\n\nValidation: all 37 tests pass; `ostf check --base main` passes with 115 valid links.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3177,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19862,
+  "cache_read_input_tokens": 129936,
+  "output_tokens": 3347,
+  "cost": 0.1259396
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "`tax` is now `salesTax` in the new `src/salestax.ts`, and everything still works. All 36 tests pass, and `ostf check --base main` reports no errors (40 items, 111 valid links).\n\n- **Code:** `roundHalfUp` was only used by `tax`, so it moved with it. `price` in `src/pricing.ts` now imports and calls `salesTax`. I renamed its local variable to `taxDue` so it doesn't clash with the import.\n- **Tests:** the two `tax` tests moved to a new `src/salestax.test.ts` under `describe(\"salesTax\")`, including the `@req R-TAX-EXEMPT` tag.\n- **Trace:** in `trace/requirements.yaml`, I repointed the `code` and `tests` links of R-TAX-RATE and R-TAX-EXEMPT to the new locations. I didn't touch any item text.\n- **README:** added a `src/salestax.ts` row and trimmed the `pricing.ts` description.\n\n`ostf check` reports these links as added (new locations):\n- `src/salestax.ts#salesTax implements R-TAX-EXEMPT`\n- `src/salestax.ts#salesTax implements R-TAX-RATE`\n- `src/salestax.test.ts#salesTax > is zero for a tax-exempt customer verifies R-TAX-EXEMPT`\n- `src/salestax.test.ts#salesTax > rounds half up to the cent verifies R-TAX-RATE`\n\nIt reports these links as removed (old locations):\n- `src/pricing.ts#tax implements R-TAX-EXEMPT`\n- `src/pricing.ts#tax implements R-TAX-RATE`\n- `src/pricing.test.ts#tax > is zero for a tax-exempt customer verifies R-TAX-EXEMPT`\n- `src/pricing.test.ts#tax > rounds half up to the cent verifies R-TAX-RATE`\n\nI stamped those four added links, plus `src/pricing.ts#price implements R-TAX-RATE`, which `ostf check` had flagged as suspect because its body changed. I stamped them after rechecking the code against the items and getting a passing test run.\n\nNeither R-TAX-RATE nor R-TAX-EXEMPT is risk-relevant, so I didn't need to ask first. No item became false.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

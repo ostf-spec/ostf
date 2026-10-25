@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1319,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9807,
+  "cache_read_input_tokens": 90037,
+  "output_tokens": 1070,
+  "cost": 0.058951699999999996
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**What changed:** the only change is in `pricing/discount.go`, in `ApplyDiscount`. The builtin `min(d.Percent, MaxDiscountPercent)` is now an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`.\n\n**Behavior impact:** none that I can see. Both versions cap the percentage at 50, and the expiry check and the rounding-down arithmetic are untouched. It is a pure refactor, probably to avoid the Go 1.21+ `min` builtin. I didn't check `go.mod` to confirm that.\n\n**Trace impact:** `ostf check --base main` reports three links on `ApplyDiscount` as suspect (`BODY_CHANGED`):\n- `R-DISCOUNT-CAP`\n- `R-DISCOUNT-EXPIRY`\n- `R-DISCOUNT-PERCENT`\n\nNothing was reported as an error, and none of the items were made false.\n\n**Tests:**\n- I ran the affected tests uncached with `go test -count=1 -v -run TestApplyDiscount ./pricing/`. All four subtests pass: `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent` and `rejects_expired`. That covers the three tests `ostf` named.\n- `go test ./...` also passes across all packages. That run was served from the test cache.\n\n**Next step:** I haven't run `ostf stamp`, because it edits `trace.lock` and you only asked for a summary and test run. The code and tests support stamping all three links. Do you want me to stamp them?",
+ "date": "2026-10-24"
+}

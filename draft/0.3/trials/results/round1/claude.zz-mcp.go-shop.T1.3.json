@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-mcp.go-shop.T1.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1781,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 12952,
+  "cache_read_input_tokens": 49854,
+  "output_tokens": 1002,
+  "cost": 0.0668294
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` (payments/refund.go:63) exists to send a refund back to the card that was originally charged, while enforcing the refund limit and recording an audit entry. I read the OSTF trace for it and did not change any files.\n\n**Why it exists**\n\nThree requirements link to it:\n\n- **R-REFUND-ORIGINAL** (the `@req` tag on the function): \"A refund goes back to the payment method of the charge it refunds, never to another one.\" It looks up the receipt by ID and refunds against that charge's transaction (`rcpt.Txn`). That is why unknown receipts return `ErrUnknownReceipt`.\n- **R-REFUND-LIMIT** (declared link, marked risk-relevant): a refund can't exceed what is left of the charge. Refunds above 500.00 per account per UTC day need a second approval. `Refund` tracks the refunded totals per receipt and per day, and `CheckRefundLimit` applies the rule. This requirement controls RISK-REFUND-ABUSE, which is a compromised account or a mistaken operator draining funds through refunds.\n- **R-AUDIT-MONEY**: every charge and refund appends an audit entry. `Refund` appends one after a successful gateway refund.\n\nThose requirements trace up to two needs: N-REFUNDS (refunds are quick without abuse losses) and N-ACCOUNT-SAFE.\n\n**Tests that cover it (all in payments/refund_test.go)**\n\n- **`TestRefund`** verifies R-REFUND-ORIGINAL (declared) and R-AUDIT-MONEY (tagged). It is the direct test of `Refund`.\n- **`TestRefundDailyLimit`** verifies R-REFUND-LIMIT.\n- **`TestCheckRefundLimit`** verifies R-REFUND-LIMIT, but it tests the `CheckRefundLimit` helper, not `Refund` itself. It covers `Refund` only indirectly.\n\nAll of these links currently report as `valid`. I didn't run the tests, and I didn't open the test files to check what they assert. This comes from the trace links only.\n\nBecause R-REFUND-LIMIT is risk-relevant, I would ask you before changing the limit logic in `Refund`.",
+ "date": "2026-10-24"
+}

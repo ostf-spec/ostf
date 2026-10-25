@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.go-shop.T6.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2474,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 11405,
+  "cache_read_input_tokens": 69469,
+  "output_tokens": 1199,
+  "cost": 0.06457289999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "I haven't added the test, because there's nothing in the repo for it to link to or exercise.\n\n- **No such requirement:** `R-CHECKOUT-TIMEOUT` isn't in `trace.yaml` or `trace/*.yaml`. The only checkout items are `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. Our rules say never to link an ID that doesn't exist, so I can't tag a test with it.\n- **No behavior to test:** nothing in the code handles a gateway timeout. `payments.Gateway.Charge` takes no context or deadline, `Processor.Charge` has no timer, and `Checkout.PlaceOrder` has no 30-second limit. A test for \"checkout fails after 30 seconds\" would fail today, or pass only if I wrote the feature.\n\nHow do you want to proceed?\n\n1. **Add the feature and the item.**\n   - Add a new `R-CHECKOUT-TIMEOUT` item with `status: draft`.\n   - Implement a 30-second limit on the gateway call.\n   - Write the test, with a fake gateway that blocks and an injectable clock or timeout so it runs fast.\n   - Link the code and the test to the item.\n   - Release the reserved stock on timeout, as `PlaceOrder` already does for declines.\n   - A timeout might mean the gateway charged the card anyway. The idempotency key handles that on retry, but it needs a decision.\n   - The change would touch `payments/charge.go` and `cart/checkout.go`, and `ostf context` should show whether either is risk-relevant. If so, I'll ask you before editing it.\n2. **The requirement lives elsewhere.** If it's in another branch or a Jira ticket, point me to it, and I'll add it as a proper item and then write the test.\n3. **Test-only.** If a timeout already exists somewhere I missed, tell me where.",
+ "date": "2026-10-24"
+}

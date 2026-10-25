@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T1.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3172,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.7
+ },
+ "usage": {
+  "input_tokens": 100352,
+  "cached_input_tokens": 85760,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 605,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](src/refunds.ts:68) exists to fulfill **N-REFUNDS**: customers get refunds quickly without losing money to abuse. Its trace links identify three requirements:\n\n- **R-REFUND-LIMIT:** prevent refunds exceeding the remaining charge; require second approval when an account’s UTC-day refunds exceed 500.00. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** return funds through the original payment transaction.\n- **R-AUDIT-MONEY:** record the refund in the audit log.\n\nTwo tests directly exercise the method:\n\n- [`refunds to the original transaction`](src/refunds.test.ts:50): checks the original transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining charge.\n- [`totals refunds per account and UTC day`](src/refunds.test.ts:63): checks aggregation across two charges for one account, rejects exceeding the daily limit, and permits the refund the next day.\n\nThe [`checkRefundLimit` tests](src/refunds.test.ts:32) additionally cover zero/excessive amounts, approval requirements, and allowed or approved refunds.\n\nThere are no explicit tests here for unknown receipts, gateway-failure rollback, or concurrent refunds. I inspected the code and trace context; I did not run tests or change files.",
+ "date": "2026-10-24"
+}

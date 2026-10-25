@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T6.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1968,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 12750,
+  "cache_read_input_tokens": 51065,
+  "output_tokens": 2378,
+  "cost": 0.0042502500000000006
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "I didn't write the test, because `R-CHECKOUT-TIMEOUT` doesn't exist in this repo. I made no changes.\n\n- **The ID is absent.** A case-insensitive search for `TIMEOUT`, `timeout`, and `30 sec` across the repo, excluding `node_modules` and `.git`, returned nothing. That covers `trace.yaml`, `trace/requirements.yaml`, `trace/design.yaml`, `trace.lock`, and the source and tests.\n- **The behavior isn't implemented.** `src/checkout.ts#Checkout.placeOrder` awaits `payments.charge` with no time limit, and `src/payments.ts` has no timeout either. A test for a 30-second limit would fail today.\n- **AGENTS.md rules out creating it here.** It says not to invent IDs, and if you name one that doesn't exist, to say so and not create it.\n\nThe closest existing items are:\n- `R-CHECKOUT-ORDER` (`src/checkout.ts#Checkout.placeOrder`), which covers placing the order.\n- `R-CHECKOUT-SESSION`, which covers the session requirement.\n- `R-CHARGE-AMOUNT` (`src/payments.ts#Processor.charge`), which covers charge amounts.\n\nTo go ahead, I need one of these from you:\n1. **The requirement already exists under another ID.** Tell me which one, and I'll add the timeout test and link it with `@req`.\n2. **You want a new requirement.** Confirm the ID you want, and I'll add it as a `draft` item in `trace/requirements.yaml` with links to `placeOrder` and a new test. That change would also need the 30-second timeout implemented, because the test can't pass otherwise. Changing `placeOrder` means running `ostf context` on it first, and checking whether it's marked risk-relevant.",
+ "date": "2026-10-24"
+}

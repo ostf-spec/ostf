@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 30,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 2,
+  "ostfOutputTokens": 14626,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 107.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 48,
+  "cache_creation_input_tokens": 56218,
+  "cache_read_input_tokens": 1102599,
+  "output_tokens": 22273,
+  "cost": 0.03341089
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 15,
+ "finalMessage": "SHOP-57 is implemented, and `ostf check --base main` is clean. I didn't commit or open a PR, since you didn't ask for either.\n\nI have no Jira access here, so I used the repo's `R-VOLUME-DISCOUNT` item (`external: jira:SHOP-57`, revision 2) as the spec. That item already existed, so no new item was needed.\n\n**What changed**\n- `src/pricing.ts`: new `volumeDiscount(lines)` takes 5% off each line of 10 or more units, rounded down per line. `price()` now takes the volume discount as an argument. It applies the volume discount first, then the discount code to the remaining amount. The code is capped so volume plus code never exceeds 50% of the subtotal.\n- `src/checkout.ts`: passes `volumeDiscount(lines)` into `price()`.\n- Tests: 5 new (3 unit tests for `volumeDiscount`, 1 for `price` covering the ordering and the cap, 1 checkout test that the charge includes the discount). Suite is 41/41, up from 36.\n- Links: `@req R-VOLUME-DISCOUNT` on the new functions and tests. I didn't edit the item text.\n\n**Ostf**\n- The new links are `pricing.ts#volumeDiscount` and `pricing.ts#price` implementing `R-VOLUME-DISCOUNT`, plus three tests verifying it.\n- `R-TAX-RATE`, `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` went suspect because their code changed. I rechecked each against the code and its tests, then stamped them with `ostf stamp`. `trace.lock` changed only through that command.\n- None of the touched code is marked risk-relevant, so I didn't need to ask first.\n\n**Decision for you**\n`R-DISCOUNT-PERCENT` says a code takes its percentage \"off the subtotal\". With a qualifying line in the cart, the code now applies to the subtotal after the volume discount. I read SHOP-57's \"before any discount code applies\" as requiring that. If the literal reading of R-DISCOUNT-PERCENT is what you want, the two items conflict and one needs to change. I haven't rewritten either.",
+ "date": "2026-10-24"
+}

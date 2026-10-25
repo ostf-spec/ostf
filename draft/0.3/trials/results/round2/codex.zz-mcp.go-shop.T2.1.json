@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-mcp.go-shop.T2.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6528,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.9
+ },
+ "usage": {
+  "input_tokens": 165267,
+  "cached_input_tokens": 133888,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1783,
+  "reasoning_output_tokens": 27
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 4,
+ "finalMessage": "Implemented shipping: free when the discounted subtotal is at least 100.00; otherwise 5.99, included in the total and payment.\n\nTests cover threshold boundaries and discounts. `go test ./...` and `ostf check --base main` pass.\n\nTrace impact: `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, and new draft `R-CHECKOUT-SHIPPING`. Tests: `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderShipping`.\n\nAdded shipping links to `N-BUY`, `Checkout.PlaceOrder`, `Quote`, and `TestPlaceOrderShipping`. All links revalidated and stamped.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2507,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 12240,
+  "cache_read_input_tokens": 101913,
+  "output_tokens": 2792,
+  "cost": 0.00486413
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a refactor with no behavior change. It replaces `Math.min` with an explicit `if`, and nothing else is affected.\n\n**What changed** (`src/pricing.ts`, `applyDiscount`)\n- Before: `const percent = Math.min(d.percent, MAX_DISCOUNT_PERCENT);`\n- After: `let percent = d.percent;` followed by `if (percent > MAX_DISCOUNT_PERCENT) percent = MAX_DISCOUNT_PERCENT;`\n- For every number `percent` can hold, the two versions return the same result. `NaN` passes through unchanged in both, and the only difference is in `-0` versus `0`, which doesn't change the cent amount. The 50% cap still applies.\n- The change does not add a lower bound. A negative `percent` still produces a negative discount, which is an existing gap relevant to `RISK-WRONG-CHARGE`, not something this diff introduces.\n\n**Impact (from `ostf check --base main`)**\n- Changed symbol: `src/pricing.ts#applyDiscount`\n- Requirements it implements, all now marked suspect because the body changed:\n  - `R-DISCOUNT-CAP`\n  - `R-DISCOUNT-EXPIRY`\n  - `R-DISCOUNT-PERCENT`\n- Tests to run: `src/pricing.test.ts#applyDiscount`, plus its `caps at fifty percent` and `rejects an expired code` cases.\n- Check result: 40 items, 108 valid, 3 suspect, no errors.\n\n**Tests**\n- `node --test src/pricing.test.ts`: 7 of 7 pass, including `caps at fifty percent` and `rejects an expired code`.\n- `npm test`: 36 of 36 pass across the whole suite.\n\n**Not done**\n- I did not run `ostf stamp` on the three suspect links. Per AGENTS.md, that only happens after rechecking each item against the code and its tests, and I have not been asked to commit or stamp. I can do that if you want the check to come back clean.\n- I did not change any files. The diff is already in your working tree.",
+ "date": "2026-10-24"
+}

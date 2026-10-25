@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 523,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 10207,
+  "cache_read_input_tokens": 130747,
+  "output_tokens": 1298,
+  "cost": 0.06691070000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors.\n\n- **Cause:** one line in `trace.lock`, for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`, had `source.sig:` where it should have `source.sig=`. That made the lock entry invalid, and `check` also reported the link as unstamped.\n- **Recheck:** I didn't change any code. `checkRefundLimit` still matches the item text:\n  - It rejects a refund that is zero or negative, or larger than what's left on the charge.\n  - It requires a second approval when the day's total for the account goes above `DAILY_REFUND_LIMIT` (50,000 cents, i.e. 500.00).\n\n  All 36 tests pass, including the `checkRefundLimit` and `Refunder` refund tests.\n- **Stamp:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. The stamp command rewrote the malformed line itself. The only change is `:` to `=` on that one line, and I did not edit `trace.lock` by hand.\n\n`checkRefundLimit` is marked risk-relevant, but I only read it and did not change it, so I didn't ask first. The `trace.lock` change is uncommitted. I added no new items or links, so there is nothing to list for a pull request.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,58 @@
+{
+ "run": "codex.py-shell.go-shop.T5.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 24,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 17,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 13,
+  "ostfOutputTokens": 8986,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 75.1
+ },
+ "usage": {
+  "input_tokens": 298400,
+  "cached_input_tokens": 266624,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3168,
+  "reasoning_output_tokens": 134
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 7,
+ "finalMessage": "Implemented SHOP-57:\n\n- Added 5% discounts for lines with 10+ units, rounded down per line.\n- Applied discount codes afterward, with a combined 50% cap.\n- Integrated checkout and added rounding, tax, expiry, and payment tests.\n\nValidation passed: `go test ./...`, `git diff --check`, and `ostf check --base main` with all 119 links valid. Added 10 trace links; no new requirement IDs.",
+ "date": "2026-10-24"
+}

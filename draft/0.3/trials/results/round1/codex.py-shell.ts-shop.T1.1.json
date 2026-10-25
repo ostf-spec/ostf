@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T1.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 4065,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.1
+ },
+ "usage": {
+  "input_tokens": 75255,
+  "cached_input_tokens": 47232,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 590,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](src/refunds.ts:68) exists to provide refunds while protecting against abuse. Its OSTF context links it to three requirements:\n\n- **R-REFUND-ORIGINAL:** Return money to the original payment method.\n- **R-REFUND-LIMIT:** Prevent refunds exceeding the remaining charge and require second approval when an account’s refunds exceed 500.00 in one UTC day. This controls **RISK-REFUND-ABUSE**.\n- **R-AUDIT-MONEY:** Record every refund in the audit log.\n\nThese support **N-REFUNDS**, the need for customers to receive refunds quickly without the business losing money to abuse.\n\nTwo tests directly exercise the method:\n\n- [`refunds to the original transaction`](src/refunds.test.ts:50): Checks the original gateway transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining charge.\n- [`totals refunds per account and UTC day`](src/refunds.test.ts:63): Checks aggregation across two charges for one account, rejection above the daily limit, and allowance on the next day.\n\nThe [`checkRefundLimit` tests](src/refunds.test.ts:32) additionally cover excessive or zero amounts, required approval, and allowed or approved refunds.\n\nThe shown tests do not cover unknown receipts, gateway-failure rollback, or concurrent refunds. No files were changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,58 @@
+{
+ "run": "codex.py-shell.go-shop.T4.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 5319,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 48.3
+ },
+ "usage": {
+  "input_tokens": 158803,
+  "cached_input_tokens": 141312,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 939,
+  "reasoning_output_tokens": 8
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to `pricing/salestax.go`. Updated callers, tests, and trace references; behavior is unchanged.\n\n- `go test ./...` passes.\n- `ostf check --base main`: all 109 links valid.\n- Impacted items: `R-TAX-RATE`, `R-TAX-EXEMPT`.\n- Impacted tests: `TestPrice`, `TestTax`, `TestTaxExempt`.\n- Added links: `pricing/salestax.go#SalesTax` implements both impacted items. No items added.",
+ "date": "2026-10-24"
+}

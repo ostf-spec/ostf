@@ -1,0 +1,53 @@
+{
+ "run": "codex.zz-shell.ts-shop.T7.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 9,
+  "edited": false,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 6,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 3,
+  "ostfOutputTokens": 3110,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 49.3
+ },
+ "usage": {
+  "input_tokens": 151143,
+  "cached_input_tokens": 136320,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 705,
+  "reasoning_output_tokens": 10
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Compared with `main`, `applyDiscount` replaces `Math.min` with an explicit conditional cap. Behavior is unchanged for numeric percentages, including rounding and expiry handling.\n\n- **Affected requirements:** `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`.\n- **Impacted tests:** `src/pricing.test.ts#applyDiscount`, specifically `caps at fifty percent` and `rejects an expired code`.\n- **Validation:** `node --test src/pricing.test.ts` passed all 7 tests.\n- **Trace check:** `ostf check --base main` passes with 111 valid links. No added items or links.\n\nRechecked and stamped the three affected links using OSTF, which updated `trace.lock`. No source or tests were edited.",
+ "date": "2026-10-24"
+}

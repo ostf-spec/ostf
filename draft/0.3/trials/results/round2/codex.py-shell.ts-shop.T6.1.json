@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T6.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5292,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.6
+ },
+ "usage": {
+  "input_tokens": 127509,
+  "cached_input_tokens": 110848,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 471,
+  "reasoning_output_tokens": 29
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no timeout logic.\n\nShould I register it as a draft requirement and add a failing test? The repository’s `AGENTS.md` requires links to existing requirement IDs, so I need to resolve that before adding the test.",
+ "date": "2026-10-24"
+}

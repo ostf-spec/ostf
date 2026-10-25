@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.go-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2581,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.9
+ },
+ "usage": {
+  "input_tokens": 123725,
+  "cached_input_tokens": 109952,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 482,
+  "reasoning_output_tokens": 27
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is absent from the trace files, and checkout has no timeout handling. No files changed.\n\nMay I add this requirement as a draft and a regression test that initially fails? `AGENTS.md` says “Never invent an ID: link only IDs that exist,” so I need clarification before creating the missing requirement.",
+ "date": "2026-10-24"
+}

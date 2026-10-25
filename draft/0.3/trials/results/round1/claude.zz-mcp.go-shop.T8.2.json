@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.go-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1178,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 10993,
+  "cache_read_input_tokens": 92022,
+  "output_tokens": 1054,
+  "cost": 0.0637342
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no errors.\n\nThe check was failing on one link in `trace.lock`, `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. Its line was malformed, with `source.sig:` where it should be `source.sig=`, so the link was reported as `LOCK_INVALID` and unstamped.\n\nBefore stamping, I rechecked the link:\n- **Code against the item:** `CheckRefundLimit` rejects refunds that are non-positive or larger than what's left on the charge. It also requires approval when the day's refunds would go above `DailyRefundLimit`. That matches the requirement text. I didn't check that `DailyRefundLimit` is 500.00; my grep for its definition printed nothing.\n- **Tests:** `go test ./payments/` passes, including `TestCheckRefundLimit` and `TestRefundDailyLimit`. That run was cached rather than fresh.\n\nI then ran `ostf stamp` on the link, which rewrote the line in `trace.lock`. That is the only file changed. I didn't edit it by hand, and I changed no code, tests or `trace.yaml`. The function is marked risk-relevant, but I left it untouched.\n\nThe check reports no added items or links. If you open a PR, there is nothing to list, apart from the re-stamped `trace.lock` line.",
+ "date": "2026-10-24"
+}

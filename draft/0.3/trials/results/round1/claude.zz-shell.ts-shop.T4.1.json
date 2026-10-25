@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 2193,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 15594,
+  "cache_read_input_tokens": 166738,
+  "output_tokens": 2870,
+  "cost": 0.1077818
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "`tax` is now `salesTax` in the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` reports 40 items and 111 valid links, with no errors.\n\n- **Code:** `roundHalfUp` was only used by `tax`, so it moved with it. `price` in `src/pricing.ts` now imports `salesTax`. Its local variable was already named `salesTax`, so I renamed that to `taxAmount`.\n- **Circular import:** `salestax.ts` imports the `Region` type from `pricing.ts`, and `pricing.ts` imports `salesTax` back. It's a type-only import in one direction, so it's harmless at runtime.\n- **Tests:** I left the tax tests in `src/pricing.test.ts` and only changed their import and calls. That keeps their trace IDs the same.\n- **Trace and README:** In `trace/requirements.yaml`, the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `src/salestax.ts#salesTax`. The README module table has a new `salestax.ts` row.\n- **Stamps:** The move left three links suspect and two unstamped. I confirmed the body is unchanged and the tests pass, then ran `ostf stamp` on all five. I did not edit `trace.lock` by hand.\n\nLinks `ostf check` reports as added, for the PR description:\n- `src/salestax.ts#salesTax implements R-TAX-EXEMPT`\n- `src/salestax.ts#salesTax implements R-TAX-RATE`\n\nIt also reports the old `src/pricing.ts#tax` links to those two items as removed.\n\nNeither item is linked to a risk item, so I didn't need to ask before changing the code. No item text became false.\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

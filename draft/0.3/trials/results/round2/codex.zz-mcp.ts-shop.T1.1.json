@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T1.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5432,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.9
+ },
+ "usage": {
+  "input_tokens": 78561,
+  "cached_input_tokens": 60160,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 713,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](/tmp/ostf-trials/runs2/codex.zz-mcp.ts-shop.T1.1/repo/src/refunds.ts:68) exists to provide refunds while protecting against abuse. OSTF links it to three requirements, all with valid links:\n\n- **R-REFUND-ORIGINAL:** Return money to the original payment method.\n- **R-REFUND-LIMIT:** Prevent refunds exceeding the remaining charge; require second approval when an account’s refunds exceed 500.00 in one UTC day. This controls **RISK-REFUND-ABUSE**.\n- **R-AUDIT-MONEY:** Record the money movement in the audit log.\n\nThese support **N-REFUNDS** (quick refunds without losses from abuse) and **N-ACCOUNT-SAFE** (protect accounts and money from misuse).\n\nTwo tests call the method directly:\n\n- [`refunds to the original transaction`](/tmp/ostf-trials/runs2/codex.zz-mcp.ts-shop.T1.1/repo/src/refunds.test.ts:50): Checks the original gateway transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining balance.\n- [`totals refunds per account and UTC day`](/tmp/ostf-trials/runs2/codex.zz-mcp.ts-shop.T1.1/repo/src/refunds.test.ts:63): Checks aggregation across charges, rejection above the daily limit, and allowance on the next UTC day.\n\nThe [`checkRefundLimit` suite](/tmp/ostf-trials/runs2/codex.zz-mcp.ts-shop.T1.1/repo/src/refunds.test.ts:32) additionally tests the helper’s amount limits and approval rules.\n\nThe existing tests do not directly exercise unknown receipts, gateway-failure rollback, or concurrent refunds. I inspected the code and trace links; I did not run tests or change files.",
+ "date": "2026-10-24"
+}

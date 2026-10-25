@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4344,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 21933,
+  "cache_read_input_tokens": 329379,
+  "output_tokens": 7567,
+  "cost": 0.01146629
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`. Build, vet, and all tests pass, and `ostf check --base main` reports 109 valid with no errors.\n\n**What changed**\n- **`pricing/salestax.go`** (new): `SalesTax`, with the same body and doc comment.\n- **`pricing/tax.go`**: `Tax` removed. `Region` stays here, since you asked to move only the function.\n- **`pricing/quote.go`**: `Price` calls `SalesTax`.\n- **`pricing/tax_test.go`**: calls and the error message use `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt` because the trace links verify them by name.\n- **`trace/requirements.yaml`**: the two `code:` links that named `pricing/tax.go#Tax` now name `pricing/salestax.go#SalesTax`. This is the only edit to the requirement entries; no item text changed.\n- **`trace.lock`**: updated only by `ostf stamp`, for the five links that check flagged (suspect or unstamped) after the move.\n\n**OSTF**\n- `Tax` is not marked risk-relevant, so no approval was needed.\n- Before stamping, I confirmed the three tests (`TestTax`, `TestTaxExempt`, `TestPrice`) pass, and that the items still hold, since this is a rename with unchanged behavior.\n- Stamped links: `pricing/quote.go#Price implements R-TAX-RATE`, `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`, `pricing/salestax.go#SalesTax implements R-TAX-RATE`, `pricing/tax_test.go#TestTax verifies R-TAX-RATE`, `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`.\n- Items and tests named in the impact list: R-TAX-RATE and R-TAX-EXEMPT. Changed code: `pricing/quote.go#Price`, `pricing/salestax.go#SalesTax`, `pricing/tax_test.go#TestTax`, `pricing/tax_test.go#TestTaxExempt`. Tests to run: `TestTax`, `TestTaxExempt`, `TestPrice`.\n- Links added: `pricing/salestax.go#SalesTax` implements R-TAX-EXEMPT and R-TAX-RATE. Links removed: the same two under `pricing/tax.go#Tax`.\n- No items were added and none became false.\n\nI did not commit or open a PR, since you didn't ask for one.",
+ "date": "2026-10-24"
+}

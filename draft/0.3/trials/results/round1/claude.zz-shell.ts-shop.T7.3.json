@@ -1,0 +1,54 @@
+{
+ "run": "claude.zz-shell.ts-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 824,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9415,
+  "cache_read_input_tokens": 107550,
+  "output_tokens": 1405,
+  "cost": 0.062489
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**The change:** in `src/pricing.ts`, `applyDiscount` now clamps the percentage with an `if` instead of `Math.min(d.percent, MAX_DISCOUNT_PERCENT)`. It's a pure refactor with no behavior change. The 50% cap, the expiry check and the round-down are all as before.\n\n**What it touches:** `applyDiscount` implements three items:\n- R-DISCOUNT-CAP\n- R-DISCOUNT-EXPIRY\n- R-DISCOUNT-PERCENT\n\nAll three go back to N-FAIR-PRICE. `ostf check` flagged all three links as suspect (BODY_CHANGED) because the function body changed.\n\n**Tests:** I ran `src/pricing.test.ts` and `src/checkout.test.ts`. All 10 tests pass, including \"caps at fifty percent\" and \"rejects an expired code\", which `ostf check` listed as the tests to run.\n\n**Trace:** I read each item against the new code and found no conflict. I then ran `ostf stamp` on the three links, which updated `trace.lock`. `ostf check --base main` now reports 40 items and 111 valid links, with no errors and no suspect links. The change adds no new items or links.\n\nNothing is committed. `trace.lock` now has the new stamps, so include it in your commit along with `src/pricing.ts`.",
+ "date": "2026-10-24"
+}

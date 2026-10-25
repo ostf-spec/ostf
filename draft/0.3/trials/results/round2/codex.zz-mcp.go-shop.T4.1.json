@@ -1,0 +1,58 @@
+{
+ "run": "codex.zz-mcp.go-shop.T4.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4629,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 56.1
+ },
+ "usage": {
+  "input_tokens": 133246,
+  "cached_input_tokens": 116992,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1288,
+  "reasoning_output_tokens": 0
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to `pricing/salestax.go`. Updated callers, tests, and trace links without changing behavior.\n\n- `go test ./...` passes, including impacted `TestPrice`, `TestTax`, and `TestTaxExempt`.\n- `ostf check --base main` passes: 109 valid links.\n- Added `SalesTax` implementation links for `R-TAX-RATE` and `R-TAX-EXEMPT`; no new items. Updated stamps using `ostf stamp`.",
+ "date": "2026-10-24"
+}

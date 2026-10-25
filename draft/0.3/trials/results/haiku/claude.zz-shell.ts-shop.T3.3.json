@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-shell.ts-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 0,
+  "stampCalls": 2,
+  "ostfOutputTokens": 6600,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 58.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 33355,
+  "cache_read_input_tokens": 435606,
+  "output_tokens": 10422,
+  "cost": 0.019873870000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws `InvalidRefundAmountError` for a zero or negative refund. Other amounts are unchanged: a refund above what is left on the charge still throws `RefundTooLargeError`. All 37 tests pass, and `ostf check --base main` exits 0.\n\n**Changes**\n\n- `src/refunds.ts`: new `InvalidRefundAmountError`, checked before the charge-limit test.\n- `src/refunds.test.ts`: the zero-amount assertion now expects the new class, and a new test covers `-1`.\n- `trace/requirements.yaml`: new draft item `R-REFUND-POSITIVE` (\"A refund of zero or a negative amount is rejected with InvalidRefundAmountError…\"), refining `N-REFUNDS`. It links to `src/refunds.ts#InvalidRefundAmountError` and `src/refunds.ts#checkRefundLimit` and to the new test.\n- `trace.lock`: changed only by `ostf stamp`.\n\n**OSTF**\n\n- `R-REFUND-LIMIT` was marked risk-relevant. Its text still holds: the 500.00 daily rule and the charge cap are unchanged, and its tests pass. I did not edit the item.\n- `check` flagged two suspect links on `R-REFUND-LIMIT` (`src/refunds.ts#checkRefundLimit` and `src/refunds.test.ts#checkRefundLimit`). I rechecked them and stamped both.\n- I stamped the new item's links after the same check: the refines link, the test link, and the two code links.\n- I first added a `controls: [RISK-WRONG-CHARGE]` link to the new item and removed it. That risk is about charges, and claiming this refund rule controls it is your call.\n- Impact against `main`: item added `R-REFUND-POSITIVE`; changed `checkRefundLimit`, `InvalidRefundAmountError`, and the zero-amount test; the test to run is `checkRefundLimit`.\n\n**Things to decide**\n\n- A refund of zero or less now throws `InvalidRefundAmountError`, not `RefundTooLargeError`. Nothing else in `src` catches the old class, so no other code changes.\n- The new item is a draft, so you should decide whether it stays draft or moves to an active status.\n\nI have not committed or opened a PR. If you open one, it should name `R-REFUND-POSITIVE` as added, the links listed above as stamped, and the tests in the impact list.",
+ "date": "2026-10-24"
+}

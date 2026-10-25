@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4405,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 18725,
+  "cache_read_input_tokens": 215962,
+  "output_tokens": 4128,
+  "cost": 0.00797042
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid, 0 unstamped, exit 0.\n\n**What was wrong:** The failure was a single malformed line in `trace.lock`, line 111, for the link `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`. It had `source.sig:` where every other line has `source.sig=`. Because the line didn't parse, the link was reported as both LOCK_INVALID and unstamped.\n\n**What I did:**\n- Checked the item against the code. `checkRefundLimit` rejects amounts that are zero or below, or above what's left on the charge. It requires approval when the account's refunds for the day would exceed `DAILY_REFUND_LIMIT` (50_000 cents = 500.00), which matches R-REFUND-LIMIT's text.\n- Ran `npm test`: 36 of 36 pass, including the `checkRefundLimit` and `Refunder` tests linked to this item.\n- Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'` with the link quoted exactly as check printed it. The stamp rewrote the malformed line with `source.sig=`.\n- I did not edit `trace.lock` by hand, and I did not change any source code or item text.\n\n**Impact for this change:**\n- Items added or changed: none. The impact list is empty.\n- Links added: none.\n- Tests affected: none.\n- The only file touched is `trace.lock`, a one-line fix from the stamp.\n\n**Things you should know:**\n- `trace.lock` is modified in the working tree and uncommitted. Review that one-line diff before you commit it.\n- R-REFUND-LIMIT is marked risk-relevant. I didn't change its code, so no approval was needed, but the stamp now records that this link was rechecked and its tests passed.\n- I didn't commit or open a PR, since you didn't ask for one. If you want one, the PR should name the item R-REFUND-LIMIT and its linked tests, and say that no items or links were added.",
+ "date": "2026-10-24"
+}

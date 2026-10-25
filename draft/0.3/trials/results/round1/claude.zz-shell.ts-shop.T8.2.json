@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1121,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9259,
+  "cache_read_input_tokens": 87491,
+  "output_tokens": 1080,
+  "cost": 0.056605100000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors.\n\n- **Cause:** the `trace.lock` line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` was malformed. It had `source.sig:ts1:…` where it should have `source.sig=ts1:…`, so `ostf check` reported `LOCK_INVALID` and an unstamped link.\n- **Check before stamping:** I compared `checkRefundLimit` with the item text, and they match. The function rejects non-positive refunds and refunds larger than what is left on the charge. It also requires approval when the day's total goes above `DAILY_REFUND_LIMIT`. All 5 tests in `src/refunds.test.ts` pass.\n- **Fix:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one lock line (1 insertion, 1 deletion in `trace.lock`). I didn't edit `trace.lock` by hand.\n- **Code and risk:** `checkRefundLimit` is marked risk-relevant, but I made no code or test changes. The only change is the re-stamped lock line. I haven't committed anything.\n- **Pull request:** `ostf check` reported no added items or links, so the PR list would be empty.",
+ "date": "2026-10-24"
+}

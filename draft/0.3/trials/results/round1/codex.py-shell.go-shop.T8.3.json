@@ -1,0 +1,50 @@
+{
+ "run": "codex.py-shell.go-shop.T8.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5171,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.4
+ },
+ "usage": {
+  "input_tokens": 161923,
+  "cached_input_tokens": 143872,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 549,
+  "reasoning_output_tokens": 9
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed a malformed `source.sig` entry in `trace.lock` using `ostf stamp`, after reviewing `R-REFUND-LIMIT` against the implementation and passing both linked tests.\n\n`ostf check --base main` now passes: **40 items, 109 links, all valid**.\n\nNo code changes or added items/links.",
+ "date": "2026-10-24"
+}

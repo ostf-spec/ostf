@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3369,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.6
+ },
+ "usage": {
+  "input_tokens": 125386,
+  "cached_input_tokens": 110848,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 470,
+  "reasoning_output_tokens": 17
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no timeout logic. No files changed.\n\nShould I register this requirement as a draft and add a failing test? The repository’s `AGENTS.md` prohibits linking tests to nonexistent requirement IDs.",
+ "date": "2026-10-24"
+}

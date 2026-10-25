@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.ts-shop.T1.2",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3758,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 38.7
+ },
+ "usage": {
+  "input_tokens": 100481,
+  "cached_input_tokens": 85504,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 673,
+  "reasoning_output_tokens": 11
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[`Refunder.refund`](src/refunds.ts:68) exists to refund earlier charges while protecting against misuse. `ostf context` links it to three requirements:\n\n- **R-REFUND-LIMIT:** Never refund more than remains on a charge; require second approval when an account’s refunds exceed **500.00 per UTC day**. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Return money through the original payment transaction.\n- **R-AUDIT-MONEY:** Record each refund in the audit log.\n\nThese support **N-REFUNDS**, getting customers refunds quickly without losing money to abuse, and **N-ACCOUNT-SAFE**, protecting accounts and money movements.\n\nThe covering tests are:\n\n- [`Refunder > refunds to the original transaction`](src/refunds.test.ts:50): checks the original transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining charge.\n- [`Refunder > totals refunds per account and UTC day`](src/refunds.test.ts:63): combines refunds across two charges for the same account, rejects exceeding the daily limit, and permits a refund the following day.\n- [`checkRefundLimit`](src/refunds.test.ts:32), indirect helper coverage: rejects excessive or zero amounts, requires approval above the daily limit, and allows within-limit or approved refunds.\n\nThe tests do not directly exercise unknown receipts, gateway-failure rollback, or concurrent refunds. No files were changed; tests were inspected, not run.",
+ "date": "2026-10-24"
+}

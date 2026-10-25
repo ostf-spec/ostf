@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.go-shop.T8.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 10,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 8256,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 34501,
+  "cache_read_input_tokens": 306156,
+  "output_tokens": 5303,
+  "cost": 0.012615260000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no errors. The only change is one line in `trace.lock`, and it is uncommitted.\n\n**What was wrong:** line 86 of `trace.lock` (the `CheckRefundLimit implements R-REFUND-LIMIT` link) had `source.sig:` where the format requires `source.sig=`. That made the lock invalid (`LOCK_INVALID`), and the link was reported as unstamped.\n\n**What I did:**\n- Read `ostf context` for `payments/refund.go#CheckRefundLimit`. It is risk-relevant (it controls RISK-REFUND-ABUSE), and I did not change any code.\n- Checked the item text against the code. R-REFUND-LIMIT says a refund must not exceed what is left on the charge, and daily refunds above 500.00 need a second approval. `CheckRefundLimit` enforces both, and git shows no changes to `refund.go` since the last commit.\n- Ran `TestCheckRefundLimit` and `TestRefundDailyLimit`. Both pass.\n- Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`, quoted as check printed it. That rewrote the malformed line with the correct `=`. I did not edit `trace.lock` by hand.\n\n**Added or changed by the check:**\n- Added: no new items, tests or links were added.\n- Stamped: the one link above.\n- Impact against main: `ostf check` reported only \"coverage: direct\" and did not list the impacted items or tests. I can't name them from its output, so the PR should list them after a fuller run.\n\nI did not commit or open a PR, since you didn't ask for one. If you want the PR, the summary should name R-REFUND-LIMIT, the stamped link, and the two refund tests.",
+ "date": "2026-10-24"
+}

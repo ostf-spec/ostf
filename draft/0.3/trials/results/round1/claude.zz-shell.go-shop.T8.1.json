@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1076,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 9169,
+  "cache_read_input_tokens": 87673,
+  "output_tokens": 1009,
+  "cost": 0.0555533
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 valid links, no errors.\n\n- **Cause:** the `trace.lock` line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` was malformed. It had `source.sig:go1:…` where the format needs `source.sig=go1:…`, so the check reported `LOCK_INVALID` and left the link unstamped.\n- **Check before stamping:** I read `ostf context` for the function and compared the code with R-REFUND-LIMIT. `CheckRefundLimit` enforces both rules in the item: the refund can't exceed what's left of the charge, and refunds above the daily limit need a second approval. `go test ./payments/` passed.\n- **Fix:** I ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one line in `trace.lock`. It printed the `LOCK_INVALID` error once while stamping, then reported the link as stamped. I didn't edit `trace.lock` by hand.\n\nThe item is marked risk-relevant, but I changed no code, only the lock. Nothing is committed. The check reports no items or links as added.",
+ "date": "2026-10-24"
+}

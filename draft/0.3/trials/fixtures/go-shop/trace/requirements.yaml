@@ -1,0 +1,180 @@
+ostf: "0.3"
+items:
+  - id: R-CART-ADD
+    title: Add to cart
+    text: >-
+      Adding a product that is already in the cart increases the quantity of
+      its line instead of adding a second line.
+    refines: [N-BUY]
+    code: [cart/cart.go#Cart.Add]
+  - id: R-CART-QTY
+    title: Line quantity
+    text: >-
+      A cart line holds between 1 and 99 units. A request that would leave
+      that range is rejected and leaves the cart unchanged.
+    refines: [N-BUY]
+    code: [cart/cart.go#Cart.Add]
+    tests: [cart/cart_test.go#TestAddRejectsBadQuantity]
+  - id: R-CART-REMOVE
+    title: Remove from cart
+    text: >-
+      Removing a product deletes its line. Removing a product that is not in
+      the cart is not an error.
+    refines: [N-BUY]
+    tests: [cart/cart_test.go#TestRemove]
+  - id: R-CART-SUBTOTAL
+    title: Cart subtotal
+    text: The cart subtotal is the sum over its lines of unit price times quantity.
+    refines: [N-BUY]
+    tests: [cart/cart_test.go#TestSubtotal]
+  - id: R-MONEY-CENTS
+    title: Integer cents
+    text: Every amount of money is an integer number of cents.
+    rationale: >-
+      Binary floating point cannot represent most decimal fractions, so sums
+      of prices drift by fractions of a cent and totals stop matching the
+      payment gateway's.
+    refines: [N-FAIR-PRICE]
+    code: [pricing/money.go#Money]
+  - id: R-DISCOUNT-PERCENT
+    title: Percentage discount
+    text: A discount code takes its percentage off the subtotal, rounded down to the cent.
+    refines: [N-FAIR-PRICE]
+    code: [pricing/discount.go#ApplyDiscount]
+    tests: [pricing/discount_test.go#TestApplyDiscount]
+  - id: R-DISCOUNT-CAP
+    title: Discount cap
+    text: No discount takes more than fifty percent off an order's subtotal.
+    rationale: >-
+      A code mistyped as 100 percent instead of 10 once gave orders away for
+      free. The cap bounds the loss from any such configuration error.
+    refines: [N-FAIR-PRICE]
+    code: [pricing/discount.go#ApplyDiscount]
+    tests: [pricing/discount_test.go#TestApplyDiscount/caps_at_fifty_percent]
+  - id: R-DISCOUNT-EXPIRY
+    title: Expired discount
+    text: >-
+      An expired discount code is rejected, and checkout fails with an error
+      that names the code.
+    refines: [N-FAIR-PRICE]
+    tests: [pricing/discount_test.go#TestApplyDiscount/rejects_expired]
+  - id: R-TAX-RATE
+    title: Sales tax
+    text: >-
+      Sales tax is charged on the subtotal after discounts, at the rate of the
+      shipping region, rounded half up to the cent.
+    refines: [N-FAIR-PRICE]
+    code: [pricing/tax.go#Tax, pricing/quote.go#Price]
+    tests: [pricing/tax_test.go#TestTax, pricing/tax_test.go#TestPrice]
+  - id: R-TAX-EXEMPT
+    title: Tax exemption
+    text: A customer registered as tax exempt pays no sales tax.
+    refines: [N-FAIR-PRICE]
+    code: [pricing/tax.go#Tax]
+  - id: R-STOCK-RESERVE
+    title: Reserve stock
+    text: >-
+      Checkout reserves stock for every line before it charges the customer.
+      If any line cannot be reserved, nothing is reserved and the order fails.
+    refines: [N-NO-OVERSELL]
+    code: [inventory/inventory.go#Stock.Reserve]
+  - id: R-STOCK-RELEASE
+    title: Release stock
+    text: Reserved stock returns to the available count when the charge for its order fails.
+    refines: [N-NO-OVERSELL]
+    code: [inventory/inventory.go#Stock.Release]
+    tests: [inventory/inventory_test.go#TestRelease]
+  - id: R-STOCK-EXPIRY
+    title: Reservation expiry
+    text: >-
+      A reservation that is not confirmed within 15 minutes expires, and its
+      stock returns to the available count.
+    refines: [N-NO-OVERSELL]
+    code:
+      - inventory/inventory.go#HoldDuration
+      - inventory/inventory.go#Stock.Available
+      - inventory/inventory.go#Stock.Confirm
+  - id: R-CHECKOUT-ORDER
+    title: Place order
+    text: >-
+      Placing an order prices the cart, reserves its stock, charges the
+      customer and confirms the reservation, in that order. An empty cart
+      cannot be checked out.
+    refines: [N-BUY]
+    code: [cart/checkout.go#Checkout.PlaceOrder]
+  - id: R-CHECKOUT-SESSION
+    title: Checkout needs a session
+    text: >-
+      Only a customer with a valid session can place an order, and the order
+      is placed for that customer's account.
+    refines: [N-ACCOUNT-SAFE]
+  - id: R-CHARGE-AMOUNT
+    title: Charge amount
+    text: >-
+      A charge must be more than zero and at most 10,000.00. Any other amount
+      is rejected before the payment gateway is called.
+    rationale: >-
+      No order in the catalog can cost more than 10,000.00, so a larger amount
+      is a bug or tampering.
+    refines: [N-FAIR-PRICE]
+    controls: [RISK-WRONG-CHARGE]
+    code: [payments/charge.go#ValidateAmount, payments/charge.go#Processor.Charge]
+    tests: [payments/charge_test.go#TestValidateAmount]
+  - id: R-CHARGE-DECLINE
+    title: Declined charge
+    text: >-
+      A declined charge returns an error with the gateway's reason and is not
+      stored under its idempotency key, so the customer can retry with the
+      same key.
+    refines: [N-BUY]
+    code: [payments/charge.go#Processor.Charge, payments/charge.go#DeclineError]
+  - id: R-REFUND-LIMIT
+    title: Refund limit
+    text: >-
+      A refund must not exceed what is left of the original charge, and
+      refunds above 500.00 in one UTC day for an account need a second
+      approval.
+    refines: [N-REFUNDS]
+    controls: [RISK-REFUND-ABUSE]
+    code: [payments/refund.go#CheckRefundLimit, payments/refund.go#Refunder.Refund]
+    tests: [payments/refund_test.go#TestCheckRefundLimit, payments/refund_test.go#TestRefundDailyLimit]
+  - id: R-REFUND-ORIGINAL
+    title: Refund to the original payment
+    text: A refund goes back to the payment method of the charge it refunds, never to another one.
+    refines: [N-REFUNDS]
+    code: [payments/charge.go#Gateway]
+    tests: [payments/refund_test.go#TestRefund]
+  - id: R-SESSION-EXPIRY
+    title: Session expiry
+    text: >-
+      A session expires after 30 minutes without use. An expired session is
+      rejected and the customer must log in again.
+    refines: [N-ACCOUNT-SAFE]
+  - id: R-LOGIN-LOCKOUT
+    title: Login lockout
+    text: >-
+      After five consecutive failed logins an account is locked for 15
+      minutes, and a correct password is refused while it is locked.
+    refines: [N-ACCOUNT-SAFE]
+    controls: [RISK-ACCOUNT-TAKEOVER]
+    code: [accounts/session.go#Sessions.Login]
+  - id: R-PASSWORD-HASH
+    title: Password storage
+    text: Passwords are stored only as salted, slow hashes and are compared in constant time.
+    refines: [N-ACCOUNT-SAFE]
+    code: [accounts/session.go#Sessions.Register]
+    tests: [accounts/session_test.go#TestLogin]
+  - id: R-AUDIT-MONEY
+    title: Audit money movements
+    text: >-
+      Every charge and every refund appends an audit entry with the time, the
+      account, the action, the amount and the receipt.
+    refines: [N-ACCOUNT-SAFE]
+    code: [payments/charge.go#Processor.Charge, payments/refund.go#Refunder.Refund]
+    tests: [payments/charge_test.go#TestChargeAudited]
+  - id: R-AUDIT-APPEND-ONLY
+    title: Append-only audit log
+    text: Audit entries cannot be changed or removed once written. Reading the log returns a copy.
+    refines: [N-ACCOUNT-SAFE]
+    code: [payments/audit.go]
+    tests: [payments/audit_test.go]

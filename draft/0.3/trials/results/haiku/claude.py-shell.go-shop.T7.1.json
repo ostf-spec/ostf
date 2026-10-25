@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3200,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 15281,
+  "cache_read_input_tokens": 155303,
+  "output_tokens": 4901,
+  "cost": 0.00706113
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-preserving rewrite of the discount cap, and the tests pass. Nothing is committed or stamped.\n\n**What changed** (`pricing/discount.go`, `ApplyDiscount`)\n\nThe `min(d.Percent, MaxDiscountPercent)` call became an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. For integers the two forms return the same value for every input, so the result is unchanged. The cap at 50% (`R-DISCOUNT-CAP`) still applies.\n\n**Impact against main (from `ostf check --base main`)**\n\n- Changed symbol: `pricing/discount.go#ApplyDiscount`\n- Items marked suspect (`BODY_CHANGED`): `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`\n- Tests linked to those items: `TestApplyDiscount`, `TestApplyDiscount/caps_at_fifty_percent`, `TestApplyDiscount/rejects_expired`\n- Downstream caller: `pricing/quote.go#Price`, which feeds the discount into tax and the total. Its behavior is unchanged.\n- `ostf check` reports 40 items, 109 links, 106 valid, 0 errors. The three suspect links are the only findings.\n\n**Tests run**\n\n- `go test -count=1 ./...`: all five packages pass (accounts, cart, inventory, payments, pricing).\n- `go vet ./pricing/`: clean.\n- `TestApplyDiscount` (all four subtests) passes.\n\n**Not done, and why**\n\n- I did not run `ostf stamp` on the three suspect links. The recheck evidence is in place (behavior is unchanged and the linked tests pass), but stamping writes to `trace.lock`, so I'd rather you confirm first. If you want it, I can stamp them with the links quoted as check prints them.\n- `R-DISCOUNT-CAP` is the rule that limits a mistyped code from giving orders away, so it is risk-relevant. This change does not alter its behavior, but per AGENTS.md I'm flagging it for your sign-off.\n\n**Observations outside this diff**\n\n- `R-VOLUME-DISCOUNT` (SHOP-57) is in `trace.yaml` and says volume discounts count toward the 50% cap. Nothing in the Go code implements volume discounts yet.\n- Neither the old nor the new code rejects a negative `Percent`, which would produce a negative discount (a charge above the subtotal). That relates to `RISK-WRONG-CHARGE` and predates this change.",
+ "date": "2026-10-24"
+}

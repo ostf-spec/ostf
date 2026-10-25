@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 11094,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 90.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 49767,
+  "cache_read_input_tokens": 744192,
+  "output_tokens": 19534,
+  "cost": 0.02716572
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "finalMessage": "Shipping is now in checkout. An order whose subtotal after discounts is at least 100.00 ships free, and any other order pays 5.99. Shipping is added to the order total. All 40 tests pass, and `ostf check --base main` exits 0 with 118 valid links and no errors or suspects. I did not commit or open a PR, since you didn't ask for one.\n\n**What changed**\n- `src/pricing.ts`: `price()` now computes shipping from the after-discount subtotal and adds it to `total`. `Quote` gained a `shipping` field. The fee is `shippingFee()`, with the 10,000-cent threshold and 599-cent fee as named constants.\n- `src/pricing.test.ts`: updated the existing full-quote assertion (total is now 10,947). Added tests for the 100.00 boundary, for a discount that takes the subtotal exactly to 100.00 (free shipping), and for one that drops it below (shipping charged).\n- `src/checkout.test.ts`: the existing order total went from 2,300 to 2,899. Added a checkout test that charges the receipt the right amount under and at the threshold.\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE`, `status: draft`, refining `N-FAIR-PRICE`, linked to `shippingFee` and `price` and to its four tests.\n\n**OSTF impact**\n- Item added: `R-SHIPPING-FEE`, with the links it reports as added: the refines link to `N-FAIR-PRICE`, the implements links to `shippingFee` and `price`, and the verifies links to the four tests above.\n- Rechecked and stamped, since `price()` and one test changed under them: `R-TAX-RATE` (its code and its tax-on-subtotal test) and `R-CHECKOUT-ORDER` (its placement test). Both still match their item text and pass.\n- I did not edit `trace.lock` by hand; `ostf stamp` wrote it.\n\n**Choices I made**\n- Shipping is not taxed. R-TAX-RATE says tax is on the after-discount subtotal, so I kept tax unchanged. If shipping should be taxed, that's a change to R-TAX-RATE and its tests.\n- The threshold is compared against the subtotal after discounts, as you specified, and it is applied before tax.\n\n**Please look at**\n- `MAX_CHARGE` (10,000.00, controlling RISK-WRONG-CHARGE) is checked against the full total. Adding 5.99 pushes a narrow band of orders just under the cap over it, around a subtotal of 8,694 to 8,699 dollars. Those orders will now fail at the charge step and release their stock. I didn't touch the cap because it's risk-relevant. Say if you want it raised, or if you want this band handled differently.\n- `trace.yaml` has `R-VOLUME-DISCOUNT`, which has no code link. If volume discounts are meant to apply before the threshold check, they aren't implemented yet, so the threshold is only as accurate as the discounts that exist today.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.go-shop.T8.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 402,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9355,
+  "cache_read_input_tokens": 107110,
+  "output_tokens": 973,
+  "cost": 0.05788499999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 links, all valid.\n\nThe check was failing on one link, `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. It was unstamped, and its `trace.lock` entry was invalid.\n\nI rechecked `CheckRefundLimit` against the item text. The function rejects a refund that exceeds what is left of the charge, and it requires a second approval above 500.00 per account per UTC day. That is what the item says. `TestCheckRefundLimit` and `TestRefundDailyLimit` both pass. I then ran `ostf stamp` on the link, which is what changed `trace.lock`.\n\nI didn't change any code, tests, or `trace.yaml`. The `CheckRefundLimit` item is marked risk-relevant, but I only re-stamped its link.\n\n`trace.lock` is the only modified file, and it is uncommitted. The stamp only refreshed that one lock entry, so the report lists no added items or links.",
+ "date": "2026-10-24"
+}

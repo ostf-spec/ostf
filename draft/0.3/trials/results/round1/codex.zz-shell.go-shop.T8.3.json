@@ -1,0 +1,50 @@
+{
+ "run": "codex.zz-shell.go-shop.T8.3",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 5191,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.8
+ },
+ "usage": {
+  "input_tokens": 186283,
+  "cached_input_tokens": 152576,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 599,
+  "reasoning_output_tokens": 8
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed refund-limit entry in `trace.lock` using `ostf stamp`, after verifying the requirement and running both linked tests.\n\n- Linked tests passed.\n- `ostf check --base main` passes: 40 items, 109 valid links.\n- No code changes or new traceability items or links.",
+ "date": "2026-10-24"
+}

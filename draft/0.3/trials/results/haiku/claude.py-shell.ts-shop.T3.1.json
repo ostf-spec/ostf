@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T3.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4597,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 48.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 25287,
+  "cache_read_input_tokens": 395893,
+  "output_tokens": 8770,
+  "cost": 0.01695001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws the new `InvalidRefundAmountError` for a zero or negative amount. Amounts above what is left on the charge still throw `RefundTooLargeError`. All 37 tests pass and `ostf check --base main` reports 114 of 114 links valid.\n\n**Changes:**\n- **`src/refunds.ts`:** Added `InvalidRefundAmountError`, following the existing error classes. `checkRefundLimit` now checks `amount <= 0` first, then the charge limit. Updated its docstring.\n- **`src/refunds.test.ts`:** The zero-amount assertion now expects the new class. I added a test for a negative amount.\n- **`trace/requirements.yaml`:** Added `R-REFUND-POSITIVE` as a draft item, refining `N-REFUNDS` and linked to the function and its new test. You didn't answer my question about this, so I took the reading in AGENTS.md that new behavior gets a new item.\n- **`trace.lock`:** Changed only by `ostf stamp`. I did not edit it by hand.\n\n**Stamped after checking:** The existing `R-REFUND-LIMIT` links to `checkRefundLimit` and its test were marked suspect because their bodies changed. I rechecked the item text against the code and it still holds. The new item's links were unstamped, and I checked those the same way. I then stamped the five links:\n- `src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT`\n- `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`\n- `src/refunds.test.ts#checkRefundLimit%20>%20rejects%20a%20refund%20of%20zero%20or%20less verifies R-REFUND-POSITIVE`\n- `src/refunds.ts#checkRefundLimit implements R-REFUND-POSITIVE`\n- `R-REFUND-POSITIVE refines N-REFUNDS`\n\n**For the PR:**\n- **Impact:** `R-REFUND-LIMIT` and `R-REFUND-POSITIVE`. Changed symbols are `checkRefundLimit`, `InvalidRefundAmountError`, and the three `checkRefundLimit` tests.\n- **Added:** item `R-REFUND-POSITIVE` (draft), plus the three links listed above.\n\nI haven't committed or opened a PR, since you didn't ask for that. `R-REFUND-LIMIT` is the risk-relevant item, so the reviewer should look at this change against it.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,58 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3084,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 15684,
+  "cache_read_input_tokens": 163338,
+  "output_tokens": 2864,
+  "cost": 0.10774180000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "`tax` is now `salesTax` in the new `src/salestax.ts`. All 36 tests pass, and `ostf check --base main` reports 111 of 111 links valid with no errors. I didn't run a TypeScript type-check because `tsc` isn't installed here, so the move is checked only by the tests.\n\n- **Code:** `pricing.ts` imports `salesTax` and calls it from `price`. I moved the private `roundHalfUp` helper along with it, since nothing else used it. The logic is unchanged. In `price`, I renamed the local variable `salesTax` to `taxCents` so it doesn't clash with the imported function.\n- **Tests:** `pricing.test.ts` now imports and calls `salesTax`. I left the tests in that file so their existing trace links stay valid.\n- **Trace links:** In `trace/requirements.yaml`, `src/pricing.ts#tax` became `src/salestax.ts#salesTax` for R-TAX-RATE and R-TAX-EXEMPT. No requirement text changed, and none of the affected items is marked risk-relevant.\n- **Stamps:** `ostf check` flagged five links as suspect or unstamped. I rechecked each against the code, ran the tests, and stamped them. They are:\n  - `src/salestax.ts#salesTax implements R-TAX-EXEMPT`\n  - `src/salestax.ts#salesTax implements R-TAX-RATE`\n  - `src/pricing.ts#price implements R-TAX-RATE`\n  - the two test links `src/pricing.test.ts#tax > …`, which verify R-TAX-EXEMPT and R-TAX-RATE\n- **Links added and removed:** The links `check` reports as added are the two `salesTax` implements links above. It reports the two `src/pricing.ts#tax` implements links as removed.\n\n`trace.lock` is modified, but only by those stamp commands. Nothing is committed.",
+ "date": "2026-10-24"
+}

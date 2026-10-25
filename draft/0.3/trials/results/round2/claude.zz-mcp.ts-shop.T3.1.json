@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 13279,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 42.6
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 47188,
+  "cache_read_input_tokens": 351600,
+  "output_tokens": 3797,
+  "cost": 0.3196569
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws the new `InvalidRefundAmountError` for a refund of zero or a negative amount. A refund above what's left on the charge still throws `RefundTooLargeError`. All 6 tests in `src/refunds.test.ts` pass.\n\n- **Code:** I added `InvalidRefundAmountError` in `src/refunds.ts` and split the old combined guard into two checks. The daily-limit approval check is unchanged.\n- **Tests:** The old assertion that a zero amount raises `RefundTooLargeError` is gone. A new test, \"rejects a refund of zero or a negative amount\", covers `0` and `-100`.\n- **Item `R-REFUND-LIMIT`:** The item text is still true, so I left it alone. It says nothing about non-positive amounts, so I didn't add a new item.\n\n**OSTF check (`ostf check --base main`):**\n- **Items and links added:** none.\n- **Items impacted:** `R-REFUND-LIMIT`. It is risk-relevant, and you approved the change.\n- **Tests the impact lists:**\n  - `src/refunds.test.ts#Refunder > totals refunds per account and UTC day`\n  - `src/refunds.test.ts#checkRefundLimit`\n  - `src/refunds.test.ts#checkRefundLimit > rejects a refund of zero or a negative amount`\n  - `src/refunds.test.ts#checkRefundLimit > rejects more than is left on the charge`\n- **Stamped links:** two links were suspect because their bodies changed. I stamped both after the tests passed:\n  - `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`\n  - `src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT`\n\nThe only caller of `checkRefundLimit` is `Refunder.refund`. A zero or negative refund through it now fails with `InvalidRefundAmountError`, so any outside code that expects `RefundTooLargeError` for those amounts would need updating.\n\nI haven't committed anything or opened a pull request. When you do, name the items and tests listed above.",
+ "date": "2026-10-24"
+}

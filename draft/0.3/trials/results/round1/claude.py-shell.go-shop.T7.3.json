@@ -1,0 +1,54 @@
+{
+ "run": "claude.py-shell.go-shop.T7.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 918,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 8936,
+  "cache_read_input_tokens": 87638,
+  "output_tokens": 1295,
+  "cost": 0.05747780000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**The change:** in `pricing/discount.go`, `ApplyDiscount` used to cap the percentage with the `min(...)` builtin. It now does the same cap with an `if` statement. The cap is still `MaxDiscountPercent` (50), and the expiry check and the arithmetic are untouched. Behavior is unchanged. It's a refactor, and it no longer needs Go 1.21 or later.\n\n**Requirements affected** (`ostf check --base main`):\n- R-DISCOUNT-CAP: no discount takes more than 50% off.\n- R-DISCOUNT-EXPIRY: an expired code is rejected with an error naming the code.\n- R-DISCOUNT-PERCENT: the percentage comes off the subtotal, rounded down.\n\nAll three were marked suspect because the function body changed. None of them is flagged risk-relevant.\n\n**Tests run:**\n- `go test ./pricing -run TestApplyDiscount -v` passes, including the `caps_at_fifty_percent` and `rejects_expired` subtests, along with `takes_the_percentage` and `rounds_down`.\n- `go vet ./pricing` reported nothing.\n\n**Stamping:** I compared each requirement against the new code and the tests passed, so I ran `ostf stamp` on those three links. `ostf check` now reports 109 of 109 links valid. The stamps changed `trace.lock`, and you'll see that in the diff alongside `discount.go`.\n\nI didn't run the rest of the repo's tests. The only code in the diff is `ApplyDiscount`, so the discount tests are the ones that matter for it.",
+ "date": "2026-10-24"
+}

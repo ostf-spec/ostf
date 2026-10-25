@@ -1,0 +1,58 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 3,
+  "ostfOutputTokens": 7168,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 23431,
+  "cache_read_input_tokens": 255410,
+  "output_tokens": 4870,
+  "cost": 0.168005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "SHOP-57 (volume discount, `R-VOLUME-DISCOUNT`) is implemented but not committed, and I didn't open a pull request. The 38 tests pass and `ostf check --base main` reports no errors.\n\n**How it works**\n- `volumeDiscount(lines)` in `src/pricing.ts` takes 5% off each cart line of 10 or more units, rounded down to the cent per line.\n- `price()` takes an optional `volume` argument. The discount code is applied to the subtotal after the volume discount.\n- Both discounts together are capped at 50% of the original subtotal.\n- `Checkout.placeOrder` passes `volumeDiscount(lines)` into `price()`.\n- Two new tests cover the per-line rounding and the cap.\n\n**Trace links**\n- **Links added:**\n  - `src/pricing.ts#volumeDiscount` implements `R-VOLUME-DISCOUNT`.\n  - `src/pricing.ts#price` implements `R-VOLUME-DISCOUNT`.\n  - Both new tests, `volumeDiscount > takes 5 percent off lines of 10 or more units, rounded down` and `volumeDiscount > applies before the code and counts toward the fifty percent cap`, verify `R-VOLUME-DISCOUNT`.\n- **Stamped:** I rechecked and stamped the suspect links `Checkout.placeOrder` → `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. I did the same for `price` → `R-TAX-RATE`, whose signature changed.\n- **Lock file:** `trace.lock` changed through `ostf stamp`; I didn't edit it by hand.\n- **Item text:** I left it unchanged.\n\n**One item may now be slightly off**\n`R-DISCOUNT-PERCENT` says a code takes its percentage off \"the subtotal\". With a volume discount, the code now applies to the subtotal after the volume discount. `applyDiscount` itself is unchanged and its tests pass, but you may want to reword that item.\n\nI didn't ask before editing `price` and `placeOrder` because `ostf context` showed no code marked risk-relevant. `price` still touches the fifty percent cap (`R-DISCOUNT-CAP`, which guards against giving orders away) and the charged total, so look at that part in review.",
+ "date": "2026-10-24"
+}

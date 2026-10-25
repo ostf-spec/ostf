@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-shell.ts-shop.T5.2",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 9624,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 59.8
+ },
+ "usage": {
+  "input_tokens": 254433,
+  "cached_input_tokens": 223872,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2568,
+  "reasoning_output_tokens": 77
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Implemented SHOP-57: qualifying lines receive 5% off before discount codes, with per-line rounding and a combined 50% cap. Checkout charges the resulting total.\n\nValidation: all 40 tests pass; `ostf check --base main` passes with 115 valid links.\n\nAdded four links to existing requirement `R-VOLUME-DISCOUNT`: pricing, checkout, pricing tests, and checkout tests. No new requirement IDs.",
+ "date": "2026-10-24"
+}

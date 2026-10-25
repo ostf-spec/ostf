@@ -1,0 +1,77 @@
+# SPDX-License-Identifier: Apache-2.0
+name: Draft conformance checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Run the 0.3 reader checks
+        run: python3 draft/0.3/conformance/run.py
+  schema-fixtures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+      - name: Check structural schema fixtures
+        run: go test ./...
+      - name: Vet Go code
+        run: go vet ./...
+      - name: Check draft 0.3 example
+        run: cd draft/0.3/example && go vet ./... && go test ./...
+      - name: Check draft 0.3 minimal fixture
+        run: cd draft/0.3/fixtures/minimal && go test ./...
+  action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Check the example with the action
+        uses: ./
+        with:
+          root: draft/0.3/example
+          sarif: ${{ github.event_name == 'push' && 'true' || 'false' }}
+      - name: Make a link suspect in a copy of the example
+        run: |
+          cp -R draft/0.3/example "$RUNNER_TEMP/edited"
+          sed -i 's/return ErrRefundTooLarge/return ErrNeedsApproval/' "$RUNNER_TEMP/edited/refund.go"
+      - name: Check the edited copy with the action
+        id: edited
+        continue-on-error: true
+        uses: ./
+        with:
+          root: ${{ runner.temp }}/edited
+          sarif: "false"
+      - name: The action fails on a suspect link
+        run: test "${{ steps.edited.outcome }}" = failure && test "${{ steps.edited.outputs.exit-code }}" = 1
+  pre-commit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.12'
+      - name: Run the pre-commit hook on the example
+        run: |
+          python -m pip install --quiet pre-commit==4.7.0
+          cd draft/0.3/example
+          git init -q . && git add -A
+          pre-commit try-repo "$GITHUB_WORKSPACE" ostf-check --all-files

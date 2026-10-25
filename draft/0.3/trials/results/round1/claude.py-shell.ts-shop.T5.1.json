@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4982,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 46.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 21382,
+  "cache_read_input_tokens": 247595,
+  "output_tokens": 5617,
+  "cost": 0.1665015
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/cart.test.ts",
+  "src/cart.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "SHOP-57 is implemented, but I haven't committed anything or opened a PR. Tests pass (38/38), and `ostf check --base main` reports no errors (115 of 115 links valid). I had no Jira access, so I worked from the repo's `R-VOLUME-DISCOUNT` item, which carries `external: jira:SHOP-57`.\n\n**What changed**\n- **`src/cart.ts`:** new `Cart.volumeDiscount()` gives 5% off each line of 10 or more units, rounded down to the cent per line. `subtotal()` is untouched, so R-CART-SUBTOTAL stays true.\n- **`src/pricing.ts`:** `price()` takes an optional `volume` amount. It takes the volume discount off first and applies the code discount to what's left. The two together are capped at 50% of the subtotal.\n- **`src/checkout.ts`:** `placeOrder` passes `cart.volumeDiscount()` to `price()`.\n- **Tests:** one new test in `src/cart.test.ts` and one in `src/pricing.test.ts`.\n- **`trace.lock`:** updated by `ostf stamp`, not edited by hand.\n\n**Items and links `ostf check` reports as added, for the PR description**\n- `src/cart.ts#Cart.volumeDiscount` implements R-VOLUME-DISCOUNT\n- `src/pricing.ts#price` implements R-VOLUME-DISCOUNT\n- `src/cart.test.ts#Cart > gives 5 percent off lines of 10 or more units, rounded down` verifies R-VOLUME-DISCOUNT\n- `src/pricing.test.ts#price > applies the volume discount before the code and counts it toward the cap` verifies R-VOLUME-DISCOUNT\n\nNo new items were added. I linked the existing R-VOLUME-DISCOUNT using `@req` comments.\n\n**Stamped after rechecking**\n- The four new links above.\n- Three links flagged as suspect because of the edits: `placeOrder` for R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, and `price` for R-TAX-RATE.\n\nI reran the affected tests and confirmed those three items are still true. No items were made false. None of the touched code is marked risk-relevant, so I didn't need to ask first.\n\n**Choices to confirm**\n- **Cap interpretation:** I read \"counts toward the fifty percent cap\" as a cap on the total (volume plus code) against the gross subtotal.\n- **Quote discount:** `Quote.discount` now holds the combined discount.",
+ "date": "2026-10-24"
+}

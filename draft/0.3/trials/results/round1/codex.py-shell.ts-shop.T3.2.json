@@ -1,0 +1,59 @@
+{
+ "run": "codex.py-shell.ts-shop.T3.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 11,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 6,
+  "ostfOutputTokens": 7298,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 80.5
+ },
+ "usage": {
+  "input_tokens": 305628,
+  "cached_input_tokens": 269824,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1924,
+  "reasoning_output_tokens": 119
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "Implemented `InvalidRefundAmountError` for zero and negative refunds. Amounts exceeding the remaining charge still throw `RefundTooLargeError`.\n\nAdded regression tests and draft requirement `R-REFUND-AMOUNT`, linked to the function, error class, tests, and `N-REFUNDS`.\n\nValidation: all 37 tests pass; `ostf check --base main` reports all 115 links valid.",
+ "date": "2026-10-24"
+}

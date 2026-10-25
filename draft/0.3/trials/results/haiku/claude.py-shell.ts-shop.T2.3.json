@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T2.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 24,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 10442,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 98.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 51834,
+  "cache_read_input_tokens": 694618,
+  "output_tokens": 17999,
+  "cost": 0.026315879999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "finalMessage": "Shipping is now added to checkout. An order whose subtotal after discounts is at least 100.00 ships free, and any other order pays 5.99. The fee is included in the total that gets charged. All 40 tests pass and `ostf check --base main` exits 0 with 118 of 118 links valid. I haven't committed or opened a PR, since you didn't ask for that.\n\n**Changes**\n- `src/pricing.ts`: new `shipping()` function and `FREE_SHIPPING_MIN` / `FLAT_SHIPPING` constants. `Quote` gains a `shipping` field, and `price()` adds it to `total`.\n- `src/pricing.test.ts`: threshold tests for `shipping()`, a free-shipping case for `price()`, and the existing `price()` expectation updated to include the 5.99 fee.\n- `src/checkout.test.ts`: the existing \"places an order\" total moves from 2,300 to 2,899 because the fee is now included. A new test checks a 10-mug order (100.00 subtotal) ships free and that its total is charged.\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE` with `status: draft`, refining `N-FAIR-PRICE`, linked to `shipping`/`price` and four tests.\n\n**Trace**\n- **Added item:** `R-SHIPPING-FEE`, with link `R-SHIPPING-FEE refines N-FAIR-PRICE`.\n- **Added links:** `src/pricing.ts#shipping implements R-SHIPPING-FEE`, `src/pricing.ts#price implements R-SHIPPING-FEE`, and four `verifies R-SHIPPING-FEE` test links (`shipping` ×2, `price` ×1, and the checkout test).\n- **Rechecked and stamped:** `R-CHECKOUT-ORDER` (its test body changed, and the item text is still true) and `R-TAX-RATE` (`price` changed, and tax is still on the subtotal after discounts). Their tests pass.\n- **Not touched:** no item text was rewritten, and I didn't edit `trace.lock` by hand. The stamps are the only changes to it.\n- None of the touched symbols control a `RISK-*` item, so no risk-relevant code needed your sign-off.\n\n**Choices I made that you may want to confirm**\n- The threshold uses the subtotal after discounts and before tax.\n- Shipping is not taxed. The tax rule still applies only to the subtotal after discounts.\n- The fee applies to every order below the threshold, including a zero-value subtotal.",
+ "date": "2026-10-24"
+}

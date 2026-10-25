@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1402,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 9243,
+  "cache_read_input_tokens": 68417,
+  "output_tokens": 1189,
+  "cost": 0.0557197
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your uncommitted change doesn't alter behavior. The tests pass, and `ostf check` flags three links as suspect because the function body changed.\n\n**The change**\n\nThe only edit is in `pricing/discount.go`, in `ApplyDiscount`. `percent := min(d.Percent, MaxDiscountPercent)` became `percent := d.Percent` followed by an `if percent > MaxDiscountPercent` clamp. The two forms give the same result for every input, including a negative `Percent`, which neither version clamps. The 50% cap, the expiry check and the round-down arithmetic are untouched.\n\n**What it touches**\n\n`ostf` reports three requirements that `ApplyDiscount` implements:\n- **`R-DISCOUNT-CAP`:** no discount takes more than 50% off a subtotal. It refines `N-FAIR-PRICE`.\n- **`R-DISCOUNT-EXPIRY`:** an expired code is rejected with an error naming the code.\n- **`R-DISCOUNT-PERCENT`:** a code takes its percentage off the subtotal, rounded down to the cent.\n\nThe cap is the line you edited. The function guards against a wrong charge, but nothing in the trace marks it risk-relevant, so I didn't stop to ask first.\n\n**Tests**\n\n- `go test ./pricing -run ApplyDiscount -v` passes. That covers the cases `ostf` says to run: `TestApplyDiscount/caps_at_fifty_percent` and `TestApplyDiscount/rejects_expired`, plus `takes_the_percentage` and `rounds_down`.\n- `go test ./...` passes in every package.\n- `ostf check --base main` reports no errors. It shows 40 items, 106 links valid and 3 suspect, which are the three links above (`BODY_CHANGED`).\n\nI haven't run `ostf stamp`. The code and tests support stamping all three links, since behavior is unchanged. Stamping updates `trace.lock`, though, so I'd rather you say so first. Want me to stamp them?",
+ "date": "2026-10-24"
+}

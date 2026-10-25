@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 2966,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 22874,
+  "cache_read_input_tokens": 271171,
+  "output_tokens": 5679,
+  "cost": 0.010128209999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors, no unstamped links. It exits 0.\n\n**What was failing:** `trace.lock` line 111 had a malformed entry for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`. It used `source.sig:` where the format requires `source.sig=`. That made the check report `LOCK_INVALID`, and the same entry was also reported as `LINK_UNSTAMPED`.\n\n**What I did:**\n- Read `checkRefundLimit` and its item text. The item says a refund must not exceed what is left on the charge, and daily refunds above 500.00 need a second approval. The code does both.\n- Ran the full suite with `node --test`: 36 of 36 pass, including the two `checkRefundLimit` tests.\n- Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, quoted as check printed it. The tool rewrote that one line, adding the `=`. The diff to `trace.lock` is that single line. I didn't edit the file by hand.\n\n**Things to know:**\n- I didn't change any code. `checkRefundLimit` is marked risk-relevant, so it's worth a look that the stamp is what you want.\n- The impact against `main` lists no items, tests, or links as added, removed, or changed. The only working-tree change is the `trace.lock` line.\n- Nothing is committed, and I didn't open a pull request, since you didn't ask for either. If you do, the PR should say the stamp fixed the malformed `checkRefundLimit` line, with no items or links added.",
+ "date": "2026-10-24"
+}

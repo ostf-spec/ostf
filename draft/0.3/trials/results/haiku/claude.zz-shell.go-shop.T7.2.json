@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1332,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 14631,
+  "cache_read_input_tokens": 73610,
+  "output_tokens": 3223,
+  "cost": 0.0052746
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-preserving refactor. Tests pass, but `ostf check` flags three suspect links that need a decision from you.\n\n**What changed** (`pricing/discount.go`, `ApplyDiscount`)\n\n`percent := min(d.Percent, MaxDiscountPercent)` became an explicit `if` that clamps `percent` to `MaxDiscountPercent` (50). For `int64` values the two forms are identical, so the 50% cap and the rounding are unchanged. The only other difference is that `min` is no longer used. Negative `Percent` values are not clamped in either version.\n\n**Impact** (per `ostf check --base main`)\n\n- Changed symbol: `pricing/discount.go#ApplyDiscount`\n- Items it implements, all now marked suspect (`BODY_CHANGED`):\n  - `R-DISCOUNT-CAP`\n  - `R-DISCOUNT-EXPIRY`\n  - `R-DISCOUNT-PERCENT`\n- Tests the impact list names:\n  - `pricing/discount_test.go#TestApplyDiscount`\n  - `pricing/discount_test.go#TestApplyDiscount/caps_at_fifty_percent`\n  - `pricing/discount_test.go#TestApplyDiscount/rejects_expired`\n- Caller: `pricing/quote.go:19` (quote computation). Its behavior is unchanged.\n\n**Tests run**\n\n- `go test ./pricing/ -run TestApplyDiscount -v`: all four subtests pass, including `caps_at_fifty_percent`, `rejects_expired`, `rounds_down` and `takes_the_percentage`.\n- `go test ./...`: all packages pass (accounts, cart, inventory, payments, pricing).\n\n**Not done**\n\n- I did not run `ostf stamp`. AGENTS.md says to stamp suspect links only after rechecking the item against the code and running its tests. The tests pass and the code still matches the item text, so the stamp would be justified. Stamping edits `trace.lock`, though, and you asked for a summary, so I left it for you to decide. Say the word and I'll recheck the three items and stamp them.\n- I made no code changes. Since `pricing/discount.go` may be risk-relevant, AGENTS.md asks you to confirm before any change to it. This one is a semantic no-op, but I'd flag it for your review.\n- If you open a PR, it needs to name the three items and the three tests above, and the three suspect links from `ostf check`.",
+ "date": "2026-10-24"
+}

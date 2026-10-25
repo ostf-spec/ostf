@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 672,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 8361,
+  "cache_read_input_tokens": 66982,
+  "output_tokens": 1058,
+  "cost": 0.0507382
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change to `applyDiscount` in `src/pricing.ts` doesn't change what the function does. The tests pass, but `ostf check` reports three links as suspect until they are re-stamped.\n\n**The change**\n- It replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an `if` that clamps `percent` to `MAX_DISCOUNT_PERCENT`.\n- The expiry check and the `Math.floor((subtotal * percent) / 100)` rounding are untouched.\n- Callers see no difference: `price` and checkout get the same results as on main.\n\n**Tests**\n- I ran `src/pricing.test.ts` and `src/checkout.test.ts`: 10 of 10 pass, covering the percentage, rounding, the fifty-percent cap, expiry, `price` and checkout.\n- `ostf check --base main` lists the pricing tests as the ones to run: `applyDiscount`, `caps at fifty percent` and `rejects an expired code`. All three are in the run above and pass.\n\n**Trace status**\n- `ostf check` reports `BODY_CHANGED` on `applyDiscount`, so these three links are now suspect:\n  - `R-DISCOUNT-CAP`\n  - `R-DISCOUNT-EXPIRY`\n  - `R-DISCOUNT-PERCENT`\n- Those three are the only affected items, and none of their text is made false by the change.\n- I haven't stamped them, because stamping rewrites `trace.lock` and you only asked for a summary and a test run. If you commit this, the stamps are needed.\n- I can run `ostf stamp` on each of the three links now, since the code still matches the item text and the tests pass.",
+ "date": "2026-10-24"
+}

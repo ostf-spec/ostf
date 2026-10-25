@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 654,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 11428,
+  "cache_read_input_tokens": 111853,
+  "output_tokens": 1281,
+  "cost": 0.0697313
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes, with 111 of 111 links valid.\n\n**Cause:** the `refund-tweaks` merge (0f83ba4) changed one line in `trace.lock`. For `checkRefundLimit` implementing `R-REFUND-LIMIT`, `source.sig=` became `source.sig:`. That made the lock entry invalid, so the link showed as unstamped. The hashes in the line were the same as before. I didn't change any code.\n\n**What I did:**\n- I checked `checkRefundLimit` against the item text. It rejects a refund that is zero or less, or larger than what's left on the charge. It requires approval when the account's refunds for the day would pass `DAILY_REFUND_LIMIT`, which is 50,000 cents (500.00). That matches the requirement.\n- `npm test` passed all 36 tests, including the `checkRefundLimit` and `Refunder` ones that verify this item.\n- I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. That rewrote the one malformed line in `trace.lock`. I didn't edit the file by hand.\n\n**For the PR:** the check reports no added items or links. The only change is that one line in `trace.lock`. The function is marked risk-relevant, but I didn't modify it. I haven't committed anything.",
+ "date": "2026-10-24"
+}

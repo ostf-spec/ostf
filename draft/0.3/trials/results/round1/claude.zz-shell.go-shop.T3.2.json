@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T3.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 2056,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 30.400000000000002
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 11852,
+  "cache_read_input_tokens": 114313,
+  "output_tokens": 1988,
+  "cost": 0.12029459999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. A refund larger than what is left on the charge still returns `ErrRefundTooLarge`. The `payments` tests pass, and `ostf check --base main` reports no errors (40 items, 109 valid links).\n\n- **Code:** in `payments/refund.go` I added the error and split the amount check in two. I also updated the function's doc comment to mention it.\n- **Tests:** in `payments/refund_test.go`, the \"zero\" case in `TestCheckRefundLimit` now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **Stamps:** the check flagged two links as suspect because their bodies changed: `CheckRefundLimit` implements R-REFUND-LIMIT, and `TestCheckRefundLimit` verifies R-REFUND-LIMIT. I rechecked the item against the code, ran the tests, and stamped both. That is why `trace.lock` shows as modified. I did not edit it by hand.\n- **Items:** R-REFUND-LIMIT is still true, so I did not change it. The check reports no links added, and `ErrInvalidRefundAmount` has no item (it is a new error, not new behavior). I haven't committed or opened a pull request.",
+ "date": "2026-10-24"
+}

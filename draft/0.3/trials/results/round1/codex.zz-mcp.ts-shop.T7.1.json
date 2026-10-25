@@ -1,0 +1,52 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T7.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3179,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.8
+ },
+ "usage": {
+  "input_tokens": 123338,
+  "cached_input_tokens": 108544,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 565,
+  "reasoning_output_tokens": 29
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in [src/pricing.ts:45](/tmp/ostf-trials/runs/codex.zz-mcp.ts-shop.T7.1/repo/src/pricing.ts:45) replaces `Math.min` with an explicit conditional cap.\n\n- **Impact:** Behavior is unchanged for numeric percentages. The 50% cap, cent rounding, and expiration rejection remain intact. Pricing and checkout totals should be unchanged.\n- **Requirements affected:** `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, and `R-DISCOUNT-PERCENT`.\n- **Tests:** Ran `node --test src/pricing.test.ts src/checkout.test.ts`. All **10 tests passed**.\n- **Trace status:** `ostf check --base main` reports those three implementation links as suspect because the function body changed.\n\nNo files or trace stamps were modified.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,53 @@
+{
+ "run": "codex.zz-shell.go-shop.T7.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 10,
+  "edited": false,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 6,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 3,
+  "ostfOutputTokens": 2479,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 51.8
+ },
+ "usage": {
+  "input_tokens": 149617,
+  "cached_input_tokens": 135552,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 744,
+  "reasoning_output_tokens": 17
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Compared with `main`, `pricing/discount.go` replaces `min` with an equivalent `if` in `ApplyDiscount`. No behavior change: the 50% cap, rounding, and expiry handling remain intact.\n\nImpacted requirements: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`. No added items or links.\n\nPassed `TestApplyDiscount` and all four subtests, including the explicitly impacted `caps_at_fifty_percent` and `rejects_expired`.\n\nRechecked and stamped the three links using OSTF, updating `trace.lock`. Final `ostf check --base main` passed: **109 valid links, none suspect**.",
+ "date": "2026-10-24"
+}

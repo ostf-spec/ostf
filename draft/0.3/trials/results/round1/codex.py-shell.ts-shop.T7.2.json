@@ -1,0 +1,53 @@
+{
+ "run": "codex.py-shell.ts-shop.T7.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3974,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 44.0
+ },
+ "usage": {
+  "input_tokens": 155117,
+  "cached_input_tokens": 138880,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 655,
+  "reasoning_output_tokens": 16
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change in `src/pricing.ts` replaces `Math.min` with an explicit conditional cap. For numeric percentages, behavior is unchanged: discounts remain capped at 50%, rounded down, and rejected when expired. Pricing and checkout totals are unaffected.\n\n- Ran `node --test src/pricing.test.ts src/checkout.test.ts`: **10 tests passed**.\n- Rechecked discount cap, expiry, and percentage requirements.\n- `ostf check --base main`: **111/111 links valid**, no added items or links.\n\nOSTF stamping updated `trace.lock`; I made no source or test edits.",
+ "date": "2026-10-24"
+}

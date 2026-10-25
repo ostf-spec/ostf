@@ -1,0 +1,57 @@
+{
+ "run": "codex.py-shell.ts-shop.T4.1",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7104,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 38.0
+ },
+ "usage": {
+  "input_tokens": 139485,
+  "cached_input_tokens": 106240,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1117,
+  "reasoning_output_tokens": 15
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it with its rounding helper to `src/salestax.ts`. Updated callers, tests, and trace links without changing behavior.\n\nAll 36 tests pass. `ostf check --base main` passes with 111 valid links.\n\nAdded links: `src/salestax.ts#salesTax` implements `R-TAX-EXEMPT` and `R-TAX-RATE`. No items added.",
+ "date": "2026-10-24"
+}

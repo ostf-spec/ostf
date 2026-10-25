@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 673,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 14.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 7907,
+  "cache_read_input_tokens": 48114,
+  "output_tokens": 1084,
+  "cost": 0.0472914
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change to `ApplyDiscount` doesn't alter its behavior, and the `ApplyDiscount` tests pass.\n\n**The change:** in `pricing/discount.go`, `ApplyDiscount` used `min(d.Percent, MaxDiscountPercent)`. It now uses an `if` that clamps to `MaxDiscountPercent`. The two do the same thing. The expiry check and the rounding-down arithmetic are untouched.\n\n**Impact from `ostf check --base main`:**\n- **Changed function:** `pricing/discount.go#ApplyDiscount`.\n- **Items it implements:**\n  - `R-DISCOUNT-CAP`\n  - `R-DISCOUNT-EXPIRY`\n  - `R-DISCOUNT-PERCENT`\n- **Tests it lists:**\n  - `pricing/discount_test.go#TestApplyDiscount`\n  - `pricing/discount_test.go#TestApplyDiscount/caps_at_fifty_percent`\n  - `pricing/discount_test.go#TestApplyDiscount/rejects_expired`\n- **Links added:** none.\n- **Items made false:** none. I compared the three item texts with the code and each still holds.\n- **Link status:** the check reports 40 items and 109 links, 106 of them valid. The other three are the `ApplyDiscount` links to the three items above. They are marked suspect (`BODY_CHANGED`) because the function body changed. `ostf context` shows no risk-relevant marking on them.\n\n**Tests:** `go test ./pricing/ -run TestApplyDiscount -v` passes. That covers the subtests `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent` and `rejects_expired`.\n\nI haven't stamped the three suspect links, because that writes to `trace.lock` and you only asked for a summary. The tests pass and the items still hold, so I can run `ostf stamp` on each of them if you want. Until then, `ostf check` will keep reporting them as suspect.",
+ "date": "2026-10-24"
+}

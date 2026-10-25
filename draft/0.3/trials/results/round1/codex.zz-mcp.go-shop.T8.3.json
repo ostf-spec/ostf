@@ -1,0 +1,50 @@
+{
+ "run": "codex.zz-mcp.go-shop.T8.3",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3848,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.3
+ },
+ "usage": {
+  "input_tokens": 156345,
+  "cached_input_tokens": 140032,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 575,
+  "reasoning_output_tokens": 11
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed refund-limit stamp using `ostf stamp`, after verifying the requirement and running its tests. Only `trace.lock` changed.\n\n- `ostf check --base main`: passes, 40 items and 109 valid links.\n- `go test ./...`: passes.\n- No items or links added.",
+ "date": "2026-10-24"
+}

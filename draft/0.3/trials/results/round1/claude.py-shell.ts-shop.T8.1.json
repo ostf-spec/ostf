@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 640,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.5
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 10180,
+  "cache_read_input_tokens": 88320,
+  "output_tokens": 981,
+  "cost": 0.059382
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links, all valid.\n\nThe only problem was one stale link. `checkRefundLimit` implements `R-REFUND-LIMIT`, and the merge of `refund-tweaks` left that link's `trace.lock` entry out of date (`LOCK_INVALID` / `LINK_UNSTAMPED`).\n\nI followed the recheck procedure from AGENTS.md:\n- **Code against item:** `checkRefundLimit` rejects a refund that is not positive or exceeds what is left on the charge. It also requires a second approval once an account's refunds for the UTC day pass 500.00 (`DAILY_REFUND_LIMIT` is 50,000 cents). That is what the item says.\n- **Tests:** the full suite passes, 36 of 36, including the `checkRefundLimit` tests and \"totals refunds per account and UTC day\".\n- **Stamp:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`.\n\nThe only file changed is `trace.lock`, and the change came from `ostf stamp`. I didn't edit it by hand. I didn't touch any code, so the risk-relevant refund code was not changed. Nothing was committed.\n\nThe check reported no items or links as added, so there is nothing to list for a pull request. No item became false.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,58 @@
+{
+ "run": "claude.zz-shell.ts-shop.T5.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 26,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3627,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 127.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 44,
+  "cache_creation_input_tokens": 61915,
+  "cache_read_input_tokens": 958302,
+  "output_tokens": 28784,
+  "cost": 0.036362420000000006
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 13,
+ "finalMessage": "SHOP-57 is implemented and `ostf check --base main` is clean (exit 0). I haven't committed or opened a PR, since you didn't ask for one. The one thing to decide is that the spec's wording may conflict with R-DISCOUNT-PERCENT, described below.\n\n**The spec.** I don't have a Jira tool, so I used the text stored in `trace.yaml`. SHOP-57 is `R-VOLUME-DISCOUNT` (external `jira:SHOP-57`, revision 2): a cart line with 10 or more units gets 5% off, rounded down to the cent, before any discount code applies, and the volume discount counts toward the 50% cap.\n\n**What changed**\n- `src/pricing.ts`: added `volumeDiscount(lines)`, with `VOLUME_MIN_UNITS = 10` and `VOLUME_PERCENT = 5`. `price` now takes cart lines instead of a subtotal. It takes the volume discount off first, applies the code to what remains, and caps volume plus code together at 50% of the subtotal.\n- `src/checkout.ts`: passes the lines to `price`.\n- `src/pricing.test.ts`: the existing `price` test moved to the lines signature. Added tests for the 10-unit threshold, per-line rounding, the order of volume and code, and the shared cap.\n- `trace.lock`: changed by `ostf stamp`, which is the sanctioned route.\n\n**Interpretation I took.** \"Before any discount code applies\" is read as the code taking its percentage off the amount after the volume discount. The cap is applied to the total discount.\n\n**Needs your decision.** R-DISCOUNT-PERCENT says a code \"takes its percentage off the subtotal\". For carts with a qualifying line, the code now applies to the subtotal less the volume discount, and a large code can be clipped by the cap. That may make R-DISCOUNT-PERCENT false for those carts. Per AGENTS.md I left the item text alone. Should I rewrite it, or should the volume discount be applied differently?\n\n**Trace results**\n- Impact: `R-VOLUME-DISCOUNT`, `R-TAX-RATE`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`.\n- Links added (from the `@req` comments): `src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT`, and four `verifies R-VOLUME-DISCOUNT` links from the new pricing tests.\n- Rechecked and stamped: `placeOrder` against R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, `price` against R-TAX-RATE, and the existing `price` test against R-TAX-RATE. Each item still holds and the tests pass. No changed symbol is marked risk-relevant.\n- Tests: `npm test` passes, 40 of 40.\n\n**Gaps.** There's no checkout-level test for a volume-discounted order, only pricing-level tests.\n\n**If you want a PR:** I'd name `R-VOLUME-DISCOUNT` (SHOP-57) with the four pricing tests and `volumeDiscount` as the impact, the four links above as added, and the `R-TAX-RATE` and `R-CHECKOUT-*` re-stamps. I'll commit and open it on your go-ahead.",
+ "date": "2026-10-24"
+}

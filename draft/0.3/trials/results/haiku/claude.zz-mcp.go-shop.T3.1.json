@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 24314,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 60.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 36,
+  "cache_creation_input_tokens": 78065,
+  "cache_read_input_tokens": 761425,
+  "output_tokens": 8281,
+  "cost": 0.031645780000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "The change is in and tests pass, but it touched a risk-relevant function, so please review it.\n\n**What changed**\n- `payments/refund.go`: `CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` (\"payments: refund amount must be positive\") for an amount of zero or less. Amounts above what is left on the charge still return `ErrRefundTooLarge`, and the daily-approval check is unchanged.\n- `payments/refund_test.go`: the zero case now expects `ErrInvalidRefundAmount`, and I added a negative-amount case.\n- `trace/requirements.yaml`: added `R-REFUND-AMOUNT-POSITIVE` with `status: draft`, refining `N-REFUNDS`, implemented by `payments/refund.go#CheckRefundLimit` and verified by `payments/refund_test.go#TestCheckRefundLimit`. AGENTS.md asks for new behaviour as a draft item, and the new error is a distinct contract, so I treated it that way. Remove it if you'd rather not have it.\n\n**Verification**\n- `go vet ./payments/` is clean, and `go test ./...` passes in all packages.\n- `ostf check --base main` reports no diagnostics. Its impact lists these changed anchors: `CheckRefundLimit`, `ErrInvalidRefundAmount` and `TestCheckRefundLimit`. Its impact lists these tests: `TestCheckRefundLimit` and `TestRefundDailyLimit`.\n- Added items and links: the item `R-REFUND-AMOUNT-POSITIVE`, plus three links: `R-REFUND-AMOUNT-POSITIVE refines N-REFUNDS`, `CheckRefundLimit implements R-REFUND-AMOUNT-POSITIVE` and `TestCheckRefundLimit verifies R-REFUND-AMOUNT-POSITIVE`.\n- Two links on `R-REFUND-LIMIT` were suspect because the function body changed (`CheckRefundLimit implements R-REFUND-LIMIT` and `TestCheckRefundLimit verifies R-REFUND-LIMIT`). I rechecked the item text against the code, which still holds, and the tests pass. I stamped those two plus the three new links with `ostf_stamp`. All links now report valid.\n- `trace.lock` changed only through the stamp tool. I did not edit it by hand.\n\n**For the reviewer:** `R-REFUND-LIMIT` is risk-relevant and stays accepted. Its text is still accurate, but the code path now has an extra early return.\n\nI have not opened a pull request, since you didn't ask for one. If you do, the PR description should name the items and links above.",
+ "date": "2026-10-24"
+}

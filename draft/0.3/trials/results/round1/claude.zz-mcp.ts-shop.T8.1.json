@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1192,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 143.8
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 11205,
+  "cache_read_input_tokens": 134926,
+  "output_tokens": 1157,
+  "cost": 0.06991060000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid links, no errors.\n\nThe failure was one malformed line in `trace.lock`. It was the `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` entry, which had `source.sig:` where it should have `source.sig=`. That made the link unstamped.\n\nI didn't edit the lock file by hand. I first confirmed that the code and the item agree. `checkRefundLimit` rejects refunds above what's left on the charge. It also requires approval above `DAILY_REFUND_LIMIT`, which is 50,000 cents (500.00). `node --test src/refunds.test.ts` passed all 5 tests. Then I ran `ostf stamp` on that link, which rewrote the line.\n\nI didn't change any source code. The only modified file is `trace.lock`, and I haven't committed anything. The stamp added no new items or links, so there is nothing to list as added for a pull request.",
+ "date": "2026-10-24"
+}

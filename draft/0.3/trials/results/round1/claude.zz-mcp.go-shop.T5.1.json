@@ -1,0 +1,61 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 10290,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 45.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 37477,
+  "cache_read_input_tokens": 280544,
+  "output_tokens": 5418,
+  "cost": 0.2321784
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/quote.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "SHOP-57 (volume discount) is implemented and uncommitted on `main`. I couldn't read the ticket itself because I have no Jira access. I worked from the `R-VOLUME-DISCOUNT` item in `trace.yaml`, which cites it. `go test ./...` passes, and `ostf check --base main` reports no errors (40 items, 115 valid).\n\n**What it does:** a cart line with 10 or more units gets 5% off that line, rounded down to the cent. The discount code then applies to what's left. The volume discount and the code together can't exceed the 50% cap on the original subtotal.\n\n**Code**\n- `pricing.VolumeDiscount` in `pricing/discount.go` computes the per-line amount.\n- `pricing.PriceWithVolume` in `pricing/quote.go` applies the volume discount, then the code, with the combined cap. `Price` now calls it with no volume discount, so its behaviour is unchanged.\n- `Cart.VolumeDiscount` in `cart/cart.go` sums the amounts over all lines.\n- `Checkout.PlaceOrder` now prices through `PriceWithVolume`.\n- `Quote.Discount` holds the volume and code discounts combined. There is no separate field for the volume part.\n\n**Tests:** `TestVolumeDiscount` in `pricing/discount_test.go` and in `cart/cart_test.go`, and `TestPriceWithVolume` in `pricing/discount_test.go`. They cover the 9 vs 10 unit threshold, rounding, ordering with a code, and the cap.\n\n**Links**\n- **Added:**\n  - `Cart.VolumeDiscount`, `VolumeDiscount` and `PriceWithVolume` implement R-VOLUME-DISCOUNT.\n  - The three new tests verify R-VOLUME-DISCOUNT.\n- **Restamped after re-checking:** `Checkout.PlaceOrder` for R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, and `Price` for R-TAX-RATE. Their tests pass and the items are still true.\n\nNo item was made false and no existing item was edited. I didn't touch anything marked risk-relevant. `R-CHARGE-AMOUNT`, which controls `RISK-WRONG-CHARGE`, is unchanged, though a different order total now flows into that charge.\n\nThe two new constants, `VolumeDiscountMinQuantity` and `VolumeDiscountPercent`, show up as \"no item\" in the check output. That's informational, not an error.\n\nI haven't committed or opened a PR.",
+ "date": "2026-10-24"
+}

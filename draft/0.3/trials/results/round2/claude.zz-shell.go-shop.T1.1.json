@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.go-shop.T1.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 388,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 8.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7076,
+  "cache_read_input_tokens": 29513,
+  "output_tokens": 755,
+  "cost": 0.038813299999999995
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.Refund` in `payments/refund.go` exists to satisfy three requirements. I got this from `ostf context payments/refund.go#Refunder.Refund`, which reads the repo's trace data. I didn't open the source file itself, and I changed nothing.\n\n**Why it exists**\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it): a refund can't exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval.\n  - It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds.\n  - It refines N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n  - The limit check itself lives in `CheckRefundLimit`.\n- **R-AUDIT-MONEY:** every charge and every refund appends an audit entry with the time, account, action, amount and receipt. It refines N-ACCOUNT-SAFE.\n- **R-REFUND-ORIGINAL:** a refund goes back to the payment method of the charge it refunds, never to another one. This is implemented through `Gateway` and `Processor.receipt` in `payments/charge.go`.\n\n**Tests that cover it**\n- `payments/refund_test.go#TestRefund` verifies R-AUDIT-MONEY and R-REFUND-ORIGINAL.\n- `payments/refund_test.go#TestCheckRefundLimit` verifies R-REFUND-LIMIT.\n- `payments/refund_test.go#TestRefundDailyLimit` verifies R-REFUND-LIMIT.\n- `payments/charge_test.go#TestChargeAudited` verifies R-AUDIT-MONEY, but it exercises `Processor.Charge`, not `Refund`.\n\nAll the links show as valid. `TestRefund` is the only test tied directly to `Refund`'s audit and original-payment behavior. The limit tests are linked to the requirement and to `CheckRefundLimit`.",
+ "date": "2026-10-24"
+}

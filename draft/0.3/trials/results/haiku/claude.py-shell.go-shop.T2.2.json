@@ -1,0 +1,61 @@
+{
+ "run": "claude.py-shell.go-shop.T2.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "ostfOutputTokens": 7412,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 99.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 36,
+  "cache_creation_input_tokens": 49323,
+  "cache_read_input_tokens": 720677,
+  "output_tokens": 18258,
+  "cost": 0.02620397
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "finalMessage": "Shipping is now part of checkout. Orders with a subtotal after discounts of at least 100.00 ship free, and all other orders pay 5.99, which is added to the total. `go test ./...` passes and `ostf check --base main` reports 115 of 115 links valid.\n\n**What changed**\n- `pricing/shipping.go` (new): `Shipping(afterDiscount)` returns 0 at or above 10,000 cents and 599 otherwise.\n- `pricing/quote.go`: `Quote` gets a `Shipping` field, and `Price` sets it and adds it to `Total`.\n- `pricing/shipping_test.go` (new): table tests for the threshold (9.99, 100.00, 100.01) and two `Price` cases, one discounted below the line and one at 200.00 with shipping free.\n- `cart/checkout_test.go`: `TestPlaceOrder` now expects 28.99 (it was 23.00). New `TestPlaceOrderShipping` checks that a 100.00 order is charged 114.98 with no shipping.\n- `pricing/tax_test.go`: `TestPrice` now expects shipping of 5.99 and a total of 109.47. Its subtotal is 100.00 before the 10% discount, so it lands at 90.00 and pays shipping.\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE`, `status: draft`, refining `N-FAIR-PRICE`, linked to `Shipping` and `Price` and to the three new tests.\n\n**Decisions to check**\n- Tax is still charged on the subtotal after discounts only, as `R-TAX-RATE` says, so shipping is not taxed. Tell me if shipping should be taxed.\n- The threshold is applied after the discount, as you specified. A 100.00 cart with a 10% code pays 5.99.\n\n**Traceability**\n- The `R-TAX-RATE` and `R-CHECKOUT-ORDER` links were flagged as changed because I edited their functions and tests. I rechecked both item texts against the code, and their tests pass, so I stamped them.\n- I stamped nine links in total: the new item's `refines` link and its code and test links, plus those two existing links.\n- `trace.lock` changed only through `ostf stamp`. I did not edit it by hand.\n- No item became false, and I did not change any item text.\n- `ostf` reports no risk-relevant code in the changed functions, so I did not need to ask before editing.\n\nNothing is committed and no pull request is open, since you did not ask for either. If you want a PR, the impact list from `ostf check` names the changed items and tests above.",
+ "date": "2026-10-24"
+}

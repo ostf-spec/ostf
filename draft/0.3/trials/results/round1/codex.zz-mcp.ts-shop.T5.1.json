@@ -1,0 +1,59 @@
+{
+ "run": "codex.zz-mcp.ts-shop.T5.1",
+ "agent": "codex",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 5,
+  "stampCalls": 1,
+  "ostfOutputTokens": 37238,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 59.9
+ },
+ "usage": {
+  "input_tokens": 263496,
+  "cached_input_tokens": 220800,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2171,
+  "reasoning_output_tokens": 48
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "Implemented SHOP-57:\n\n- Lines with 10+ units receive 5% off, rounded down per line.\n- Discount codes apply afterward; combined savings stay within 50%.\n- Checkout charges the updated total.\n\nAll 42 tests pass. OSTF check against `main` passes with all 115 links valid. Added four links to existing `R-VOLUME-DISCOUNT`: pricing, checkout, pricing tests, and checkout integration test.",
+ "date": "2026-10-24"
+}

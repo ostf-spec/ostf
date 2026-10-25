@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.go-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2742,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 16610,
+  "cache_read_input_tokens": 140996,
+  "output_tokens": 4351,
+  "cost": 0.006908860000000001
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "**Summary: the change is a behavior-preserving refactor.** It is not a bug fix or a behavior change.\n\n- **What changed:** In `pricing/discount.go`, `ApplyDiscount` used to cap the percent with `min(d.Percent, MaxDiscountPercent)`. It now uses an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`.\n- **Why it's equivalent:** `Percent` is an `int64`, so `min` and the `if` give the same result for every value, including negatives. The expiry check and the rounding (`subtotal * Money(percent) / 100`) are untouched.\n- **Who is affected:** `ApplyDiscount` has one production caller, `pricing/quote.go:19`, which feeds quotes and therefore checkout totals. Its output doesn't change, so neither does anything downstream.\n\n**Tests run**\n- `go test ./...` passes in all five packages (accounts, cart, inventory, payments, pricing). Some results were cached, but Go keys the cache on file contents, so they reflect the current code.\n- `go test ./pricing -run TestApplyDiscount -v` passes all four subtests: `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent`, `rejects_expired`.\n\n**OSTF impact (`ostf check --base main`)**\n- No errors. The result is 40 items, 106 valid, 3 suspect.\n- The three suspect links are all on `pricing/discount.go#ApplyDiscount`, flagged `BODY_CHANGED`: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT`.\n- The tests the impact list names are `TestApplyDiscount`, `caps_at_fifty_percent` and `rejects_expired`. All pass.\n- `R-DISCOUNT-CAP` is the 50% cap. Its rationale is the free-order incident, so it's the most sensitive of the three. It has no `controls:` field, so it doesn't map directly to `RISK-WRONG-CHARGE`. The charge-amount limit (`R-CHARGE-AMOUNT`) is the item that does.\n\n**What I did not do**\n- I did not run `ostf stamp`. The three links are still suspect, and AGENTS.md wants them stamped only after the item is rechecked against the code and its tests pass. The tests pass and the behavior is unchanged, so stamping looks appropriate. It edits `trace.lock`, though, so I'm leaving it for your go-ahead. Say the word and I'll recheck and stamp the three links.\n- I didn't change any code or trace files.\n- The `ostf_context` MCP call failed with an argument-schema error, so I used the `ostf context` CLI instead. It gave the same item list.",
+ "date": "2026-10-24"
+}

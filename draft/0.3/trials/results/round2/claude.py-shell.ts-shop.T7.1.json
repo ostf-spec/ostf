@@ -1,0 +1,53 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 543,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 8499,
+  "cache_read_input_tokens": 67277,
+  "output_tokens": 989,
+  "cost": 0.0506297
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change to `applyDiscount` in `src/pricing.ts` doesn't alter behavior, and all the tests pass.\n\n**The change:** `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became a `let percent` with an `if` that clamps it to the maximum. The two versions give the same result. The expiry check and the `Math.floor` rounding are untouched.\n\n**Impact from `ostf check --base main`:**\n- **Changed function:** `src/pricing.ts#applyDiscount`.\n- **Items affected:** `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT`.\n- **Tests listed:**\n  - `src/pricing.test.ts#applyDiscount`\n  - `src/pricing.test.ts#applyDiscount > caps at fifty percent`\n  - `src/pricing.test.ts#applyDiscount > rejects an expired code`\n- **Items and links added:** none.\n- **Suspect links:** the three `applyDiscount` → item links are suspect (`BODY_CHANGED`). Each of the three items still says what the code does. `check` exits non-zero until they are re-stamped.\n\n**Tests:** all 7 in `src/pricing.test.ts` pass, including the three listed above. The full `npm test` run passes too (36 of 36).\n\nI haven't run `ostf stamp`, because that updates `trace.lock`. Do you want me to stamp the three links?",
+ "date": "2026-10-24"
+}

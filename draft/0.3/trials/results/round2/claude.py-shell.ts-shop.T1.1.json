@@ -1,0 +1,50 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 475,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 9.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 4,
+  "cache_creation_input_tokens": 7248,
+  "cache_read_input_tokens": 29531,
+  "output_tokens": 712,
+  "cost": 0.0390731
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`Refunder.refund` in `src/refunds.ts` exists to implement three requirements. This comes from `ostf context`, which reads `trace.yaml`.\n\n**Why it exists**\n- **R-REFUND-LIMIT** (risk-relevant, so ask before changing it): A refund can't exceed what is left of the original charge. Refunds above 500.00 in one UTC day for an account need a second approval. It controls RISK-REFUND-ABUSE, where a compromised account or a mistaken operator drains funds through refunds. It refines the need N-REFUNDS: customers get refunds quickly without the business losing money to abuse.\n- **R-AUDIT-MONEY**: Every charge and refund appends an audit entry with the time, account, action, amount and receipt. It refines N-ACCOUNT-SAFE. The only code link on that item is `Processor.charge` in `src/payments.ts`, so `Refunder.refund` doesn't appear as an implementer there.\n- **R-REFUND-ORIGINAL**: A refund goes back to the payment method of the charge it refunds, never to another one. The code links on this item are `Gateway` and `Processor.receipt` in `src/payments.ts`.\n\n**Tests that cover it**\n- `src/refunds.test.ts#Refunder > totals refunds per account and UTC day`, for R-REFUND-LIMIT.\n- `src/refunds.test.ts#checkRefundLimit`, for R-REFUND-LIMIT.\n- `src/refunds.test.ts#Refunder > refunds to the original transaction`, for R-AUDIT-MONEY and R-REFUND-ORIGINAL.\n- `src/payments.test.ts#Processor > appends an audit entry`, for R-AUDIT-MONEY. This one tests the charge side.\n\nAll of these links show as valid. I didn't change any files.",
+ "date": "2026-10-24"
+}

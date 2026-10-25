@@ -1,0 +1,50 @@
+{
+ "run": "codex.py-shell.ts-shop.T8.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 3826,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.9
+ },
+ "usage": {
+  "input_tokens": 151301,
+  "cached_input_tokens": 135552,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 611,
+  "reasoning_output_tokens": 9
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "Fixed the malformed refund-limit stamp using `ostf stamp`, after verifying the requirement and passing all 5 refund tests.\n\n`ostf check --base main` now passes: **40 items, 111 links, all valid**.\n\nOnly `trace.lock` changed. No items or links were added.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.3",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 941,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.4
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 9135,
+  "cache_read_input_tokens": 107529,
+  "output_tokens": 1096,
+  "cost": 0.05827689999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links, all valid.\n\n- **Cause:** the `refund-tweaks` merge left the `trace.lock` entry for `src/refunds.ts#checkRefundLimit` implements `R-REFUND-LIMIT` invalid, so the link showed as unstamped.\n- **Recheck:** I read the item text against `checkRefundLimit`. It still rejects non-positive refunds and refunds above what's left on the charge. It still requires a second approval above `DAILY_REFUND_LIMIT` (50,000 cents, which is 500.00). `src/refunds.test.ts` passes all 5 tests.\n- **Fix:** I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. That only updated `trace.lock`. The tool wrote that file, and I didn't edit it by hand.\n- **Risk-relevant code:** this function is marked \"ask before changing\". I didn't change the code, only re-stamped the link.\n\nI haven't committed anything. The check reported no added items or links, so there's nothing to list for a pull request.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,51 @@
+{
+ "run": "claude.zz-shell.ts-shop.T8.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4945,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 26048,
+  "cache_read_input_tokens": 278589,
+  "output_tokens": 4518,
+  "cost": 0.01025649
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 valid, exit 0. The only change is one line in `trace.lock`.\n\n**Cause:** The merge commit `b105f97` (\"Merge branch 'refund-tweaks'\") changed the lock line for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` from `source.sig=` to `source.sig:`. That isn't valid Annex B, so check reported `LOCK_INVALID` and also flagged the link as unstamped.\n\n**Fix:**\n- I rechecked the item against the code. `checkRefundLimit` rejects non-positive amounts and amounts above what is left on the charge, and it requires approval when the daily total goes above 500.00. That matches R-REFUND-LIMIT.\n- I ran the project tests (`npm test`): 36 pass, 0 fail, including the `checkRefundLimit` suite.\n- I ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. I did not edit `trace.lock` by hand. The stamp restored the separator to `=`, and the diff against `main` is that one line.\n\n**Impact and added links:** I changed no code or tests, so check's impact is empty (no items, tests or links added, changed or removed). The only lock change is the restored line for the existing `R-REFUND-LIMIT` link. There was no `trace.yaml` in any other directory, so one check was enough.\n\n**Not done:** I did not commit. The `trace.lock` change is uncommitted in the working tree. The merge commit that broke it is the likely culprit, so someone should check whether the `:` edit was intentional.",
+ "date": "2026-10-24"
+}

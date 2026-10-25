@@ -1,0 +1,60 @@
+{
+ "run": "claude.py-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4512,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 42.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 20660,
+  "cache_read_input_tokens": 291482,
+  "output_tokens": 6789,
+  "cost": 0.01382651
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns `ErrInvalidRefundAmount` for a zero or negative amount, instead of `ErrRefundTooLarge`. Amounts above what is left on the charge still return `ErrRefundTooLarge`. `go test ./...` passes, and `ostf check --base main` exits 0 with 112 of 112 links valid.\n\n**Changes**\n- `payments/refund.go`: added `ErrInvalidRefundAmount` and split the non-positive check out of the range check. I also reworded the doc comment to match.\n- `payments/refund_test.go`: the `zero` case now expects `ErrInvalidRefundAmount`, and I added a `negative` case.\n- `trace/requirements.yaml`: added a new draft item, `R-REFUND-POSITIVE`. It refines `N-REFUNDS` and is linked to `CheckRefundLimit` and `TestCheckRefundLimit`.\n- `trace.lock`: changed by `ostf stamp`, which I ran as AGENTS.md requires. I did not edit it by hand.\n\n**Stamped links**\nI rechecked each link against the code and ran the refund tests before stamping. All of them passed.\n- `R-REFUND-POSITIVE refines N-REFUNDS`\n- `payments/refund.go#CheckRefundLimit implements R-REFUND-POSITIVE`\n- `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-POSITIVE`\n- `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`, which was suspect because the body changed. R-REFUND-LIMIT's text still holds: the refund cap and the approval rule are unchanged.\n- `payments/refund_test.go#TestCheckRefundLimit verifies R-REFUND-LIMIT`, which was suspect for the same reason.\n\n**For the pull request**\n- Impact (direct): changed `payments/refund.go#CheckRefundLimit` and `payments/refund_test.go#TestCheckRefundLimit`, and the new `payments/refund.go#ErrInvalidRefundAmount`. Affected items are R-REFUND-LIMIT and R-REFUND-POSITIVE. Affected tests are `TestCheckRefundLimit` and `TestRefundDailyLimit`.\n- Items and links added: `R-REFUND-POSITIVE` and its three links listed above.\n\nI haven't committed or opened a PR, since you didn't ask for one. Tell me if you want one.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 13,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 7,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 4,
+  "stampCalls": 1,
+  "ostfOutputTokens": 44748,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 95.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 151488,
+  "cache_read_input_tokens": 1239516,
+  "output_tokens": 20310,
+  "cost": 0.14141188
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 13,
+ "finalMessage": "SHOP-57 is implemented as `R-VOLUME-DISCOUNT` (revision 2 in `trace.yaml`). The 40 tests pass and `ostf check --base main` reports no diagnostics. I did not commit or open a PR, since you didn't ask for that. I couldn't reach Jira from here, so I worked from the item text mirrored in `trace.yaml`.\n\n**What changed**\n- **`src/pricing.ts`**: new `volumeDiscount(lines)` takes 5% off each line of 10+ units, rounded down per line. `price()` takes an optional `volume` argument, which defaults to 0 so existing callers are unchanged. The discount code applies to the subtotal after the volume discount, and the combined discount is capped at 50% of the subtotal.\n- **`src/checkout.ts`**: `placeOrder` passes `volumeDiscount(lines)` into `price()`.\n- **Tests**: unit tests in `pricing.test.ts` for the per-line rule, the discount ordering, and the cap. One checkout test charges a 10-unit line and expects the discounted total.\n\n**Reading I took:** \"before any discount code applies\" means the code's percentage is taken off the post-volume amount. The alternative is that the code applies to the full subtotal with the volume discount added on top. Tell me if you meant the second, and I'll change it.\n\n**OSTF**\n- Impact: items `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, and `R-CHECKOUT-SESSION`. `R-TAX-RATE` was also marked suspect because the `price` signature changed.\n- Tests to run: the 40 tests in `npm test`, with the volume-discount ones in `src/pricing.test.ts` and `src/checkout.test.ts`.\n- Added links (5): `src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT`, plus four `verifies R-VOLUME-DISCOUNT` links from the new tests.\n- Suspect links that I rechecked and stamped: `Checkout.placeOrder` → `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, and `pricing.ts#price` → `R-TAX-RATE`.\n- `trace.lock` changed only because `ostf stamp` wrote to it. I didn't edit it by hand.\n- No item was made false, and no item text was rewritten.\n\n**Suggested PR text:** \"Implements SHOP-57 (R-VOLUME-DISCOUNT). Adds a 5% per-line volume discount for lines of 10+ units, applied before discount codes and counted toward the 50% cap. Links added: volumeDiscount → R-VOLUME-DISCOUNT and four tests verifying it. Rechecked suspect links: placeOrder → R-CHECKOUT-ORDER/SESSION, price → R-TAX-RATE.\" It should end with the Claude Code attribution line.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.go-shop.T3.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": true,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4231,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 45.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 23018,
+  "cache_read_input_tokens": 284247,
+  "output_tokens": 7858,
+  "cost": 0.016270510000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns `ErrInvalidRefundAmount` for a zero or negative refund. Amounts above what's left on the charge still return `ErrRefundTooLarge`. The change is in the working tree and not committed.\n\n**Changes**\n- `payments/refund.go`: added `ErrInvalidRefundAmount` and split the check so `amount <= 0` returns it. The rejection itself is unchanged, so the limits still hold.\n- `payments/refund_test.go`: the `zero` case now expects `ErrInvalidRefundAmount`, and I added a `negative` case.\n- `trace/requirements.yaml`: added `R-REFUND-AMOUNT-POSITIVE` with `status: draft`, refining `N-REFUNDS`, linked to `payments/refund.go#CheckRefundLimit` and `payments/refund_test.go#TestCheckRefundLimit`. You didn't answer whether this should be a separate item, so I chose that because AGENTS.md asks for new behavior as a new draft item.\n\n**Verification**\n- `go test ./...` passes. `gofmt` is clean.\n- `ostf check --base main` now reports 41 items, 112 valid, no errors.\n- The check flagged `R-REFUND-LIMIT` and its test as suspect because their bodies changed, and the new item's links as unstamped. I rechecked `R-REFUND-LIMIT` against the code and confirmed its text still holds. I then ran `TestCheckRefundLimit`, `TestRefund`, and `TestRefundDailyLimit`, all passing. I stamped the five links as check printed them. `ostf stamp` also updated `trace.lock`, which I didn't edit by hand.\n\n**Impact against main**\n- Changed: `CheckRefundLimit`, `TestCheckRefundLimit`.\n- Items: `R-REFUND-AMOUNT-POSITIVE` (added), `R-REFUND-LIMIT`.\n- Added links: `R-REFUND-AMOUNT-POSITIVE refines N-REFUNDS`, `CheckRefundLimit implements R-REFUND-AMOUNT-POSITIVE`, `TestCheckRefundLimit verifies R-REFUND-AMOUNT-POSITIVE`.\n- Tests to run: `TestCheckRefundLimit`, `TestRefundDailyLimit`.\n- Open point: the impact lists `ErrInvalidRefundAmount` as changed with no item. The new item covers it through the function link, but I didn't link the error variable directly. Say if you want that.\n\nSince `CheckRefundLimit` is risk-relevant, please review the item and the stamps before this is merged.",
+ "date": "2026-10-24"
+}

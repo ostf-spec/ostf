@@ -1,0 +1,52 @@
+[DOCUMENT]
+TITLE: Shop requirements
+
+[[SECTION]]
+TITLE: Payments
+
+[REQUIREMENT]
+UID: SHOP-1
+STATUS: Active
+TITLE: Card payments
+STATEMENT: The shop takes card payments.
+
+[REQUIREMENT]
+UID: SHOP-2
+STATUS: Draft
+TAGS: payments, idempotency
+TITLE: Charge once
+STATEMENT: >>>
+A retried charge with the same key is not charged twice.
+
+The first receipt is returned.
+<<<
+RATIONALE: Customers retry when the network fails.
+COMMENT: Agreed with finance.
+RELATIONS:
+- TYPE: Parent
+  VALUE: SHOP-1
+- TYPE: File
+  VALUE: src/payments.py
+
+[TEXT]
+STATEMENT: >>>
+Some free text that is not a requirement.
+<<<
+
+[[SECTION]]
+TITLE: Refunds
+
+[REQUIREMENT]
+UID: SHOP-3
+STATUS: Deleted
+STATEMENT: Refunds never exceed the original charge.
+RELATIONS:
+- TYPE: Parent
+  VALUE: SHOP-1
+
+[REQUIREMENT]
+STATEMENT: A requirement without a UID.
+
+[[/SECTION]]
+
+[[/SECTION]]

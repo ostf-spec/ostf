@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.ts-shop.T7.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 1396,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.2
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 9365,
+  "cache_read_input_tokens": 68207,
+  "output_tokens": 1063,
+  "cost": 0.0549267
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change to `applyDiscount` in `src/pricing.ts` doesn't alter behavior. The tests I ran all pass, but `ostf check` flags three links as suspect until someone restamps them.\n\n**The change:** the cap used to be `Math.min(d.percent, MAX_DISCOUNT_PERCENT)`. It is now a `let percent` that is clamped with an `if`. For every input, the discount percent comes out the same. The expiry check and the `Math.floor((subtotal * percent) / 100)` rounding are untouched.\n\n**Impact:**\n- The only callers of `applyDiscount` are `price` in `src/pricing.ts` and its tests.\n- `ostf context` shows three requirements linked to `applyDiscount`: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY` and `R-DISCOUNT-PERCENT`.\n- `ostf check --base main` reports all three links as suspect (`BODY_CHANGED`), because the function body changed. It reports no errors.\n\n**Tests run:**\n- I ran `src/pricing.test.ts` and `src/checkout.test.ts`. All 10 tests pass: the 4 `applyDiscount` tests (percentage off, rounds down, caps at fifty percent, rejects an expired code) plus the `tax`, `price` and checkout tests.\n- `ostf check` lists `src/pricing.test.ts#applyDiscount` as the test to run, including the caps and expiry tests.\n\nI haven't run `ostf stamp` on the three links, since you didn't ask for it and it writes to `trace.lock`. The code still satisfies all three requirements and their tests pass, so restamping looks justified. Want me to do it?",
+ "date": "2026-10-24"
+}

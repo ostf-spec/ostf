@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-shell.go-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3436,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 15567,
+  "cache_read_input_tokens": 80955,
+  "output_tokens": 3008,
+  "cost": 0.005427749999999999
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a behavior-preserving rewrite, and all tests pass. `ostf check` still reports three suspect links, which I have not stamped.\n\n**What changed**\n\n`pricing/discount.go`, `ApplyDiscount`: the `min(d.Percent, MaxDiscountPercent)` call is replaced with an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. Both forms cap `int64` at 50 identically, including the boundary at exactly 50 and negative percentages, so there is no change in output.\n\n**Impact (per `ostf check --base main`)**\n\n- Changed function: `pricing/discount.go#ApplyDiscount`\n- Items implemented by it, all now marked suspect (`BODY_CHANGED`):\n  - `R-DISCOUNT-CAP`: no discount takes more than 50% off the subtotal\n  - `R-DISCOUNT-EXPIRY`: expired codes are rejected with an error naming the code\n  - `R-DISCOUNT-PERCENT`: the percentage applies to the subtotal, rounded down to the cent\n- Tests the impact list asks you to run: `pricing/discount_test.go#TestApplyDiscount`, including its `caps_at_fifty_percent` and `rejects_expired` subtests\n\n**Tests run**\n\n- `go test ./pricing/ -run TestApplyDiscount -v`: pass, all four subtests (`takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent`, `rejects_expired`).\n- `go test ./...`: pass for accounts, cart, inventory, payments, and pricing. The package results were cached, so they reflect the last run, not a fresh one.\n\n**Not done: stamping the suspect links**\n\n`ostf check` exits 1 because of the three suspect links. AGENTS.md says to recheck each item against the code, run its tests, and then run `ostf stamp` if they pass. Both the tests and the code comparison support stamping, but you asked for a summary and test run, and stamping writes to `trace.lock`. I did not stamp. If you want that done, I can run `ostf stamp` for the three links, then re-run `ostf check --base main`.\n\n**Unrelated observation**\n\n`trace/requirements.yaml` lists `R-VOLUME-DISCOUNT` (5% off lines of 10 or more units, counted toward the 50% cap). Nothing in this diff implements it, and `trace.lock` does not link it to any code.",
+ "date": "2026-10-24"
+}

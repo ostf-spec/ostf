@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T5.3",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 4,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 34158,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 80.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 121599,
+  "cache_read_input_tokens": 727058,
+  "output_tokens": 17303,
+  "cost": 0.078894
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 14,
+ "finalMessage": "SHOP-57 is implemented: volume discounts are in, all 41 tests pass, and `ostf check --base main` is clean. The changes are uncommitted and I didn't open a PR.\n\nThe Jira issue is already in `trace.yaml` as `R-VOLUME-DISCOUNT` (external `jira:SHOP-57`, revision 2). I have no Jira tool here, so I worked from that item's text: a line with 10 or more units gets 5% off, rounded down to the cent, before any discount code, and the volume discount counts toward the 50% cap.\n\n**Changes**\n- `src/pricing.ts`: new `volumeDiscount(lines)`, which applies 5% per line at 10+ units, floored per line.\n- `src/pricing.ts`: `price()` takes an optional trailing `volume` argument (default 0, so existing callers are unchanged). The discount code applies to the subtotal after the volume discount. Total discount is capped at 50% of the original subtotal, volume included.\n- `src/checkout.ts`: `placeOrder` passes `volumeDiscount(lines)` into `price`, so the charged total includes it.\n- Tests: unit tests for `volumeDiscount` and `price` (including the cap), and a checkout test that the charged total is 10,923 for 10 mugs at 1,000 each.\n- `README.md`: the pricing row mentions volume discounts.\n\n**OSTF**\n- Links added (all `@req R-VOLUME-DISCOUNT`): `pricing.ts#volumeDiscount` and five tests in `pricing.test.ts` and `checkout.test.ts`.\n- Suspect links rechecked, since their code changed and their tests pass: `checkout.ts#Checkout.placeOrder` against R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, and `pricing.ts#price` against R-TAX-RATE.\n- I stamped those three plus the six new links. I did not edit `trace.lock` or any item text.\n- No item is risk-relevant, so no approval was needed.\n\n**Please decide**\n- R-DISCOUNT-PERCENT says a code takes its percentage \"off the subtotal\". With a volume discount present, the code now applies to the subtotal after the volume discount. That follows the SHOP-57 wording (\"before any discount code applies\"), but it may make R-DISCOUNT-PERCENT false as written. I left the item alone. Do you want it amended, or should the code keep applying to the full subtotal?",
+ "date": "2026-10-24"
+}

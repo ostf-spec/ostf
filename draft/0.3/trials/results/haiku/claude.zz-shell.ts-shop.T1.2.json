@@ -1,0 +1,50 @@
+{
+ "run": "claude.zz-shell.ts-shop.T1.2",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 2262,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 16140,
+  "cache_read_input_tokens": 76581,
+  "output_tokens": 2851,
+  "cost": 0.0054201100000000006
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "**Why `Refunder.refund` exists**\n\n`Refunder.refund` (`src/refunds.ts`) is the entry point for giving money back on a charge. It does four things in order:\n\n1. Looks up the receipt and throws `UnknownReceiptError` if it doesn't exist.\n2. Calls `checkRefundLimit`, which enforces that the refund is positive, no more than what's left on the charge, and that the account's refunds for the UTC day stay within the 500.00 limit unless there's a second approver.\n3. Records the refund in its running totals before awaiting the gateway, then rolls the totals back if the gateway call fails.\n4. Sends the money to the gateway transaction of the original charge and appends a `refund` entry to the audit log.\n\nThe repository links the method to these requirements (from `trace/requirements.yaml` and the `@req` comment in the code):\n\n- **R-REFUND-LIMIT** (Refund limit, refines N-REFUNDS, controls RISK-REFUND-ABUSE). This is the main reason for the method. `ostf context` marks it risk-relevant, so changes need your approval first.\n- **R-REFUND-ORIGINAL** (Refund to the original payment). The `// @req R-REFUND-ORIGINAL` comment sits on the method. The money goes back to the card that was charged.\n- **R-AUDIT-MONEY** (Audit money movements). Every refund appends an audit entry.\n- **D-REFUND-LEDGER** (`trace/design.yaml`) describes the two running totals, per charge and per account per UTC day, that the method keeps.\n\n**Tests that cover it**\n\nAll in `src/refunds.test.ts`:\n\n- **`Refunder > refunds to the original transaction`** checks that the gateway receives the refund on the original transaction, that the audit entry has the right action, amount and receipt, and that a refund larger than what's left is rejected with `RefundTooLargeError`. The `ostf` links list this test under R-REFUND-ORIGINAL and R-AUDIT-MONEY. The file's `@req` comment says R-AUDIT-MONEY only, so the two disagree.\n- **`Refunder > totals refunds per account and UTC day`** checks the daily limit. A second refund that would go over 500.00 raises `NeedsApprovalError`, and it succeeds on the next UTC day. This is the test for R-REFUND-LIMIT and D-REFUND-LEDGER.\n- **`checkRefundLimit`** (three tests) covers the validation helper directly: over-charge and non-positive amounts, the daily limit, and the approved path.\n\n**Gaps I noticed**\n\n- No test covers the gateway-failure path, where the running totals are rolled back and the error is rethrown.\n- No test checks `UnknownReceiptError`.\n- `V-REFUND-REVIEW` in `trace/design.yaml` is a manual check, a second engineer reviewing refund changes before each release, not an automated test.\n\nI didn't change any files. I ran `ostf context` on the method, which only reads the trace data.",
+ "date": "2026-10-24"
+}

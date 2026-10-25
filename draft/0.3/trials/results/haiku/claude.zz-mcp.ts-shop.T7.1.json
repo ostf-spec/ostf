@@ -1,0 +1,53 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T7.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 0,
+  "ostfOutputTokens": 14752,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 23.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 43254,
+  "cache_read_input_tokens": 128005,
+  "output_tokens": 3321,
+  "cost": 0.01159255
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "The change is a refactor with no behavior change, and the tests that cover it pass.\n\n**What changed:** In `src/pricing.ts`, `applyDiscount` replaced `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if (percent > MAX_DISCOUNT_PERCENT) percent = MAX_DISCOUNT_PERCENT`. The 50% cap works the same way. `Math.min` and the `if` both return `NaN` for a `NaN` percent, so the output is identical for every input. No other file changed.\n\n**Impact (`ostf check --base main`):**\n- Changed anchor: `src/pricing.ts#applyDiscount`.\n- Items it touches: `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-DISCOUNT-PERCENT`. None is marked risk-relevant.\n- Items and links added or removed: none. Diagnostics: none.\n- The three `implements` links from `applyDiscount` to those items are now `suspect` with reason `BODY_CHANGED`. This comes from the body hash changing, not from a semantic change.\n- Tests the impact lists: `src/pricing.test.ts#applyDiscount`, `…#applyDiscount > caps at fifty percent`, and `…#applyDiscount > rejects an expired code`.\n\n**Tests:**\n- `node --test src/pricing.test.ts`: 7 of 7 pass.\n- `npm test`: 36 of 36 pass across 13 suites.\n\n**Not done:** I did not run `ostf stamp`. The three suspect links are ready to be restamped, since the items still hold and their tests pass. Stamping writes to `trace.lock`, so I'd like your go-ahead first. Say the word and I'll recheck and stamp them.\n\n**Unrelated to this change:** `R-VOLUME-DISCOUNT` (SHOP-57) is in `trace/requirements.yaml`, but nothing in `src/pricing.ts` implements it yet. It is outside this diff, but it's worth knowing.",
+ "date": "2026-10-24"
+}

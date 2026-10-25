@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.go-shop.T8.2",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 3803,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 18645,
+  "cache_read_input_tokens": 144218,
+  "output_tokens": 3848,
+  "cost": 0.00709658
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 109 links, 109 valid, exit 0. The one failing link was `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`.\n\n**Cause:** its line in `trace.lock` had `source.sig:go1:...` where every other line uses `source.sig=go1:...`. That made the lock entry invalid, so the link was reported as unstamped. The recorded hashes still matched the current code.\n\n**Fix:**\n- I rechecked the item against the code. `CheckRefundLimit` enforces both parts of R-REFUND-LIMIT: the amount cannot exceed what is left of the charge, and daily refunds above 500.00 need a second approver. `TestCheckRefundLimit` and `TestRefundDailyLimit` both pass.\n- I then ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`. That rewrote the one malformed line in `trace.lock`. I did not edit the lock by hand.\n- No code, trace.yaml, or item text changed.\n\n**For your summary and the PR:**\n- **Impact list (against main):** empty. Check reports no direct impact.\n- **Items and links added:** none. No new items or links were created.\n- **Link stamped:** `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`. Its item is risk-relevant, so this change is worth a look from whoever owns R-REFUND-LIMIT.\n\n`trace.lock` is modified in the working tree and not committed. I have not committed or opened a PR, since you did not ask for either.",
+ "date": "2026-10-24"
+}

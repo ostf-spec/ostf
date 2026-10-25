@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.go-shop.T5.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "codeLinked": true,
+  "testLinked": true,
+  "itemUnchanged": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 4,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 5219,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.0
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 23463,
+  "cache_read_input_tokens": 298456,
+  "output_tokens": 6060,
+  "cost": 0.18434559999999997
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "finalMessage": "SHOP-57 (volume discount) is implemented. `go test ./...` passes and `ostf check --base main` reports no errors (40 items, 116 valid links). Nothing is committed, and I didn't open a pull request.\n\nI couldn't read the Jira issue. I worked from the `R-VOLUME-DISCOUNT` item (revision 2) in `trace.yaml`, which links to SHOP-57.\n\n**What changed**\n- **Per-line discount:** `pricing.VolumeDiscount` takes 5% off a line of 10 or more units, rounded down to the cent. It lives in the new `pricing/volume.go`.\n- **Cart total:** `Cart.VolumeDiscount()` in `cart/cart.go` sums that over all lines.\n- **Code and cap:** `pricing.PriceWithVolume` takes the volume discount first. The discount code then applies to what is left. Together they can't exceed 50% of the subtotal. The existing `Price` is untouched.\n- **Checkout:** `PlaceOrder` now calls `PriceWithVolume`.\n- **Tests:** new tests cover the threshold, rounding, code-after-volume ordering and the cap.\n\nOne reading is mine: the item says the volume discount applies \"before any discount code\", and I took that to mean the code percentage applies to the post-volume amount. If you meant the code should apply to the full subtotal, say so and I'll change it.\n\n**From `ostf check`**\n- **Items and tests in the impact list:**\n  - Items: `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`.\n  - Tests to run: `TestVolumeDiscount` (cart), `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPriceWithVolume` and `TestVolumeDiscount` (pricing).\n- **Links added**, all for `R-VOLUME-DISCOUNT`:\n  - implements: `Cart.VolumeDiscount`, `Checkout.PlaceOrder`, `PriceWithVolume`, `VolumeDiscount`\n  - verifies: `cart_test.go#TestVolumeDiscount`, `volume_test.go#TestPriceWithVolume`, `volume_test.go#TestVolumeDiscount`\n- **Suspect links:** `PlaceOrder` implements `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`. I rechecked both against the code, and the order of steps and the session check are unchanged. The tests passed and I stamped them. I stamped the new links too, and I didn't edit `trace.lock` by hand.\n\n`R-VOLUME-DISCOUNT` doesn't refine any need (`N-FAIR-PRICE` would fit). I left it alone because I can't rewrite item text. Because of that, the new links come from `@req` comments.",
+ "date": "2026-10-24"
+}

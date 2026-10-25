@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6660,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.9
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 22633,
+  "cache_read_input_tokens": 224940,
+  "output_tokens": 4715,
+  "cost": 0.160212
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "finalMessage": "Checkout now adds shipping to the order total: free when the subtotal after discounts is at least 100.00, otherwise a flat 5.99. `go test ./...` passes and `ostf check --base main` reports no errors. I haven't committed anything or opened a pull request.\n\n**What changed**\n- `pricing/quote.go` has a new `Shipping(net)` function and a `Shipping` field on `Quote`. `Price` fills the field and includes it in `Total`. `PlaceOrder` charges `quote.Total`, so the charge includes shipping too.\n- Tax is still computed on the discounted subtotal only, so shipping isn't taxed. You didn't say either way, so tell me if you want it taxed.\n- **Edited tests:** I changed two existing tests because their expected totals now include shipping.\n  - `TestPlaceOrder` now expects 28.99 instead of 23.00.\n  - `TestPrice` now expects 109.47. Its 100.00 subtotal minus a 10% discount is 90.00, which is below the free-shipping threshold.\n- **New test:** `TestShipping` in `pricing/tax_test.go` covers the cases around the threshold, including a discount that pushes an order under 100.00 and one that leaves it at or over.\n\n**Trace items**\n- I added `R-SHIPPING-FEE` as a draft item. It refines `N-BUY` and is linked to `Shipping`, `Price`, `TestShipping` and `TestPlaceOrder`.\n- **Added by check:** `R-SHIPPING-FEE` and these links:\n  - `R-SHIPPING-FEE` refines `N-BUY`\n  - `Shipping` implements `R-SHIPPING-FEE`\n  - `Price` implements `R-SHIPPING-FEE`\n  - `TestShipping` verifies `R-SHIPPING-FEE`\n  - `TestPlaceOrder` verifies `R-SHIPPING-FEE`\n- **Impact items:** `R-SHIPPING-FEE`, `R-TAX-RATE` and `R-CHECKOUT-ORDER`.\n- **Impact tests to run:** `TestPlaceOrder`, `TestPrice`, `TestShipping` and `TestTax`. All pass.\n- Two existing links went suspect: `Price` implements `R-TAX-RATE`, and `TestPrice` verifies `R-TAX-RATE`. `TestPlaceOrder` verifying `R-CHECKOUT-ORDER` went suspect too. I rechecked each against the code, ran the tests, and stamped them with `ostf stamp`. The new links were unstamped, and I stamped those the same way. `trace.lock` changed only through those stamps.\n- No existing item became false. `R-TAX-RATE` and `R-CHECKOUT-ORDER` still hold. Nothing I touched was marked risk-relevant.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 4549,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 58.400000000000006
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 20721,
+  "cache_read_input_tokens": 278418,
+  "output_tokens": 7877,
+  "cost": 0.01412911
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws `InvalidRefundAmountError` for a zero or negative amount, and `RefundTooLargeError` is only thrown for amounts above what is left on the charge. `npm test` passes all 37 tests, and `ostf check --base main` exits 0 with 41 items and 116 valid.\n\nBecause `checkRefundLimit` is marked risk-relevant, I'd confirmed with you first. The changes:\n\n- **`src/refunds.ts`**: new `InvalidRefundAmountError` class, and the zero/negative check moved into its own branch ahead of the charge-limit check.\n- **`src/refunds.test.ts`**: the zero-amount assertion now expects `InvalidRefundAmountError`, and I added a test for a negative amount.\n- **`trace/requirements.yaml`**: new item `R-REFUND-POSITIVE` with `status: draft`, refining `N-REFUNDS` and controlling `RISK-WRONG-CHARGE`. It links to `checkRefundLimit` and `InvalidRefundAmountError` in the code, and to `src/refunds.test.ts#checkRefundLimit`.\n\nTwo existing links were suspect because their function bodies changed: `R-REFUND-LIMIT` on `checkRefundLimit` in the code and in its test. I rechecked the item text against the code, which still enforces the charge limit and the daily approval rule, and ran its tests. The item doesn't name the error type, so it still holds. I then stamped those two links plus the five unstamped `R-REFUND-POSITIVE` links, using `ostf stamp` with each link as check printed it. I did not edit `trace.lock` by hand.\n\nItems and links in the `ostf check` impact for this change:\n- Item added: `R-REFUND-POSITIVE`.\n- Links added: `R-REFUND-POSITIVE` controls `RISK-WRONG-CHARGE`; `R-REFUND-POSITIVE` refines `N-REFUNDS`; `src/refunds.test.ts#checkRefundLimit` verifies `R-REFUND-POSITIVE`; `src/refunds.ts#InvalidRefundAmountError` implements `R-REFUND-POSITIVE`; `src/refunds.ts#checkRefundLimit` implements `R-REFUND-POSITIVE`.\n- Impact lists `R-REFUND-LIMIT` and `R-REFUND-POSITIVE` for the changed `checkRefundLimit`, and `R-REFUND-POSITIVE` for the new error class.\n\nNothing is committed and no pull request is open, since you didn't ask for either. The new error class's constructor and the new test case show as \"no item\" in the impact list; that's expected for new code the item doesn't cover directly.",
+ "date": "2026-10-24"
+}

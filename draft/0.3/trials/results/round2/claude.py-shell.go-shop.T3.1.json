@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 1438,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 45.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 11407,
+  "cache_read_input_tokens": 134231,
+  "output_tokens": 2218,
+  "cost": 0.1231139
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. `ErrRefundTooLarge` is returned only when the amount is more than what's left on the charge. The daily-limit check is unchanged. `go test ./...` passes, and `ostf check --base main` reports no errors (109 of 109 links valid).\n\n- **Code:** `payments/refund.go` adds the error and the `amount <= 0` check.\n- **Tests:** in `TestCheckRefundLimit`, the \"zero\" case now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **R-REFUND-LIMIT:** the item text is still true, so I left it unchanged.\n- **Stamps:** the check flagged two links as suspect because their bodies changed. I rechecked R-REFUND-LIMIT against the code, ran the tests, and stamped both links, which is why `trace.lock` shows as modified. The links are:\n  - `CheckRefundLimit implements R-REFUND-LIMIT`\n  - `TestCheckRefundLimit verifies R-REFUND-LIMIT`\n- **Impact list from `ostf check`:**\n  - Changed: `CheckRefundLimit` (R-REFUND-LIMIT), `ErrInvalidRefundAmount`, and `TestCheckRefundLimit` (R-REFUND-LIMIT).\n  - Tests to run: `TestCheckRefundLimit` and `TestRefundDailyLimit`.\n- **New items or links:** none. `ErrInvalidRefundAmount` appears only as a changed symbol.\n- **Callers:** `Refunder.Refund` passes the error through, so callers now get `ErrInvalidRefundAmount` for zero or negative amounts. Nothing else in the repo referenced `ErrRefundTooLarge`.\n\nI haven't committed anything or opened a pull request. If you want one, tell me and I'll list the items and tests above in its description.",
+ "date": "2026-10-24"
+}

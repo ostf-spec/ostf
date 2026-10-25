@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T4.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12188,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.3
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 41474,
+  "cache_read_input_tokens": 146882,
+  "output_tokens": 2439,
+  "cost": 0.20500220000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "I've renamed `Tax` to `SalesTax` and moved it into the new `pricing/salestax.go`. `go test ./...` passes, and all five links `ostf check --base main` flagged are now stamped valid.\n\nI also updated what referenced the old name:\n- **Caller:** `pricing/quote.go`, where `Price` now calls `SalesTax`.\n- **Tests:** `pricing/tax_test.go`, which calls `SalesTax` and uses the new name in its error message.\n- **Trace links:** the `code:` anchors in `trace/requirements.yaml` for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. I didn't touch any item text.\n- **Not moved:** the `Region` type stays in `pricing/tax.go`.\n\nNone of the touched items are risk-relevant, so I didn't need to ask first. The rename doesn't make any item false. Before stamping, I rechecked each item against the code and ran the tests.\n\n**Links for the pull request**\n- **Added:**\n  - `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n  - `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n- **Removed:**\n  - `pricing/tax.go#Tax implements R-TAX-EXEMPT`\n  - `pricing/tax.go#Tax implements R-TAX-RATE`\n- **Stamped after the body changed:**\n  - `pricing/quote.go#Price implements R-TAX-RATE`\n  - `pricing/tax_test.go#TestTax verifies R-TAX-RATE`\n  - `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`\n  - the two new `SalesTax` links above\n\nI haven't committed anything.",
+ "date": "2026-10-24"
+}

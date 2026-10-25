@@ -1,0 +1,51 @@
+{
+ "run": "claude.py-shell.go-shop.T8.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "ostfOutputTokens": 5968,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 22229,
+  "cache_read_input_tokens": 169430,
+  "output_tokens": 4724,
+  "cost": 0.0085035
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "finalMessage": "`ostf check --base main` now exits 0: 40 items, 109 links, all valid, and no impact entries.\n\n**What was wrong:** The merge commit `4217ab5` (\"Merge branch 'refund-tweaks'\") changed one line in `trace.lock`. It replaced `source.sig=` with `source.sig:` on the `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` link. That made the lock line unparseable, so the check reported `LOCK_INVALID` and the link as `LINK_UNSTAMPED`. The Go code was not changed by that merge.\n\n**What I did:**\n- Rechecked the item against the code. `CheckRefundLimit` enforces the per-charge cap and the 500.00 per-day approval rule that R-REFUND-LIMIT states. The item text is unchanged, and I did not change any code. The function is marked risk-relevant, so I left it alone.\n- Ran the refund tests uncached (`TestCheckRefundLimit`, `TestRefund`, `TestRefundDailyLimit`). All pass.\n- Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`. The stamp rewrote the line with the `=` separator. I did not edit `trace.lock` by hand.\n\n**Changes:**\n- `trace.lock`: one line, the separator on the `CheckRefundLimit` link, restored from `:` to `=`. The hashes are the same as before.\n- No links or items were added, and no `trace.yaml` changed. There is only one `trace.yaml` in the repo, so the check ran once.\n\n**Impact:** None reported. Nothing is listed as added.\n\n**For you to decide:** The `:` separator in the merge likely came from a hand edit on the `refund-tweaks` branch. I have not committed the change. If you want it on the branch, I can commit it with the attribution line. I did not open a PR because you did not ask for one.",
+ "date": "2026-10-24"
+}

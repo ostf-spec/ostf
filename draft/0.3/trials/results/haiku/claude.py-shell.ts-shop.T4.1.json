@@ -1,0 +1,59 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 6186,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 30956,
+  "cache_read_input_tokens": 329145,
+  "output_tokens": 11120,
+  "cost": 0.015044850000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "finalMessage": "`tax` is now `salesTax` in a new file, `src/salestax.ts`. All 36 tests pass and `ostf check --base main` is clean (111 of 111 links valid). I haven't committed anything.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private helper `roundHalfUp`. It imports `Region` as a type-only import from `pricing.ts`, so there's no runtime cycle.\n- **`src/pricing.ts`**: `tax` and `roundHalfUp` are removed, and `price` imports `salesTax`. I renamed the local `salesTax` variable in `price` to `taxAmount` so it doesn't shadow the import. `Region` and the `Quote` shape are unchanged.\n- **`src/pricing.test.ts`**: imports `salesTax` from `./salestax.ts` and the describe block is renamed to `salesTax`. The tests stay in this file.\n- **`trace/requirements.yaml`**: I only updated the code and test paths on R-TAX-RATE and R-TAX-EXEMPT (`src/pricing.ts#tax` → `src/salestax.ts#salesTax`, and the test names). No item text changed.\n- **`README.md`**: added a `src/salestax.ts` row to the module table.\n- **`trace.lock`**: written by `ostf stamp`, not edited by hand.\n\n**Trace follow-up**\n- Check flagged five links from the move: four unstamped and one suspect (`pricing.ts#price`, whose body changed). I re-read R-TAX-RATE and R-TAX-EXEMPT against the code, ran their tests (passing), and then stamped the five links.\n- **Items named in the impact list:** R-TAX-RATE and R-TAX-EXEMPT. Their tests are `src/pricing.test.ts#salesTax > rounds half up to the cent` and `src/pricing.test.ts#salesTax > is zero for a tax-exempt customer`.\n- **Items and links that check reports as added:** the stamped links `src/salestax.ts#salesTax implements R-TAX-RATE`, `src/salestax.ts#salesTax implements R-TAX-EXEMPT`, `src/pricing.ts#price implements R-TAX-RATE` (re-stamped), and the two test links under the new `salesTax` describe.\n- No new items were needed, since this is a refactor with no behavior change.\n- Neither R-TAX item is linked to a risk item, so no change needed your approval.",
+ "date": "2026-10-24"
+}

@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.ts-shop.T2.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 7297,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 59.7
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 24631,
+  "cache_read_input_tokens": 330658,
+  "output_tokens": 5292,
+  "cost": 0.1845578
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "finalMessage": "Shipping is now part of every quote and order total, and `node --test` passes (38 tests). `ostf check --base main` reports no errors: 41 items, 116 valid links. I haven't committed anything or opened a pull request.\n\n**What changed**\n- **Rule:** `shipping()` in `src/pricing.ts` returns 0 when the subtotal after discounts is at least 100.00, and 5.99 otherwise. The two amounts are the constants `FREE_SHIPPING_MIN` and `FLAT_SHIPPING`.\n- **Quote:** `price()` adds the shipping charge to the total, and `Quote` has a new `shipping` field. Checkout charges `quote.total`, so the charge includes shipping with no change to `checkout.ts`.\n- **Tax:** I left tax computed on the subtotal after discounts only, as `R-TAX-RATE` says, so shipping is not taxed. Tell me if shipping should be taxed.\n- **New tests:** one in `src/pricing.test.ts` covers the boundary, 99.99 versus 100.00. One in `src/checkout.test.ts` covers a small order and a large order, with the discount applied before the free-shipping check.\n- **Existing tests:** I changed two expected totals because every order under 100.00 now pays 5.99. The checkout \"places an order\" total went from 2,300 to 2,899 cents. The `price` test now expects `shipping: 599` and a total of 10,947 cents.\n\n**Trace items**\n- **New item:** `R-SHIPPING` is added as `status: draft` in `trace/requirements.yaml`. It refines `N-FAIR-PRICE` and links to `shipping`, `price` and the two new tests.\n- **Links added:**\n  - `R-SHIPPING` refines `N-FAIR-PRICE`\n  - `src/pricing.ts#shipping` implements `R-SHIPPING`\n  - `src/pricing.ts#price` implements `R-SHIPPING`\n  - `src/pricing.test.ts#shipping > is free from 100.00 after discounts and 5.99 below` verifies `R-SHIPPING`\n  - `src/checkout.test.ts#Checkout > ships free from 100.00 and charges 5.99 below` verifies `R-SHIPPING`\n- **Impact list:**\n  - Items: `R-SHIPPING`, `R-TAX-RATE`, `R-CHECKOUT-ORDER`\n  - Tests to run: `Checkout > places an order`, `Checkout > ships free…`, `price > taxes the subtotal after discounts`, `shipping > is free…`, `tax > rounds half up to the cent`\n- **Stamping:** `check` also flagged the links to `R-TAX-RATE` and `R-CHECKOUT-ORDER` as suspect because I edited the code or tests behind them. Both items are still true, so I stamped those links after the tests passed. I stamped the five new links the same way, which changed `trace.lock`.\n\nNeither `R-TAX-RATE` nor `R-CHECKOUT-ORDER` became false, so I didn't touch their text. Nothing I changed was marked risk-relevant. `R-CHARGE-AMOUNT` (charges capped at 10,000.00) is the one nearby risk control, and I left it alone.",
+ "date": "2026-10-24"
+}

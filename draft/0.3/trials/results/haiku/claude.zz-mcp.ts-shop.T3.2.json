@@ -1,0 +1,60 @@
+{
+ "run": "claude.zz-mcp.ts-shop.T3.2",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 0,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 3,
+  "stampCalls": 1,
+  "ostfOutputTokens": 16239,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 48.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 58546,
+  "cache_read_input_tokens": 285847,
+  "output_tokens": 8074,
+  "cost": 0.023553300000000003
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "finalMessage": "`checkRefundLimit` now throws `InvalidRefundAmountError` for a zero or negative amount. Over-limit refunds still throw `RefundTooLargeError`. The full suite passes (37/37), and `ostf check --base main` reports no diagnostics.\n\n**Changes**\n- `src/refunds.ts`: added `InvalidRefundAmountError`. `checkRefundLimit` checks `amount <= 0` first, then `amount > leftOnCharge`. The doc comment is updated to match. The daily-limit logic is unchanged.\n- `src/refunds.test.ts`: the zero-amount assertion moved out of `rejects more than is left on the charge` into a new test, `rejects a refund of zero or less`, which also covers -1.\n- `trace/requirements.yaml`: new draft item `R-REFUND-AMOUNT`, refining `N-REFUNDS`, with code links to `checkRefundLimit` and `InvalidRefundAmountError` and a test link to the new test. I did not edit `R-REFUND-LIMIT`'s text.\n\n**OSTF impact (base `main`)**\n- Items added: `R-REFUND-AMOUNT` (draft).\n- Links added: `R-REFUND-AMOUNT refines N-REFUNDS`; the new test verifies `R-REFUND-AMOUNT`; `InvalidRefundAmountError` and `checkRefundLimit` implement `R-REFUND-AMOUNT`.\n- Links stamped after recheck: `checkRefundLimit` implements and verifies `R-REFUND-LIMIT`. Both had gone suspect because the function body changed. `R-REFUND-LIMIT` is `riskRelevant: true`, so please look at these. I confirmed the code still meets the item and the tests pass before stamping.\n- Tests named by the impact list: `src/refunds.test.ts#Refunder > totals refunds per account and UTC day`, `src/refunds.test.ts#checkRefundLimit`, `src/refunds.test.ts#checkRefundLimit > rejects a refund of zero or less`, and `src/refunds.test.ts#checkRefundLimit > rejects more than is left on the charge`.\n\nI haven't committed or opened a PR. If you want one, I can do that with the item and test names above in the description.",
+ "date": "2026-10-24"
+}

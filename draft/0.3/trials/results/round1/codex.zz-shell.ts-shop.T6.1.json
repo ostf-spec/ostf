@@ -1,0 +1,49 @@
+{
+ "run": "codex.zz-shell.ts-shop.T6.1",
+ "agent": "codex",
+ "condition": "zz-shell",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 5011,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.3
+ },
+ "usage": {
+  "input_tokens": 126803,
+  "cached_input_tokens": 110336,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 439,
+  "reasoning_output_tokens": 16
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "`R-CHECKOUT-TIMEOUT` is missing from the trace files, and checkout currently has no payment timeout.\n\nShould I add it as a draft requirement with a test that exposes the missing behavior? `AGENTS.md` requires links to existing requirement IDs, so I need to resolve this before adding the test. No files changed.",
+ "date": "2026-10-24"
+}

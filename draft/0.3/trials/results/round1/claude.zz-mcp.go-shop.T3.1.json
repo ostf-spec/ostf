@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-mcp.go-shop.T3.1",
+ "agent": "claude",
+ "condition": "zz-mcp",
+ "fixture": "go-shop",
+ "task": "T3",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "usedMcp": true,
+  "usedShellTool": false,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "ostfOutputTokens": 12280,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 25.1
+ },
+ "usage": {
+  "model": "claude-sonnet-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 43793,
+  "cache_read_input_tokens": 225984,
+  "output_tokens": 2713,
+  "cost": 0.28152659999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "payments/refund.go",
+  "payments/refund_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 3,
+ "finalMessage": "`CheckRefundLimit` now returns the new `ErrInvalidRefundAmount` for a refund of zero or a negative amount. `go test ./...` passes.\n\n- **`payments/refund.go`:** I added `ErrInvalidRefundAmount` and split the first check in `CheckRefundLimit`. `amount <= 0` returns the new error, `amount > leftOnCharge` still returns `ErrRefundTooLarge`, and the daily-limit check is unchanged.\n- **`payments/refund_test.go`:** the \"zero\" case in `TestCheckRefundLimit` now expects `ErrInvalidRefundAmount`, and I added a \"negative\" case.\n- **`Refund`:** `Refunder.Refund` passes the error through, so its callers now see the new error for these inputs. Nothing else in the repo referenced `ErrRefundTooLarge`.\n- **OSTF:** `ostf check --base main` reported no errors, no items added or removed, and no links added or removed. The text of `R-REFUND-LIMIT` is still true, so I left it alone. Two links went suspect with `BODY_CHANGED`: `CheckRefundLimit` implements `R-REFUND-LIMIT`, and `TestCheckRefundLimit` verifies `R-REFUND-LIMIT`. I rechecked both against the item, the tests passed, and I stamped them. I didn't edit `trace.lock` by hand.\n\nI haven't committed anything or opened a pull request.",
+ "date": "2026-10-24"
+}

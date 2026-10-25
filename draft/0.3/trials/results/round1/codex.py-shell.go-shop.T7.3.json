@@ -1,0 +1,53 @@
+{
+ "run": "codex.py-shell.go-shop.T7.3",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "pass": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4188,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 35.8
+ },
+ "usage": {
+  "input_tokens": 129071,
+  "cached_input_tokens": 112640,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 704,
+  "reasoning_output_tokens": 9
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "finalMessage": "Your change replaces `min(d.Percent, MaxDiscountPercent)` with an equivalent `if` in `pricing/discount.go`. No behavior changes: the 50% cap, rounding, and expiry handling remain intact.\n\n- **Tests passed:** `go test ./pricing ./cart -count=1 -v`, covering discounts, price calculation, and checkout.\n- **Traceability passed:** `ostf check --base main`, with all 109 links valid and no added items or links.\n\nRevalidated the three affected discount requirement links using `ostf stamp`, which updated `trace.lock`. No source or tests were edited.",
+ "date": "2026-10-24"
+}

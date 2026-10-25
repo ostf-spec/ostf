@@ -1,0 +1,49 @@
+{
+ "run": "codex.py-shell.ts-shop.T1.2",
+ "agent": "codex",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "pass": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "ostfOutputTokens": 3797,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.5
+ },
+ "usage": {
+  "input_tokens": 100569,
+  "cached_input_tokens": 85504,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 784,
+  "reasoning_output_tokens": 10
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "finalMessage": "[Refunder.refund](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T1.2/repo/src/refunds.ts:68) exists to fulfill three traced requirements:\n\n- **R-REFUND-LIMIT:** Prevent refunds exceeding the remaining charge and require second approval when an account’s refunds exceed 500.00 in one UTC day. This controls **RISK-REFUND-ABUSE**.\n- **R-REFUND-ORIGINAL:** Return money to the original payment transaction.\n- **R-AUDIT-MONEY:** Record each successful refund in the audit log.\n\nThese support the repository’s needs for quick refunds without abuse (**N-REFUNDS**) and protection of accounts and money (**N-ACCOUNT-SAFE**).\n\nCoverage in `src/refunds.test.ts`:\n\n- [“refunds to the original transaction”](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T1.2/repo/src/refunds.test.ts:50): Checks the original transaction receives the refund, verifies audit action/amount/receipt, and rejects a subsequent refund exceeding the remaining charge.\n- [“totals refunds per account and UTC day”](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T1.2/repo/src/refunds.test.ts:63): Checks accumulation across two charges, rejection above the daily limit, and allowance the next day.\n- [The `checkRefundLimit` suite](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T1.2/repo/src/refunds.test.ts:32): Covers the helper’s excessive/zero amounts, approval requirement, and allowed or approved refunds.\n\nThe method’s unknown-receipt, gateway-failure rollback, and concurrent-refund handling have no explicit tests in this suite. OSTF reports the traced links as valid; I did not run tests or change files.",
+ "date": "2026-10-24"
+}

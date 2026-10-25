@@ -1,0 +1,59 @@
+{
+ "run": "claude.zz-shell.go-shop.T4.1",
+ "agent": "claude",
+ "condition": "zz-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "pass": true,
+ "criteria": {
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "oldNameGone": true,
+  "checkPasses": true,
+  "testsPass": true,
+  "noLockHandEdit": true
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "ostfOutputTokens": 4462,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 22286,
+  "cache_read_input_tokens": 233817,
+  "output_tokens": 6889,
+  "cost": 0.01024167
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`, and everything builds and passes. `go vet`, `gofmt`, and `go test ./...` are all clean, and `ostf check --base main` exits 0 with 40 items and 109 valid.\n\n**What changed**\n- **`pricing/salestax.go`** (new): `SalesTax`, with the same body and doc comment.\n- **`pricing/tax.go`**: `Tax` removed. `Region` stays here, since you only asked to move the function.\n- **`pricing/quote.go`**: `Price` calls `SalesTax`.\n- **`pricing/tax_test.go`**: call sites and the assertion messages now use `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt`, because the trace links name them.\n- **`trace/requirements.yaml`**: the code links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax` instead of `pricing/tax.go#Tax`.\n- **`trace.lock`**: updated by `ostf stamp`, not by hand.\n\n**OSTF**\n- `Tax` isn't a `controls` target for any RISK item, so it isn't risk-relevant and I didn't need to ask first.\n- Check flagged three suspect links and two unstamped ones. The item text is unchanged, the body is unchanged apart from the name, and the tests pass. I stamped these five links:\n  - `pricing/quote.go#Price implements R-TAX-RATE`\n  - `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`\n  - `pricing/salestax.go#SalesTax implements R-TAX-RATE`\n  - `pricing/tax_test.go#TestTax verifies R-TAX-RATE`\n  - `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`\n- **Impact list, for the PR:**\n  - Items: R-TAX-RATE and R-TAX-EXEMPT.\n  - Tests to run: `pricing/tax_test.go#TestTax`, `pricing/tax_test.go#TestTaxExempt`, `pricing/tax_test.go#TestPrice`.\n  - Links added: `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT` and `pricing/salestax.go#SalesTax implements R-TAX-RATE`.\n  - Links removed: `pricing/tax.go#Tax implements R-TAX-EXEMPT` and `pricing/tax.go#Tax implements R-TAX-RATE`.\n\nNothing is committed or pushed. No PR was requested, so the attribution line hasn't been used yet.",
+ "date": "2026-10-24"
+}
