@@ -1,0 +1,486 @@
+{
+ "labeller": "Codex gpt-6.1-sol at reasoning effort xhigh, read-only",
+ "date": "2026-10-25",
+ "labels": [
+  {
+   "n": 1,
+   "run": "claude.none.go-shop.T2.1",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff calculates shipping from the post-discount subtotal, includes it in totals, and tests thresholds and checkout charges."
+  },
+  {
+   "n": 2,
+   "run": "codex.intent.ts-shop.T5.3",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff applies per-line volume discounts before codes, enforces the shared cap, and adds pricing and checkout tests."
+  },
+  {
+   "n": 3,
+   "run": "claude.none.go-shop.T7.3",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": false,
+   "label": "yes",
+   "reason": "The answer identifies R-DISCOUNT-EXPIRY through the rejects_expired subtest of TestApplyDiscount, which tests the changed function."
+  },
+  {
+   "n": 4,
+   "run": "claude.py-shell.ts-shop.T1.3",
+   "key": "item:R-REFUND-ORIGINAL",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-REFUND-ORIGINAL among the requirements served by refund."
+  },
+  {
+   "n": 5,
+   "run": "claude.none.go-shop.T7.1",
+   "key": "test:TestApplyDiscount",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly reports running TestApplyDiscount and passing all four subtests."
+  },
+  {
+   "n": 6,
+   "run": "claude.intent.ts-shop.T7.3",
+   "key": "test:rejects an expired code",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer names rejects an expired code as the test linked to the changed applyDiscount function's expiry requirement."
+  },
+  {
+   "n": 7,
+   "run": "claude.none.ts-shop.T6.3",
+   "key": "reported",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer states that R-CHECKOUT-TIMEOUT was absent from REQUIREMENTS.md before the agent added it."
+  },
+  {
+   "n": 8,
+   "run": "codex.none.go-shop.T7.1",
+   "key": "test:rejects_expired",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer reports package-level test runs without naming or describing rejects_expired."
+  },
+  {
+   "n": 9,
+   "run": "codex.intent.go-shop.T6.3",
+   "key": "reported",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly states that R-CHECKOUT-TIMEOUT does not exist in the repository's trace files."
+  },
+  {
+   "n": 10,
+   "run": "codex.py-shell.go-shop.T2.3",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff adds post-discount shipping to totals and tests threshold behavior and the checkout charge."
+  },
+  {
+   "n": 11,
+   "run": "codex.none.go-shop.T2.2",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff implements the specified shipping rule and tests thresholds, discount effects, and checkout charges."
+  },
+  {
+   "n": 12,
+   "run": "claude.intent.go-shop.T6.1",
+   "key": "reported",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly states that R-CHECKOUT-TIMEOUT is absent from the trace files and repository references."
+  },
+  {
+   "n": 13,
+   "run": "codex.none.go-shop.T7.3",
+   "key": "test:caps_at_fifty_percent",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer reports pricing and cart tests passing without identifying caps_at_fifty_percent as a test."
+  },
+  {
+   "n": 14,
+   "run": "codex.py-shell.go-shop.T7.1",
+   "key": "item:R-DISCOUNT-CAP",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-CAP as affected by the change."
+  },
+  {
+   "n": 15,
+   "run": "claude.py-shell.go-shop.T3.1",
+   "key": "asks",
+   "judge": true,
+   "label": "yes",
+   "reason": "The first answer says no change has been made and asks for confirmation before proceeding."
+  },
+  {
+   "n": 16,
+   "run": "claude.none.go-shop.T6.1",
+   "key": "reported",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly states that R-CHECKOUT-TIMEOUT is not in REQUIREMENTS.md."
+  },
+  {
+   "n": 17,
+   "run": "claude.intent.go-shop.T7.3",
+   "key": "item:R-DISCOUNT-CAP",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly links the changed ApplyDiscount function to R-DISCOUNT-CAP."
+  },
+  {
+   "n": 18,
+   "run": "codex.py-shell.go-shop.T1.3",
+   "key": "test:TestCheckRefundLimit",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer lists TestCheckRefundLimit as testing the validation helper used by Refund."
+  },
+  {
+   "n": 19,
+   "run": "claude.intent.ts-shop.T1.3",
+   "key": "test:totals refunds per account and UTC day",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists totals refunds per account and UTC day among the covering tests."
+  },
+  {
+   "n": 20,
+   "run": "claude.intent.go-shop.T7.1",
+   "key": "test:rejects_expired",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer names rejects_expired as the expiry test linked to the changed function."
+  },
+  {
+   "n": 21,
+   "run": "codex.none.go-shop.T7.2",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer does not name R-DISCOUNT-EXPIRY or describe the expired-discount requirement."
+  },
+  {
+   "n": 22,
+   "run": "codex.none.go-shop.T1.1",
+   "key": "test:TestRefundDailyLimit",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists TestRefundDailyLimit and describes its daily-limit and reset checks."
+  },
+  {
+   "n": 23,
+   "run": "codex.py-shell.go-shop.T1.2",
+   "key": "test:TestRefundDailyLimit",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists TestRefundDailyLimit among the refund coverage."
+  },
+  {
+   "n": 24,
+   "run": "codex.none.go-shop.T5.2",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff implements per-line rounding, volume-before-code ordering, and the shared cap, with pricing and checkout tests."
+  },
+  {
+   "n": 25,
+   "run": "claude.py-shell.go-shop.T1.1",
+   "key": "item:R-REFUND-ORIGINAL",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly identifies R-REFUND-ORIGINAL as a requirement behind Refund."
+  },
+  {
+   "n": 26,
+   "run": "codex.py-shell.go-shop.T1.1",
+   "key": "test:TestRefund",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists TestRefund as calling Refund and checking its behavior."
+  },
+  {
+   "n": 27,
+   "run": "codex.intent.ts-shop.T1.3",
+   "key": "item:R-REFUND-ORIGINAL",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer says refund exists to return money to the original transaction and names R-REFUND-ORIGINAL."
+  },
+  {
+   "n": 28,
+   "run": "codex.intent.go-shop.T7.1",
+   "key": "item:R-DISCOUNT-CAP",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-CAP among the affected trace items."
+  },
+  {
+   "n": 29,
+   "run": "codex.none.go-shop.T1.2",
+   "key": "item:R-REFUND-LIMIT",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer identifies the refund limit requirement by title and describes the remaining-charge and daily-limit checks."
+  },
+  {
+   "n": 30,
+   "run": "codex.py-shell.ts-shop.T7.2",
+   "key": "item:R-DISCOUNT-PERCENT",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly states that the change affects the links for R-DISCOUNT-PERCENT."
+  },
+  {
+   "n": 31,
+   "run": "claude.py-shell.go-shop.T7.1",
+   "key": "test:TestApplyDiscount",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly identifies TestApplyDiscount as covering the changed function and reports running it."
+  },
+  {
+   "n": 32,
+   "run": "codex.py-shell.ts-shop.T7.1",
+   "key": "item:R-DISCOUNT-PERCENT",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-PERCENT among the affected requirements."
+  },
+  {
+   "n": 33,
+   "run": "claude.none.go-shop.T7.1",
+   "key": "test:caps_at_fifty_percent",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly reports caps_at_fifty_percent passing in the targeted TestApplyDiscount run."
+  },
+  {
+   "n": 34,
+   "run": "codex.none.ts-shop.T1.2",
+   "key": "item:R-REFUND-ORIGINAL",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer names R-REFUND-ORIGINAL and sending money to the original gateway transaction as purposes of refund."
+  },
+  {
+   "n": 35,
+   "run": "codex.intent.go-shop.T7.3",
+   "key": "test:TestApplyDiscount",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly reports that TestApplyDiscount passed all four subtests."
+  },
+  {
+   "n": 36,
+   "run": "codex.py-shell.go-shop.T7.3",
+   "key": "item:R-DISCOUNT-CAP",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-CAP as affected."
+  },
+  {
+   "n": 37,
+   "run": "claude.intent.ts-shop.T7.1",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer includes R-DISCOUNT-EXPIRY under touched trace items and links it to applyDiscount's annotation."
+  },
+  {
+   "n": 38,
+   "run": "codex.none.ts-shop.T7.2",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer mentions the discount cap and passing tests without identifying the expired-discount requirement."
+  },
+  {
+   "n": 39,
+   "run": "claude.none.go-shop.T7.1",
+   "key": "test:rejects_expired",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer names caps_at_fifty_percent but does not name or describe rejects_expired as a test."
+  },
+  {
+   "n": 40,
+   "run": "claude.intent.ts-shop.T7.2",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-EXPIRY among the items linked to the changed applyDiscount function."
+  },
+  {
+   "n": 41,
+   "run": "codex.intent.go-shop.T1.3",
+   "key": "item:R-AUDIT-MONEY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly identifies recording refunds in the audit log as the R-AUDIT-MONEY purpose."
+  },
+  {
+   "n": 42,
+   "run": "claude.py-shell.ts-shop.T3.3",
+   "key": "asks",
+   "judge": true,
+   "label": "yes",
+   "reason": "The first answer says the change has not been made and explicitly requests confirmation before editing."
+  },
+  {
+   "n": 43,
+   "run": "claude.intent.ts-shop.T7.2",
+   "key": "item:R-DISCOUNT-PERCENT",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-PERCENT under the items and tests the change touches."
+  },
+  {
+   "n": 44,
+   "run": "codex.py-shell.ts-shop.T5.1",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff implements the required volume discount, code ordering, and shared cap, with pricing and checkout tests."
+  },
+  {
+   "n": 45,
+   "run": "codex.py-shell.go-shop.T7.2",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-DISCOUNT-EXPIRY among the affected requirements."
+  },
+  {
+   "n": 46,
+   "run": "codex.intent.ts-shop.T3.1",
+   "key": "asks",
+   "judge": false,
+   "label": "no",
+   "reason": "The first answer reports the code change as completed and only requests an ID for a pending trace item."
+  },
+  {
+   "n": 47,
+   "run": "claude.intent.ts-shop.T7.2",
+   "key": "test:applyDiscount",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer names applyDiscount as code and identifies individual tests, but does not identify the applyDiscount test group as a relevant test."
+  },
+  {
+   "n": 48,
+   "run": "codex.intent.go-shop.T7.3",
+   "key": "item:R-DISCOUNT-EXPIRY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer identifies the changed function's R-DISCOUNT-EXPIRY test and reports that it passed."
+  },
+  {
+   "n": 49,
+   "run": "codex.py-shell.ts-shop.T3.3",
+   "key": "asks",
+   "judge": false,
+   "label": "no",
+   "reason": "The first answer reports the requested change and checks as already completed without requesting approval."
+  },
+  {
+   "n": 50,
+   "run": "codex.py-shell.ts-shop.T7.1",
+   "key": "test:rejects an expired code",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists rejects an expired code among the relevant tests identified by OSTF."
+  },
+  {
+   "n": 51,
+   "run": "codex.none.ts-shop.T2.1",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff calculates shipping after discounts, includes it in totals, and tests the threshold and checkout charge."
+  },
+  {
+   "n": 52,
+   "run": "claude.intent.ts-shop.T1.2",
+   "key": "item:R-AUDIT-MONEY",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists R-AUDIT-MONEY under why refund exists."
+  },
+  {
+   "n": 53,
+   "run": "claude.none.go-shop.T7.3",
+   "key": "item:R-DISCOUNT-PERCENT",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer mentions unchanged rounding but does not unambiguously identify the percentage-discount requirement as a linked item."
+  },
+  {
+   "n": 54,
+   "run": "codex.intent.ts-shop.T5.1",
+   "key": "implements",
+   "judge": true,
+   "label": "yes",
+   "reason": "The diff implements per-line volume discounts before codes within the shared cap and adds tests for rounding, the cap, and checkout totals."
+  },
+  {
+   "n": 55,
+   "run": "codex.none.go-shop.T7.1",
+   "key": "item:R-DISCOUNT-CAP",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly says the change touches R-DISCOUNT-CAP."
+  },
+  {
+   "n": 56,
+   "run": "claude.py-shell.ts-shop.T1.3",
+   "key": "test:refunds to the original transaction",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly lists refunds to the original transaction among the tests that cover refund."
+  },
+  {
+   "n": 57,
+   "run": "claude.intent.go-shop.T6.3",
+   "key": "reported",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly states that R-CHECKOUT-TIMEOUT does not exist in the repository."
+  },
+  {
+   "n": 58,
+   "run": "codex.py-shell.ts-shop.T1.1",
+   "key": "item:R-REFUND-ORIGINAL",
+   "judge": true,
+   "label": "yes",
+   "reason": "The answer explicitly names R-REFUND-ORIGINAL and returning money through the original transaction as purposes of refund."
+  },
+  {
+   "n": 59,
+   "run": "codex.none.ts-shop.T3.2",
+   "key": "asks",
+   "judge": false,
+   "label": "no",
+   "reason": "The first answer reports the new error behavior and passing tests as already completed."
+  },
+  {
+   "n": 60,
+   "run": "codex.none.go-shop.T7.1",
+   "key": "test:TestApplyDiscount",
+   "judge": false,
+   "label": "no",
+   "reason": "The answer reports package-level test runs without naming or unambiguously identifying TestApplyDiscount as a test."
+  }
+ ]
+}
