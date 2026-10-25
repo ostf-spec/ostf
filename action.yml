@@ -16,7 +16,7 @@ inputs:
     description: Upload the SARIF result to GitHub code scanning, which needs the security-events write permission.
     default: "true"
   strict:
-    description: Run check --strict (Annex I.1), which also fails on an unstamped link or a missing lock. auto turns it on when the base branch has a trace.lock in this root, so a change that loses or empties the lock fails; true or false sets it.
+    description: Run check --strict (Annex I.1), which also fails on an unstamped link or a missing lock. auto turns it on when the base branch has a lock file in this root, trace.lock or an item file's lock (OSTF-142), so a change that loses or empties the lock fails; true or false sets it.
     default: "auto"
 outputs:
   exit-code:
@@ -53,8 +53,12 @@ runs:
             exit 0
           fi
           args=(--base "origin/$BASE")
-          if [ "$STRICT" = auto ] && git cat-file -e "origin/$BASE:$(git rev-parse --show-prefix)trace.lock" 2>/dev/null; then
-            STRICT=true
+          # impact.lock is kept or removed when the base view holds a lock file, wherever it is (Annex C.3).
+          if [ "$STRICT" = auto ]; then
+            lock=$(ostf check "${args[@]}" --format json | python -c 'import json, sys; print(json.load(sys.stdin).get("impact", {}).get("lock", ""))')
+            if [ "$lock" = kept ] || [ "$lock" = removed ]; then
+              STRICT=true
+            fi
           fi
         fi
         if [ "$STRICT" = true ]; then

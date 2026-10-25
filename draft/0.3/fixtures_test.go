@@ -349,8 +349,10 @@ func TestExpectedMatchesLock(t *testing.T) {
 		fields := strings.Fields(line)
 		pairs := map[string]string{}
 		for _, p := range fields[3:] {
-			k, v, _ := strings.Cut(p, "=")
-			pairs[k] = v
+			// by and at record who rechecked the link and where (OSTF-142); they are not fingerprints.
+			if k, v, _ := strings.Cut(p, "="); k != "by" && k != "at" {
+				pairs[k] = v
+			}
 		}
 		lock[strings.Join(fields[:3], " ")] = pairs
 	}

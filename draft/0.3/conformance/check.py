@@ -181,9 +181,7 @@ def check():
     # Stamping every link of the example from no lock rebuilds its lock, tagged and item links included (Annex I.4).
     unlocked = {path: value for path, value in edited.items() if path != "trace.lock"} | {"refund.go": example.files["refund.go"]}
     result, text = reader.stamp(reader.Analysis(unlocked), sorted(example.links))
-    text = text["trace.lock"]
-    assert text == example.files["trace.lock"].decode().replace("\n", " by=unknown at=unknown\n").replace("trace.lock 1 by=unknown at=unknown\n", "trace.lock 1\n") \
-        and len(result["links"]) == 8, "example lock from stamp"
+    assert text == {"trace.lock": example.files["trace.lock"].decode()} and len(result["links"]) == 8, "example lock from stamp"
     counts["exampleOutputs"] = 5
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))
@@ -191,7 +189,7 @@ def check():
     for retired in RETIRED:
         assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
-    every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["sarif"] + cases["projections"] + cases["schemas"]
+    every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["sarif"] + cases["projections"] + cases["schemas"] + cases["migrations"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
     for case in every:
@@ -299,9 +297,18 @@ def check():
         assert rules == sorted(rules, key=str.encode) and got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
     for case in cases["projections"]:
         assert reader.item_projection(case["item"], case["types"]).decode() == case["canonical"], case["id"]
+    for case in cases["migrations"]:  # Annex H: the lock files that migrate writes, by path, or None
+        analysis = reader.Analysis(case["files"])
+        got = {"codes": codes(analysis.result()), "locks": reader.migrate(analysis)}
+        assert got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
+        if got["locks"]:  # migrating again changes nothing, and no link changes state
+            again = reader.Analysis({**case["files"], **got["locks"]})
+            assert reader.migrate(again) == {}, f"{case['id']}: migrating twice writes again"
+            assert {k: v for k, v in states(again).items()} == states(analysis), f"{case['id']}: a state changed"
     counts["checkCases"], counts["contextCases"], counts["projections"] = len(cases["checks"]), len(cases["contexts"]), len(cases["projections"])
     counts["stampCases"], counts["impactCases"], counts["sarifCases"] = len(cases["stamps"]), len(cases["impacts"]), len(cases["sarif"])
     counts["schemaCases"] = len(cases["schemas"])  # run by fixtures_test.go
+    counts["migrationCases"] = len(cases["migrations"])
 
     # Inputs that JSON cases cannot carry, and limits that must not crash the reader.
     bad = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: R-A\n    text: A.\n', "a.go": b"package a\n// @req R-A \xff\nfunc F() {}\n"})
@@ -318,13 +325,12 @@ def check():
     lock = (DRAFT / "fixtures" / "minimal" / "trace.lock").read_bytes()
     damaged = reader.Analysis({**minimal_files, "trace.lock": lock + b"\xff\n"})
     assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
-    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add "))
-    stamped = lock.decode().replace(add, add + " by=unknown at=unknown").encode()  # OSTF-142: a writer records by and at
+    stamped = lock  # its entries record by and at, as a stamp writes them (OSTF-142)
     assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1]["trace.lock"].encode() == stamped, "stamp drops only the non-UTF-8 line"
     assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
     # OSTF-105 and Annex I.4: stamp writes a lock of at most 8 MiB and refuses the whole stamp above it. The lock
     # holds entries for links outside the graph, which a stamp keeps, so that adding one entry crosses the limit.
-    add = add + " by=unknown at=unknown\n"
+    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add ")) + "\n"
     filler = lambda i, pad: f"f{i:07}{'x' * pad}.go#F implements R-ADD source.sig=go2:{'A' * 43} target=f1:{'A' * 43}\n"
     count, rest = divmod(limit - len(stamped), len(filler(0, 0)))
     for over in (0, 1):
@@ -427,6 +433,11 @@ def check():
         assert run(tree, "check")[0] == 0 and run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 on unstamped links"
         (tree / "trace.lock").write_bytes(lock)
         assert run(tree, "check", "--strict")[0] == 0, "check --strict exit 0 when every link is valid"
+        # Annex H: migrate gives a lock written before by and at its pairs, then has nothing more to write.
+        (tree / "trace.lock").write_text(lock.decode().replace(" by=unknown at=unknown", ""))
+        code, out = run(tree, "migrate")
+        assert code == 0 and out == "migrated trace.lock\n" and (tree / "trace.lock").read_bytes() == lock, "migrate"
+        assert run(tree, "migrate") == (0, ""), "migrate twice"
         os.remove(tree / "trace.lock")
         (tree / "empty").mkdir()
         (tree / "empty" / "trace.yaml").write_text('ostf: "0.3"\nitems:\n  - id: R-A\n    text: Do a.\n')
@@ -517,7 +528,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 38
+    counts["commandLine"] = 40
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

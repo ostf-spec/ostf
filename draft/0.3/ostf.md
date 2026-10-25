@@ -80,12 +80,12 @@ items:
     tests: [math_test.go#TestAdd]
 ```
 
-`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that rechecks those links writes `trace.lock`:
+`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that rechecks those links writes `trace.lock`, with the principal that rechecked each and the view it did so in, here `unknown`:
 
 ```text
 trace.lock 1
-math.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE
-math_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE
+math.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown
+math_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown
 ```
 
 When the requirement text or the body of `Add` changes, the recorded fingerprints no longer match and the link is `suspect` until someone rechecks it. A valid link says only that its inputs have not changed. It does not say the test passed or the code is correct. A tool that implements the optional command profile (Annex I) answers the three questions of the abstract with `context` and `check`, and records a recheck with `stamp`.
@@ -517,7 +517,7 @@ another principal rechecks it.
 | Spec Kit, Kiro, OpenSpec | Feature specifications written for an agent before coding | Per-feature intent. The requirements meant to outlive a feature become OSTF items linked to the code that carries them. |
 | OpenFastTrace, StrictDoc, Sphinx-Needs, LOBSTER, Doorstop, reqstool | Requirements-as-code with tool-specific tag syntax | Converters to and from OSTF are the intended adoption path; each should publish what it loses. |
 
-## Annex H (informative): changes from draft 0.2
+## Annex H (informative): changes from draft 0.2 and revision 0.14
 
 **Kept unchanged:** item ID grammar, aliases, the default types and links, `code` and `tests` authoring, `@req` and `@req-file` tags, the f1 projection and digest, `lf1`, the `trace.lock 1` format and its four states and precedence, the Producer, Consumer and Analyzer classes, and the 1.0 release gate.
 
@@ -530,6 +530,16 @@ another principal rechecks it.
 **Added outside Core:** the `hint` diagnostic field and the `impact` section of the result format, with `schema/result.schema.json`; the SARIF mapping, now normative for tools that emit SARIF (Annex D); the fixed agent paragraph (Annex F.1); the command profile (Annex I); the context rendering (Annex J).
 
 **Moved out of Core:** `logs` and `otel` references (use `x-` keys or a future profile); evidence (Annex E points to in-toto); recovery records and `@req-none` (not carried forward); coverage rules and policy (tool behavior).
+
+**Since document revision 0.14.** The wire string `ostf: "0.3"`, the lock header `trace.lock 1`, the schema identifiers and the algorithms f1, `go2`, `ts2`, `py1` and `lf1` are unchanged; a file written under revision 0.14 is read under the rules of this one.
+
+- Requirements: OSTF-161 and OSTF-162 are merged into OSTF-160, OSTF-171 into OSTF-170, and OSTF-146 is new.
+- Vocabulary: every type has a kind, which link rules and risk relevance follow, and a profile's new type declares it; `threat` and `control` are default types; [profiles/security.yaml](profiles/security.yaml) is published.
+- Files: `trace.derived` records coverage and gives `implements` links a corroboration; lock entries end with `by` and `at`; an item file may have its own lock; a source entry may name with `ostf` the root that owns its items.
+- Reasons and diagnostics: `FILE_CHANGED` and `DEFINITION_CHANGED`, with the profile keys `fileChange` and `definitionChange`; `DERIVED_INVALID` and `NESTED_ROOT_FAILED`; the hint of `BROKEN_LINK` names a moved definition.
+- Results and agents: `corroboration`, `impact.contexts` and the `ndjson` format (Annex N); lines of item text marked with `| ` in the text of `context`; agent paragraph 4 and the policy paragraph of F.2.
+
+A tool MAY offer `migrate`, an added command (Annex I.6), which rewrites the lock files of a tree written under an earlier revision: every entry a reader may use gains `by=unknown` and `at=unknown` when it lacks them and moves to the lock file of its target's file, an entry whose target is no item stays where it is, and malformed or duplicated entries are dropped, as a stamp drops them. It changes no state, leaves a lock file above 8 MiB as it is, and writes nothing when graph construction fails or a lock file would exceed 8 MiB. Two changes need a person: a profile's new type without a `kind` is `PROFILE_INVALID` until someone states its kind, which no tool can infer, and a link attribute named `by` or `at` must be renamed.
 
 **Requirement ID map.** 0.2 identifiers are retired; the table records where each meaning went.
 

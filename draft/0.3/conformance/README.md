@@ -28,6 +28,8 @@ cd draft/0.3/example
 
 Outside a Git checkout, the added option `--base-tree DIR` (Annex I.6) supplies the base view instead: DIR is the directory that holds this root in a checkout of REV, and REV is then only the label in `impact.base`. For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
 
+The added command `migrate` (Annex H) rewrites the lock files of a tree written under an earlier revision: each entry gains `by` and `at` when it lacks them and moves to the lock file of its target's file.
+
 The reader adds one code of its own, outside Annex C as OSTF-151 allows: `ostf-reader.UNLINKED`, an info that counts the statements, other than obsolete ones, that no link targets, and names the first ten. `check` reports whether links are fresh, not whether statements are covered, so without it a requirement with no code, test or verification passes in silence; whether it must be covered is a policy for the team or a tool on top. The info never fails `check`, and the cases compare Annex C codes only. When `context` is given a path that does not resolve, its hint names the covered files whose paths end with that path, spelled from the working directory, which is where Annex I.3 reads TARGET from:
 
 ```sh
@@ -79,4 +81,17 @@ Step 2b converted the 0.2 suite's 73 repository cases and 24 schema cases; its 3
 | The four `schema-snapshot` cases | The snapshot schema was replaced by `external` and `sources`. |
 | `repository-valid` | Its input equals `minimal-valid`, which now carries its requirements. |
 
-The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#annex-h-informative-changes-from-draft-02).
+The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#annex-h-informative-changes-from-draft-02-and-revision-014).
+
+## From revision 0.14
+
+Phase 2 of the [agent-first plan](../plan-agent-first.md) changed rules under the same wire string, and the suite with them; the [decision record](../decisions.md#agent-first-plan-phase-2-wire-04-core) gives each rule. Every case carried on, and none was retired. The converted ones, by rule:
+
+- **Type kinds.** `risk-relevance-follows-controls-only`, which pinned the 0.3 gap, became `risk-relevance-follows-kind` and expects the opposite; `risk-relevance-through-extended-controls` declares the kind of its new type.
+- **Merges.** The four cases that named OSTF-162 name OSTF-160.
+- **Recheck provenance.** The 15 stamped lines that the stamp cases expect end with `by=unknown at=unknown`; a stamp case may give `by` and `at`.
+- **Sharded locks.** A stamp case may expect `locks`, every lock file written by path, in place of `lock`.
+- **One call per change and roots that know each other.** Every impact case gained `impact.contexts`, and impact cases compare the result of `check --base`, which evaluates nested roots.
+- **Item text as data.** Eleven context cases gained the `| ` marker in their Annex J text, and nothing else.
+
+New expectations: `corroboration` and `hints` in check cases, and `migrations`, the lock files that `migrate` writes (Annex H). The example gained `trace.derived`, and its lock and the minimal fixture's were brought to the current revision with the reader's `migrate`, so each entry ends with `by=unknown at=unknown`.

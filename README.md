@@ -29,14 +29,14 @@ Under the default, every edit to a linked function's body makes its link suspect
    pipx install git+https://github.com/ostf-spec/ostf
    ```
 
-3. Run `ostf check`. It lists your links as having no state yet. Stamp each one you have checked by hand, quoting it as `check` prints it, and commit the `trace.lock` it writes:
+3. Run `ostf check`. It lists your links as having no state yet. Stamp each one you have checked by hand, quoting it as `check` prints it and naming yourself with `--by`, and commit the `trace.lock` it writes:
 
    ```sh
-   ostf stamp 'math.go#Add implements R-ADD' 'math_test.go#TestAdd verifies R-ADD'
+   ostf stamp --by "person:$USER" 'math.go#Add implements R-ADD' 'math_test.go#TestAdd verifies R-ADD'
    ```
 
 4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`, and after it your policy for agents, or the [recommended one](draft/0.3/fixtures/agent-policy.txt). Coding agents then run `ostf check --base` before they finish, which also shows what every function they changed serves.
-5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a suspect or broken link, and in a pull request whose base branch has a `trace.lock` also on an unstamped link or a missing lock (`check --strict`), shows the impact of a pull request in its log and uploads the findings to code scanning:
+5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a suspect or broken link, and in a pull request whose base branch has a lock file also on an unstamped link or a missing lock (`check --strict`), shows the impact of a pull request in its log and uploads the findings to code scanning:
 
    ```yaml
    name: OSTF
@@ -69,7 +69,7 @@ Under the default, every edit to a linked function's body makes its link suspect
 | Document | Purpose |
 | --- | --- |
 | [Specification](draft/0.3/ostf.md) | The format in 35 numbered requirements, the Go annex, the lock grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents and context rendering |
-| [Schemas](draft/0.3/schema/) and [lock grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.lock` |
+| [Schemas](draft/0.3/schema/) and [lock grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.lock` and `trace.derived` |
 | [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with a real lock file and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
 | [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check`, `context` and `stamp` commands, and hand-written cases |

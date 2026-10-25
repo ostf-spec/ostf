@@ -17,7 +17,7 @@ go test ./...
 
 ## What the stamps say
 
-Each lock line names a link and the fingerprints of both ends at the last recheck. The `refines`, `controls` and `verifies` lines between items carry two item fingerprints. The two `R-REFUND-LIMIT` code and test links are declared in YAML (`code` and `tests`); the two `PAY-123` links come from tags, so an Analyzer reports them with origin `tagged`. The `deploy/database.tf` line carries `source.sig` alone: a whole-file anchor in a language without an annex is fingerprinted with `lf1` over the file's bytes (OSTF-141). All eight are `valid` for these exact bytes.
+Each lock line names a link and the fingerprints of both ends at the last recheck. The `refines`, `controls` and `verifies` lines between items carry two item fingerprints. The two `R-REFUND-LIMIT` code and test links are declared in YAML (`code` and `tests`); the two `PAY-123` links come from tags, so an Analyzer reports them with origin `tagged`. The `deploy/database.tf` line carries `source.sig` alone: a whole-file anchor in a language without an annex is fingerprinted with `lf1` over the file's bytes (OSTF-141). All eight are `valid` for these exact bytes. Each line ends with `by=unknown at=unknown`, since no named principal rechecked the links of this example in a known view (OSTF-142).
 
 - Change the body of `CheckRefundLimit` and its `implements` link becomes `suspect` with reason `BODY_CHANGED`, because `bodyChange` defaults to `all` (OSTF-144).
 - Refresh the Jira item's copy to a new `revision` with different `text` and both `PAY-123` links become `suspect` with reason `ITEM_CHANGED`: the observed copy enters the item fingerprint (OSTF-113).

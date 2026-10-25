@@ -2175,6 +2175,36 @@ def stamp(analysis, names, by="unknown", at="unknown"):
     return result, texts
 
 
+# --- migrate (Annex H) ------------------------------------------------------
+
+def migrate(analysis):
+    """Annex H: the text of each lock file that changes when a tree written under an earlier revision is
+    brought up to this one, by path, or None when graph construction failed. Every entry a reader may use
+    gains by and at, unknown when absent, and moves to the lock file of its target's file; an entry whose
+    target is no item stays where it is, and a lock file above 8 MiB is left as it is (OSTF-142)."""
+    if analysis.stopped:
+        return None
+    usable = analysis.lock or {}
+    readable = {path for path in analysis.lock_files if analysis.size(path) <= MAX_FILE_BYTES}
+    files = {path: {} for path in readable}
+    for path in readable:
+        for key, entry in analysis.lock_files[path].items():
+            if key in usable:
+                home = analysis.lock_home(entry["target"]) if entry["target"] in analysis.items else path
+                home = path if home in analysis.lock_files and home not in readable else home
+                files.setdefault(home, {})[key] = {**entry, "provenance": {"by": "unknown", "at": "unknown", **entry.get("provenance", {})}}
+    texts = {}
+    for path in sorted(files, key=str.encode):
+        text = lock_text(files[path])
+        exists = path in analysis.files
+        if (exists and analysis.data(path) == text.encode()) or (not exists and not files[path]):
+            continue
+        texts[path] = text
+    if any(len(text.encode()) > MAX_FILE_BYTES for text in texts.values()):
+        return None  # a lock file no reader would use is never written (OSTF-105)
+    return texts
+
+
 # --- SARIF (Annex D) --------------------------------------------------------
 
 LEVEL = {"error": "error", "warning": "warning", "info": "note"}
@@ -2314,10 +2344,10 @@ def text_check(result, analysis=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description="OSTF 0.3 reader (Annex I check, context and stamp).")
     commands = parser.add_subparsers(dest="command", required=True)
-    for command in ("check", "context", "stamp"):
+    for command in ("check", "context", "stamp", "migrate"):  # migrate is an added command (Annex I.6, Annex H)
         sub = commands.add_parser(command)
         sub.add_argument("--root", type=pathlib.Path)
-        sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["json", "text"], default="text")
+        sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["text"] if command == "migrate" else ["json", "text"], default="text")
         if command == "check":
             sub.add_argument("--base", metavar="REV")
             # Added option (Annex I.6): read the base view from a checkout of REV, given as the
@@ -2418,6 +2448,13 @@ def _run(args, analysis, target, anchor, root):
         else:
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result, analysis), end="\n" if args.format == "json" else "")
         return 1 if analysis.failed(args.strict) else 0
+    if args.command == "migrate":
+        texts = migrate(analysis)
+        print("".join(line + "\n" for line in text_diagnostics({"diagnostics": [d for d in analysis.diagnostics if analysis.stopped]})), end="")
+        for path, text in (texts or {}).items():
+            write_lock(root / path, text)
+            print("migrated " + path)
+        return 0 if texts is not None else 1
     if args.command == "stamp":
         result, texts = stamp(analysis, args.links, args.by, args.at)
         for path, text in (texts or {}).items():

@@ -11361,6 +11361,96 @@
    "valid": false
   }
  ],
+ "migrations": [
+  {
+   "id": "migrate-adds-provenance-and-moves",
+   "requirements": [
+    "Annex H",
+    "OSTF-142"
+   ],
+   "note": "A lock written before revision 0.15: R-A's entry moves to the lock of trace/a.yaml, which declares R-A, and every entry gains by and at, unknown when it had none.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=person:ana at=9fceb02\n"
+   },
+   "expect": {
+    "codes": [],
+    "locks": {
+     "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=person:ana at=9fceb02\n",
+     "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n"
+    }
+   }
+  },
+  {
+   "id": "migrate-keeps-what-it-cannot-place",
+   "requirements": [
+    "Annex H",
+    "OSTF-142"
+   ],
+   "note": "An entry whose target is no item stays in the lock file that holds it; a malformed line and both copies of a duplicated identity are dropped, as a stamp drops them.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\ngone.go#X implements R-GONE source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\nnot-an-entry\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_DUPLICATE",
+     "LOCK_INVALID"
+    ],
+    "locks": {
+     "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=unknown at=unknown\ngone.go#X implements R-GONE source.sig=go2:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA target=f1:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA by=unknown at=unknown\n",
+     "trace/a.yaml.lock": "trace.lock 1\n"
+    }
+   }
+  },
+  {
+   "id": "migrate-current-tree-unchanged",
+   "requirements": [
+    "Annex H"
+   ],
+   "note": "A tree already at the current revision gives no file to write.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=unknown at=unknown\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n"
+   },
+   "expect": {
+    "codes": [],
+    "locks": {}
+   }
+  },
+  {
+   "id": "migrate-refused-when-the-graph-fails",
+   "requirements": [
+    "Annex H",
+    "OSTF-150"
+   ],
+   "note": "Without a graph there is no telling which file declares a target, so nothing is written.",
+   "files": {
+    "trace.yaml": "ostf: 0.3\nitems: []\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [
+     "FORMAT_INVALID"
+    ],
+    "locks": null
+   }
+  }
+ ],
  "notCovered": {
   "OSTF-163": "A claim is a statement, not behavior.",
   "OSTF-164": "A rule for annex authors; Annex A meets it with its vectors.",
