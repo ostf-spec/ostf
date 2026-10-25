@@ -1576,6 +1576,8 @@ class Analysis:
 # --- context (Annex I.3, Annex J) -------------------------------------------
 
 def item_context(analysis, ident):
+    """Annex I.3: the items reached from ident by item-to-item links in their direction and the links
+    from them, and every link to ident with its source when that is an item, one level deep."""
     reached, frontier = {ident}, [ident]
     while frontier:
         current = frontier.pop()
@@ -1583,8 +1585,9 @@ def item_context(analysis, ident):
             if not link["anchor"] and link["source"] == current and link["target"] not in reached:
                 reached.add(link["target"])
                 frontier.append(link["target"])
-    links = {k for k, l in analysis.links.items() if (not l["anchor"] and l["source"] in reached) or (l["anchor"] and l["target"] == ident)}
-    return reached, links
+    incoming = {k for k, l in analysis.links.items() if l["target"] == ident}
+    links = {k for k, l in analysis.links.items() if not l["anchor"] and l["source"] in reached} | incoming
+    return reached | {analysis.links[k]["source"] for k in incoming if not analysis.links[k]["anchor"]}, links
 
 
 def resolve(analysis, target, anchor=None):
@@ -1688,7 +1691,7 @@ def render(analysis, target, anchor=None):
         return " ".join([base] + [f"{k}={v}" for k, v in sorted(link["attributes"].items())])
 
     lines = []
-    shown = set()
+    shown, drawn = set(), set()
 
     def tree(ident, depth, skip):
         pad = "  " * depth
@@ -1720,16 +1723,19 @@ def render(analysis, target, anchor=None):
                 work.pop()
                 continue
             level = "  " * work[-1][1]
+            drawn.add(link["identity"])
             if link["target"] in shown:
                 lines.append(level + f"{name(link)} {link['target']}{state(link)}")
                 continue
             shown.add(link["target"])
             lines.append(level + f"{name(link)} {label(link['target'], True)}{state(link)}")
             work.append((children(link["target"]), work[-1][1] + 1))
-        incoming = sorted((l for l in analysis.links.values() if l["anchor"] and l["target"] == ident and l["identity"] not in skip),
+        # Rule 4: links to the item from another anchor or from an item, unless rule 3 showed them.
+        incoming = sorted((l for l in analysis.links.values() if l["target"] == ident and l["identity"] not in skip | drawn),
                           key=lambda l: (name(l, True).encode(), l["source"].encode()))
         for link in incoming:
-            lines.append(pad + f"{name(link, True)} {link['source']}{state(link)}")
+            source = link["source"] if link["anchor"] or link["source"] in shown else label(link["source"], True)
+            lines.append(pad + f"{name(link, True)} {source}{state(link)}")
 
     if kind == "item":
         shown.add(value)
