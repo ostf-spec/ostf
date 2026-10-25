@@ -306,6 +306,16 @@ def check():
             (tree / name).write_bytes(data)
         code, out = run(tree, "check")
         assert code == 0 and "math.go#Add implements R-ADD" in out and "math_test.go#TestAdd verifies R-ADD" in out, "text check names links without a state"
+        # I.1: --strict also fails on LOCK_MISSING with links in the graph and on an unstamped link.
+        assert run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 without a lock"
+        (tree / "trace.lock").write_text("trace.lock 1\n")
+        assert run(tree, "check")[0] == 0 and run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 on unstamped links"
+        (tree / "trace.lock").write_bytes(lock)
+        assert run(tree, "check", "--strict")[0] == 0, "check --strict exit 0 when every link is valid"
+        os.remove(tree / "trace.lock")
+        (tree / "empty").mkdir()
+        (tree / "empty" / "trace.yaml").write_text('ostf: "0.3"\nitems:\n  - id: R-A\n    text: Do a.\n')
+        assert run(tree / "empty", "check", "--strict")[0] == 0, "check --strict exit 0 without a lock or a link"
         # A lock that exists but cannot be read is not a missing lock: the command cannot run.
         (tree / "trace.lock").write_bytes(lock)
         os.chmod(tree / "trace.lock", 0)
@@ -373,7 +383,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 27
+    counts["commandLine"] = 31
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

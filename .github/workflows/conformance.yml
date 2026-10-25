@@ -61,6 +61,20 @@ jobs:
           sarif: "false"
       - name: The action fails on a suspect link
         run: test "${{ steps.edited.outcome }}" = failure && test "${{ steps.edited.outputs.exit-code }}" = 1
+      - name: Drop the lock in a copy of the example
+        run: |
+          cp -R draft/0.3/example "$RUNNER_TEMP/unlocked"
+          rm "$RUNNER_TEMP/unlocked/trace.lock"
+      - name: Check the copy without a lock, strictly
+        id: unlocked
+        continue-on-error: true
+        uses: ./
+        with:
+          root: ${{ runner.temp }}/unlocked
+          sarif: "false"
+          strict: "true"
+      - name: The strict action fails on a missing lock
+        run: test "${{ steps.unlocked.outcome }}" = failure && test "${{ steps.unlocked.outputs.exit-code }}" = 1
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15

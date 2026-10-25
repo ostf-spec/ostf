@@ -124,9 +124,10 @@
           "required": ["added", "removed"],
           "additionalProperties": false
         },
+        "lock": { "enum": ["kept", "added", "removed", "absent"] },
         "tests": { "type": "array", "items": { "$ref": "#/$defs/anchor" } }
       },
-      "required": ["base", "coverage", "changed", "items", "links", "tests"],
+      "required": ["base", "coverage", "changed", "items", "links", "lock", "tests"],
       "patternProperties": { "^x-": {} },
       "additionalProperties": false
     }

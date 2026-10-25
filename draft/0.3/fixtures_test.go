@@ -161,6 +161,7 @@ func TestSchemas(t *testing.T) {
 		{"expected context", "result.schema.json", read(t, "example/expected/context.json"), true},
 		{"result with unknown key", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "proposed": []}`, false},
 		{"impact with unknown coverage", "result.schema.json", strings.Replace(`{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": `+impact+`}`, `"direct"`, `"transitive"`, 1), false},
+		{"impact with unknown lock state", "result.schema.json", strings.Replace(`{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": `+impact+`}`, `"kept"`, `"lost"`, 1), false},
 	} {
 		t.Run(c.id, func(t *testing.T) {
 			if err := validator(t, c.schema).Validate(instance(t, c.text)); (err == nil) != c.valid {

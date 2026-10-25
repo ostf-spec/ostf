@@ -6659,6 +6659,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF"
      ]
@@ -6704,6 +6705,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -6747,6 +6749,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -6834,6 +6837,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#FuzzParse",
       "a_test.go#Test",
@@ -6902,6 +6906,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF"
      ]
@@ -6953,6 +6958,7 @@
        "a.go#F implements R-C"
       ]
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestA",
       "a_test.go#TestF"
@@ -6997,6 +7003,7 @@
       ],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF"
      ]
@@ -7096,6 +7103,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -7136,6 +7144,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    },
@@ -7188,6 +7197,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF"
      ]
@@ -7234,6 +7244,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -7289,6 +7300,7 @@
        "a.go#F implements R-A"
       ]
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF"
      ]
@@ -7342,6 +7354,7 @@
       ],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -7383,6 +7396,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    }
@@ -7429,6 +7443,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "a_test.go#TestF/sub"
      ]
@@ -7468,6 +7483,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": []
     }
    },
@@ -7535,6 +7551,7 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "cart.test.ts#Cart",
       "cart.test.ts#Cart > adds"
@@ -7585,9 +7602,121 @@
       "added": [],
       "removed": []
      },
+     "lock": "absent",
      "tests": [
       "r.test.js#f returns one"
      ]
+    }
+   }
+  },
+  {
+   "id": "impact-lock-removed",
+   "requirements": [
+    "Annex C.3"
+   ],
+   "note": "A change that deletes trace.lock shows it in its impact, though nothing else changed and the link merely loses its state.",
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "removed",
+     "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-lock-added",
+   "requirements": [
+    "Annex C.3"
+   ],
+   "note": "The first stamp of a repository adds trace.lock.",
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "added",
+     "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-lock-absent",
+   "requirements": [
+    "Annex C.3"
+   ],
+   "note": "Neither view has trace.lock.",
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
     }
    }
   }

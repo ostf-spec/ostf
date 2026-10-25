@@ -1568,9 +1568,13 @@ class Analysis:
             "links": [self.link_row(self.links[k]) for k in sorted(self.links, key=str.encode)],
         }
 
-    def failed(self):
+    def failed(self, strict=False):
+        """Annex I.1: whether check exits 1; with strict, also on an unstamped link and on a missing
+        lock while the graph has links."""
+        failing = {"suspect", "broken", "unstamped"} if strict else {"suspect", "broken"}
         return any(d["severity"] == "error" for d in self.diagnostics) or \
-            any(l.get("state") in {"suspect", "broken"} for l in self.links.values())
+            any(l.get("state") in failing for l in self.links.values()) or \
+            (strict and self.lock is None and not self.stopped and bool(self.links))
 
 
 # --- context (Annex I.3, Annex J) -------------------------------------------
@@ -1835,6 +1839,8 @@ def impact(base, current, rev):
         "items": {"added": added, "changed": modified, "removed": removed},
         "links": {"added": sorted(current.links.keys() - base.links.keys(), key=str.encode),
                   "removed": sorted(base.links.keys() - current.links.keys(), key=str.encode)},
+        "lock": {(True, True): "kept", (False, True): "added", (True, False): "removed", (False, False): "absent"}[
+            ("trace.lock" in base.files, "trace.lock" in current.files)],
         "tests": sorted(tests, key=str.encode),
     }
 
@@ -1987,6 +1993,7 @@ def text_check(result):
         lines += [f"  changed {c['anchor']} {' '.join(c['items'])}".rstrip() for c in found["changed"]]
         lines += [f"  item {kind} {i}" for kind in ("added", "changed", "removed") for i in found["items"][kind]]
         lines += [f"  link {kind} {i}" for kind in ("added", "removed") for i in found["links"][kind]]
+        lines += [f"  trace.lock {found['lock']}"] if found["lock"] in ("added", "removed") else []
         lines += [f"  test {t}" for t in found["tests"]]
     return "\n".join(lines) + "\n"
 
@@ -2003,6 +2010,7 @@ def main(argv=None):
             # Added option (Annex I.6): read the base view from a checkout of REV, given as the
             # directory that holds this root there, instead of from Git.
             sub.add_argument("--base-tree", metavar="DIR", type=pathlib.Path)
+            sub.add_argument("--strict", action="store_true")
         if command == "context":
             sub.add_argument("target")
         if command == "stamp":
@@ -2091,7 +2099,7 @@ def _run(args, analysis, target, anchor, root):
             print(json.dumps(sarif(analysis, result), indent=2, ensure_ascii=False))
         else:
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result), end="\n" if args.format == "json" else "")
-        return 1 if analysis.failed() else 0
+        return 1 if analysis.failed(args.strict) else 0
     if args.command == "stamp":
         result, text = stamp(analysis, args.links)
         if text is not None:
