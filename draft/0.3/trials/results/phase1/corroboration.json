@@ -1,0 +1,2099 @@
+{
+ "fixtures": {
+  "go-shop": {
+   "implementsLinks": 41,
+   "toTypesOrConstants": 6,
+   "onTestedCode": 33,
+   "ran": 33,
+   "confirmed": 32
+  },
+  "ts-shop": {
+   "implementsLinks": 42,
+   "toTypesOrConstants": 6,
+   "onTestedCode": 34,
+   "ran": 34,
+   "confirmed": 33
+  }
+ },
+ "runs": [
+  {
+   "run": "claude.intent.go-shop.T2.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FLAT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FLAT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T2.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T2.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T4.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T4.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T4.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T5.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/volume.go#VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T5.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/discount.go#VolumeOff implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.go-shop.T5.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T2.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shippingFee implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T2.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T2.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shippingFee implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T4.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T4.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T4.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T5.1",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T5.2",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.intent.ts-shop.T5.3",
+   "arm": "intent",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T2.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FLAT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FLAT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T2.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T2.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/shipping.go#Shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T4.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T4.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T4.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T5.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T5.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/volume.go#VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.go-shop.T5.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/volume.go#VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T2.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shipping implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T2.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shippingFee implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T2.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#shippingFee implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T4.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T4.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T4.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T5.1",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T5.2",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "claude.py-shell.ts-shop.T5.3",
+   "arm": "full",
+   "agent": "claude",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T2.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T2.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T2.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T4.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T4.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T4.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T5.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/discount.go#VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T5.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 5,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 5,
+   "ran": 5,
+   "confirmed": 5,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-DISCOUNT-CAP",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.go-shop.T5.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T2.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING-FEE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T2.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T2.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T4.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T4.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T4.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T5.1",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T5.2",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 4,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 4,
+   "ran": 4,
+   "confirmed": 4,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-DISCOUNT-CAP",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.intent.ts-shop.T5.3",
+   "arm": "intent",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 4,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 4,
+   "ran": 4,
+   "confirmed": 4,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-DISCOUNT-CAP",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#volumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T2.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T2.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T2.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "pricing/quote.go#Price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T4.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T4.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T4.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/salestax.go#SalesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T5.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T5.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.go-shop.T5.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "go-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T2.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T2.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T2.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T2",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-SHIPPING",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T4.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T4.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T4.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T4",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-EXEMPT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/salestax.ts#salesTax implements R-TAX-RATE",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T5.1",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 3,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 3,
+   "ran": 3,
+   "confirmed": 3,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#priceCart implements R-DISCOUNT-CAP",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#priceCart implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T5.2",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 2,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 2,
+   "ran": 2,
+   "confirmed": 2,
+   "links": [
+    {
+     "link": "src/checkout.ts#Checkout.placeOrder implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    },
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  },
+  {
+   "run": "codex.py-shell.ts-shop.T5.3",
+   "arm": "full",
+   "agent": "codex",
+   "fixture": "ts-shop",
+   "task": "T5",
+   "implementsLinks": 1,
+   "toTypesOrConstants": 0,
+   "onTestedCode": 1,
+   "ran": 1,
+   "confirmed": 1,
+   "links": [
+    {
+     "link": "src/pricing.ts#price implements R-VOLUME-DISCOUNT",
+     "function": true,
+     "tested": true,
+     "ran": true,
+     "confirmed": true
+    }
+   ]
+  }
+ ],
+ "agentDeclared": {
+  "implementsLinks": 152,
+  "toTypesOrConstants": 0,
+  "onTestedCode": 152,
+  "ran": 152,
+  "confirmed": 152
+ }
+}
