@@ -413,7 +413,8 @@ def sections(corroboration, recheck, parallel, replay):
                   f"functions; under `bodyChange: risk`, {s['bodyChangeRisk']['suspectLinks']} links on {s['bodyChangeRisk']['suspectItems']} items.", ""]
     if replay:
         lines += ["## Replay of real repositories", "",
-                  "Three repositories the maintainer controls, which are not public, so only counts appear here ([replay.py](replay.py)). "
+                  "Three repositories the maintainer controls, which are not public, so only counts appear here, under neutral labels and "
+                  "with their roots numbered ([replay.py](replay.py)). "
                   "Claude Code on claude-haiku-5-5 backfilled one root per module at the start of each window; every change on the "
                   "main branch was then replayed, the links it made suspect recorded and stamped again, and claude-opus-5-5 labelled a "
                   "sample of 100 per repository, stratified by reason, as a real mismatch, relevant but still true, or noise. Two "

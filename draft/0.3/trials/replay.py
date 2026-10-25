@@ -13,11 +13,13 @@ model labels each as a real mismatch or not.
     python3 replay.py summary NAME
     python3 replay.py publish
 
-The repositories are the maintainer's own and are not public, so nothing of their content enters
-this repository: clones, transcripts, the index and the labels stay in OSTF_REPLAY_DATA, and only
-the counts that `summary` prints reach the baseline report. Each repository is a local clone
-without a remote in DATA/NAME/clone. The index is DATA/NAME/index.sqlite, one row per view, root
-and record, in the tables that the plan's index annex names (section 7).
+The repositories are the maintainer's own and are not public, so nothing of their content, names
+or module paths enters this repository: their configuration is DATA/repos.json, and clones,
+transcripts, the index and the labels stay in OSTF_REPLAY_DATA. NAME is a repository's name in
+that file; `publish` writes only counts, under each repository's neutral label and with its roots
+numbered in the order the file lists them. Each repository is a local clone without a remote in
+DATA/NAME/clone. The index is DATA/NAME/index.sqlite, one row per view, root and record, in the
+tables that the plan's index annex names (section 7).
 """
 import argparse
 import collections
@@ -37,19 +39,17 @@ import time
 import harness
 
 DATA = pathlib.Path(os.environ.get("OSTF_REPLAY_DATA", "/Users/eric/Devl/_private/ostf-phase1-data"))
-# Each repository: its main branch, the start of the window (the last change on the branch before
-# that date, or its first commit) and one root per module, where an agent backfills the links.
-REPOS = {
-    "go-repo": {"source": "~/Devl/_private/go-repo", "branch": "main", "since": None, "language": "Go",
-                     "roots": ["root 1", "root 2", "root 3", "root 4"], "target": 70},
-    # py-repo's window starts where its dead v1 package was removed, since the live code was
-    # about 7 000 lines before it; it then runs two months, to the last change.
-    "py-repo": {"source": "~/Devl/_private/py-repo", "branch": "master", "start": "py-repo-start", "language": "Python",
-                    "roots": ["root 1", "root 2", "root 3", "root 4"], "target": 55},
-    "ts-repo": {"source": "~/Devl/_private/ts-repo", "branch": "master", "since": "2026-07-25", "language": "TypeScript",
-           "roots": ["root 1", "root 2", "root 3", "root 4",
-                     "root 5", "root 6"], "target": 80},
-}
+# Each repository, by name: its neutral label, source, main branch, the start of the window (`start`,
+# a commit, or `since`, the last change on the branch before that date, or else its first commit),
+# its language, one root per module, where an agent backfills the links, and the backfill's target.
+# The file is private; without it, no command here runs, and the published counts still read.
+REPOS = json.loads((DATA / "repos.json").read_text()) if (DATA / "repos.json").exists() else {}
+
+
+def published(name):
+    """A repository's neutral label, and its roots numbered as repos.json lists them."""
+    config = REPOS[name]
+    return config["label"], {root: f"root {n}" for n, root in enumerate(config["roots"], 1)}
 BACKFILL_TIMEOUT = int(os.environ.get("OSTF_REPLAY_BACKFILL_TIMEOUT", "3600"))
 SYMBOLS = {"Go": "`Type.Method` for a method, `Name` for a function or type, and the test function's name for a test",
            "Python": "`Class.method` for a method, `name` for a function or class, and `test_name` or `TestClass.test_name` for a test",
@@ -541,13 +541,15 @@ def publish():
         worth = {reasons: [c["mismatch"] + c["relevant"], sum(c.values())] for reasons, c in labelled.items()}
         # No backfilled item controls a risk, so under bodyChange: risk only a changed signature counts.
         signature = sum(n for reasons, n in suspect.items() if "SIGNATURE_CHANGED" in reasons)
+        label, numbered = published(name)
         roots = out["roots"]
-        repositories.append({"name": name, "language": out["language"], "changes": steps, "checkedChanges": out["checkedViews"] - 1,
+        scale = {numbered[root]: v for root, v in out["scale"].items()} if out["scale"] else None
+        repositories.append({"name": label, "language": out["language"], "changes": steps, "checkedChanges": out["checkedViews"] - 1,
                              "from": out["from"][:10], "to": out["to"][:10], "roots": len(roots),
                              "linkedSymbols": sum(r["symbols"] for r in roots.values()), "links": sum(r["links"] for r in roots.values()),
                              "suspect": suspect, "broken": broken, "precision": precision, "worthALook": worth,
                              "stampsPer100": 100 * sum(suspect.values()) / steps if steps else 0,
-                             "stampsPer100Risk": 100 * signature / steps if steps else 0, "scale": out["scale"],
+                             "stampsPer100Risk": 100 * signature / steps if steps else 0, "scale": scale,
                              "labelCost": out["labelCost"], "backfillCost": out["backfillCost"], "kinds": kinds(name)})
     text = ["| Repository | Changes replayed | Roots | Linked symbols | Suspect links | Labelled | Mismatch, `BODY_CHANGED` | "
             "Mismatch, `SIGNATURE_CHANGED` | Newly broken |", "| --- | --- | --- | --- | --- | --- | --- | --- | --- |"]

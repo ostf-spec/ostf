@@ -109,9 +109,11 @@ def verify(counts):
 
 
 def collect():
+    """Counts under each repository's neutral label (replay.py); the names stay in the data directory."""
     summary = {r["name"]: r for r in baseline.load("replay-summary.json")["repositories"]}
-    counts = {"repositories": [{"name": name, "changes": summary[name]["changes"], "broken": summary[name]["broken"], "cells": cells(name)}
-                               for name in replay.REPOS if name in summary]}
+    labels = {name: replay.published(name)[0] for name in replay.REPOS}
+    counts = {"repositories": [{"name": label, "changes": summary[label]["changes"], "broken": summary[label]["broken"], "cells": cells(name)}
+                               for name, label in labels.items() if label in summary]}
     verify(counts)
     COUNTS.write_text(json.dumps(counts, indent=1) + "\n")
     print(f"wrote {COUNTS}")
