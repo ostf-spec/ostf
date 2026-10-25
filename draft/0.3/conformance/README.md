@@ -9,7 +9,7 @@ From the repository root, with Python 3.12 or newer:
 python3 draft/0.3/conformance/run.py
 ```
 
-The script creates an ignored `.venv/` at the repository root, installs the exact versions and release hashes in [requirements.txt](requirements.txt), then runs [check.py](check.py). It needs PyPI or a prepared wheel cache on first run. To use the reader directly:
+The script creates an ignored `.venv/` at the repository root, installs the exact versions and release hashes in [requirements.txt](requirements.txt), fetches the OASIS SARIF 2.1.0 schema into `.venv/` and checks its SHA-256, then runs [check.py](check.py). It needs PyPI and docs.oasis-open.org, or a prepared `.venv/`, on first run. To use the reader directly:
 
 ```sh
 cd draft/0.3/example
@@ -46,14 +46,14 @@ cd draft/0.3/example/deploy
 | [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes, origins, states and reasons, risk relevance, context selections and Annex J text, and f1 projections; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
 | `stamps` in cases.json | The stamped links and the exact lock bytes, or no write when a link is refused; then that the named links are valid, no other link changed state and stamping again changes nothing |
 | `impacts` in cases.json | A base view and an evaluated view with the expected `impact`, and the evaluated view's codes, read after the impact so it cannot add a diagnostic; [fixtures_test.go](../fixtures_test.go) checks each expected `impact` against the result schema |
-| `sarif` in cases.json | Rules, levels, locations, `ostf.link` and `ostf.state` of link-state results, and the mapping of each diagnostic |
+| `sarif` in cases.json | Rules, levels, locations, `ostf.link` and `ostf.state` of link-state results, and the mapping of each diagnostic; every SARIF log the suite produces is also validated against the OASIS SARIF 2.1.0 schema |
 | Annex C.3 example | The edit that C.3 describes, applied to the example, yields the JSON printed in the specification; stamping the example's eight links from no lock yields its `trace.lock` |
 | Coverage | The vector files of 0.2 are unchanged byte for byte, and every requirement and Annex C code has a case or a reason in `notCovered` |
 | The command line | Exit codes 0, 1 and 2 of all three commands, root selection from TARGET, TARGET kept as given, the hint for a path given from another directory, and on an edited copy of the example `check --base`, `--format sarif`, a refused stamp that writes nothing, a stamp that makes `check` pass and leaves no temporary file, no write through a symbolic or hard link, and text `check` naming links that have no state yet |
 
 [generate_tree.py](generate_tree.py) writes the deterministic 10 000-file tree on which both implementations time `check` (plan, section 5.4): `python3 generate_tree.py DIR`.
 
-Each case names the requirements it exercises. Expectations were written from the specification text, not copied from the reader's output; a changed expectation needs a specification reason. The Go tests also check that the schemas accept every file of a case the reader accepts. Not yet covered: Consumer expectations, and the reader is not validated against the OASIS SARIF schema, which is not vendored here.
+Each case names the requirements it exercises. Expectations were written from the specification text, not copied from the reader's output; a changed expectation needs a specification reason. The Go tests also check that the schemas accept every file of a case the reader accepts. Not yet covered: Consumer expectations. The SARIF schema is fetched rather than kept here, since it is OASIS's.
 
 ## From 0.2
 

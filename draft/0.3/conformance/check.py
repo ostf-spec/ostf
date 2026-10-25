@@ -16,11 +16,16 @@ import shutil
 import tempfile
 import urllib.parse
 
+import fastjsonschema
+
 import reader
 
 HERE = pathlib.Path(__file__).resolve().parent
 DRAFT = HERE.parent
 VECTORS = HERE / "vectors"
+# The OASIS SARIF 2.1.0 schema (Errata 01), which run.py fetches and pins (Annex D).
+SARIF_SCHEMA = HERE.parents[2] / ".venv" / "sarif-schema-2.1.0.json"
+SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e"
 # The 0.2 vectors, byte for byte as published with 0.2, and the 0.3 requirements they exercise (Annex H).
 VECTORS_02 = {
     "item-vectors.json": ("7ef4e294933e4757e913b7abe20ea1d8211f415ad31fa302a4c738959c779e27", ["OSTF-140", "OSTF-170"]),
@@ -57,6 +62,21 @@ def check_stamp(case_id, files, names, result, text):
         want = ("valid", []) if key in names else before[key]
         assert state == want, f"{case_id}: {key} is {state} after stamping, want {want}"
     assert reader.stamp(again, names)[1] == text, f"{case_id}: stamping twice changes the lock"
+
+
+def sarif_validator():
+    """Annex D: a validator for the OASIS SARIF 2.1.0 schema, which is JSON Schema draft-04."""
+    assert SARIF_SCHEMA.is_file(), f"no {SARIF_SCHEMA}: run run.py, which fetches it"
+    data = SARIF_SCHEMA.read_bytes()
+    assert hashlib.sha256(data).hexdigest() == SARIF_SHA256, "the SARIF schema is not the pinned one"
+    validate = fastjsonschema.compile(json.loads(data), use_default=False)  # never fill in defaults
+
+    def check(log, what):
+        try:
+            validate(log)
+        except fastjsonschema.JsonSchemaException as error:
+            raise AssertionError(f"{what}: SARIF fails the OASIS schema: {error.message}") from None
+    return check
 
 
 def check():
@@ -196,11 +216,19 @@ def check():
         assert got == case["expect"]["impact"], f"{case['id']}:\n got {got}\nwant {case['expect']['impact']}"
         # Computed after impact, so impact cannot add a diagnostic to the evaluated view.
         assert codes(current.result()) == case["expect"]["codes"], f"{case['id']}: codes {codes(current.result())}"
+    valid_sarif = sarif_validator()
+    try:  # a nested rule of the schema, reached through its references, is enforced
+        valid_sarif({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "x"}}, "results": [
+            {"ruleId": "LINK_BROKEN", "level": "fatal", "message": {"text": "x"}}]}]}, "a level outside SARIF")
+        raise RuntimeError("the SARIF schema accepted level fatal")
+    except AssertionError:
+        pass
     for case in cases["sarif"]:
         analysis = reader.Analysis(case["files"])
         result = analysis.result()
         result["diagnostics"] = [d for d in result["diagnostics"] if not d["code"].startswith(reader.OWN_PREFIX)]
         log = reader.sarif(analysis, result)
+        valid_sarif(log, case["id"])
         assert log["version"] == "2.1.0" and len(log["runs"]) == 1, f"{case['id']}: one SARIF 2.1.0 run"
         run_ = log["runs"][0]
         rules = [r["id"] for r in run_["tool"]["driver"]["rules"]]
@@ -256,7 +284,9 @@ def check():
     many = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n' + "".join(f"  - id: R-{i:02}\n    text: Step {i}.\n" for i in range(12))})
     assert [d["message"] for d in many.diagnostics if d["code"] == reader.UNLINKED] == \
         ["12 statements that no link targets: R-00, R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09 and 2 more"], "unlinked statements counted"
-    run_ = reader.sarif(many, many.result())["runs"][0]
+    log = reader.sarif(many, many.result())
+    valid_sarif(log, "unlinked statements")
+    run_ = log["runs"][0]
     assert {"id": reader.UNLINKED} in run_["tool"]["driver"]["rules"] and \
         [r["level"] for r in run_["results"] if r["ruleId"] == reader.UNLINKED] == ["note"], "unlinked statements in SARIF"
     counts["directChecks"] = 10
@@ -342,6 +372,7 @@ def check():
         assert code == 1 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example"
         code, out = run(tree, "check", "--format", "sarif")
         assert code == 1 and [r["ruleId"] for r in json.loads(out)["runs"][0]["results"]] == ["BODY_CHANGED"], "check --format sarif"
+        valid_sarif(json.loads(out), "check --format sarif")
         lock = (tree / "trace.lock").read_bytes()
         code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-NOPE", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT")
         assert code == 1 and (tree / "trace.lock").read_bytes() == lock, "stamp exit 1 writes nothing"
