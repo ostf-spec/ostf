@@ -1,0 +1,81 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 3,
+  "stamps": [
+   "ostf stamp --help 2>&1; echo ----; ostf context 'src/salestax.ts#salesTax'; echo; ostf context 'src/salestax.test.ts#salesTax'",
+   "ostf stamp 'src/pricing.ts#price implements R-TAX-RATE'; echo \"exit $?\"; ostf check --base main; echo \"check exit $?\"",
+   "ostf stamp 'src/salestax.test.ts#salesTax%20>%20is%20zero%20for%20a%20tax-exempt%20customer verifies R-TAX-EXEMPT' 'src/salestax.test.ts#salesTax%20>%20rounds%20half%20up%20to%20the%20cent verifies R-TAX-RATE' 'src/salestax.ts#salesTax implements R-TAX-EXEMPT' 'src/salestax.ts#salesTax implements R-TAX-RATE'; echo \"exit $?\"; echo ----; ostf check --base main; echo \"check exit $?\"; echo ----; git status --short"
+  ],
+  "ostfOutputTokens": 7154,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 31565,
+  "cache_read_input_tokens": 388042,
+  "output_tokens": 11550,
+  "cost": 0.01597102
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "changedSymbols": 12,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "`tax` is now `salesTax` in `src/salestax.ts`, and the full suite passes (36 of 36). `ostf check --base main` exits 0 with 111 of 111 links valid.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private `roundHalfUp` helper, moved unchanged.\n- **`src/pricing.ts`**: imports `salesTax`. In `price`, the local variable is now `tax`, since `salesTax` is the function name. `Region` stays here because `checkout.ts` imports it from `pricing.ts`, and `salestax.ts` imports that type back.\n- **`src/salestax.test.ts`** (new): the two `tax` tests moved here as a `salesTax` describe block, including the `@req R-TAX-EXEMPT` comment.\n- **`src/pricing.test.ts`**: the tax tests and their import are removed.\n- **`trace/requirements.yaml`**: only the code and test links for R-TAX-RATE and R-TAX-EXEMPT changed to the new locations. No item text changed. No new item was needed, since this is a refactor.\n- **`README.md`**: the module table has a row for `src/salestax.ts`.\n\n**OSTF impact** (`ostf check --base main`)\n- Items: R-TAX-RATE and R-TAX-EXEMPT. Neither is marked risk-relevant, so I didn't need to ask first.\n- Changed: `pricing.ts#price`, `pricing.ts#tax` (removed), `pricing.ts#roundHalfUp` (removed), `salestax.ts#salesTax`, `salestax.ts#roundHalfUp`, and the moved tests.\n- Links added, all stamped after I reran the tests and checked that the item text still holds:\n  - `src/salestax.ts#salesTax implements R-TAX-RATE`\n  - `src/salestax.ts#salesTax implements R-TAX-EXEMPT`\n  - `src/salestax.test.ts#salesTax > rounds half up to the cent verifies R-TAX-RATE`\n  - `src/salestax.test.ts#salesTax > is zero for a tax-exempt customer verifies R-TAX-EXEMPT`\n- Link removed: the four old `src/pricing.ts#tax` and `src/pricing.test.ts#tax` links.\n- `price` was flagged as a suspect link because its body changed. I stamped it.\n- `trace.lock` changed only through `ostf stamp`. I didn't edit it by hand.\n\nThe `R-VOLUME-DISCOUNT` \"no link targets\" notice was already there before my changes, and I left it alone.\n\nNothing is committed. If you want a PR, I can open one with the attribution lines from the session instructions.",
+ "date": "2026-10-25"
+}

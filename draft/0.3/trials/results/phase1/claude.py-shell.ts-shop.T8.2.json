@@ -1,0 +1,68 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp --help 2>&1; ostf check --help 2>&1 | head -20; echo ---; cat package.json; ls; echo ---; ostf context src/refunds.ts#Refunder.refund 2>&1 | head -30",
+   "ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"exit=$?\"; echo ---; ostf check --base main 2>&1; echo \"exit=$?\"; echo ---; git status --short; git diff -- trace.lock | head -30"
+  ],
+  "ostfOutputTokens": 7018,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 28732,
+  "cache_read_input_tokens": 214010,
+  "output_tokens": 4552,
+  "cost": 0.010164099999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b160e47b0ae3f85d09f7e5b0d9b835b2a82ae3dc",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now passes: 40 items, 111 links, 111 valid, no errors.\n\n**What was wrong:** `trace.lock` line 111, the entry for `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`, had `source.sig:` with a colon where every other line uses `=`. That made the lock entry invalid, so check reported `LOCK_INVALID` and also flagged the link as unstamped.\n\n**What I did:**\n- Did not edit the code. `checkRefundLimit` is risk-relevant (\"ask before changing\"), and nothing needed changing.\n- Rechecked the link against R-REFUND-LIMIT. The function rejects non-positive amounts and amounts above what's left on the charge, and requires approval when a day's refunds would pass 500.00. That matches the item text.\n- Ran `npm test`: 36 pass, 0 fail, including the three `checkRefundLimit` tests and the two `Refunder` tests the item links to.\n- Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`. It rewrote the malformed line with `=`. I did not edit `trace.lock` by hand.\n\n**Current state:**\n- Only `trace.lock` changed, and only that one line. Nothing is committed.\n- **Impact list (against main):** empty. Check printed no direct impact items.\n- **Items and links added:** none. This change only repairs an existing link's lock entry.\n- **Remaining info (not an error):** R-VOLUME-DISCOUNT (SHOP-57) has no code, test, or verification link, so check reports it as unlinked. Fixing that means implementing or linking the volume discount, which is a feature change, so I left it alone.\n\nWant me to commit this on a branch and open a PR? If so, the PR will name the same empty impact list and the R-REFUND-LIMIT stamp.",
+ "date": "2026-10-25"
+}

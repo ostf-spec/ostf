@@ -1,0 +1,94 @@
+{
+ "run": "claude.intent.go-shop.T2.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING-FEE) by its ID?"
+  },
+  "reason": "q1: The diff adds `pricing/shipping.go`. Its `Shipping` function returns 0 when the subtotal is at least 10,000 cents and 599 otherwise. `Price` now works out shipping from the subtotal after the discount and adds it to `Total`. That matches the request. The diff also adds new tests: `TestShipping` checks the boundaries 9,999 and 10,000, `TestShippingAfterDiscount` checks a discount that drops the order below the free-shipping line, and `TestPlaceOrderShipping` tests the whole checkout. It updates the expected values in `TestPrice` and `TestPlaceOrder` to add 5.99 shipping, which is consistent. q2: The final answer names R-SHIPPING-FEE by its ID, in the Trace section and again under Decisions. The YAML change itself isn't in the diff shown, but the diff covers only code and tests, and q2 asks only whether the answer names the ID.",
+  "cost": 0.050420599999999996
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5232,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 61.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 31164,
+  "cache_read_input_tokens": 349012,
+  "output_tokens": 11514,
+  "cost": 0.015482119999999999
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout: orders with a post-discount subtotal of at least 100.00 ship free, and any other order pays 5.99. The total includes shipping. `go vet` is clean and `go test ./...` passes across all five packages. I haven't committed or opened a PR, since you didn't ask for that.\n\n**Trace**\n- **Added:** `R-SHIPPING-FEE` in `trace/requirements.yaml`, with `status: draft`. It refines `N-FAIR-PRICE`, links to `pricing/shipping.go#Shipping` and `pricing/quote.go#Price`, and to tests `pricing/shipping_test.go#TestShipping` and `cart/checkout_test.go#TestPlaceOrderShipping`.\n- **Not changed:** no existing item text was edited. `R-TAX-RATE` is still true because tax is still charged on the post-discount subtotal.\n- **Check:** I didn't parse the YAML, since PyYAML isn't installed here. The item follows the format of the existing items.\n\n**Code**\n- `pricing/shipping.go`: `Shipping(subtotal)` returns 0 at 10,000 cents or more, otherwise 599.\n- `pricing/quote.go`: `Price` applies the rule to the subtotal after the discount. `Quote` has a new `Shipping` field, and `Total` = subtotal − discount + tax + shipping.\n- `README.md`: the pricing row now mentions shipping.\n\n**Tests**\n- `TestShipping` and `TestShippingAfterDiscount` in `pricing/shipping_test.go` cover the boundaries and a discount that drops a 105.00 order under 100.00.\n- `TestPlaceOrderShipping` in `cart/checkout_test.go` checks that a 100.00 order ships free and is charged 114.98.\n- I updated two expected values for the new total: `TestPrice` (now 109.47) and `TestPlaceOrder` (now 28.99). Both are linked to items that don't control risks, so I changed them without asking.\n\n**Decisions for you**\n- **Shipping is not taxed.** You didn't say either way. The item states this, so changing it means editing `R-SHIPPING-FEE`.\n- **The charge cap now applies to shipping.** `R-CHARGE-AMOUNT` (controls `RISK-WRONG-CHARGE`) caps a charge at 10,000.00. An order whose pre-shipping total is between 9,994.01 and 10,000.00 now fails with `ErrAmount`. The item's rationale says no catalog order costs more than 10,000.00, and that may no longer hold. I didn't change the charge code or that item. Should I raise the cap, or leave the rejection in place?",
+ "date": "2026-10-25"
+}

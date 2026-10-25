@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.ts-shop.T2.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING-FEE) by its ID?"
+  },
+  "reason": "q1: The diff adds `shippingFee()` to `src/pricing.ts`. It returns 0 when the subtotal after discounts is at least 10,000 cents and 599 otherwise. `price()` works out shipping from that post-discount amount and adds it to `total`, and sales tax is still computed on the post-discount subtotal. That matches the request. The diff also adds new tests and updates the expected values in existing ones. Those tests cover the 100.00 / 99.99 boundary, a discount that pushes the subtotal below 100.00, free shipping above the threshold, and the checkout charge including shipping. The updated numbers check out: 9,000 + 1,348 + 599 = 10,947, and 2,000 + 300 + 599 = 2,899. q2: The final answer names the new item `R-SHIPPING-FEE` by its ID several times, in the Trace section and elsewhere.",
+  "cost": 0.0527766
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5038,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 89.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 40916,
+  "cache_read_input_tokens": 669061,
+  "output_tokens": 16251,
+  "cost": 0.023002709999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 16,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout: orders with a subtotal after discounts of at least 100.00 ship free, and all others pay a flat 5.99 that is added to the order total. The suite passes, 42 of 42 (36 existing plus 6 new). I did not commit.\n\n**Code changes**\n- `src/pricing.ts`: added `shippingFee()` with `FREE_SHIPPING_MIN` (10,000 cents) and `FLAT_SHIPPING` (599 cents). `Quote` has a new `shipping` field, and `total` now includes it.\n- Sales tax is still computed on the subtotal after discounts only, so shipping is not taxed. That follows R-TAX-RATE.\n- `src/checkout.ts` needed no change, because it already charges `quote.total`.\n- README: the pricing row mentions the shipping fee.\n\n**Existing tests I changed**\n- `pricing.test.ts`, \"taxes the subtotal after discounts\": a 90.00 post-discount subtotal now pays 5.99, so the expected total moved from 103.48 to 109.47. The tax value is unchanged.\n- `checkout.test.ts`, \"places an order\": a 20.00 order now totals 28.99 instead of 23.00.\n\n**New tests**\n- `shippingFee` at the boundary: free at 100.00, 5.99 at 99.99.\n- `price`: free shipping above the threshold, and a discount that drops the subtotal below 100.00 charges shipping.\n- `Checkout`: the charged amount includes shipping in both cases.\n\n**Trace**\n- New item `R-SHIPPING-FEE` in `trace/requirements.yaml`, with `status: draft`. It refines `N-FAIR-PRICE`. I chose that need because shipping is part of what the customer pays, and this is my judgment, so change it if you'd rather it refine `N-BUY`.\n- It links to `src/pricing.ts#shippingFee` and `src/pricing.ts#price`, and to five tests. Those tests are in `pricing.test.ts` and `checkout.test.ts`, and each is also tagged `@req R-SHIPPING-FEE`.\n- The new item controls no risks, and it refines no item that controls one. No risk-controlling code was touched, so no confirmation was needed.\n- I did not edit any existing item. `R-TAX-RATE` and `R-CHECKOUT-ORDER` still hold as written.\n\n**Worth a look**\n- `R-CHARGE-AMOUNT` says no catalog order costs more than 10,000.00. Shipping adds up to 5.99 to the total, so an order near that ceiling can now exceed it and be rejected by the charge guard. That guard is correct and I left it alone, but the rationale's claim about the catalog may need revisiting. I can't verify the catalog maximum from this repo.\n- `ostf` isn't installed here, so I couldn't run the trace validator. I checked that `trace/requirements.yaml` parses and that the new ID's links resolve to existing functions and tests.",
+ "date": "2026-10-25"
+}

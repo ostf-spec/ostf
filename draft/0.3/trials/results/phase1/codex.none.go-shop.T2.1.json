@@ -1,0 +1,79 @@
+{
+ "run": "codex.none.go-shop.T2.1",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. `Price` now subtracts the discount first. When the result is under 10_000 (100.00), it sets `q.Shipping = 599` (5.99); otherwise shipping is 0. The total now includes shipping, and `Quote` has a new `Shipping` field. The threshold is applied to the subtotal after discounts, as requested, and exactly 100.00 ships free. The tests cover this: there is a new table test for amounts below, at and above the threshold, and for a discount that pushes the order below the threshold or leaves it above. The existing `TestPrice` and `TestPlaceOrder` expectations were updated to include shipping. A new checkout test checks free shipping and that the amount charged includes it. The expected values match the code. For example, 9000 + 1348 + 599 = 10947, and 9000 + 599 = 9599.",
+  "cost": 0.0375968
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2831,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.4
+ },
+ "usage": {
+  "input_tokens": 263607,
+  "cached_input_tokens": 240768,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2746,
+  "reasoning_output_tokens": 289
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 6,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "Added shipping to checkout. Orders with a subtotal of at least 100.00 **after discounts** ship free; all others pay 5.99. The quote shows shipping separately and includes it in the total charged.\n\nAdded tests for the threshold, discounts crossing it, and both paid and free shipping at checkout. `go test ./...` passes.",
+ "date": "2026-10-25"
+}

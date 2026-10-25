@@ -1,0 +1,75 @@
+{
+ "run": "claude.intent.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5906,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 41.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 27216,
+  "cache_read_input_tokens": 224401,
+  "output_tokens": 8344,
+  "cost": 0.011860810000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "`tax` is now `salesTax` in its own file, `src/salestax.ts`, and all 36 tests pass, the same count as before the change. I haven't committed or opened a PR, since you didn't ask for one.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private helper `roundHalfUp`, which only `tax` used. It imports `Region` as a type from `pricing.ts`, which is erased at runtime, so there's no runtime cycle.\n- **`src/pricing.ts`**: removed the old function and helper, imports `salesTax`, and `price()` calls it. The `Quote` field is still named `tax`, so the public output is unchanged.\n- **`src/pricing.test.ts`**: imports `salesTax` from `./salestax.ts`, and the describe block is renamed to `salesTax`. Test bodies are unchanged.\n- **`trace/requirements.yaml`**: updated the `code` and `tests` links on R-TAX-RATE and R-TAX-EXEMPT to the new names. Item text is untouched.\n- **`README.md`**: added a module row for `src/salestax.ts`.\n\n**OSTF checks**\n- Linked items: R-TAX-RATE and R-TAX-EXEMPT. Both refine N-FAIR-PRICE, which controls no risk, and neither item has `controls:`, so I didn't need to ask first.\n- Tests that verify them, all passing: `src/pricing.test.ts#salesTax > rounds half up to the cent`, `src/pricing.test.ts#price > taxes the subtotal after discounts`, and the tax-exempt test (`salesTax > is zero for a tax-exempt customer`, tagged `@req R-TAX-EXEMPT`).\n- No new items or links were added, because the change adds no behavior.\n- I couldn't parse the YAML with a parser because PyYAML isn't installed here. The two edits were single-line replacements in the same format as the lines around them.",
+ "date": "2026-10-25"
+}

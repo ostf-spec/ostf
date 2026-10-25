@@ -1,0 +1,79 @@
+{
+ "run": "claude.py-shell.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "stamps": [
+   "go test ./pricing/ -run 'TestTax|TestPrice' -v -count=1 2>&1 | tail -20; echo ---; ostf stamp --help 2>&1 | head -30",
+   "ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE' 'pricing/salestax.go#SalesTax implements R-TAX-EXEMPT' 'pricing/salestax.go#SalesTax implements R-TAX-RATE' 'pricing/tax_test.go#TestTax verifies R-TAX-RATE' 'pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT'; echo \"exit=$?\"; echo ---; ostf check --base main; echo \"exit=$?\"; echo ---; git status --short"
+  ],
+  "ostfOutputTokens": 4492,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 72.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 23851,
+  "cache_read_input_tokens": 308014,
+  "output_tokens": 8436,
+  "cost": 0.012070740000000003
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "The rename is done. `Tax` is now `SalesTax` in its own file, `pricing/salestax.go`, and everything builds and passes.\n\n**Changes**\n- `pricing/salestax.go` (new): `SalesTax`, with the same body and doc comment as before.\n- `pricing/tax.go`: keeps only the `Region` type.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls `SalesTax`. I kept the test function names (`TestTax`, `TestTaxExempt`) so their existing trace links still resolve. Renaming them is a separate change if you want it.\n- `trace/requirements.yaml`: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point at `pricing/salestax.go#SalesTax`. I changed only the link paths, not the item text.\n\n**Verification**\n- `gofmt` is clean, `go vet` passes, and `go test ./...` passes in every package.\n- `ostf context` was run on `Tax`, `TestTax`, `TestTaxExempt`, and `Price` before editing. None of them is risk-relevant. The risk controls sit on `ValidateAmount`/`Processor.Charge` and `CheckRefundLimit`/`Refunder.Refund`.\n- `ostf check --base main` first reported five suspect or unstamped links, all on R-TAX-RATE and R-TAX-EXEMPT. I checked both items against the code, ran `TestTax`, `TestTaxExempt`, and `TestPrice` (all pass), and stamped the five links. The final check reports 109 of 109 links valid, with no errors.\n\n**Trace impact for the summary**\n- Items: R-TAX-RATE and R-TAX-EXEMPT (both refine N-FAIR-PRICE).\n- Changed: `pricing/quote.go#Price`, `pricing/salestax.go#SalesTax`, `pricing/tax_test.go#TestTax`, `pricing/tax_test.go#TestTaxExempt`. The old `pricing/tax.go#Tax` is no longer present.\n- Tests in the impact list: `pricing/tax_test.go#TestPrice`, `pricing/tax_test.go#TestTax`, `pricing/tax_test.go#TestTaxExempt`.\n- Links added: `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT` and `pricing/salestax.go#SalesTax implements R-TAX-RATE`.\n- Links removed: `pricing/tax.go#Tax implements R-TAX-EXEMPT` and `pricing/tax.go#Tax implements R-TAX-RATE`.\n- `trace.lock` changed because `ostf stamp` wrote the five new stamps. I did not edit it by hand.\n\n**Left as is**\n- `ostf check` also prints an info note that R-VOLUME-DISCOUNT has no links. That was there before this change and is unrelated.\n- Nothing is committed. The working tree has the changes above, and I can commit them on a branch if you want.",
+ "date": "2026-10-25"
+}

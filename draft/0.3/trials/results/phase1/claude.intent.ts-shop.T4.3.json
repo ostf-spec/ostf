@@ -1,0 +1,75 @@
+{
+ "run": "claude.intent.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5512,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 29160,
+  "cache_read_input_tokens": 211760,
+  "output_tokens": 8256,
+  "cost": 0.012079200000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` to `src/salestax.ts` and renamed it `salesTax`. All 36 tests pass, the same count as before the change.\n\n**Changes**\n- **`src/salestax.ts`** (new): `salesTax` plus its private `roundHalfUp` helper, which only `tax` used.\n- **`src/pricing.ts`**: imports `salesTax`. `price` now uses `taxAmount` as its local name, because a local `salesTax` would shadow the import and throw at runtime.\n- **`src/pricing.test.ts`**: imports `salesTax` from the new file and renames its `describe` block to `salesTax`. The tests stay in this file.\n- **`README.md`**: adds a row for `src/salestax.ts`.\n\n**Trace (`trace/requirements.yaml`)**\n- The items linked to `tax` are R-TAX-RATE and R-TAX-EXEMPT. Both refine N-FAIR-PRICE, and neither controls a risk or refines an item that does. That is why I went ahead without asking.\n- I updated only the link strings: `src/pricing.ts#tax` became `src/salestax.ts#salesTax`, and the test IDs changed from `tax >` to `salesTax >`. The item text is unchanged, and the rename does not make either item false.\n- No new items were added. This is a refactor with no new behavior.\n\n**Note:** `salestax.ts` imports the `Region` type from `pricing.ts`, and `pricing.ts` imports `salesTax` from `salestax.ts`. The cycle is type-only, so it is erased at runtime and harmless. Moving `Region` into `salestax.ts` would remove it if you prefer.\n\nNothing is committed and no PR is open. The changes are in the working tree.",
+ "date": "2026-10-25"
+}

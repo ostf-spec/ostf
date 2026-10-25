@@ -1,0 +1,70 @@
+{
+ "run": "claude.none.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3557,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 23526,
+  "cache_read_input_tokens": 206061,
+  "output_tokens": 6257,
+  "cost": 0.00989591
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "cad636e53d0ea75cc28f61028453885de3806217",
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` out of `src/pricing.ts` and renamed it to `salesTax` in the new `src/salestax.ts`. All 36 tests pass, the same count as before.\n\n- **`src/salestax.ts`** (new): holds `salesTax` and its private `roundHalfUp` helper.\n- **`src/pricing.ts`**: imports `salesTax`. `price` now uses a local `taxed` instead of `salesTax`, because a local with that name would shadow the import and throw at runtime.\n- **`src/salestax.test.ts`** (new): the two tax tests moved here from `src/pricing.test.ts`, and they now call `salesTax`.\n- **`REQUIREMENTS.md`**: the Code and Tests references for R-TAX-RATE and R-TAX-EXEMPT now point at `salesTax` in the new files, so requirement traceability still holds.\n- **`README.md`**: the module table has a row for `src/salestax.ts`.\n\n`Region` stays in `pricing.ts`, and `salestax.ts` imports it as a type. That makes the two files import each other, but only for types, which are erased at runtime. `checkout.ts` only uses `price`, so it did not need changes.\n\nI did not commit anything.",
+ "date": "2026-10-25"
+}

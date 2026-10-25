@@ -1,0 +1,95 @@
+{
+ "run": "claude.py-shell.ts-shop.T2.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: In the diff, `shippingFee()` returns 0 when the subtotal after discounts is at least 10,000 cents (100.00) and 599 (5.99) otherwise. `price()` works out shipping from the post-discount amount and adds it to `total`, which `placeOrder` charges. The tests cover this. A checkout test checks that a 100.00 order ships free and is charged 11,498. New pricing tests check the free and flat rates at their edges and show the threshold is applied after the discount. The existing expected totals were updated for the change. The test numbers are consistent with each other: 9,975 + 1,494 tax + 599 = 12,068, and 10,000 + 1,498 = 11,498. q2: The final answer names the new item `R-SHIPPING` by its ID in several places, including the trace bookkeeping section.",
+  "cost": 0.051120599999999995
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 8,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "PATH=/tmp/ostf-trials/runs/claude.py-shell.ts-shop.T2.2/bin:$PATH ostf stamp --help 2>&1 | head -30",
+   "export PATH=/tmp/ostf-trials/runs/claude.py-shell.ts-shop.T2.2/bin:$PATH && ostf stamp 'R-SHIPPING refines N-FAIR-PRICE' 'src/checkout.test.ts#Checkout%20>%20places%20an%20order verifies R-CHECKOUT-ORDER' 'src/checkout.test.ts#Checkout%20>%20ships%20free%20at%20one%20hundred%20dollars%20and%20charges%20it%20in%20the%20total verifies R-SHIPPING' 'src/pricing.test.ts#price%20>%20taxes%20the%20subtotal%20after%20discounts verifies R-TAX-RATE' 'src/pricing.test.ts#shipping%20>%20is%20a%20flat%205.99"
+  ],
+  "ostfOutputTokens": 14338,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 112.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 70327,
+  "cache_read_input_tokens": 798175,
+  "output_tokens": 21862,
+  "cost": 0.03298115
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "changedSymbols": 14,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "Shipping is now part of checkout. Orders with a post-discount subtotal of at least 100.00 ship free, and all others pay 5.99. The 5.99 is included in the order total that gets charged. All 40 tests pass, and `ostf check --base main` is clean (41 items, 118 links, all valid).\n\n**What changed**\n- `src/pricing.ts`: `price()` now returns a `shipping` field, and the total is discounted subtotal + tax + shipping. The new `shippingFee()` returns 0 at or above 10,000 cents and 599 below it. `placeOrder` needed no code change because it already charges `quote.total`.\n- `src/checkout.test.ts`: the \"places an order\" total goes from 2,300 to 2,899 (2,000 + 300 tax + 599 shipping). A new test checks that a 100.00 subtotal ships free and is charged at 11,498.\n- `src/pricing.test.ts`: the existing quote expectation changes from 10,348 to 10,947, because a 10,000 subtotal less a 10% code is 9,000, which is under 100.00. New tests cover the free and flat rates, and show that the threshold is judged after the discount (10,500 less 5% ships at 5.99; 10,526 less 5% ships free).\n- `trace/requirements.yaml`: new draft item `R-SHIPPING`, refining `N-FAIR-PRICE`, linked to `shippingFee`, `price`, and four tests.\n- `README.md`: the `pricing.ts` row mentions shipping.\n\n**Choices I made that you may want to change**\n- Shipping is not taxed. Sales tax still applies only to the post-discount subtotal, as `R-TAX-RATE` says. The `R-SHIPPING` text states this.\n- The threshold uses the subtotal after the discount code. `R-VOLUME-DISCOUNT` is in `trace.yaml` but has no code yet, so it doesn't affect the threshold today. When it is built, it will need to count toward the threshold too.\n\n**Trace bookkeeping**\n- Added: item `R-SHIPPING` (status: draft) and its links.\n- Changed items: `R-CHECKOUT-ORDER` and `R-TAX-RATE`. I re-read both against the code, and their text still holds. Their tests changed only in expected values, so I stamped those links.\n- I stamped 9 links with `ostf stamp`. `trace.lock` changed only through that tool; I did not edit it by hand.\n- I did not touch risk-linked code (`validateAmount`, `Processor.charge`, refunds, login), so no approval was needed.\n\nNothing is committed, and no pull request was opened. Say if you want a commit or PR, and I'll name `R-SHIPPING` and the tests above in it.",
+ "date": "2026-10-25"
+}

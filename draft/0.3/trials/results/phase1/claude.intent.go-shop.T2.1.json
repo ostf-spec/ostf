@@ -1,0 +1,94 @@
+{
+ "run": "claude.intent.go-shop.T2.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING-FLAT) by its ID?"
+  },
+  "reason": "q1: Yes. The diff adds `pricing.Shipping`, which charges 0 when the subtotal after discounts is at least 10_000 (100.00) and 599 (5.99) otherwise. `Price` calls it on the after-discount amount and adds the result into `Total`. New tests cover both sides of the threshold: `TestShipping` checks 9_999, 10_000 and others. `TestShippingInQuote` builds a discounted order that lands just under the threshold and one that lands exactly on it. `TestPlaceOrderShipping` checks checkout end to end. The existing expected totals were updated and the numbers add up: 20.00 + 3.00 + 5.99 = 28.99, and 90.00 + 13.48 + 5.99 = 109.47. The tax figures fit a rate of about 14.975%. q2: Yes. The final answer names the new item `R-SHIPPING-FLAT` by its ID.",
+  "cost": 0.059768600000000005
+ },
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5401,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 73.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 37677,
+  "cache_read_input_tokens": 442651,
+  "output_tokens": 16264,
+  "cost": 0.02009651
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout and the order total. Every order with a subtotal after discounts below 100.00 pays 5.99, and orders at or above 100.00 ship free. `go test ./...`, `go vet`, and `gofmt` are all clean.\n\n**Choices I made, for you to check:**\n- **\"Subtotal after discounts\"** is the amount after the discount code and before tax. Tax still applies only to that amount, as `R-TAX-RATE` already says, so shipping is not taxed. If your jurisdiction taxes shipping, that is a separate change.\n- **Shipping lives on the quote.** `pricing.Quote` has a new `Shipping` field, `pricing.Price` adds it into `Total`, and `Price`'s signature is unchanged.\n- **Shipping is not per region.** The 5.99 and the 100.00 threshold are constants in `pricing/shipping.go`.\n\n**Expected test changes:** the existing totals assumed no shipping, so I updated them. `TestPrice` goes from 103.48 to 109.47. `TestPlaceOrder` goes from 23.00 to 28.99. Those are the new rule, not regressions.\n\n**OSTF trace:**\n- **New item `R-SHIPPING-FLAT`** in `trace/requirements.yaml`, with `status: draft` and `refines: [N-FAIR-PRICE]`. It is linked to:\n  - code: `pricing/shipping.go#Shipping`, `pricing/quote.go#Price`\n  - tests: `pricing/shipping_test.go#TestShipping`, `pricing/shipping_test.go#TestShippingInQuote`, `cart/checkout_test.go#TestPlaceOrderShipping`\n- **Existing items:** none made false. `R-TAX-RATE` still holds, since tax is still on the after-discount subtotal. I did not rewrite any existing item text.\n- **Asking first:** not needed. The code I changed is linked only to items that refine a need and control no risk. I did not touch `payments/charge.go` or `R-CHARGE-AMOUNT`.\n- **Not run:** no OSTF CLI is installed here, and I didn't parse the YAML with a parser. I checked the new block by reading it.\n- **Not committed:** the changes are in the working tree. I haven't opened a PR, so there is no PR to name items in.\n\n**One thing to decide:** the new total can cross the 10,000.00 charge cap that `R-CHARGE-AMOUNT` enforces. An order at about 9,990.00 with tax and shipping now exceeds 10,000.00 and is rejected with `ErrAmount`, where it previously passed. I did not change the cap or the charge code. Should shipping count toward the cap, or should the cap move?\n\nFiles changed: `trace/requirements.yaml`, `pricing/shipping.go` (new), `pricing/shipping_test.go` (new), `pricing/quote.go`, `pricing/tax_test.go`, `cart/checkout_test.go`, `README.md`.",
+ "date": "2026-10-25"
+}

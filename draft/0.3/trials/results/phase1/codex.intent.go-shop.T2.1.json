@@ -1,0 +1,90 @@
+{
+ "run": "codex.intent.go-shop.T2.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: The diff adds a Shipping field to Quote. In Price it computes the subtotal after discounts and sets shipping to 599 only when that amount is below 10_000, so an order of exactly 100.00 or more ships free. It adds shipping into Total, and since checkout charges the quote total, the receipt amount includes it. On tests, the diff updates TestPrice and TestPlaceOrder. It also adds TestPriceShippingThreshold, which covers four cases: just below the threshold, exactly at it, a discount that drops the order below it, and a discount that lands exactly on it. I checked the expected totals by hand against the Quebec tax rate and they are consistent. q2: The final answer names the requirement it added: \"Added draft requirement `R-SHIPPING`\".",
+  "cost": 0.0361286
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5200,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 60.1
+ },
+ "usage": {
+  "input_tokens": 341091,
+  "cached_input_tokens": 315008,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3240,
+  "reasoning_output_tokens": 645
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "Added shipping to checkout. The quote now shows a shipping amount and includes it in the total charged: **free at a subtotal of 100.00 or more after discounts; 5.99 otherwise**.\n\nAdded draft requirement `R-SHIPPING`, linked to `pricing.Price`, `TestPrice`, `TestPriceShippingThreshold`, and `TestPlaceOrder`. The changed pricing test also verifies the existing `R-TAX-RATE` calculation, and checkout remains linked to `R-CHECKOUT-ORDER`.\n\n`go test ./...` passes.",
+ "date": "2026-10-25"
+}

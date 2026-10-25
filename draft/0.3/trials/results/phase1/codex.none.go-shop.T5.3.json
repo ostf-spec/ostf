@@ -1,0 +1,87 @@
+{
+ "run": "codex.none.go-shop.T5.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what R-VOLUME-DISCOUNT asks. `VolumeDiscount` gives 5% off any line with 10 or more units, and integer division rounds it down to the cent. Checkout adds up the discount line by line, so each line is rounded on its own. `PriceWithVolume` takes the volume discount off before the discount code, applying the code to subtotal minus the volume discount. It then caps the combined discount at 50% of the subtotal and works out tax on what is left. The new tests cover all of this: the per-line function, including the 9-unit threshold and rounding down; pricing with the volume discount alone, followed by a code, and hitting the combined cap; and checkout, including rounding per line across two lines. The test figures check out, for example 20% of 9,500 plus 500 gives 2,400.",
+  "cost": 0.0447688
+ },
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3020,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 71.4
+ },
+ "usage": {
+  "input_tokens": 311585,
+  "cached_input_tokens": 285312,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 4466,
+  "reasoning_output_tokens": 1148
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Checkout now applies a 5% discount to each line with at least 10 units, rounds each line’s discount down to the cent, then applies any discount code. The combined discount is capped at 50% of the original subtotal.\n\nI added pricing and checkout tests, updated [REQUIREMENTS.md](/private/tmp/ostf-trials/runs/codex.none.go-shop.T5.3/repo/REQUIREMENTS.md), and verified the change with `go test ./...`.",
+ "date": "2026-10-25",
+ "corrected": {
+  "itemUnchanged": false
+ }
+}

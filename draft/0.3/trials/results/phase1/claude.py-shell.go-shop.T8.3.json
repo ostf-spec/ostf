@@ -1,0 +1,68 @@
+{
+ "run": "claude.py-shell.go-shop.T8.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 8,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp --help 2>&1 | head -20; ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT source.sig:go2:MrtAFh3A9IjyEoKBrDVpF3fIChTeeb6hmeiFQTHTSF4 source.body=go2:DOz9MI1oKlxkx5N-94gIiLJ53SpUm_LebDbTOCCc5k8 target=f1:2h9ffq1213Qd4_p-44ASPKWgXYnfcIhyMPWy72G7_jI'; echo \"exit=$?\"",
+   "ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'; echo \"exit=$?\"; echo ---; ostf check --base main; echo \"exit=$?\"; git diff -- trace.lock"
+  ],
+  "ostfOutputTokens": 4267,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 31.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 21263,
+  "cache_read_input_tokens": 209317,
+  "output_tokens": 4466,
+  "cost": 0.00858057
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "c01ad6d18d8d401294f9fbc5dd4610553de80d1b",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now exits 0. The failure is fixed, and the only change is one restored line in `trace.lock`, made by `ostf stamp`.\n\n**What was wrong:** The last commit (`279d8b4`, \"refund-tweaks\") changed the lock line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` from `source.sig=` to `source.sig:`. The hashes were unchanged, so the code had not drifted. The malformed separator made the lock invalid and left the link unstamped.\n\n**What I did:**\n- Read `ostf context` for the link. `R-REFUND-LIMIT` is marked risk-relevant, so I did not change any code or the item text.\n- Rechecked the item against the code. `CheckRefundLimit` rejects non-positive amounts and amounts above what is left on the charge, and it requires approval when the daily total would exceed `DailyRefundLimit`. That constant is 50,000 cents, which is 500.00, so the code matches the item.\n- Ran the payments tests. `TestCheckRefundLimit`, `TestRefundDailyLimit`, and `TestRefund` pass, and so does the full `./payments` package.\n- Ran `ostf stamp` with the link exactly as check prints it. That rewrote the lock line with `=`, which is how the other lock entries are written. I did not edit `trace.lock` by hand.\n\n**Final check result:** 40 items, 109 links, 109 valid, no errors. The impact list against `main` is empty.\n\n**Items and links:** No items or links were added, and no item text was changed. The stamp is the only change, and it is an attestation that I rechecked `R-REFUND-LIMIT` and its tests. The one remaining note is informational, not an error: `R-VOLUME-DISCOUNT` has no link targeting it.\n\nNothing is committed. The working tree has the `trace.lock` change only. If you want it in the PR, the PR description should name `R-REFUND-LIMIT` and the stamped link, and state that the impact list is empty.",
+ "date": "2026-10-25"
+}

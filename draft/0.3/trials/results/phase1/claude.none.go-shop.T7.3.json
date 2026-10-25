@@ -1,0 +1,112 @@
+{
+ "run": "claude.none.go-shop.T7.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": false,
+   "item:R-DISCOUNT-PERCENT": false,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer links the changed clamp in ApplyDiscount to the 50% discount cap: it says \"the cap still limits any discount to 50%\", and it names R-DISCOUNT-CAP next to the caps_at_fifty_percent subtest. So q1 is true. R-DISCOUNT-EXPIRY comes up only as the ID of a subtest that passed. The answer never ties expiry to the changed code, so q2 is false. The percentage-discount requirement (R-DISCOUNT-PERCENT) is never named, either by ID or by its content. The answer only says rounding is unchanged, so q3 is false. TestApplyDiscount and its subtests caps_at_fifty_percent and rejects_expired are each named as tests that were run for the change, so q4, q5 and q6 are true.",
+  "cost": 0.0278638
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3073,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 16710,
+  "cache_read_input_tokens": 107333,
+  "output_tokens": 1990,
+  "cost": 0.005411330000000001
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The change replaces the `min` builtin with an explicit `if` in `ApplyDiscount` (`pricing/discount.go:31-33`). For integers, `min(d.Percent, MaxDiscountPercent)` and the `if` clamp to the same value, so the cap still limits any discount to 50% and the rounding is unchanged. The only difference is style: the `if` form is more verbose, and the `min` builtin would have been the idiomatic choice for this Go 1.27 module.\n\n**Tests run:** `go vet ./...` is clean, and `go test -count=1 ./...` passes for all five packages (accounts, cart, inventory, payments, pricing). In `pricing`, `TestApplyDiscount` passes all four subtests, including `caps_at_fifty_percent` (R-DISCOUNT-CAP) and `rejects_expired` (R-DISCOUNT-EXPIRY). The cart package has no tests matching the `Price|Checkout` filter, so I didn't check checkout separately. The whole suite covers it.\n\n**Worth knowing, unrelated to this diff:** R-VOLUME-DISCOUNT (SHOP-57: 5% off lines of 10+ units) has no implementation in the repo. A grep for volume-discount logic found nothing. The diff doesn't touch it, so it's not a regression, but it's an open requirement.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": false,
+    "item:R-DISCOUNT-PERCENT": false,
+    "test:TestApplyDiscount": true,
+    "test:caps_at_fifty_percent": true,
+    "test:rejects_expired": true
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+    "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The answer treats the changed clamp as the cap logic. It says the cap still limits discounts to 50% and ties caps_at_fifty_percent to R-DISCOUNT-CAP, so it names the cap requirement as the one the change touches (q1). R-DISCOUNT-EXPIRY comes up only as the label on a subtest that passed. The answer never says the change affects expiry behavior (q2 false). The percentage-discount requirement is never named. The passing remark that rounding is unchanged doesn't clearly point to it (q3 false). The answer names TestApplyDiscount as the relevant test it ran, and it names caps_at_fifty_percent and rejects_expired as subtests it ran and checked for this change (q4–q6 true).",
+   "cost": 0.027263799999999998
+  },
+  "namesItems": false,
+  "namesTests": true
+ }
+}

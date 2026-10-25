@@ -1,0 +1,71 @@
+{
+ "run": "claude.none.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3978,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 35.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 24544,
+  "cache_read_input_tokens": 182014,
+  "output_tokens": 6497,
+  "cost": 0.00997884
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 14,
+ "tree": "cad636e53d0ea75cc28f61028453885de3806217",
+ "firstMessage": null,
+ "finalMessage": "`tax` is now `salesTax`, and it lives in the new `src/salestax.ts`. All 36 tests pass, the same count as before the change.\n\nWhat moved:\n- **`src/salestax.ts`** (new): `salesTax`, its private `roundHalfUp` helper, and the `Region` type. `Region` moved too, since it is the tax rate's type and `salesTax` takes it.\n- **`src/pricing.ts`**: imports `salesTax` and `Region` from the new file. `price` uses it, and the local variable that used to shadow the name is now just `tax`.\n- **`src/checkout.ts`**: takes `Region` from `./salestax.ts`. This was the one outside caller of the type.\n- **`src/salestax.test.ts`** (new): the two `tax` tests moved here as a `salesTax` block, with the `@req R-TAX-EXEMPT` tag.\n- **`src/pricing.test.ts`**: the `tax` block is gone and its imports are updated. The `price` test stays here.\n\nBeyond the code, I also updated the references that pointed at the old location:\n- **`REQUIREMENTS.md`**: `R-TAX-RATE` and `R-TAX-EXEMPT` now point at `salesTax` in `src/salestax.ts` and its tests in `src/salestax.test.ts`.\n- **`README.md`**: added a module-table row for `src/salestax.ts`, and reworded the `src/pricing.ts` row so it no longer claims tax.\n\nI did not change the behaviour of anything, and I did not add an `@req` tag to `salesTax` itself. `R-TAX-RATE` has no tag in the code today, and adding one would be a separate change.",
+ "date": "2026-10-25"
+}

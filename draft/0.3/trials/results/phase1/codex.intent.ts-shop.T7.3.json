@@ -1,0 +1,116 @@
+{
+ "run": "codex.intent.ts-shop.T7.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {
+  "namesItems": true
+ },
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": false,
+   "test:caps at fifty percent": false,
+   "test:rejects an expired code": false
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer says the change touches R-DISCOUNT-PERCENT and R-DISCOUNT-CAP. It also says the changed function carries the R-DISCOUNT-EXPIRY annotation, which ties that requirement to the changed code, so q1, q2 and q3 are all true. For tests, the answer only names two test files (pricing.test.ts and checkout.test.ts) and a pass count. It never names a single test such as `applyDiscount`, `caps at fifty percent` or `rejects an expired code`, so q4, q5 and q6 are false.",
+  "cost": 0.0208478
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 14,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2983,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 44.0
+ },
+ "usage": {
+  "input_tokens": 160021,
+  "cached_input_tokens": 140032,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1767,
+  "reasoning_output_tokens": 503
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "The uncommitted change in [src/pricing.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T7.3/repo/src/pricing.ts:41) replaces `Math.min` with an explicit branch. For numeric discount percentages, it preserves the 50% cap and produces the same discount, tax, and checkout totals. No tests or requirement links changed.\n\nIt touches **R-DISCOUNT-PERCENT** and **R-DISCOUNT-CAP**; the function also carries the **R-DISCOUNT-EXPIRY** annotation. I ran [pricing.test.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T7.3/repo/src/pricing.test.ts) and [checkout.test.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T7.3/repo/src/checkout.test.ts): **10 tests passed, 0 failed**.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": false,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:applyDiscount": false,
+    "test:caps at fifty percent": false,
+    "test:rejects an expired code": false
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The answer says the change \"touches R-DISCOUNT-PERCENT and R-DISCOUNT-CAP\", so q1 and q3 are true. It brings up R-DISCOUNT-EXPIRY only to say the function \"also carries\" that annotation. That sets it apart from the requirements the change touches, so it isn't named as affected (q2 false). For tests, the answer only names the files pricing.test.ts and checkout.test.ts and gives a pass count. It never names the tests `applyDiscount`, `caps at fifty percent` or `rejects an expired code`, so q4–q6 are false.",
+   "cost": 0.022247799999999998
+  },
+  "namesItems": false,
+  "namesTests": false
+ }
+}

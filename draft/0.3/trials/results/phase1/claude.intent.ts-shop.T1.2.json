@@ -1,0 +1,111 @@
+{
+ "run": "claude.intent.ts-shop.T1.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "Under \"Why it exists\", the answer gives three requirements by ID as reasons the method exists: R-REFUND-LIMIT, R-REFUND-ORIGINAL and R-AUDIT-MONEY. For R-AUDIT-MONEY it uses the title \"every refund is audited\". Under \"Tests that cover it\", it names three tests: \"refunds to the original transaction\", \"totals refunds per account and UTC day\", and the checkRefundLimit tests. It describes the checkRefundLimit tests as covering the pure limit function that refund calls, and q5 counts that.",
+  "cost": 0.0248158
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4839,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 19.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 18747,
+  "cache_read_input_tokens": 79442,
+  "output_tokens": 3267,
+  "cost": 0.0061781200000000005
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "The `refund` method exists to enforce the refund rules in the trace and to keep the money records straight. Nothing was changed.\n\n**What it does** (`src/refunds.ts:68-89`)\n1. Looks up the receipt and throws `UnknownReceiptError` if it doesn't exist.\n2. Calls `checkRefundLimit`, which rejects a refund that is not positive or is more than what's left on the charge, and one that takes the account's refunds for the UTC day above 500.00 without a second approver.\n3. Records the refund in two running totals (per charge and per account per day) before awaiting the gateway, so a concurrent refund sees it.\n4. Sends the refund to the original gateway transaction. If the gateway fails, it reverses both totals and rethrows.\n5. Appends an audit entry with the account, action, amount and receipt.\n\n**Why it exists, per `trace.yaml` and `trace/*.yaml`**\n- `R-REFUND-LIMIT` (refund limit) refines `N-REFUNDS` and controls `RISK-REFUND-ABUSE`. It lists `Refunder.refund` in its code. The daily totals come from design item `D-REFUND-LEDGER`, which is linked to `Refunder`.\n- `R-REFUND-ORIGINAL` (refund to the original payment) refines `N-REFUNDS`. The method's `@req` comment points here.\n- `R-AUDIT-MONEY` (every refund is audited) refines `N-ACCOUNT-SAFE`. It also lists `Refunder.refund` in its code.\n- `V-REFUND-REVIEW` requires a second engineer to review every change to refund code against `R-REFUND-LIMIT`.\n\nBecause `R-REFUND-LIMIT` controls a risk, AGENTS.md says to ask you before changing the method.\n\n**Tests that cover it** (`src/refunds.test.ts`)\n- `Refunder > refunds to the original transaction`: checks the gateway receives the refund on the original transaction, that the audit entry has action `refund`, and that over-refunding throws `RefundTooLargeError`. It is tagged `@req R-AUDIT-MONEY`, but the trace lists it as the test for `R-REFUND-ORIGINAL`.\n- `Refunder > totals refunds per account and UTC day`: checks that a second charge on the same account and day is blocked with `NeedsApprovalError` until it is approved. This is the test the trace links to `R-REFUND-LIMIT`.\n- `checkRefundLimit` tests (lines 32–45) cover the pure limit function that `refund` calls. The trace links them to `R-REFUND-LIMIT`.\n\n**Gaps I noticed**\n- I found no test by name for the gateway-failure rollback, the unknown-receipt error, or the audit entry for the no-approval path. I read test names, not test bodies, so a rollback check could be inside another test. I did not verify this.\n- The `@req` tag and the trace disagree on which requirement the \"original transaction\" test verifies.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-REFUND-LIMIT": true,
+    "item:R-AUDIT-MONEY": true,
+    "item:R-REFUND-ORIGINAL": true,
+    "test:totals refunds per account and UTC day": true,
+    "test:checkRefundLimit": true,
+    "test:refunds to the original transaction": true
+   },
+   "questions": {
+    "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` as one that covers the function?",
+    "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` as one that covers the function?",
+    "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` as one that covers the function?"
+   },
+   "reason": "The answer gives R-REFUND-LIMIT, R-REFUND-ORIGINAL and R-AUDIT-MONEY by ID, each under \"Why it exists\" and each with its title or content. Under \"Tests that cover it\" it lists \"refunds to the original transaction\", \"totals refunds per account and UTC day\" and the checkRefundLimit tests. It says the checkRefundLimit tests cover the pure limit function that refund calls, so it still offers them as coverage for the method. That makes all six true.",
+   "cost": 0.025323799999999997
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

@@ -1,0 +1,69 @@
+{
+ "run": "claude.none.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2991,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 18284,
+  "cache_read_input_tokens": 134823,
+  "output_tokens": 3854,
+  "cost": 0.00693323
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`, and the full test suite passes (all five packages, run with `-count=1`). `go vet` and `gofmt` are clean.\n\nChanges:\n- **`pricing/salestax.go`** (new): holds `SalesTax`, with the same body and doc comment.\n- **`pricing/tax.go`**: now only holds the `Region` type. I left it there because you asked to move the function, not the type.\n- **`pricing/quote.go`**: the `Price` call site now uses `SalesTax`.\n- **`pricing/tax_test.go`**: the call sites and the error message use `SalesTax`. I kept the test function names (`TestTax`, `TestTaxExempt`) unchanged so the test references in the requirements still match.\n- **`REQUIREMENTS.md`**: the R-TAX-RATE and R-TAX-EXEMPT code references now point to `SalesTax` in `pricing/salestax.go`. I updated these so the traceability entries don't go stale. This is a change beyond the literal request.\n\nI haven't committed anything.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,108 @@
+{
+ "run": "claude.none.go-shop.T1.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:TestCheckRefundLimit": true,
+   "test:TestRefundDailyLimit": true,
+   "test:TestRefund": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "test:TestCheckRefundLimit": "Does the final answer name the test `TestCheckRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefundDailyLimit": "Does the final answer name the test `TestRefundDailyLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefund": "Does the final answer name the test `TestRefund` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer names all three requirements as reasons the function exists. It gives R-REFUND-LIMIT as the per-charge cap and daily approval rule, and R-REFUND-ORIGINAL as the rule that money goes back to the original payment method. It also says R-AUDIT-MONEY lists Refunder.Refund because every refund must be audited. That last one sits a little apart from the two \"code behind\" requirements, but it is still clearly given as a reason. Under tests, the answer names TestCheckRefundLimit, TestRefund and TestRefundDailyLimit, and describes what each one covers.",
+  "cost": 0.026331799999999995
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4851,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17783,
+  "cache_read_input_tokens": 77588,
+  "output_tokens": 2132,
+  "cost": 0.00539928
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the operation that sends money back to a customer for an earlier charge. It does four things, in order:\n\n1. Looks up the charge by `ReceiptID` and returns `ErrUnknownReceipt` if it doesn't exist.\n2. Under a mutex, works out what is still refundable on that charge and what the account has already refunded that UTC day (`dayKey`).\n3. Calls `CheckRefundLimit`, which enforces the rules: the amount must be positive and no more than what is left on the charge, and a refund that takes the day's total over `DailyRefundLimit` (50,000 cents = 500.00) needs a second approver.\n4. Calls `gateway.Refund(rcpt.Txn, amount)`, which sends the money to the card of the original transaction, then updates both running totals and appends a `\"refund\"` audit entry.\n\nIt is the code behind two requirements in `REQUIREMENTS.md`:\n- **R-REFUND-LIMIT** (controls RISK-REFUND-ABUSE): the per-charge cap and the daily 500.00 approval rule. `CheckRefundLimit` holds the rule and `Refunder.Refund` applies it.\n- **R-REFUND-ORIGINAL**: the money goes back to the original payment method. The `Refund` doc comment cites this ID.\n\nThe per-charge and per-day totals are the design in **D-REFUND-LEDGER**. `R-AUDIT-MONEY` also lists `Refunder.Refund`, since every refund must be audited.\n\n**Tests that cover it** (all in `payments/refund_test.go`):\n- `TestCheckRefundLimit`: table test of the pure check. Covers within limits, more than is left, zero amount, over the daily limit without approval, and over the daily limit with approval.\n- `TestRefund`: a successful refund goes to the charge's transaction (`g.refunds[rcpt.Txn]`), the last audit entry is the refund, and a refund beyond what is left returns `ErrRefundTooLarge`. It is tagged `@req R-AUDIT-MONEY`, though the requirements list it under R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `TestRefundDailyLimit`: a second refund on the same UTC day that crosses the limit returns `ErrNeedsApproval`, and the same refund succeeds the next day.\n\n**Things worth knowing:**\n- I did not run the tests. This answer comes from reading the code and the test file.\n- The \"approval\" is just a non-empty `ApprovedBy` string. `Refund` doesn't check that the approver is a real or different person, so the second-approval control depends on callers.\n- The requirements file lists `Refunder.Refund` under R-REFUND-LIMIT, R-REFUND-ORIGINAL and R-AUDIT-MONEY, but the code comment only tags R-REFUND-ORIGINAL. Nothing is wrong with the code; the traceability tags are just inconsistent.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-REFUND-LIMIT": true,
+    "item:R-AUDIT-MONEY": true,
+    "item:R-REFUND-ORIGINAL": true,
+    "test:TestCheckRefundLimit": true,
+    "test:TestRefundDailyLimit": true,
+    "test:TestRefund": true
+   },
+   "questions": {
+    "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "test:TestCheckRefundLimit": "Does the final answer name the test `TestCheckRefundLimit` as one that covers the function?",
+    "test:TestRefundDailyLimit": "Does the final answer name the test `TestRefundDailyLimit` as one that covers the function?",
+    "test:TestRefund": "Does the final answer name the test `TestRefund` as one that covers the function?"
+   },
+   "reason": "The answer names all three requirements as reasons the function exists. It calls the function \"the code behind\" R-REFUND-LIMIT and R-REFUND-ORIGINAL, giving each requirement's ID and content. It also says R-AUDIT-MONEY lists Refunder.Refund \"since every refund must be audited,\" which ties that requirement to the function as well. Under \"Tests that cover it,\" the answer names all three tests: TestCheckRefundLimit, TestRefund and TestRefundDailyLimit.",
+   "cost": 0.0248798
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

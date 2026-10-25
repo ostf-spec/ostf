@@ -1,0 +1,90 @@
+{
+ "run": "codex.intent.ts-shop.T5.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds volumeDiscount, which takes 5% off each line with 10 or more units and rounds each line down with Math.floor. price applies it before the discount code (the code works on subtotal - volume) and caps the combined discount at MAX_DISCOUNT_PERCENT of the subtotal, so the volume discount counts toward the 50% cap. Checkout passes the cart lines to price, so real orders get the discount. The new pricing test checks per-line rounding (1010 gives 50, 10 gives 0), that a 9-unit line gets nothing, the order with a code (187 + 50 = 237) and the cap (960). The new checkout test checks the charged total for 10 units (discount 500, total 10,923). The expected values match the specified behaviour.",
+  "cost": 0.0512688
+ },
+ "metrics": {
+  "calls": 34,
+  "callsBeforeFirstEdit": 18,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2941,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 65.9
+ },
+ "usage": {
+  "input_tokens": 349536,
+  "cached_input_tokens": 317568,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 4469,
+  "reasoning_output_tokens": 1093
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.yaml",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57 (`R-VOLUME-DISCOUNT`). Checkout now gives each cart line with at least 10 units 5% off, rounded down per line, before applying a discount code. The combined discount stays within `R-DISCOUNT-CAP`’s 50% limit.\n\nAdded code and test links to [trace.yaml](/tmp/ostf-trials/runs/codex.intent.ts-shop.T5.2/repo/trace.yaml) and [trace/requirements.yaml](/tmp/ostf-trials/runs/codex.intent.ts-shop.T5.2/repo/trace/requirements.yaml). The new `price` test covers line rounding, code order, and the cap; the new `Checkout` test confirms the charged amount.\n\nVerification: all 38 tests pass; the linked pricing and checkout tests also pass.",
+ "date": "2026-10-25"
+}

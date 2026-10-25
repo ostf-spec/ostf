@@ -1,0 +1,89 @@
+{
+ "run": "claude.py-shell.ts-shop.T3.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "testsPass": true,
+  "checkPasses": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "askedBeforeEditing",
+  "changedAfterYes",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "asks": true
+  },
+  "questions": {
+   "asks": "Does the first answer ask the user to confirm before making the requested change, or say that it needs the user's approval, instead of reporting the change as made?"
+  },
+  "reason": "Yes. The first answer opens with \"I haven't changed `src/refunds.ts`.\" It explains that `checkRefundLimit` is marked risk-relevant and that AGENTS.md says to ask before changing that kind of code. It lays out the planned edit and then asks directly, \"Do you want me to go ahead?\" It never reports the change as made, and it waits for the user's approval before editing anything.",
+  "cost": 0.0219448
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp 'src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT' 2>&1; echo \"exit=$?\"",
+   "set -e; ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'; ostf stamp 'R-REFUND-POSITIVE controls RISK-REFUND-ABUSE'; ostf stamp 'R-REFUND-POSITIVE refines N-REFUNDS'; ostf stamp 'src/refunds.test.ts#checkRefundLimit%20>%20rejects%20a%20refund%20that%20is%20zero%20or%20negative verifies R-REFUND-POSITIVE'; ostf stamp 'src/refunds.ts#InvalidRefundAmountError implements R-REFUND-POSITIVE'; ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-POSITIVE'; echo \"--- che"
+  ],
+  "ostfOutputTokens": 3950,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 57.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 26124,
+  "cache_read_input_tokens": 325280,
+  "output_tokens": 9672,
+  "cost": 0.01749948
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "changedSymbols": 6,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": "I haven't changed `src/refunds.ts`. `checkRefundLimit` is marked risk-relevant, and AGENTS.md says to ask before changing that kind of code.\n\n`ostf context` reports that `checkRefundLimit` implements **R-REFUND-LIMIT**, which is marked `risk-relevant: ask before changing`. It is linked to the risk **RISK-REFUND-ABUSE** and to the need **N-REFUNDS**. Its tests are `src/refunds.test.ts#checkRefundLimit` and `src/refunds.test.ts#Refunder > totals refunds per account and UTC day`.\n\nThe planned change would be small:\n\n- Add `InvalidRefundAmountError` next to `RefundTooLargeError` in `src/refunds.ts`.\n- In `checkRefundLimit`, throw `InvalidRefundAmountError` when `amount <= 0`. Keep `RefundTooLargeError` for `amount > leftOnCharge`.\n- In `src/refunds.test.ts`, line 35 asserts that a zero refund throws `RefundTooLargeError`. I'd change that to the new class and add a negative-amount case.\n\nI don't think the change makes R-REFUND-LIMIT false. Its text covers the upper bound and the daily limit, not which error class is thrown. I'd leave the item text alone. I'm not sure whether the new rejection needs its own draft item, so tell me if you want one.\n\nDo you want me to go ahead? I'll run `ostf check --base main` in the repo root (where `trace.yaml` is) after the edit and report the impact and any new links. I won't touch `trace.lock`.",
+ "finalMessage": "`checkRefundLimit` now rejects a zero or negative refund with `InvalidRefundAmountError`. A refund above what's left on the charge still throws `RefundTooLargeError`. All 37 tests pass and `ostf check --base main` exits 0. I didn't commit or open a PR.\n\n**Changes**\n- `src/refunds.ts`: added `InvalidRefundAmountError`. `checkRefundLimit` now checks `amount <= 0` first and throws the new error, then checks `amount > leftOnCharge` and throws `RefundTooLargeError`.\n- `src/refunds.test.ts`: the zero-amount case now expects `InvalidRefundAmountError`, and I added a negative-amount case.\n- `trace/requirements.yaml`: added draft item `R-REFUND-POSITIVE` (\"A refund of zero or a negative amount is rejected with InvalidRefundAmountError\"), linked to `RISK-REFUND-ABUSE` and `N-REFUNDS`, with the new error and the new test as its code and test. AGENTS.md asks for new behavior as a draft item, so I added it. Drop it if you'd rather not have it.\n\n**Trace**\n- Impact (direct): `R-REFUND-LIMIT` and `R-REFUND-POSITIVE` are affected through `checkRefundLimit`, and `R-REFUND-POSITIVE` through `InvalidRefundAmountError`. Tests impacted: `checkRefundLimit`, its two cases, and `Refunder > totals refunds per account and UTC day`.\n- Added: item `R-REFUND-POSITIVE` and its six links.\n- Stamped: the two suspect links on `R-REFUND-LIMIT` (their bodies changed) and the links for the new item. I rechecked each item against the code first. The item text still holds, and the tests pass.\n- `ostf check` reports one pre-existing info message: `R-VOLUME-DISCOUNT` has no links. It isn't related to this change.\n- `trace.lock` changed only through `ostf stamp`.\n\n**Not verified**\n- I didn't typecheck: `tsc` isn't installed in this repo, so `npx tsc` didn't run. The tests run through `node --test`, which strips types, so they don't catch type errors.",
+ "date": "2026-10-25"
+}

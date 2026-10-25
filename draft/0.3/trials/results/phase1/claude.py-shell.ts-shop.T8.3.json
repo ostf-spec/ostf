@@ -1,0 +1,73 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "cat package.json | head -30; ls; ostf check --help 2>&1 | head -30; ostf stamp --help 2>&1 | head -30; grep -n \"checkRefundLimit\" -A3 src/refunds.test.ts | head -60",
+   "ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"exit $?\"; ostf check --base main 2>&1; echo \"exit $?\"; git status --short; git diff --stat"
+  ],
+  "ostfOutputTokens": 4514,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 21162,
+  "cache_read_input_tokens": 184347,
+  "output_tokens": 3632,
+  "cost": 0.007893470000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b160e47b0ae3f85d09f7e5b0d9b835b2a82ae3dc",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now passes: 111 of 111 links valid, no errors. The only change is one line in `trace.lock`.\n\n**What was failing**\n\n- **`LOCK_INVALID`**: the merge commit `2ad516f` changed the `checkRefundLimit` lock line from `source.sig=` to `source.sig:`. That made the line unparseable.\n- **`LINK_UNSTAMPED`**: as a result, the link `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT` had no valid stamp.\n\n**What I did**\n\n- Checked `R-REFUND-LIMIT` against the code. The 500.00 limit is `DAILY_REFUND_LIMIT = 50_000` cents, and the charge-remainder check matches the item text. I did not change the item or the code.\n- Ran the test suite. All 36 tests pass, including the `checkRefundLimit` tests.\n- Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, with the link quoted as check printed it. Stamping rewrote that lock line with the correct `=`. I did not edit `trace.lock` by hand.\n\n**Items and links for the summary and PR**\n\n- Item: `R-REFUND-LIMIT`, which the restored link implements.\n- Link: `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`, now stamped.\n- Links added: none. Links re-stamped: this one.\n- Impact against `main` (direct): empty.\n- Tests run: the full `npm test` suite, 36 passing.\n\n**Not changed**\n\n- `R-VOLUME-DISCOUNT` is an info note, not an error. No link targets it, so it is not part of this fix. The check does not block on it.\n- I have not committed. The only pending change is `trace.lock`.",
+ "date": "2026-10-25",
+ "corrected": {
+  "lockHandEdits": [
+   "git show HEAD -- trace.lock | cat; npm test >/tmp/t.log 2>&1; echo \"npm exit $?\"; grep -n \"not ok\\|Error\\|error\" /tmp/t.log | head; sed -n 100,115p trace.lock"
+  ]
+ }
+}

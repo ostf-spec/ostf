@@ -1,0 +1,94 @@
+{
+ "run": "claude.py-shell.go-shop.T5.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff covers every part of R-VOLUME-DISCOUNT. `VolumeDiscount` takes 5% off any line of 10 or more units. It uses integer division on positive amounts, which rounds down to the cent. `Cart.VolumeDiscount` adds up the discount line by line. `Price` subtracts the volume discount before the code is applied, since `ApplyDiscount` gets `subtotal-volume`. The code discount is then limited to `subtotal*MaxDiscountPercent/100 - volume`, so the volume discount counts toward the 50% cap. Tax and total are worked out on what is left. `PlaceOrder` passes the volume discount in. New tests check the 9-unit and 10-unit cases, the rounding (19,990 → 999), the per-line sum in the cart, the code applying after volume, and volume counting toward the cap. I worked through the expected numbers in the tests and they match the code.",
+  "cost": 0.05825280000000001
+ },
+ "metrics": {
+  "calls": 22,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 5,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp --help; echo \"exit=$?\"",
+   "ostf stamp \\\n 'cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT' \\\n 'cart/cart_test.go#TestVolumeDiscountPerLine verifies R-VOLUME-DISCOUNT' \\\n 'pricing/quote.go#Price implements R-VOLUME-DISCOUNT' \\\n 'pricing/volume.go#VolumeDiscount implements R-VOLUME-DISCOUNT' \\\n 'pricing/volume_test.go#TestPriceVolumeAndCodeCap verifies R-VOLUME-DISCOUNT' \\\n 'pricing/volume_test.go#TestVolumeDiscount verifies R-VOLUME-DISCOUNT' \\\n 'cart/checkout.go#Checkout.PlaceOrder implements R-CHECKOUT-ORDE"
+  ],
+  "ostfOutputTokens": 10042,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 111.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 34,
+  "cache_creation_input_tokens": 52771,
+  "cache_read_input_tokens": 693772,
+  "output_tokens": 22531,
+  "cost": 0.028760819999999996
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented. The item is `R-VOLUME-DISCOUNT` in `trace.yaml`. I had no Jira tool, so I took the requirement from that file's copy of the issue (rev 2). Tests pass and `ostf check --base main` exits 0 with 115 links, all valid. I haven't committed or opened a PR, since you didn't ask for either.\n\n**What changed**\n- `pricing/volume.go` (new): `VolumeDiscount(lineTotal, qty)` gives 5% off a line of 10+ units, rounded down to the cent.\n- `pricing/quote.go`: `Price` now takes the volume discount as a second argument and applies it before the discount code. The code applies to the amount after the volume discount. Volume plus code is capped at 50% of the subtotal, and tax is charged on what remains. `Quote` gets a `Volume` field.\n- `cart/cart.go`: new `Cart.VolumeDiscount()`, which sums the per-line discounts. `Subtotal` is unchanged.\n- `cart/checkout.go`: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`.\n- Tests: `pricing/volume_test.go` (new) covers the threshold, rounding, the order of volume and code, and the cap. `cart/cart_test.go` covers the per-line sum. `pricing/tax_test.go` is updated for the new `Price` signature.\n\n**ostf**\n- Items and code linked to `R-VOLUME-DISCOUNT`: `cart/cart.go#Cart.VolumeDiscount`, `pricing/quote.go#Price`, `pricing/volume.go#VolumeDiscount`, `cart/cart_test.go#TestVolumeDiscountPerLine`, `pricing/volume_test.go#TestVolumeDiscount` and `#TestPriceVolumeAndCodeCap`.\n- Existing links I re-checked and stamped, because their code changed: `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (`Checkout.PlaceOrder`), and `R-TAX-RATE` (`Price`, `TestPrice`). Their text still holds.\n- `ostf stamp` wrote to `trace.lock`. I didn't edit that file by hand.\n- Impact: the changed functions and tests listed above, plus the `Quote` type and the two new constants.\n\n**Needs your attention**\n- `R-DISCOUNT-PERCENT` says a code takes its percentage \"off the subtotal\". With a volume discount present, the code now takes it off the post-volume amount, so that wording is no longer exact. I did not change the item text. Please decide whether to reword it or accept the difference.\n- `R-DISCOUNT-CAP` still holds, but its linked function `ApplyDiscount` only caps the code. The combined cap is enforced in `Price`, which is not linked to that item.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,91 @@
+{
+ "run": "codex.intent.ts-shop.T5.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff matches R-VOLUME-DISCOUNT. `volumeDiscount` takes 5% off each line with 10 or more units and rounds each line down with `Math.floor`. `price` subtracts that discount first, applies the code to the remaining subtotal, and caps the code so the two discounts together stay within 50% of the subtotal. Checkout now passes the cart lines to `price`, so the discount takes effect when an order is placed. The new tests check this. One checks per-line rounding with 9, 10 and 11 units (50 + 55 = 105). One checks that the code applies after the volume discount (500 + 950 = 1450). One checks the shared cap (total discount 5000). One checks the amount charged at checkout with tax on the discounted amount. The expected values in the tests agree with the code's arithmetic.",
+  "cost": 0.050348800000000006
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5840,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 85.3
+ },
+ "usage": {
+  "input_tokens": 371990,
+  "cached_input_tokens": 338816,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5343,
+  "reasoning_output_tokens": 2032
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.yaml",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57 (`R-VOLUME-DISCOUNT`). Checkout now applies five percent off each cart line with at least 10 units, rounds each line’s discount down to the cent, then applies any discount code within the shared fifty percent cap. The change is in [pricing.ts](/private/tmp/ostf-trials/runs/codex.intent.ts-shop.T5.3/repo/src/pricing.ts) and [checkout.ts](/private/tmp/ostf-trials/runs/codex.intent.ts-shop.T5.3/repo/src/checkout.ts).\n\nAdded code and test links for `R-VOLUME-DISCOUNT` in [trace.yaml](/private/tmp/ostf-trials/runs/codex.intent.ts-shop.T5.3/repo/trace.yaml), and linked the shared-cap test to `R-DISCOUNT-CAP`. The new tests cover per-line rounding, discount order, the cap, and the amount charged at checkout. **All 39 tests pass** with `npm test`.\n\n`R-DISCOUNT-PERCENT` still says a code applies to the “subtotal.” With SHOP-57, it applies to the subtotal *after* the volume discount. I left that requirement text unchanged and am flagging the conflict.",
+ "date": "2026-10-25"
+}

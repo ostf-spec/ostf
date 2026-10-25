@@ -1,0 +1,92 @@
+{
+ "run": "codex.py-shell.ts-shop.T2.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: The diff does what was asked. In `price`, shipping is computed on the subtotal after discounts: 0 at 10_000 cents or more, otherwise 599. It is added to the `Quote` and to the total. New tests check both sides of the threshold: 9_999 and a discounted 9_000 pay 599; exactly 10_000 ships free. One more test uses 11_111 with a 10% discount, which comes out at about 10_000 and ships free. The expected totals add up: 9_000 + 1_348 + 599 = 10_947, and 10_000 + 1_498 = 11_498. The existing price and checkout tests were updated so the charged amount includes shipping. q2: The final answer names the new requirement by its ID, `R-SHIPPING`.",
+  "cost": 0.0338206
+ },
+ "metrics": {
+  "calls": 30,
+  "callsBeforeFirstEdit": 16,
+  "edited": true,
+  "ostfCalls": 9,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 10,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 1,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'R-SHIPPING refines N-FAIR-PRICE' && ostf stamp 'src/checkout.test.ts#Checkout%20>%20places%20an%20order verifies R-CHECKOUT-ORDER' && ostf stamp 'src/pricing.test.ts#price%20>%20charges%20flat%20shipping%20below%20100.00%20after%20discounts verifies R-SHIPPING' && ostf stamp 'src/pricing.test.ts#price%20>%20ships%20free%20at%20100.00%20after%20discounts verifies R-SHIPPING' && ostf stamp 'src/pricing.test.ts#price%20>%20taxes%20the%20subtotal%20after%20discounts verifie"
+  ],
+  "ostfOutputTokens": 5369,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 63.0
+ },
+ "usage": {
+  "input_tokens": 352730,
+  "cached_input_tokens": 325376,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3488,
+  "reasoning_output_tokens": 983
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "Shipping is now part of the checkout quote and charged order total. Orders with a subtotal after discounts of at least 100.00 ship free; all others pay 5.99.\n\nAll 38 tests pass. The affected tests cover the shipping threshold, discounts, tax, and checkout’s charged amount. `ostf check --base main` passes with 115 valid links. The check reports the new draft item `R-SHIPPING` and its links to `N-FAIR-PRICE`, `src/pricing.ts#price`, and the two shipping tests.",
+ "date": "2026-10-25"
+}

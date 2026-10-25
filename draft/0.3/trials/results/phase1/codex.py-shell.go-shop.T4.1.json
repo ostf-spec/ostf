@@ -1,0 +1,77 @@
+{
+ "run": "codex.py-shell.go-shop.T4.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "stamps": [
+   "/bin/zsh -lc \"go test ./pricing -run '\"'^(TestPrice|TestTax|TestTaxExempt)$'\"' -count=1 && ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE' && ostf stamp 'pricing/salestax.go#SalesTax implements R-TAX-EXEMPT' && ostf stamp 'pricing/salestax.go#SalesTax implements R-TAX-RATE' && ostf stamp 'pricing/tax_test.go#TestTax verifies R-TAX-RATE' && ostf stamp 'pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT' && ostf check --base main\""
+  ],
+  "ostfOutputTokens": 3250,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 58.9
+ },
+ "usage": {
+  "input_tokens": 274184,
+  "cached_input_tokens": 254080,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2738,
+  "reasoning_output_tokens": 495
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to [pricing/salestax.go](/tmp/ostf-trials/runs/codex.py-shell.go-shop.T4.1/repo/pricing/salestax.go). Updated the pricing caller, tests, and trace links.\n\n`go test ./...` passes. `ostf check --base main` reports all 109 links valid. Its impact lists R-TAX-RATE and R-TAX-EXEMPT, tests `TestPrice`, `TestTax`, and `TestTaxExempt`, and two added links from `SalesTax` to those items.",
+ "date": "2026-10-25"
+}

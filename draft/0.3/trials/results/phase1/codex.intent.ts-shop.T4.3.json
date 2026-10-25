@@ -1,0 +1,75 @@
+{
+ "run": "codex.intent.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4914,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 50.8
+ },
+ "usage": {
+  "input_tokens": 269456,
+  "cached_input_tokens": 244224,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3033,
+  "reasoning_output_tokens": 432
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T4.3/repo/src/salestax.ts). Order pricing now imports it, and the tests and README reflect the move.\n\nUpdated the trace links for `R-TAX-RATE` and `R-TAX-EXEMPT` to `src/salestax.ts#salesTax`. Their linked tests are `salesTax > rounds half up to the cent`, `price > taxes the subtotal after discounts`, and `salesTax > is zero for a tax-exempt customer` in [src/pricing.test.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T4.3/repo/src/pricing.test.ts). The exemption test link was added.\n\nVerification: all 36 tests pass.",
+ "date": "2026-10-25"
+}

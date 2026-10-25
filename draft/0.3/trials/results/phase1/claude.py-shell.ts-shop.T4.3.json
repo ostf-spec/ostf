@@ -1,0 +1,78 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf context src/salestax.ts#salesTax 2>&1; ostf stamp 'src/pricing.ts#price implements R-TAX-RATE' 2>&1; echo \"exit=$?\"",
+   "ostf stamp 'src/salestax.ts#salesTax implements R-TAX-EXEMPT' && ostf stamp 'src/salestax.ts#salesTax implements R-TAX-RATE' && ostf stamp 'src/pricing.test.ts#salesTax%20>%20is%20zero%20for%20a%20tax-exempt%20customer verifies R-TAX-EXEMPT' && ostf stamp 'src/pricing.test.ts#salesTax%20>%20rounds%20half%20up%20to%20the%20cent verifies R-TAX-RATE'; echo \"stamp exit=$?\"; echo ----; ostf check --base main 2>&1; echo \"check exit=$?\"; echo ----; git status --short"
+  ],
+  "ostfOutputTokens": 6310,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 63.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 30076,
+  "cache_read_input_tokens": 357952,
+  "output_tokens": 10831,
+  "cost": 0.015012620000000003
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "`tax` is now `salesTax` in `src/salestax.ts`, and the tests and trace checks pass. Nothing is committed.\n\n**Changes**\n- **`src/salestax.ts`** (new): exports `salesTax(amount, r, exempt)`, with its private `roundHalfUp` helper moved alongside it. `Region` stays in `pricing.ts` as a type-only import, so there is no runtime cycle.\n- **`src/pricing.ts`**: `tax` and `roundHalfUp` are removed. `price()` calls `salesTax`. The `Quote.tax` field keeps its name.\n- **`src/pricing.test.ts`**: imports `salesTax` from the new file, and the `describe` block is renamed to `salesTax`. The tests stay in this file because `price()` is tested here too.\n- **`trace/requirements.yaml`**: only the link targets changed, from `pricing.ts#tax` to `salesTax` in `R-TAX-RATE` and `R-TAX-EXEMPT`, and the matching test names. Item text is untouched.\n\n**Verification**\n- `node --test`: 36 pass, 0 fail, as before the change.\n- `ostf check --base main`: exits 0 with 111 of 111 links valid. The first run exited 1 with four unstamped links and one suspect link (`src/pricing.ts#price` implements `R-TAX-RATE`). I rechecked both items against the code and the tests, and they still hold, so I stamped those links.\n- No `tax(` callers are left.\n\n**Items and links for the summary and PR**\n- Items: `R-TAX-RATE` and `R-TAX-EXEMPT`. Neither is risk-relevant, so I did not need to ask first.\n- Impact: `src/salestax.ts#salesTax` implements both items, and the two `salesTax` tests verify them. The old `pricing.ts#tax` links are removed.\n- Links added (all stamped): `src/salestax.ts#salesTax implements R-TAX-RATE`, `src/salestax.ts#salesTax implements R-TAX-EXEMPT`, `src/pricing.test.ts#salesTax > rounds half up to the cent verifies R-TAX-RATE`, and `src/pricing.test.ts#salesTax > is zero for a tax-exempt customer verifies R-TAX-EXEMPT`.\n- No new items were created.\n\n**Things to know**\n- `ostf stamp` modified `trace.lock`. I did not edit that file by hand.\n- The `R-VOLUME-DISCOUNT` \"no link targets\" note was already there before this change and is not related to it. It is a warning, not an error.",
+ "date": "2026-10-25"
+}

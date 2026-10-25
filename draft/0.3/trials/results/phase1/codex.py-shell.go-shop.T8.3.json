@@ -1,0 +1,67 @@
+{
+ "run": "codex.py-shell.go-shop.T8.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 21,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "/bin/zsh -lc 'ostf stamp --help'",
+   "/bin/zsh -lc \"ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'\""
+  ],
+  "ostfOutputTokens": 4642,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.4
+ },
+ "usage": {
+  "input_tokens": 238178,
+  "cached_input_tokens": 214528,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1884,
+  "reasoning_output_tokens": 343
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "c01ad6d18d8d401294f9fbc5dd4610553de80d1b",
+ "firstMessage": null,
+ "finalMessage": "Fixed the invalid `trace.lock` stamp for `R-REFUND-LIMIT` using `ostf stamp`. `ostf check --base main` now passes with 109 valid links. The linked tests, `TestCheckRefundLimit` and `TestRefundDailyLimit`, pass.\n\nThe check lists no impacted or added items or links. It still reports `R-VOLUME-DISCOUNT` as unlinked informationally; that does not fail the check.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,112 @@
+{
+ "run": "claude.none.go-shop.T7.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The \"Requirements\" section of the final answer names R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY by ID and says they still map to the changed code and its tests. That counts as naming all three as touched by the change, even though the answer says their behavior didn't change. R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY are also tied to specific subtests in the test list. The answer shows `go test -v ./pricing -run TestApplyDiscount` being run as the targeted test for the change. It also names the subtests `caps_at_fifty_percent` and `rejects_expired` as ones that passed. So all three tests are named as relevant and run.",
+  "cost": 0.0240798
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3087,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 15753,
+  "cache_read_input_tokens": 79765,
+  "output_tokens": 2060,
+  "cost": 0.0049790500000000005
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The uncommitted change in `pricing/discount.go` replaces the builtin `min` with an explicit `if` in `ApplyDiscount`:\n\n```go\npercent := d.Percent\nif percent > MaxDiscountPercent {\n    percent = MaxDiscountPercent\n}\n```\n\nBoth forms clamp `d.Percent` to at most 50 for `int64` values, and the only other change is the removed `min` call. Every discount, rounding, expiry and cap path returns the same result as on `main`. `go.mod` targets Go 1.27, so the builtin was available and the change wasn't needed for compatibility. It's a style change with no effect on the requirements.\n\n**Tests run** (Go 1.27.3):\n- `go test ./...`: all five packages pass (`accounts`, `cart`, `inventory`, `payments`, `pricing`).\n- `go test -v ./pricing -run TestApplyDiscount`: all four subtests pass, including `caps_at_fifty_percent` (R-DISCOUNT-CAP) and `rejects_expired` (R-DISCOUNT-EXPIRY).\n- `go vet ./pricing`: clean.\n\n**Requirements:** R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY still map to the same code and tests. The caller in `pricing/quote.go` is covered by the passing suite.\n\nOne thing I noticed but didn't touch: the cap only guards the upper bound. A negative `Percent` would produce a negative discount, which raises the price. This was already true on `main`, and I didn't check whether the discount input is validated upstream.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": true,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:TestApplyDiscount": true,
+    "test:caps_at_fifty_percent": true,
+    "test:rejects_expired": true
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+    "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The final answer's requirements section names R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY by ID as the requirements tied to the changed code and tests. It also mentions R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY next to the subtests that cover them. The answer says the change has no behavior effect, but it presents these three as the requirements within the change's impact scope, so I count them as named for q1–q3. Under a strict reading that requires a behavior change, q1–q3 would be false. The answer says it ran `go test -v ./pricing -run TestApplyDiscount` as a test that matters for the change, and it names the subtests caps_at_fifty_percent and rejects_expired as passing. That makes q4–q6 true.",
+   "cost": 0.0385598
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

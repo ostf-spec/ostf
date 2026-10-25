@@ -246,6 +246,31 @@ def writes(command):
     return bool(WRITES.search(command) or REDIRECT.search(unquoted(command)))
 
 
+LOCK = r"\S*trace\.lock\b"
+
+
+def writes_lock(command):
+    """Whether a shell command writes trace.lock, not merely names it beside another write: in one
+    of its commands, the lock is a redirect's target, the file of sed -i or perl -i, tee's file, the
+    destination of cp or mv, or the file of a Python write."""
+    command = unwrapped(command)
+    if re.search(r"open\([^)]*trace\.lock[^)]*['\"][wa]|trace\.lock['\"]?\)\.write_text", command):
+        return True
+    for segment in re.split(r"\n|;|&&|\|\||\|", unquoted(command)):
+        words = segment.split()
+        if not words:
+            continue
+        if re.search(rf">>?\s*{LOCK}", segment):
+            return True
+        if words[0] in ("sed", "perl") and re.match(r"-[a-z]*i", " ".join(words[1:2])) and "trace.lock" in segment:
+            return True
+        if words[0] == "tee" and any(re.fullmatch(LOCK, w) for w in words[1:]):
+            return True
+        if words[0] in ("cp", "mv") and re.fullmatch(LOCK, words[-1]):
+            return True
+    return False
+
+
 def calls(agent, transcript):
     """The ordered tool calls of a transcript as dicts with kind (shell, edit, read, mcp, other),
     detail, output and the final message, session id and usage."""
@@ -327,7 +352,7 @@ def metrics(found):
     ostf_bytes = sum(len(c.get("output", "")) for c in ostf_calls)
     ostf_bytes += sum(len(c.get("output", "")) for c in found if c["kind"] in ("read", "shell") and re.search(r"trace\.(yaml|lock)|trace/|REQUIREMENTS\.md", c["detail"]) and not is_ostf(c))
     lock_edits = [c["detail"] for c in found if (c["kind"] == "edit" and c["detail"].endswith("trace.lock"))
-                  or (c.get("writes") and "trace.lock" in c["detail"])]
+                  or (c.get("writes") and writes_lock(c["detail"]))]
     first_ostf = next((i for i, c in enumerate(found) if is_ostf(c)), None)
     return {
         "calls": len(found),
@@ -721,6 +746,13 @@ def selftest():
                     for i in fixture_items(FIXTURES / fixture)[0]:
                         assert section(listed, i["id"]), (fixture, i["id"])
                     assert "OSTF" not in listed and "trace" not in listed, fixture
+    # The write detector names trace.lock only when a command writes it.
+    for command in ("cat x > trace.lock", "sed -i '' 's/a/b/' trace.lock", "echo x | tee -a trace.lock", "cp /tmp/l trace.lock",
+                    "python3 -c \"open('trace.lock', 'w').write('x')\"", "/bin/zsh -lc 'printf x >> trace.lock'"):
+        assert writes(command) and writes_lock(command), command
+    for command in ("git show HEAD -- trace.lock | cat; npm test >/tmp/t.log 2>&1; sed -n 100,115p trace.lock",
+                    "ostf stamp 'a.go#F implements R-A' > /dev/null", "cp trace.lock /tmp/lock.bak"):
+        assert not writes_lock(command), command
     print("harness selftest passed")
 
 
@@ -745,6 +777,31 @@ def correct(results):
         record["outcome"] = all(record["criteria"][k] for k in record["outcomeCriteria"])
         path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
         print(f"{record['run']}: itemUnchanged {old} -> {value}")
+
+
+def relock(results):
+    """Harness corrections (protocol): the write detector counted any command that wrote a file and
+    named trace.lock as a hand edit of the lock, such as one that read the lock with sed -n and sent
+    a test log to /tmp. Every Phase 1 transcript is read again with the corrected detector."""
+    for path in sorted(results.glob("*.json")):
+        record = json.loads(path.read_text())
+        if record.get("arm") is None or "lockHandEdits" in record.get("corrected", {}):
+            continue
+        run_dir = WORK / record["run"]
+        found = calls(record["agent"], run_dir / "transcript.jsonl")[0]
+        if (run_dir / "transcript2.jsonl").exists():
+            found += calls(record["agent"], run_dir / "transcript2.jsonl")[0]
+        edits = metrics(found)["lockHandEdits"]
+        if edits == record["metrics"]["lockHandEdits"]:
+            continue
+        record.setdefault("corrected", {})["lockHandEdits"] = record["metrics"]["lockHandEdits"]
+        record["metrics"]["lockHandEdits"] = edits
+        if "noLockHandEdit" in record["criteria"]:
+            record["criteria"]["noLockHandEdit"] = not edits
+        record["pass"] = all(record["criteria"].values())
+        record["outcome"] = all(record["criteria"][k] for k in record["outcomeCriteria"])
+        path.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
+        print(f"{record['run']}: lock hand edits {len(record['corrected']['lockHandEdits'])} -> {len(edits)}")
 
 
 def rejudge(results):
@@ -848,6 +905,8 @@ def main(argv=None):
     fix.add_argument("results", type=pathlib.Path)
     again = commands.add_parser("rejudge")
     again.add_argument("results", type=pathlib.Path)
+    lock = commands.add_parser("relock")
+    lock.add_argument("results", type=pathlib.Path)
     args = parser.parse_args(argv)
     if args.command == "selftest":
         selftest()
@@ -857,6 +916,9 @@ def main(argv=None):
         return 0
     if args.command == "rejudge":
         rejudge(args.results)
+        return 0
+    if args.command == "relock":
+        relock(args.results)
         return 0
     if args.command == "arm":
         # The fixture as the arm shows it to the agent, for reading; runs build it the same way.

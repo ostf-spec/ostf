@@ -1,0 +1,67 @@
+{
+ "run": "codex.py-shell.ts-shop.T8.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 18,
+  "edited": false,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 6,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "/bin/zsh -lc 'ostf stamp --help'",
+   "/bin/zsh -lc \"ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'\""
+  ],
+  "ostfOutputTokens": 1268,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.5
+ },
+ "usage": {
+  "input_tokens": 182305,
+  "cached_input_tokens": 164864,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1617,
+  "reasoning_output_tokens": 317
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b160e47b0ae3f85d09f7e5b0d9b835b2a82ae3dc",
+ "firstMessage": null,
+ "finalMessage": "Fixed the failing traceability check by rechecking and stamping `src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT`. The refund tests pass, and `ostf check --base main` now reports **111 valid links** with no errors.\n\nThe check reports no impacted items or tests and no added items or links. It still notes that `R-VOLUME-DISCOUNT` has no link; that informational notice does not fail the check.",
+ "date": "2026-10-25"
+}

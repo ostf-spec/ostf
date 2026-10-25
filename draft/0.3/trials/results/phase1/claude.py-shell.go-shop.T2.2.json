@@ -1,0 +1,95 @@
+{
+ "run": "claude.py-shell.go-shop.T2.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING-FEE) by its ID?"
+  },
+  "reason": "q1: The diff adds `pricing/shipping.go`. Its `Shipping` function returns 0 when the subtotal is at or above 10_000 (100.00) and 599 (5.99) otherwise. `Price` works out shipping on the subtotal after the discount and adds it to `Total`, which `PlaceOrder` then charges. The tests cover the change. `TestShipping` checks the boundary (9_999 pays 599, 10_000 is free). `TestPriceShipping` checks the free-at-threshold case and that the threshold applies after the discount. `TestPlaceOrderChargesShipping` checks the amount actually charged at checkout, and the existing `TestPrice` and `TestPlaceOrder` expectations were updated. One code comment is wrong: it says \"10% off 11.00 leaves 9.90\", but the case is 110.00 leaving 99.00. The test values themselves are consistent and correct. q2: The final answer names the new item `R-SHIPPING-FEE` by its ID in the OSTF section. (Separately, the answer's claim about the 10,000.00 charge cap doesn't hold up. Orders with a subtotal of 81.77–86.97 would total far less than 10,000.00, so this looks like a units mistake. It doesn't affect either answer.)",
+  "cost": 0.058384599999999995
+ },
+ "metrics": {
+  "calls": 29,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": 17,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 0,
+  "stampCalls": 1,
+  "stamps": [
+   "/tmp/ostf-trials/runs/claude.py-shell.go-shop.T2.2/bin/ostf stamp --help 2>&1; /tmp/ostf-trials/runs/claude.py-shell.go-shop.T2.2/bin/ostf check --help 2>&1 | head -20"
+  ],
+  "ostfOutputTokens": 8502,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 135.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 60,
+  "cache_creation_input_tokens": 57403,
+  "cache_read_input_tokens": 1428360,
+  "output_tokens": 25073,
+  "cost": 0.03830670000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "changedSymbols": 10,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in place: orders with a subtotal after discounts of at least 100.00 ship free, and every other order pays a flat 5.99. Shipping is included in the order total and charged. Tests pass and `ostf check --base main` is clean (116 of 116 links valid). I haven't committed or opened a PR, since you didn't ask for either.\n\nOne decision needs you before this ships: the charge cap now rejects some orders.\n\n**Needs your decision: the 10,000.00 charge cap.** `payments.ValidateAmount` refuses any charge above 10,000.00 (`R-CHARGE-AMOUNT`, which controls `RISK-WRONG-CHARGE`). Orders with a post-discount subtotal from 81.77 to 86.97 now total just over that, so checkout refuses them. The refusal is clean: stock is released and nothing is charged. I didn't touch `payments/charge.go` because it is risk-relevant. The item's rationale, \"No order in the catalog can cost more than 10,000.00,\" is also no longer true for these orders. Options: raise the cap to 10,599.00, or leave it and accept that these orders fail.\n\n**What changed**\n- `pricing/shipping.go` (new): `Shipping(subtotal)` returns 0 at or above 100.00 and 599 below it. The threshold and rate are constants.\n- `pricing/quote.go`: `Quote` has a `Shipping` field. `Price` decides shipping on the subtotal after discount, taxes only that subtotal, and sets `Total` to subtotal after discount + tax + shipping. The signature is unchanged, so `PlaceOrder` charges the new total without modification.\n- Tests: new `pricing/shipping_test.go` (threshold boundary, and that the threshold applies after the discount). `TestPrice` and `TestPlaceOrder` now expect shipping (`TestPlaceOrder` total goes from 23.00 to 28.99). New `TestPlaceOrderChargesShipping` covers both sides of the threshold at checkout.\n\n**Choices I made**\n- Shipping is not taxed. `R-TAX-RATE` says tax is on the subtotal after discounts, and I kept that. Say if shipping should be taxed.\n- An order whose subtotal is zero still pays 5.99, following the rule literally.\n\n**OSTF**\n- Added item `R-SHIPPING-FEE` (status: draft) refining `N-FAIR-PRICE`, linked to `pricing/shipping.go#Shipping`, `pricing/quote.go#Price`, and tests `pricing/shipping_test.go#TestShipping`, `pricing/shipping_test.go#TestPriceShipping`, `pricing/tax_test.go#TestPrice`, `cart/checkout_test.go#TestPlaceOrderChargesShipping`.\n- Links added: 8 for `R-SHIPPING-FEE`, plus the item's `refines` link.\n- Suspect links after the body changes, `R-CHECKOUT-ORDER` on `TestPlaceOrder` and `R-TAX-RATE` on `Price` and `TestPrice`: I rechecked each item against the code (the tax still applies to the post-discount subtotal, and the checkout order is unchanged) and the tests pass, so I stamped them.\n- `ostf stamp` rewrote `trace.lock`. I didn't edit it by hand.\n- Pre-existing: `R-VOLUME-DISCOUNT` has no linked code or tests. I left it alone.",
+ "date": "2026-10-25"
+}

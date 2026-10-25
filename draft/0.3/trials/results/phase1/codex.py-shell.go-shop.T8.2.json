@@ -1,0 +1,66 @@
+{
+ "run": "codex.py-shell.go-shop.T8.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 20,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 6,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'\""
+  ],
+  "ostfOutputTokens": 1926,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.2
+ },
+ "usage": {
+  "input_tokens": 188337,
+  "cached_input_tokens": 168576,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1705,
+  "reasoning_output_tokens": 350
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "c01ad6d18d8d401294f9fbc5dd4610553de80d1b",
+ "firstMessage": null,
+ "finalMessage": "Fixed the failing traceability check by rechecking `R-REFUND-LIMIT` against `CheckRefundLimit`, running the payment tests, and stamping that link with `ostf stamp`.\n\n`go test ./payments` passes. `ostf check --base main` now passes with **109 valid links** and no reported impact, added items, or added links. It still reports an informational warning that `R-VOLUME-DISCOUNT` has no link.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,78 @@
+{
+ "run": "claude.py-shell.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 1,
+  "stamps": [
+   "ostf stamp 'src/pricing.test.ts#salesTax%20>%20is%20zero%20for%20a%20tax-exempt%20customer verifies R-TAX-EXEMPT' && ostf stamp 'src/pricing.test.ts#salesTax%20>%20rounds%20half%20up%20to%20the%20cent verifies R-TAX-RATE' && ostf stamp 'src/salestax.ts#salesTax implements R-TAX-EXEMPT' && ostf stamp 'src/salestax.ts#salesTax implements R-TAX-RATE' && ostf stamp 'src/pricing.ts#price implements R-TAX-RATE'; echo \"stamp exit $?\"; ostf check --base main; echo \"check exit $?\"; git status --short"
+  ],
+  "ostfOutputTokens": 5789,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 55.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 31410,
+  "cache_read_input_tokens": 271160,
+  "output_tokens": 9990,
+  "cost": 0.013990600000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "The function is now `salesTax` in `src/salestax.ts`, and `tax` is gone from `src/pricing.ts`. All 36 tests pass, and `ostf check --base main` exits 0.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private `roundHalfUp` helper, moved unchanged apart from the rename.\n- **`src/pricing.ts`**: imports `salesTax`. `price` uses a local `taxAmount` because a local named `salesTax` would shadow the import. The `Quote.tax` field name is unchanged, so `checkout.ts` is untouched.\n- **`src/pricing.test.ts`**: imports `salesTax` from the new file. The `describe(\"tax\")` block is now `describe(\"salesTax\")`, so the test IDs changed.\n- **`trace/requirements.yaml`**: I repointed the code and test links for R-TAX-RATE and R-TAX-EXEMPT to the new names. I did not change any item text.\n- **`README.md`**: added a `src/salestax.ts` row to the module table.\n\n**Trace impact**\n- Items affected: R-TAX-RATE and R-TAX-EXEMPT. Neither is marked risk-relevant, so I did not need to ask first.\n- No new items or IDs were added.\n- Links added: `src/salestax.ts#salesTax` implements R-TAX-RATE and R-TAX-EXEMPT, and the two renamed test links verify those items.\n- Links removed: the old `src/pricing.ts#tax` and `src/pricing.test.ts#tax > …` links.\n- `ostf check` first reported four unstamped links and one suspect link (`src/pricing.ts#price`). I rechecked both items against the code and their tests, then stamped the five links. `ostf stamp` modified `trace.lock`, which is expected; I did not edit it by hand.\n\n**Choices I made that you may want to change**\n- The tests stay in `pricing.test.ts` rather than moving to a `salestax.test.ts`.\n- `salestax.ts` imports the `Region` type from `pricing.ts`, which creates a type-only cycle. It is erased at runtime, so it is harmless. Moving `Region` into the new file would remove the cycle but change more imports.\n\nI haven't committed or opened a PR, since you didn't ask for either.",
+ "date": "2026-10-25"
+}

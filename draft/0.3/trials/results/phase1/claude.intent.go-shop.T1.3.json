@@ -1,0 +1,111 @@
+{
+ "run": "claude.intent.go-shop.T1.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:TestCheckRefundLimit": true,
+   "test:TestRefundDailyLimit": true,
+   "test:TestRefund": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "test:TestCheckRefundLimit": "Does the final answer name the test `TestCheckRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefundDailyLimit": "Does the final answer name the test `TestRefundDailyLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefund": "Does the final answer name the test `TestRefund` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer's section on why the function exists names all three requirements by ID. R-REFUND-LIMIT is described as the cap on refunds plus the second-approval rule. R-REFUND-ORIGINAL is quoted as sending a refund back to the payment method of the original charge. R-AUDIT-MONEY is given as the rule that every refund writes an audit entry. Its section on covering tests names TestRefund (refund_test.go:34), TestRefundDailyLimit (refund_test.go:58) and TestCheckRefundLimit (refund_test.go:12). It says TestCheckRefundLimit tests the CheckRefundLimit function that Refund calls, not Refund itself, which still counts for q4. So all six are true.",
+  "cost": 0.026443799999999996
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3712,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 14712,
+  "cache_read_input_tokens": 75030,
+  "output_tokens": 2227,
+  "cost": 0.004807
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the entry point for refunding a customer's earlier charge. Its job is to enforce the refund rules before money goes back to the card. The steps, in order (`payments/refund.go:63-82`):\n\n1. Look up the receipt for `req.ReceiptID`. Unknown receipts return `ErrUnknownReceipt`.\n2. Work out what is left on that charge and what the account has already refunded today (UTC).\n3. Call `CheckRefundLimit`, which rejects a non-positive amount or one above what is left on the charge, and rejects anything that takes the day's total over the 500.00 `DailyRefundLimit` unless `ApprovedBy` is set.\n4. Send the refund to the gateway, on the original transaction (`rcpt.Txn`).\n5. Update the per-charge and per-day running totals and append an audit entry.\n\nThe trace files tie this to the requirements it serves:\n- **R-REFUND-LIMIT** (refines N-REFUNDS, controls RISK-REFUND-ABUSE) names `Refunder.Refund` as implementing code. Its text is the cap on refunds and the second-approval rule. Design item **D-REFUND-LEDGER** describes the two running totals that `Refund` maintains.\n- **R-REFUND-ORIGINAL** (\"a refund goes back to the payment method of the charge it refunds\") has the `@req` comment on `Refund`, and also on `Processor.receipt` in `payments/charge.go:99`, which supplies the transaction ID.\n- **R-AUDIT-MONEY** lists `Refunder.Refund` as implementing code, for the rule that every refund writes an audit entry.\n\n**Tests that cover it:**\n- `TestRefund` (`payments/refund_test.go:34`) calls `Refund` for a partial refund and then one larger than the remaining charge, expecting `ErrRefundTooLarge`. It is the test linked to R-REFUND-ORIGINAL.\n- `TestRefundDailyLimit` (`payments/refund_test.go:58`) checks the per-account, per-day total. It is linked to R-REFUND-LIMIT and D-REFUND-LEDGER.\n- `TestCheckRefundLimit` (`payments/refund_test.go:12`) tests the pure `CheckRefundLimit` function directly, with table cases such as zero and over-the-charge amounts.\n\n**Gaps and mismatches I noticed (not changed):**\n- R-AUDIT-MONEY lists `payments/charge_test.go#TestChargeAudited` as its test. That test covers charges. I did not find a test that checks a refund writes an audit entry.\n- The `@req R-REFUND-ORIGINAL` comment sits on `Refund`, but the R-REFUND-ORIGINAL item lists only `payments/charge.go#Gateway` as code. The trace and the comment disagree.\n- `TestRefund` does not appear to check that the refund used the original transaction. I did not read the fake gateway closely enough to be sure.\n- No test I found covers the `ApprovedBy` path through `Refund` itself. `TestCheckRefundLimit` covers it only at the function level.\n\nI did not run the tests. Nothing in the repository was modified.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-REFUND-LIMIT": true,
+    "item:R-AUDIT-MONEY": true,
+    "item:R-REFUND-ORIGINAL": true,
+    "test:TestCheckRefundLimit": true,
+    "test:TestRefundDailyLimit": true,
+    "test:TestRefund": true
+   },
+   "questions": {
+    "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "test:TestCheckRefundLimit": "Does the final answer name the test `TestCheckRefundLimit` as one that covers the function?",
+    "test:TestRefundDailyLimit": "Does the final answer name the test `TestRefundDailyLimit` as one that covers the function?",
+    "test:TestRefund": "Does the final answer name the test `TestRefund` as one that covers the function?"
+   },
+   "reason": "The answer names all three requirements by ID as reasons the function exists. It names R-REFUND-LIMIT, the cap and second-approval rule, which lists Refunder.Refund as implementing code. It names R-REFUND-ORIGINAL, which has the @req comment on Refund. It names R-AUDIT-MONEY, which lists Refunder.Refund as implementing code. Under the heading \"Tests that cover it\" it lists TestRefund, TestRefundDailyLimit and TestCheckRefundLimit. For TestCheckRefundLimit, the answer says the test calls the CheckRefundLimit helper directly. That helper is a step inside Refund, and the test still appears in the coverage list, so it counts as named.",
+   "cost": 0.029191799999999997
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

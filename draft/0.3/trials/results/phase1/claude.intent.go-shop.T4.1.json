@@ -1,0 +1,75 @@
+{
+ "run": "claude.intent.go-shop.T4.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4062,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 20834,
+  "cache_read_input_tokens": 169173,
+  "output_tokens": 4916,
+  "cost": 0.008317930000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "I renamed `Tax` to `SalesTax` and moved it into `pricing/salestax.go`. `go vet` is clean and all five packages pass `go test -count=1 ./...`. I didn't commit anything.\n\n**Changes**\n- **`pricing/salestax.go`** (new): `SalesTax`, with its doc comment and SPDX header.\n- **`pricing/tax.go`**: the function is removed. `Region` stays here, since it describes a region rather than the tax calculation. Say if you'd rather it move too.\n- **`pricing/quote.go`**: the `Price` call site now calls `SalesTax`.\n- **`pricing/tax_test.go`**: the three call sites now use `SalesTax`. I kept the test names (`TestTax`, `TestTaxExempt`) since you only asked about the function.\n- **`trace/requirements.yaml`**: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. Without this the trace would point at a symbol that no longer exists in `tax.go`. I didn't change any item text.\n\n**Trace check**\n- R-TAX-RATE and R-TAX-EXEMPT are the only items linked to `Tax`. Neither controls or refines a risk, so I didn't need your approval to change their code links.\n- No items were added, and no item was made false by the change.\n- Tests verifying the touched items: `TestTax`, `TestTaxExempt`, and `TestPrice` in `pricing/tax_test.go`, all passing. `TestApplyDiscount` and `TestMoneyString` also ran in that package.",
+ "date": "2026-10-25"
+}

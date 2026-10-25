@@ -1,0 +1,79 @@
+{
+ "run": "claude.py-shell.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "cat pricing/quote.go; echo ---; ostf stamp --help 2>&1 | head -20; echo ---; go test ./pricing/ -run 'TestTax|TestPrice' -v -count=1 2>&1 | tail -15",
+   "ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE' 'pricing/salestax.go#SalesTax implements R-TAX-EXEMPT' 'pricing/salestax.go#SalesTax implements R-TAX-RATE' 'pricing/tax_test.go#TestTax verifies R-TAX-RATE' 'pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT'; echo \"exit=$?\"; echo \"--- check\"; ostf check --base main; echo \"exit=$?\"; git status --short; git diff --stat"
+  ],
+  "ostfOutputTokens": 4552,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 38.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 22303,
+  "cache_read_input_tokens": 192917,
+  "output_tokens": 6812,
+  "cost": 0.009797370000000001
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`, and everything builds and passes. `go vet`, `gofmt`, and `go test ./...` are clean, and `ostf check --base main` reports 109 of 109 links valid with no errors.\n\n**What changed**\n- **`pricing/salestax.go`** (new): `SalesTax`, with the same body and doc comment as before.\n- **`pricing/tax.go`**: `Tax` removed. `Region` stays here, since you only asked to move the function.\n- **Callers**: `pricing/quote.go` (`Price`) and `pricing/tax_test.go` now call `SalesTax`.\n- **`trace/requirements.yaml`**: the code links for `R-TAX-RATE` and `R-TAX-EXEMPT` now point to `pricing/salestax.go#SalesTax`. Item text is unchanged.\n- **`trace.lock`**: updated by `ostf stamp`, not edited by hand.\n\n**Trace impact (`ostf check --base main`)**\n- Links added: `pricing/salestax.go#SalesTax implements R-TAX-RATE` and `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`.\n- Links removed: the two `pricing/tax.go#Tax` links to the same items.\n- Items affected: `R-TAX-RATE` and `R-TAX-EXEMPT`. Code changed: `pricing/quote.go#Price`, `pricing/tax_test.go#TestTax`, and `pricing/tax_test.go#TestTaxExempt`.\n- Tests named in the impact list: `TestTax`, `TestTaxExempt`, and `TestPrice`. All three pass.\n- Suspect and unstamped links: I rechecked each one against its item text, reran its tests, and then stamped it. Stamped links: `pricing/quote.go#Price implements R-TAX-RATE`, `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`, `pricing/salestax.go#SalesTax implements R-TAX-RATE`, `pricing/tax_test.go#TestTax verifies R-TAX-RATE`, and `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`.\n\n`SalesTax` is not linked to any risk item, so no approval was needed. I left the test names (`TestTax`, `TestTaxExempt`) unchanged because the trace links refer to them.\n\nAlso noted: `ostf check` shows one info message, which predates this change: `R-VOLUME-DISCOUNT` has no link targeting it. I didn't touch it. Nothing is committed.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,79 @@
+{
+ "run": "claude.py-shell.go-shop.T4.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "stamps": [
+   "go test -count=1 -v -run 'TestTax|TestPrice' ./pricing/ 2>&1 | tail -15; ostf stamp --help 2>&1 | head -20",
+   "ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE' 'pricing/salestax.go#SalesTax implements R-TAX-EXEMPT' 'pricing/salestax.go#SalesTax implements R-TAX-RATE' 'pricing/tax_test.go#TestTax verifies R-TAX-RATE' 'pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT' 2>&1; echo \"exit=$?\"; ostf check --base main; echo \"exit=$?\""
+  ],
+  "ostfOutputTokens": 3938,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 56.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 22059,
+  "cache_read_input_tokens": 304494,
+  "output_tokens": 6846,
+  "cost": 0.01088214
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax` in its own file, `pricing/salestax.go`. `go test ./...` passes and `gofmt` is clean. I haven't committed anything.\n\n**What changed**\n- `pricing/salestax.go` (new): `SalesTax`, with the same body and doc comment as before.\n- `pricing/tax.go`: keeps only the `Region` type.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls and the error message now use `SalesTax`. The test names `TestTax` and `TestTaxExempt` are unchanged so the trace links still match.\n- `trace/requirements.yaml`: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`.\n\n`Tax` wasn't marked risk-relevant in `ostf context`, so I went ahead without asking.\n\n**Trace impact (`ostf check --base main`)**\n- Items: R-TAX-RATE and R-TAX-EXEMPT. N-FAIR-PRICE is only the parent of those two.\n- Tests: TestTax, TestTaxExempt and TestPrice.\n- Links added: `pricing/salestax.go#SalesTax implements R-TAX-RATE` and `pricing/salestax.go#SalesTax implements R-TAX-EXEMPT`.\n- Links removed: the two `pricing/tax.go#Tax` links.\n- Suspect or unstamped links after the move: `pricing/quote.go#Price implements R-TAX-RATE`, `pricing/tax_test.go#TestTax verifies R-TAX-RATE`, `pricing/tax_test.go#TestTaxExempt verifies R-TAX-EXEMPT`, plus the two new `SalesTax` links. I rechecked the items against the code (the bodies are unchanged apart from the rename), ran TestTax, TestTaxExempt and TestPrice (all pass), then stamped those five links.\n- `ostf check` now reports 109 of 109 links valid, with exit 0.\n\n`trace.lock` shows as modified only because `ostf stamp` writes to it. I did not edit it by hand.\n\nThere is one pre-existing info message that is not from this change: R-VOLUME-DISCOUNT in `trace.yaml` has no links. I left it alone.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,74 @@
+{
+ "run": "codex.intent.go-shop.T4.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3720,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 46.8
+ },
+ "usage": {
+  "input_tokens": 277810,
+  "cached_input_tokens": 257408,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2196,
+  "reasoning_output_tokens": 237
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved the function to [pricing/salestax.go](/tmp/ostf-trials/runs/codex.intent.go-shop.T4.2/repo/pricing/salestax.go). I updated its callers, tests, and the code links for R-TAX-RATE and R-TAX-EXEMPT. The existing test links remain unchanged; no new items or links were added.\n\n`go test ./...` passes, including `TestTax`, `TestPrice`, and `TestTaxExempt`.",
+ "date": "2026-10-25"
+}

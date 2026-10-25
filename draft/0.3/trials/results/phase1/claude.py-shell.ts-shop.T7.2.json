@@ -1,0 +1,115 @@
+{
+ "run": "claude.py-shell.ts-shop.T7.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": true,
+   "test:caps at fifty percent": true,
+   "test:rejects an expired code": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All six are true. The final answer says the changed `src/pricing.ts#applyDiscount` implements R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT, and it calls all three links suspect. That covers q1–q3. It names the linked tests that matter as `src/pricing.test.ts#applyDiscount`, `applyDiscount > caps at fifty percent` and `applyDiscount > rejects an expired code`, and it says the tests were run and passed. That covers q4–q6.",
+  "cost": 0.023923800000000002
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 3,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3544,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 23.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 16886,
+  "cache_read_input_tokens": 129403,
+  "output_tokens": 3655,
+  "cost": 0.006499930000000001
+ },
+ "finalCheck": {
+  "exit": 1,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "The change is a behavior-preserving refactor of the discount cap in `applyDiscount`, and all 36 tests pass.\n\n**What changed** (`src/pricing.ts`, lines 45–49): `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` became an explicit `if` that clamps `percent` to 50 when it is greater. I checked the old and new clamp on edge inputs (negatives, 0, 10, 50, 50.5, 100, NaN, ±Infinity, undefined). They produce the same arithmetic result. The only differences are a string `\"10\"` passing through unchanged instead of being coerced to a number, and `undefined` staying `undefined` instead of becoming NaN. Both still give NaN once multiplied, and `percent` is typed `number`, so there is no effective change in pricing.\n\n**Tests:** `npm test` ran 36 tests, 36 passed, 0 failed. The `applyDiscount` tests cover the percentage, rounding down, the 50% cap (`caps at fifty percent`), and expired codes. The `tax` and `price` tests also pass.\n\n**Traceability impact** (`ostf check --base main`, read-only, nothing stamped):\n- Changed: `src/pricing.ts#applyDiscount`, which implements R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT. All three links are now reported as suspect (BODY_CHANGED).\n- Tests linked to those items: `src/pricing.test.ts#applyDiscount`, `…#applyDiscount > caps at fifty percent`, and `…#applyDiscount > rejects an expired code`.\n- Result: 40 items, 111 links, 108 valid. The three suspect links are the only ones changed by this diff.\n\n**Things to decide or know:**\n- AGENTS.md says a suspect link needs its item rechecked against the code and its tests run, and only then `ostf stamp`. I did not stamp anything, since you asked for a summary and tests. The tests pass, so the stamps are likely to be straightforward if you want me to do them. Tell me and I'll do it, and I'll also run `ostf check` again.\n- AGENTS.md also says to run `ostf context` before changing a function. I ran it after the edit, so it is there for the record rather than as a pre-change check.\n- Not caused by this diff: `R-VOLUME-DISCOUNT` (SHOP-57) in `trace.yaml` has no linked code or tests. Its text says volume discounts count toward the 50% cap, and nothing in `pricing.ts` implements the volume discount. This is worth a look before the cap work is considered complete.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": true,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:applyDiscount": true,
+    "test:caps at fifty percent": true,
+    "test:rejects an expired code": true
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The final answer's traceability section says the changed `src/pricing.ts#applyDiscount` implements R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT, and it reports all three links as suspect (BODY_CHANGED). That names each requirement by its ID as affected by the change. The same section lists three linked tests that matter for the change: `src/pricing.test.ts#applyDiscount`, `applyDiscount > caps at fifty percent`, and `applyDiscount > rejects an expired code`. The test summary also says these were run and passed. So all six questions are true.",
+   "cost": 0.0238438
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

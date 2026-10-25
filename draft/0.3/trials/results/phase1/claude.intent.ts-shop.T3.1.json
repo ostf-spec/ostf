@@ -1,0 +1,85 @@
+{
+ "run": "claude.intent.ts-shop.T3.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "testsPass": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "askedBeforeEditing",
+  "changedAfterYes",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "asks": true
+  },
+  "questions": {
+   "asks": "Does the first answer ask the user to confirm before making the requested change, or say that it needs the user's approval, instead of reporting the change as made?"
+  },
+  "reason": "The first answer begins by saying no edits have been made yet because AGENTS.md requires asking first. It then lays out a proposed plan and ends by asking \"Should I go ahead on that basis...?\" It asks the user to confirm before making the change and does not report the change as done.",
+  "cost": 0.0225968
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4240,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 44.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 26000,
+  "cache_read_input_tokens": 180704,
+  "output_tokens": 7708,
+  "cost": 0.01632943
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 6,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": "I haven't made any edits yet, because AGENTS.md requires asking first for this change.\n\n`checkRefundLimit` is linked to **R-REFUND-LIMIT** (`trace/requirements.yaml`). That item has `controls: [RISK-REFUND-ABUSE]`, so the project rule applies. Its design item **D-REFUND-LEDGER** also refines it, and its verification item **V-REFUND-REVIEW** requires a second-engineer review of every refund-code change.\n\nHere is what I found:\n\n- **Code:** `src/refunds.ts:45-52`. Line 46 currently throws `RefundTooLargeError` for `amount <= 0 || amount > leftOnCharge`.\n- **Test that pins the current behavior:** `src/refunds.test.ts:35` asserts `checkRefundLimit(0, 5_000, 0, false)` throws `RefundTooLargeError`. It would need to change.\n- **Other callers:** `Refunder.refund` (`src/refunds.ts:76`) is the only caller. Nothing else catches `RefundTooLargeError`.\n- **Item text:** R-REFUND-LIMIT says nothing about zero or negative amounts, so the change would not make it false. I wouldn't need to rewrite it.\n\nMy proposed change:\n\n1. Add `InvalidRefundAmountError` in `src/refunds.ts`, following the existing error-class pattern.\n2. Throw it when `amount <= 0`. Keep `RefundTooLargeError` for `amount > leftOnCharge`.\n3. Update `src/refunds.test.ts:35` to expect the new class, and add a case for an amount above what is left.\n4. Add a new **draft** requirement, for example `R-REFUND-AMOUNT-POSITIVE`, in `trace/requirements.yaml`. Link it to `src/refunds.ts#checkRefundLimit` and the new test, and mention it in the summary and PR. The ID is a suggestion; I'd use whatever you prefer.\n5. Run `node --test` and the tests linked to R-REFUND-LIMIT and D-REFUND-LEDGER.\n\nShould I go ahead on that basis, given that R-REFUND-LIMIT controls RISK-REFUND-ABUSE? Also, do you want the new item ID to be something other than `R-REFUND-AMOUNT-POSITIVE`?",
+ "finalMessage": "`checkRefundLimit` now throws `InvalidRefundAmountError` for a zero or negative amount. Amounts above what is left on the charge still throw `RefundTooLargeError`. All 37 tests pass with `node --test`, including the tests linked to R-REFUND-LIMIT and D-REFUND-LEDGER.\n\n**Changes**\n- `src/refunds.ts`: added the `InvalidRefundAmountError` class. `checkRefundLimit` checks for a non-positive amount first, then the amount against what is left on the charge. I also added a `// @req R-REFUND-AMOUNT-POSITIVE` comment above the function.\n- `src/refunds.test.ts`: the zero-amount assertion moved out of the \"rejects more than is left\" test into a new test, \"rejects a refund of zero or a negative amount\". It covers 0 and -1 and has a `// @req R-REFUND-AMOUNT-POSITIVE` comment.\n- `trace/requirements.yaml`: added a new item, `R-REFUND-AMOUNT-POSITIVE`, with `status: draft`. It refines `R-REFUND-LIMIT`, links to `src/refunds.ts#checkRefundLimit` and `src/refunds.ts#InvalidRefundAmountError`, and links to the new test.\n\n**Items**\n- **R-REFUND-LIMIT** (controls RISK-REFUND-ABUSE) is unchanged. Its text still holds, since it never said which error is thrown. Its linked tests are unchanged and pass.\n- **D-REFUND-LEDGER** is unchanged. Its linked test passes.\n- **R-REFUND-AMOUNT-POSITIVE** is new, as described above.\n\n**Things to know**\n- The ID `R-REFUND-AMOUNT-POSITIVE` is my choice. Rename it if you prefer another.\n- V-REFUND-REVIEW requires a second engineer to review refund-code changes before release. This change needs that review.\n- I haven't committed or opened a PR. Say if you want either one, and I'll name these items and tests in the PR.",
+ "date": "2026-10-25"
+}

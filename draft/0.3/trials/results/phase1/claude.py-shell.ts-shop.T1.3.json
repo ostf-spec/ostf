@@ -1,0 +1,111 @@
+{
+ "run": "claude.py-shell.ts-shop.T1.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "Under \"traced requirements it serves,\" the answer names R-REFUND-LIMIT, R-AUDIT-MONEY and R-REFUND-ORIGINAL by ID, each with its title or content. For R-REFUND-ORIGINAL it adds that the @req comment sits on refund even though the code field lists only Gateway, but it still gives the requirement as a reason the method exists. Under the tests that cover the method, it names \"totals refunds per account and UTC day\", the checkRefundLimit tests (described as covering the limit check that refund calls) and \"refunds to the original transaction\".",
+  "cost": 0.0253118
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 1374,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 18218,
+  "cache_read_input_tokens": 77310,
+  "output_tokens": 2415,
+  "cost": 0.0056250000000000015
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "**Why `Refunder.refund` exists:** It is the one place that refunds an earlier charge. It enforces the refund limits, sends the money back through the payment gateway, and writes the audit entry. The class doc says it \"refunds earlier charges within the refund limit\" and keeps running totals per charge and per account per UTC day. The method body does four things in order:\n\n1. Looks up the receipt and throws `UnknownReceiptError` if it doesn't exist.\n2. Calls `checkRefundLimit` (amount positive and not above what's left on the charge; daily total for the account not above 500.00 without `approvedBy`).\n3. Records the refund in the in-memory totals before awaiting the gateway, so a concurrent refund sees it. On a gateway failure it reverses those totals and rethrows.\n4. Refunds `receipt.txn` at the gateway, then appends a `refund` entry to the audit log.\n\nThe traced requirements it serves, per `trace/requirements.yaml` and `trace/design.yaml`:\n- **R-REFUND-LIMIT** (refund limit, controls RISK-REFUND-ABUSE): `refund` is in its `code` list.\n- **R-REFUND-ORIGINAL** (refund goes back to the original payment): the `// @req R-REFUND-ORIGINAL` comment sits on `refund`. Its `code` field, though, lists only `src/payments.ts#Gateway`.\n- **R-AUDIT-MONEY** (every refund is audited): `refund` is in its `code` list.\n- **D-REFUND-LEDGER** (the two running totals): the design item links to the `Refunder` class, and `dayKey` carries its `@req`.\n\n**Tests that cover it** (all in `src/refunds.test.ts`, `describe(\"Refunder\")` plus the `checkRefundLimit` tests):\n\n- **\"refunds to the original transaction\"**: refunds 1,500 of a 5,000 charge and checks the gateway received it on the original `txn`. It checks the audit entry (action, amount, receipt ID) and that a refund over what's left throws `RefundTooLargeError`. Traced to R-REFUND-ORIGINAL, but its `@req` comment says R-AUDIT-MONEY, so the two disagree.\n- **\"totals refunds per account and UTC day\"**: two charges on one account. A refund of 40,000 succeeds, a further 20,000 the same day throws `NeedsApprovalError`, and the same refund succeeds the next UTC day. Traced to R-REFUND-LIMIT and D-REFUND-LEDGER.\n- **`checkRefundLimit`** tests (a sibling `describe`-level test in the same file): the pure limit check, which `refund` calls. Traced to R-REFUND-LIMIT.\n\nOther test files (`checkout.test.ts`, `payments.test.ts`) only have stub gateways with no-op `refund` methods, so they don't exercise `Refunder`. Nothing tests the gateway-failure rollback branch (lines 82–85). I didn't run the tests or `ostf`; this answer is from reading the files, and I changed nothing.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-REFUND-LIMIT": true,
+    "item:R-AUDIT-MONEY": true,
+    "item:R-REFUND-ORIGINAL": true,
+    "test:totals refunds per account and UTC day": true,
+    "test:checkRefundLimit": true,
+    "test:refunds to the original transaction": true
+   },
+   "questions": {
+    "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` as one that covers the function?",
+    "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` as one that covers the function?",
+    "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` as one that covers the function?"
+   },
+   "reason": "All six are yes. The answer lists R-REFUND-LIMIT, R-AUDIT-MONEY and R-REFUND-ORIGINAL by ID among the requirements the method serves. For R-REFUND-ORIGINAL it adds that the trace's code field points only to Gateway, but it still gives that requirement as a reason, citing the @req comment on refund. The answer also names all three tests as covering the method: \"totals refunds per account and UTC day\", the checkRefundLimit tests (which it says test the limit check that refund calls), and \"refunds to the original transaction\".",
+   "cost": 0.024519799999999998
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

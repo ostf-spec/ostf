@@ -1,0 +1,114 @@
+{
+ "run": "codex.intent.ts-shop.T7.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": false,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": false,
+   "test:caps at fifty percent": false,
+   "test:rejects an expired code": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer explicitly names R-DISCOUNT-PERCENT and R-DISCOUNT-CAP as the affected requirements, so q1 and q3 are true. It mentions \"the linked expiry test\" but does not name the R-DISCOUNT-EXPIRY requirement as touched, since it lists only PERCENT and CAP as affected requirements, so q2 is false. applyDiscount is named only as the changed function, not as a test, and the cap test \"caps at fifty percent\" is never named (the \"50% cap check\" describes code), so q4 and q5 are false. \"The linked expiry test also exercises this function\" unambiguously refers to the expired-code test as relevant, and the answer says it was run, so q6 is true.",
+  "cost": 0.0336238
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 10,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4009,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.3
+ },
+ "usage": {
+  "input_tokens": 132244,
+  "cached_input_tokens": 113536,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1113,
+  "reasoning_output_tokens": 393
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "The only uncommitted change is in [applyDiscount](/private/tmp/ostf-trials/runs/codex.intent.ts-shop.T7.2/repo/src/pricing.ts:41). It replaces `Math.min` with an explicit 50% cap check. For the declared numeric discount type, the calculated discount and checkout total are unchanged.\n\nThe affected requirements are **R-DISCOUNT-PERCENT** and **R-DISCOUNT-CAP**; the linked expiry test also exercises this function. No requirement or trace links were added or made false.\n\nI ran `node --test src/pricing.test.ts src/checkout.test.ts`: **10 tests passed, 0 failed**, including the linked discount tests and downstream checkout tests.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": false,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:applyDiscount": false,
+    "test:caps at fifty percent": false,
+    "test:rejects an expired code": true
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The answer names R-DISCOUNT-PERCENT and R-DISCOUNT-CAP by ID as the affected requirements (q1 and q3 true). It does not name R-DISCOUNT-EXPIRY as an affected requirement. It only says the linked expiry test also exercises the function, which is a statement about a test, not about the requirement (q2 false). The answer uses applyDiscount as the name of the changed function, not as a test (q4 false). It never names the 'caps at fifty percent' test. 'Linked discount tests' is too generic to count (q5 false). 'The linked expiry test' clearly points to the expired-code test and treats it as relevant and run (q6 true).",
+   "cost": 0.024903799999999997
+  },
+  "namesItems": false,
+  "namesTests": false
+ }
+}

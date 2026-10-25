@@ -1,0 +1,100 @@
+{
+ "run": "codex.py-shell.ts-shop.T2.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: The diff does what was asked. In `price`, shipping is set from the discounted subtotal: 0 when it is at least 10_000 cents (100.00), otherwise 599 cents (5.99). The quote now has a `shipping` field, and shipping is added to the total. Checkout charges `quote.total`, so the charged amount includes shipping. The new and updated tests check the 9_999/10_000 boundary, check that a discount can drop an order below the free-shipping threshold or leave it at exactly 100.00, and check free and paid shipping in `placeOrder` totals and receipts. The expected numbers I worked through are correct, for example 9_000 + 1_348 + 599 = 10_947. q2: The final answer names the new draft requirement as R-SHIPPING.",
+  "cost": 0.0388046
+ },
+ "metrics": {
+  "calls": 29,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 13,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 8,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 8,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'R-SHIPPING refines N-FAIR-PRICE'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/checkout.test.ts#Checkout%20>%20charges%20shipping%20in%20the%20order%20total verifies R-SHIPPING'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/checkout.test.ts#Checkout%20>%20places%20an%20order verifies R-CHECKOUT-ORDER'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/checkout.ts#Checkout.placeOrder implements R-SHIPPING'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.test.ts#price%20>%20charges%20shipping%20based%20on%20the%20discounted%20subtotal verifies R-SHIPPING'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.test.ts#price%20>%20taxes%20the%20subtotal%20after%20discounts verifies R-TAX-RATE'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#price implements R-SHIPPING'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#price implements R-TAX-RATE'\""
+  ],
+  "ostfOutputTokens": 7104,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 58.3
+ },
+ "usage": {
+  "input_tokens": 290842,
+  "cached_input_tokens": 261376,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3700,
+  "reasoning_output_tokens": 749
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "Shipping is now part of the checkout quote and charged order total. Orders with a subtotal **after discounts** of at least 100.00 ship free; all others pay 5.99. The quote shows shipping separately.\n\nThe change adds draft requirement **R-SHIPPING**, linked to `price`, `Checkout.placeOrder`, and the new pricing and checkout tests. OSTF also reports impact on **R-CHECKOUT-ORDER** and **R-TAX-RATE**. Its test impact includes the `Checkout` and `price` suites; “places an order,” “charges shipping in the order total,” “taxes the subtotal after discounts,” “charges shipping based on the discounted subtotal,” and “tax > rounds half up to the cent.”\n\nVerification: **38 tests pass**, and `ostf check --base main` passes with 116 valid links.",
+ "date": "2026-10-25"
+}

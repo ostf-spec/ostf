@@ -1,0 +1,68 @@
+{
+ "run": "claude.py-shell.ts-shop.T8.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "npm test 2>&1 | tail -40; echo ---; ostf check --help 2>&1 | head -30; ostf stamp --help 2>&1 | head -30",
+   "ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"exit $?\"; echo ---; ostf check --base main 2>&1; echo \"exit $?\"; echo ---; git diff --stat; git diff -- trace.lock"
+  ],
+  "ostfOutputTokens": 4309,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19845,
+  "cache_read_input_tokens": 151800,
+  "output_tokens": 4062,
+  "cost": 0.0075194
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b160e47b0ae3f85d09f7e5b0d9b835b2a82ae3dc",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now passes with exit 0: 40 items, 111 links, 111 valid. The fix is in `trace.lock`, which is not committed yet.\n\n**What was wrong:** The merge commit `dc7595d` (\"Merge branch 'refund-tweaks'\") changed the `checkRefundLimit` line in `trace.lock` from `source.sig=` to `source.sig:`. That malformed line produced `LOCK_INVALID`, and the link also showed as unstamped. The hashes were unchanged, so the code had not moved.\n\n**What I did:**\n- Read `ostf context src/refunds.ts#checkRefundLimit`. The item `R-REFUND-LIMIT` is marked risk-relevant, so I did not change any code.\n- Checked the item text against the function. It matches: the function rejects refunds above what's left on the charge and requires a second approval above the daily limit.\n- Ran `npm test`: all 36 tests pass, including the three `checkRefundLimit` tests and the `Refunder` tests that verify `R-REFUND-LIMIT`.\n- Ran `ostf stamp 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT'`, which rewrote that one lock line back to `source.sig=`. I did not hand-edit `trace.lock`.\n\n**Links:** No new links were added. The one that was unstamped is now stamped, which takes the valid count from 110 to 111.\n\n**Impact:** `ostf check` reports an empty direct impact against `main`.\n\n**Left alone:** `ostf check` also prints an info-level note that `R-VOLUME-DISCOUNT` is not targeted by any link. It is not an error, so I did not change it.\n\nI did not commit or open a PR, since you asked only for the check to pass. If you want the fix committed, I can do that with the attribution line from the session instructions.",
+ "date": "2026-10-25"
+}

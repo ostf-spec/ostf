@@ -1,0 +1,69 @@
+{
+ "run": "claude.none.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2510,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 17537,
+  "cache_read_input_tokens": 161403,
+  "output_tokens": 4007,
+  "cost": 0.007126330000000001
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax`, and it lives in the new file `pricing/salestax.go`. All tests pass, and `gofmt` and `go vet` are clean.\n\nChanges:\n- **`pricing/salestax.go`** (new): `SalesTax`, moved unchanged, with its doc comment.\n- **`pricing/tax.go`**: the function is removed. `Region` stays here because you asked only to move the function.\n- **`pricing/quote.go`**: `Price` calls `SalesTax`. The `Quote.Tax` field is unchanged.\n- **`pricing/tax_test.go`**: call sites now use `SalesTax`. The test names `TestTax` and `TestTaxExempt` are unchanged.\n- **`REQUIREMENTS.md`**: the code references for R-TAX-RATE and R-TAX-EXEMPT now point to `SalesTax` in `pricing/salestax.go`. Without this the traceability would have pointed at a function that no longer exists there. Your request didn't mention this file, so say if you'd rather I revert it.\n\nTest results after the change: `accounts`, `cart`, `inventory`, `payments` and `pricing` all pass with `-count=1`. A grep finds no remaining `Tax(` calls in Go code.\n\nI haven't committed anything.",
+ "date": "2026-10-25"
+}

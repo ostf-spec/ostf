@@ -1,0 +1,93 @@
+{
+ "run": "codex.py-shell.go-shop.T2.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: The diff adds a Shipping field to Quote. In Price it computes the subtotal after discounts, sets shipping to 599 when that is below 10_000, and adds shipping to Total. So orders at or above 100.00 after discounts ship free and all others pay 5.99. The new TestPriceShipping checks the cases below, at and above the threshold, including discounts that drop the subtotal below 100.00 or land exactly on it, and its expected numbers are right. TestPrice and TestPlaceOrder were updated to include shipping in the total and in the amount charged. q2: The final answer names R-SHIPPING by its ID and calls it \"the new draft item\".",
+  "cost": 0.0357366
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 7,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 1,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'R-SHIPPING refines N-FAIR-PRICE' && ostf stamp 'cart/checkout.go#Checkout.PlaceOrder implements R-SHIPPING' && ostf stamp 'cart/checkout_test.go#TestPlaceOrder verifies R-CHECKOUT-ORDER' && ostf stamp 'cart/checkout_test.go#TestPlaceOrder verifies R-SHIPPING' && ostf stamp 'pricing/quote.go#Price implements R-SHIPPING' && ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE' && ostf stamp 'pricing/shipping_test.go#TestPriceShipping verifies R-SHIPPING' && ostf stamp"
+  ],
+  "ostfOutputTokens": 7756,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 75.0
+ },
+ "usage": {
+  "input_tokens": 487754,
+  "cached_input_tokens": 457216,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5073,
+  "reasoning_output_tokens": 1253
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "Shipping is now included in the order quote and the amount charged. It is free when the subtotal after discounts is at least 100.00; otherwise it is 5.99. Tests cover the threshold, discounts that cross it, and the checkout charge.\n\n`go test ./...` passes. `ostf check --base main` passes with 114 valid links. Its impact lists **R-CHECKOUT-ORDER, R-SHIPPING, and R-TAX-RATE**, with tests `TestPlaceOrder`, `TestPriceShipping`, `TestPrice`, and `TestTax`.\n\nThe new draft item **R-SHIPPING** adds a refinement link to **N-FAIR-PRICE**, code links to `Price` and `Checkout.PlaceOrder`, and test links to `TestPriceShipping` and `TestPlaceOrder`.",
+ "date": "2026-10-25"
+}

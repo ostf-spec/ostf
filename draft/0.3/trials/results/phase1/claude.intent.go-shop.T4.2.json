@@ -1,0 +1,75 @@
+{
+ "run": "claude.intent.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4227,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19988,
+  "cache_read_input_tokens": 167013,
+  "output_tokens": 4854,
+  "cost": 0.008096130000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "I renamed `Tax` to `SalesTax` and moved it into `pricing/salestax.go`. Everything builds, vets, and passes: `go test -count=1 ./...` is green in all five packages, same as the baseline.\n\n**Changes**\n- `pricing/tax.go`: now only holds the `Region` type.\n- `pricing/salestax.go` (new): holds `SalesTax`, with the same body and doc comment.\n- `pricing/quote.go`: the call site in `Price` now calls `SalesTax`.\n- `pricing/tax_test.go`: the three calls and the error message now use `SalesTax`. Test names (`TestTax`, `TestTaxExempt`, `TestPrice`) are unchanged.\n- `trace/requirements.yaml`: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`, so they don't go stale. I didn't change any item text.\n\n**Trace check**\n- Items linked to `Tax`: R-TAX-RATE and R-TAX-EXEMPT. Both refine N-FAIR-PRICE, a need. Neither refines or controls a risk, so I didn't need to ask before changing them.\n- No items were added, and no item was made false by this change.\n- Tests that verify those items and passed: `TestTax` and `TestPrice` (R-TAX-RATE), and `TestTaxExempt` (R-TAX-EXEMPT), all in `pricing/tax_test.go`.\n\nI did not commit anything. The `Quote.Tax` struct field keeps its name because it is a field, not the function.",
+ "date": "2026-10-25"
+}

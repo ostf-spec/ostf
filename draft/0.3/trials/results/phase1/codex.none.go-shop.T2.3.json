@@ -1,0 +1,80 @@
+{
+ "run": "codex.none.go-shop.T2.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. In `pricing/quote.go`, `Price` now works out the subtotal after discounts and adds 5.99 (599) shipping only when that amount is below 100.00 (10_000). Orders at or above 100.00 ship free. The new `Shipping` field is added into `Total`. The checkout tests show the charged receipt amount follows that total. Tests were added and updated: the new `TestPriceShipping` covers 99.99, exactly 100.00 and 100.01, plus one case where a discount still leaves the order at the threshold (free) and one where it drops below (charged). `TestPrice` and `TestPlaceOrder` now expect the 5.99 charge, and the new `TestPlaceOrderFreeShipping` checks free shipping end to end through checkout. The answer also mentions `REQUIREMENTS.md`, which isn't in the diff, but this question is only about the code and tests.",
+  "cost": 0.0393648
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2831,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 49.2
+ },
+ "usage": {
+  "input_tokens": 232056,
+  "cached_input_tokens": 211584,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2744,
+  "reasoning_output_tokens": 368
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 6,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "Shipping is now part of the checkout quote and the amount charged: orders with a subtotal after discounts of at least 100.00 ship free; all others pay 5.99. I added tests for the threshold, discounts, and checkout charges, and recorded the rule in `REQUIREMENTS.md`.\n\n`go test ./...` passes.",
+ "date": "2026-10-25"
+}

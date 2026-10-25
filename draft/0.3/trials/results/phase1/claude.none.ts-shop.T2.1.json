@@ -1,0 +1,81 @@
+{
+ "run": "claude.none.ts-shop.T2.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what the user asked. In `src/pricing.ts`, `price()` now works out the subtotal after discount. The new `shipping()` function returns 0 when that amount is 10,000 cents or more, and 599 otherwise. `price()` adds this fee to `total` and returns it as `Quote.shipping`. Checkout charges `quote.total`, so the charged amount changes with it. The tests cover the rule. The `shipping()` tests check 9,999 and 10,000 cents on either side of the threshold. The `price()` tests cover a discount that pulls an order under the threshold, an order that ships free after its discount, and shipping not being taxed. The existing assertions were updated to the new totals. The checkout tests check the charged amount for an order that pays 5.99 and for one that ships free. I checked the expected numbers by hand and they are consistent: for example, 9,000 + 1,348 tax + 599 = 10,947, and 10,800 + 1,617 = 12,417. One mismatch with the answer: the agent says it added a `REQUIREMENTS.md` entry, but no change to that file appears in the diff. This question asks only about the implementation and its tests, so the mismatch does not change the result.",
+  "cost": 0.0509128
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3066,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 27371,
+  "cache_read_input_tokens": 221504,
+  "output_tokens": 8401,
+  "cost": 0.01189134
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 17,
+ "tree": "cad636e53d0ea75cc28f61028453885de3806217",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout. An order whose subtotal after discounts is at least 100.00 ships free. Any other order adds a flat 5.99. The shipping fee is included in the total that checkout charges. All 43 tests pass, up from 36, and the 7 new tests cover the shipping rule.\n\nWhat changed:\n\n- **`src/pricing.ts`**: a `shipping()` function, with the 100.00 threshold and 5.99 fee as named constants. `price()` now computes shipping on the subtotal after discount, adds it to the total, and returns it on `Quote.shipping`. Checkout already charges `quote.total`, so the charge picks this up with no change to `checkout.ts`.\n- **Tests**: boundary cases at 9,999 and 10,000. A case where the discount pulls an order under the threshold. A check that shipping is not taxed. Checkout tests that verify the charged amount for a 5.99 order and a free-shipping order.\n- **`REQUIREMENTS.md`**: a new `R-SHIPPING` entry linked to its code and tests, following the existing convention. Also a one-line update to the README's pricing row.\n\nChoices I made that you may want to change:\n\n- **Shipping is not taxed.** R-TAX-RATE says tax applies to the subtotal after discounts, so I left shipping out of the tax base. If your jurisdiction taxes shipping, that is a change to `price()` and to R-TAX-RATE.\n- **The threshold is on the subtotal after discount**, as you specified. The discount therefore can move an order across the 100.00 line.\n\nI did not commit anything.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,75 @@
+{
+ "run": "claude.intent.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 3954,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 19200,
+  "cache_read_input_tokens": 135045,
+  "output_tokens": 4505,
+  "cost": 0.00744415
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "I renamed `Tax` to `SalesTax` and moved it to `pricing/salestax.go`. `go vet` is clean, gofmt reports nothing, and `go test -count=1 ./...` passes in all five packages.\n\n**Trace items:** The function is linked to R-TAX-RATE and R-TAX-EXEMPT. Both refine N-FAIR-PRICE and neither controls a risk, so I went ahead without asking. I updated their `code:` links in `trace/requirements.yaml` to `pricing/salestax.go#SalesTax`, so the links don't go stale. I did not change any item text, and I added no new items or IDs.\n\n**Changes:**\n- `pricing/salestax.go` (new): contains `SalesTax`, unchanged in behavior.\n- `pricing/tax.go`: keeps only the `Region` type. I read \"move the function\" as moving only the function. If you want `Region` moved too, say so.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls now use `SalesTax`. The test names (`TestTax`, `TestTaxExempt`, `TestPrice`) are unchanged, so the trace test links still resolve.\n- `trace/requirements.yaml`: the two `code:` links above.\n\nNothing is committed. The remaining `Tax` identifiers are the `Quote.Tax` struct field, which I left alone.",
+ "date": "2026-10-25"
+}

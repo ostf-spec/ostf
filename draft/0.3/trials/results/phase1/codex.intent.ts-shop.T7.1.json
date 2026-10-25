@@ -1,0 +1,114 @@
+{
+ "run": "codex.intent.ts-shop.T7.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": false,
+   "test:caps at fifty percent": false,
+   "test:rejects an expired code": false
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The final answer says the changed function is linked to R-DISCOUNT-PERCENT, R-DISCOUNT-CAP, and R-DISCOUNT-EXPIRY, so all three items are named by ID (q1–q3 true). For tests, it names only the test files it ran (src/pricing.test.ts and src/checkout.test.ts) and says \"the tests for those items\" were included. It never names the tests `applyDiscount`, `caps at fifty percent`, or `rejects an expired code`. A file name or a vague reference to a group of tests does not count as naming a specific test, so q4–q6 are false.",
+  "cost": 0.0190478
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 15,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2983,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.5
+ },
+ "usage": {
+  "input_tokens": 155782,
+  "cached_input_tokens": 137600,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1419,
+  "reasoning_output_tokens": 332
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "The uncommitted change in [src/pricing.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T7.1/repo/src/pricing.ts:41) replaces `Math.min` with an explicit check for the 50% discount cap. For the typed numeric discount values, it has no expected effect on pricing, expiry handling, or checkout totals.\n\nThe changed function is linked to `R-DISCOUNT-PERCENT`, `R-DISCOUNT-CAP`, and `R-DISCOUNT-EXPIRY`. I ran `node --test src/pricing.test.ts src/checkout.test.ts`: **10 tests passed, 0 failed**, including the tests for those items. `git diff --check main` also passed.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": true,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:applyDiscount": false,
+    "test:caps at fifty percent": false,
+    "test:rejects an expired code": false
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The final answer names R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY by ID. It presents them as the requirements linked to the changed function, which puts them in the change's impact scope, even though it says no behavior change is expected. So q1–q3 are true. For tests, the answer names only the test files (src/pricing.test.ts, src/checkout.test.ts) and a count, and adds 'including the tests for those items.' It never names the `applyDiscount` test, `caps at fifty percent`, or `rejects an expired code`. So q4–q6 are false.",
+   "cost": 0.0235678
+  },
+  "namesItems": true,
+  "namesTests": false
+ }
+}

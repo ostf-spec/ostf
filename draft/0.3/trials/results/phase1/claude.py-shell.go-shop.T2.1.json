@@ -1,0 +1,97 @@
+{
+ "run": "claude.py-shell.go-shop.T2.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noInventedIds": true,
+  "listsAddedItem": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the requirement it added (R-SHIPPING-FLAT) by its ID?"
+  },
+  "reason": "q1: The diff adds `pricing/shipping.go`. Its `Shipping(net)` returns 0 when the post-discount subtotal is at least 10,000 cents (100.00) and 599 (5.99) otherwise. `Price` now computes the subtotal after the discount, sets `q.Shipping = Shipping(net)` and includes it in `Total`, which checkout charges. The new tests cover the change. `TestShipping` checks values on both sides of the threshold (9,999 → 599, 10,000 → 0). `TestPlaceOrderShipping` checks that a 100.00 order ships free and is charged 114.98. The diff also updates `TestPlaceOrder` (+5.99) and `TestPrice` (shipping 599) to match. These numbers agree with the tax rate the existing tests imply. q2: The final answer names R-SHIPPING-FLAT explicitly as the new requirement item.",
+  "cost": 0.0471526
+ },
+ "metrics": {
+  "calls": 30,
+  "callsBeforeFirstEdit": 14,
+  "edited": true,
+  "ostfCalls": 10,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 7,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 4,
+  "stampCalls": 2,
+  "stamps": [
+   "go test -count=1 -v -run 'TestShipping|TestPrice|TestTax$|TestPlaceOrder' ./pricing ./cart 2>&1 | grep -E \"^(=== RUN|--- |ok|FAIL|PASS)\" ; ostf stamp --help 2>&1 | head -20",
+   "ostf stamp 'cart/checkout_test.go#TestPlaceOrder verifies R-CHECKOUT-ORDER' 'pricing/quote.go#Price implements R-TAX-RATE' 'pricing/tax_test.go#TestPrice verifies R-TAX-RATE' 'R-SHIPPING-FLAT refines N-FAIR-PRICE' 'pricing/quote.go#Price implements R-SHIPPING-FLAT' 'pricing/shipping.go#Shipping implements R-SHIPPING-FLAT' 'cart/checkout_test.go#TestPlaceOrderShipping verifies R-SHIPPING-FLAT' 'pricing/shipping_test.go#TestShipping verifies R-SHIPPING-FLAT'; echo \"rc=$?\"; ostf check --base main; "
+  ],
+  "ostfOutputTokens": 7354,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 93.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 47577,
+  "cache_read_input_tokens": 706463,
+  "output_tokens": 19935,
+  "cost": 0.02655133
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "changedSymbols": 9,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "Shipping is in: orders with a discounted subtotal of at least 100.00 ship free, and all others pay 5.99. The shipping is added to the total that gets charged. All Go tests pass, and `ostf check --base main` is clean (41 items, 114 links, all valid). Nothing is committed.\n\n**What changed**\n- `pricing/shipping.go` (new): `Shipping(net)` returns 0 at or above 10,000 cents, otherwise 599.\n- `pricing/quote.go`: `Quote` gets a `Shipping` field, and `Price` computes `Total = net + Tax + Shipping`. `PlaceOrder` already charges `quote.Total`, so checkout needed no change.\n- Tests: `TestShipping` (threshold cases), `TestPlaceOrderShipping` (a 100.00 order pays no shipping and totals 114.98). I also updated two existing expectations that shipping changes: `TestPlaceOrder` (23.00 → 28.99) and `TestPrice` (adds 5.99 shipping).\n- `trace/requirements.yaml`: new item **R-SHIPPING-FLAT**, `status: draft`, refines N-FAIR-PRICE, linked to `pricing/shipping.go#Shipping`, `pricing/quote.go#Price`, `pricing/shipping_test.go#TestShipping`, and `cart/checkout_test.go#TestPlaceOrderShipping`.\n- `README.md`: the pricing row mentions shipping.\n\n**Trace status**\n- Items with changed code or tests: R-CHECKOUT-ORDER, R-TAX-RATE, and R-SHIPPING-FLAT.\n- Links I stamped after rechecking their items against the code and rerunning the tests: the new R-SHIPPING-FLAT links and the existing `TestPlaceOrder` and `TestPrice` links. Stamping wrote `trace.lock`; I did not edit it by hand.\n- I did not use `@req` comments for the new links, because they duplicated the YAML fields and `check` warned about it.\n\n**Choices I made**\n- Shipping is not taxed. Tax stays on the post-discount subtotal, as R-TAX-RATE already says. The spec didn't cover this, so tell me if shipping should be taxed.\n- \"Subtotal after discounts\" means the discount code, the only discount implemented. R-VOLUME-DISCOUNT has no code yet, so when it lands the threshold will need to account for it.\n\n**Risk check**\n`payments/charge.go#Processor.Charge` is marked risk-relevant, and I didn't touch it. The 10,000.00 charge cap still applies to the new total. Shipping only adds 5.99 to orders under 100.00, so it can't push a charge over the cap by itself.\n\nI didn't open a PR, since you didn't ask for one. If you want one, the PR should name R-SHIPPING-FLAT as added, plus the impacted items R-CHECKOUT-ORDER and R-TAX-RATE and the tests listed above.",
+ "date": "2026-10-25"
+}

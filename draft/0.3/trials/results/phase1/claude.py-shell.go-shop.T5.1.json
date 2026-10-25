@@ -1,0 +1,93 @@
+{
+ "run": "claude.py-shell.go-shop.T5.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff implements the rule. Cart.VolumeDiscount takes 5% off each line with 10 or more units, rounded down per line by integer division. Price takes the volume discount off first, applies the code to what is left, and caps the combined discount at MaxDiscountPercent of the subtotal, so volume counts toward the 50% cap. PlaceOrder passes the volume discount into Price, so it reaches the amount charged. New tests cover the threshold, per-line rounding, two lines, the code applying after volume, the cap including volume, and the end-to-end checkout charge. The arithmetic in the expected test values checks out. The tests were not run here.",
+  "cost": 0.0660128
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 8,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 2,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "stamps": [
+   "grep -rn -e 'Price(' -e 'ApplyDiscount(' -e 'Subtotal()' --include='*.go' . ; echo ----; ostf check --base main --format json 2>&1 | head -60; echo ----; grep -n \"R-VOLUME\\|SHOP-57\" trace.lock | head; echo; ostf stamp --help 2>&1 | head -20",
+   "ostf stamp 'cart/checkout.go#Checkout.PlaceOrder implements R-CHECKOUT-ORDER' 'cart/checkout.go#Checkout.PlaceOrder implements R-CHECKOUT-SESSION' 'pricing/quote.go#Price implements R-TAX-RATE' 'pricing/tax_test.go#TestPrice verifies R-TAX-RATE' 'cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT' 'cart/cart_test.go#TestVolumeDiscount verifies R-VOLUME-DISCOUNT' 'cart/checkout_test.go#TestPlaceOrderVolumeDiscount verifies R-VOLUME-DISCOUNT' 'pricing/quote.go#Price implements R-VOLUME-"
+  ],
+  "ostfOutputTokens": 10192,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 114.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 65811,
+  "cache_read_input_tokens": 817962,
+  "output_tokens": 23124,
+  "cost": 0.03290702
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace.lock"
+ ],
+ "changedAnchors": 9,
+ "changedSymbols": 9,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 (`R-VOLUME-DISCOUNT`) is implemented. All tests pass, `go vet` is clean, and `ostf check --base main` reports 114 of 114 links valid with exit 0. Nothing is committed or pushed, and no PR is open.\n\n**What changed**\n- **`cart/cart.go`**: new `Cart.VolumeDiscount()`. Each line with 10 or more units takes 5% of its own amount, rounded down to the cent. The constants are `VolumeMinQuantity` and `VolumePercent`.\n- **`pricing/quote.go`**: `Price` now takes a `volume` argument. The volume discount comes off the subtotal first, then the discount code applies to what remains. The combined discount is capped at 50% of the subtotal, so the volume discount counts toward the cap.\n- **`cart/checkout.go`**: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`. The charge amount follows from that.\n- **Tests**: `TestVolumeDiscount` (per-line rule, rounding, two lines), `TestPriceVolumeDiscount` (code applies after volume, and the cap), and `TestPlaceOrderVolumeDiscount` (10 mugs at 10.00 are charged 109.23). The existing `TestPrice` call is updated for the new signature.\n\n**Readings I chose**\n- \"Before any discount code applies\" means the code's percentage is taken off the amount left after the volume discount.\n- \"Counts toward the fifty percent cap\" means volume plus code together cannot exceed 50% of the subtotal.\n\n**OSTF**\n- `R-VOLUME-DISCOUNT` already existed in `trace.yaml` as `jira:SHOP-57` revision 2, so I did not create a new item. I linked the new code and tests to it with `@req` comments.\n- Links added: `cart/cart.go#Cart.VolumeDiscount`, `pricing/quote.go#Price`, `cart/cart_test.go#TestVolumeDiscount`, `cart/checkout_test.go#TestPlaceOrderVolumeDiscount`, `pricing/tax_test.go#TestPriceVolumeDiscount`.\n- Impact list (direct): changed `cart/cart.go#Cart.VolumeDiscount`, `VolumeMinQuantity`, `VolumePercent`, `cart/checkout.go#Checkout.PlaceOrder`, `pricing/quote.go#Price`, and the test files above. Affected items: `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-TAX-RATE`, `R-VOLUME-DISCOUNT`.\n- The `Price` change made three existing links suspect: `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` on `PlaceOrder`, and `R-TAX-RATE` on `Price` (plus `TestPrice`). I rechecked each against the code and its tests, then stamped them, along with the new links. `trace.lock` changed only through `ostf stamp`.\n- None of the changed code is linked to a risk-flagged item (`R-CHARGE-AMOUNT`, `R-REFUND-LIMIT`, `R-LOGIN-LOCKOUT`, `D-REFUND-LEDGER`), so I did not need to ask first. `Price` does now set the charged amount, though; `ValidateAmount` in `payments/charge.go` is unchanged and still caps charges at 10,000.00.\n\n**Please check**\n- `R-DISCOUNT-PERCENT` says a code \"takes its percentage off the subtotal.\" For a line of 10 or more units, the code now applies to the post-volume amount, so that wording is arguably no longer exact. I did not edit the item, as AGENTS.md requires; you may want to amend its text.\n- I could not check `SHOP-57` in Jira because I have no Jira access here. I implemented the text in `trace.yaml`, and its revision is still `\"2\"`.\n- `Price` is a public signature change. Its only callers are `PlaceOrder` and the tests, and both are updated.\n\nIf you want, I can commit to a branch and open a PR that names `R-VOLUME-DISCOUNT`, the impact list, and the stamped links.",
+ "date": "2026-10-25"
+}

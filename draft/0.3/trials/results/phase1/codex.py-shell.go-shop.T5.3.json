@@ -1,0 +1,102 @@
+{
+ "run": "codex.py-shell.go-shop.T5.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff meets R-VOLUME-DISCOUNT and adds tests for it. `Cart.VolumeDiscount` takes 5% off each line with 10 or more units. It works out each line separately, and integer division rounds each line's discount down to the cent. `PriceWithVolume` applies the discount code to the subtotal after the volume discount, then limits the code's amount to `subtotal*50% - volumeDiscount`, so the two discounts share the fifty percent cap. `PlaceOrder` now prices through this path. Three new tests check it. TestVolumeDiscount shows the rounding is per line: two lines at 101¢ × 10 each round down to 50¢, for 100¢ in total, where rounding the combined amount would give 101¢. TestPriceWithVolume checks the order of discounts (500 + 950 = 1450) and the shared cap (a 100% code still leaves a 5000 discount). TestPlaceOrderVolumeDiscount checks the checkout total and the amount charged. I can't run the tests, so I couldn't confirm the checkout test's stock and region setup, but the code and tests match the requirement.",
+  "cost": 0.050180800000000005
+ },
+ "metrics": {
+  "calls": 62,
+  "callsBeforeFirstEdit": 22,
+  "edited": true,
+  "ostfCalls": 23,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 17,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 8,
+  "stampCalls": 11,
+  "stamps": [
+   "/bin/zsh -lc 'ostf stamp --help'",
+   "/bin/zsh -lc \"ostf stamp 'R-VOLUME-DISCOUNT refines N-FAIR-PRICE'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/cart.go#Cart.VolumeDiscount implements R-VOLUME-DISCOUNT'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/checkout.go#Checkout.PlaceOrder implements R-CHECKOUT-ORDER'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/checkout.go#Checkout.PlaceOrder implements R-CHECKOUT-SESSION'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/checkout.go#Checkout.PlaceOrder implements R-VOLUME-DISCOUNT'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/volume_checkout_test.go#TestPlaceOrderVolumeDiscount verifies R-VOLUME-DISCOUNT'\"",
+   "/bin/zsh -lc \"ostf stamp 'cart/volume_test.go#TestVolumeDiscount verifies R-VOLUME-DISCOUNT'\"",
+   "/bin/zsh -lc \"ostf stamp 'pricing/quote.go#Price implements R-TAX-RATE'\"",
+   "/bin/zsh -lc \"ostf stamp 'pricing/quote.go#PriceWithVolume implements R-VOLUME-DISCOUNT'\"",
+   "/bin/zsh -lc \"ostf stamp 'pricing/quote_test.go#TestPriceWithVolume verifies R-VOLUME-DISCOUNT'\""
+  ],
+  "ostfOutputTokens": 7245,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 101.8
+ },
+ "usage": {
+  "input_tokens": 775289,
+  "cached_input_tokens": 731904,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5320,
+  "reasoning_output_tokens": 1702
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/checkout.go",
+  "cart/volume_checkout_test.go",
+  "cart/volume_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.lock",
+  "trace.yaml"
+ ],
+ "changedAnchors": 7,
+ "changedSymbols": 7,
+ "tree": "debc5eea52c32556ee5d9fff52efe0d9d0cfb3f1",
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Cart lines with at least 10 units now receive 5% off, rounded down per line. Discount codes apply afterward, and both discounts share the 50% cap. Checkout charges the resulting total.\n\n`go test ./...` passes. `ostf check --base main` passes with 116 valid links. Its impact lists R-VOLUME-DISCOUNT, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION, and R-TAX-RATE; it added seven links for R-VOLUME-DISCOUNT and no new items. The listed tests are TestPlaceOrder, TestPlaceOrderNeedsSession, TestPlaceOrderVolumeDiscount, TestVolumeDiscount, TestPriceWithVolume, TestPrice, and TestTax.",
+ "date": "2026-10-25"
+}

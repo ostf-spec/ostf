@@ -1,0 +1,94 @@
+{
+ "run": "claude.intent.go-shop.T5.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noDuplicateItem": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what R-VOLUME-DISCOUNT asks. `pricing.VolumeDiscount` gives 5% off a line with 10 or more units. It uses integer division on positive cents, so the amount rounds down to the cent. `Cart.VolumeDiscount` adds this up line by line, judging each line on its own quantity. `Price` takes the volume discount off first and applies the discount code to what is left (`subtotal-volume`). It caps the code's share at `subtotal*MaxDiscountPercent/100 - volume`, so the volume discount counts toward the 50% cap. Tax and total are worked out after both discounts, and checkout passes the volume discount in. New tests cover the 10-unit threshold, the 5% rate, rounding down, the per-line sum in the cart, the code applying after volume, the cap including volume, and a full order at checkout. Their expected numbers agree with the code.",
+  "cost": 0.0607968
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 5478,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 107.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 53952,
+  "cache_read_input_tokens": 404208,
+  "output_tokens": 24814,
+  "cost": 0.02724148
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "LOCK_MISSING"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go",
+  "trace.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "7d0ec22a67327086801e028717624a0369e1744f",
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented. It maps to the existing trace item `R-VOLUME-DISCOUNT`, and `go test ./...` passes with `go vet` and `gofmt` clean.\n\n**Behavior**\n- Each cart line with 10 or more units gets 5% off, rounded down to the cent (`pricing/volume.go`).\n- The volume discount comes off first. A discount code then takes its percentage off what remains.\n- Volume plus code is capped at 50% of the subtotal, so the volume discount counts toward the cap.\n- Sales tax is charged on the amount after both discounts.\n\n**Interface changes**\n- `pricing.Price` takes a new `volume` argument. Its only other caller is `cart/checkout.go`, which I updated.\n- `pricing.Quote` has a new `Volume` field. `Discount` now holds only the code's share.\n\n**Trace changes**\n- No new items were added and no item text was changed.\n- `R-VOLUME-DISCOUNT` now links to:\n  - code: `pricing/volume.go#VolumeDiscount`, `pricing/quote.go#Price`, `cart/cart.go#Cart.VolumeDiscount`\n  - tests: `pricing/volume_test.go#TestVolumeDiscount`, `pricing/volume_test.go#TestPriceWithVolumeDiscount`, `cart/cart_test.go#TestVolumeDiscount`, `cart/checkout_test.go#TestPlaceOrderVolumeDiscount`\n- The matching `@req R-VOLUME-DISCOUNT` comments are on the code and test functions above.\n- The `ostf` CLI isn't installed here, so I checked the links by reading that each named function exists.\n\n**Ask-first rule**\n- None of the code I changed is linked to an item that controls a risk or refines one that does, so I went ahead without asking.\n\n**Needs your decision: `R-DISCOUNT-PERCENT` wording**\n- That item says a code takes its percentage \"off the subtotal\".\n- For carts with a qualifying line, the code now applies after the volume discount. I read \"before any discount code applies\" that way.\n- I did not change the item. The wording may need a tweak, such as \"off the subtotal after volume discounts\". Tell me which you want.\n\nI did not commit or open a PR, since you didn't ask for one. The PR will need to name `R-VOLUME-DISCOUNT` and the tests above.",
+ "date": "2026-10-25"
+}

@@ -182,6 +182,7 @@ Defects of the harness found during the scored runs, each corrected for every re
 
 - T5 in `none` compared the item's whole section of `REQUIREMENTS.md`, so a run that listed its new code and tests under the item failed although the item stayed as written. The criterion now compares the item's statement, its type, heading and text, which is what the f1 fingerprint covers in the other arms, and `harness.py correct` scores those records again from their final repositories.
 - Two judge questions asked more than their criteria. T7's asked whether the answer names each item "as a requirement that the change affects", which the judge read as a change of behavior, while T7 asks for the items that the impact lists, those linked to the changed code. T1's asked whether the answer names each test "as one that covers the function", which failed answers that named `TestCheckRefundLimit` or `checkRefundLimit` and said, rightly, that it tests a function the method calls; the expected tests have included it since round 1. The questions now ask for exactly that, and `harness.py rejudge` judges every T1 and T7 record again from its recorded answer.
+- The write detector counted a hand edit of `trace.lock` whenever a command wrote any file and named the lock, as in `claude.py-shell.ts-shop.T8.3`, which read the lock with `sed -n` and sent a test log to `/tmp`. It now counts a command only when the lock is what it writes, and `harness.py relock` read every Phase 1 transcript again; that record was the only one that changed.
 
 ### Parallel agents
 

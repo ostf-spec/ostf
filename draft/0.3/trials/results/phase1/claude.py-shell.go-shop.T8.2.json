@@ -1,0 +1,68 @@
+{
+ "run": "claude.py-shell.go-shop.T8.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp --help 2>&1; echo ---; ostf check --help 2>&1 | head -30",
+   "ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"exit=$?\"; echo ---; ostf check --base main 2>&1; echo \"exit=$?\"; echo ---; git status --short; git diff -- trace.lock"
+  ],
+  "ostfOutputTokens": 2976,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 26.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 17530,
+  "cache_read_input_tokens": 175345,
+  "output_tokens": 3348,
+  "cost": 0.00693505
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "c01ad6d18d8d401294f9fbc5dd4610553de80d1b",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now passes with exit 0. The fix is one line in `trace.lock`, and I did not change any code, item, or test.\n\n**Cause:** The merge commit `1d9f7bf` (Merge branch 'refund-tweaks') changed the lock line for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` from `source.sig=` to `source.sig:`. That made the line invalid (`LOCK_INVALID`), so the link also showed as unstamped.\n\n**Fix:** I did not edit `trace.lock` by hand, since AGENTS.md forbids it. Instead I:\n1. Read `ostf context payments/refund.go#CheckRefundLimit`. The item R-REFUND-LIMIT is marked risk-relevant, but I changed no code, so no approval was needed.\n2. Confirmed the code matches the item: the amount must be positive and within what is left of the charge, and refunds over the 500.00 daily limit need a second approver.\n3. Ran `go test ./payments/ -run 'TestCheckRefundLimit|TestRefundDailyLimit'`. Both pass. `go test ./...` passes for all packages.\n4. Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`. It rewrote only that lock line back to `source.sig=`. The diff against `HEAD` is that one line.\n\n**Result of `ostf check --base main`:** 40 items, 109 links, 109 valid, no errors.\n- Impact against main: none listed.\n- Items or links added: none.\n- Stamped: `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT`.\n- Remaining info note: `R-VOLUME-DISCOUNT` has no link targeting it. It is informational only and I left it alone, since linking it would mean choosing code or tests that carry it.\n\nThe `trace.lock` change is uncommitted. I did not commit or open a PR since you didn't ask for one.",
+ "date": "2026-10-25"
+}

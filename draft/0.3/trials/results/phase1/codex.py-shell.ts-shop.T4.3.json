@@ -1,0 +1,81 @@
+{
+ "run": "codex.py-shell.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 32,
+  "callsBeforeFirstEdit": 16,
+  "edited": true,
+  "ostfCalls": 12,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 6,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 5,
+  "stampCalls": 5,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.test.ts#salesTax%20>%20is%20zero%20for%20a%20tax-exempt%20customer verifies R-TAX-EXEMPT'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.test.ts#salesTax%20>%20rounds%20half%20up%20to%20the%20cent verifies R-TAX-RATE'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#price implements R-TAX-RATE'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/salestax.ts#salesTax implements R-TAX-EXEMPT'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/salestax.ts#salesTax implements R-TAX-RATE'\""
+  ],
+  "ostfOutputTokens": 5499,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 65.2
+ },
+ "usage": {
+  "input_tokens": 308014,
+  "cached_input_tokens": 281472,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3299,
+  "reasoning_output_tokens": 609
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it, with its rounding helper, to [src/salestax.ts](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T4.3/repo/src/salestax.ts). Pricing now imports it, and the tests, README, and OSTF links reflect the move.\n\nAll 36 tests pass. `ostf check --base main` passes with 111 valid links. Its impact covers `R-TAX-RATE` and `R-TAX-EXEMPT`, including the quote test and the two `salesTax` tests. The added links are `salesTax` implementing each requirement and the two renamed tests verifying them.",
+ "date": "2026-10-25"
+}

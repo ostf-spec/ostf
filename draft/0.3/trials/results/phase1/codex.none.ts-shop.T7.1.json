@@ -1,0 +1,111 @@
+{
+ "run": "codex.none.ts-shop.T7.1",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 1,
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "ranTests": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": false,
+   "item:R-DISCOUNT-PERCENT": false,
+   "test:applyDiscount": false,
+   "test:caps at fifty percent": false,
+   "test:rejects an expired code": false
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer says the change swaps `Math.min` for \"an explicit check for the 50% discount cap\", which clearly names the Discount cap rule as touched, so q1 is true. It never mentions expiry or expired codes, so q2 is false. It does say \"for valid discount percentages\" the result is unchanged, but that only describes the cap's effect. It doesn't name the Percentage discount rule as a separate item linked to the change, so q3 is false. For tests, it only says it ran \"the pricing and checkout tests\" and gives a pass count. It names no test, not `applyDiscount`, `caps at fifty percent` or `rejects an expired code`, so q4–q6 are false.",
+  "cost": 0.01392
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 6,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2994,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.1
+ },
+ "usage": {
+  "input_tokens": 106615,
+  "cached_input_tokens": 89216,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 824,
+  "reasoning_output_tokens": 159
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "cad636e53d0ea75cc28f61028453885de3806217",
+ "firstMessage": null,
+ "finalMessage": "Compared with `main`, the only uncommitted change is in [src/pricing.ts](/tmp/ostf-trials/runs/codex.none.ts-shop.T7.1/repo/src/pricing.ts:45). It replaces `Math.min` with an explicit check for the 50% discount cap. For valid discount percentages, the calculated discount and downstream tax are unchanged.\n\nI ran the pricing and checkout tests: **10 passed, 0 failed**. No tests were added or changed.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": false,
+    "item:R-DISCOUNT-PERCENT": false,
+    "test:applyDiscount": false,
+    "test:caps at fifty percent": false,
+    "test:rejects an expired code": false
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The answer says the change touches the 50% discount cap check. That clearly points to R-DISCOUNT-CAP by its content, so q1 is true. It never mentions expired discounts, so q2 is false. It brings up percentage discounts only to say that the discount amount for valid percentages is unchanged. That does not name R-DISCOUNT-PERCENT as a requirement the change affects, so q3 is false. For tests, it only says \"the pricing and checkout tests\" and gives no names. None of `applyDiscount`, `caps at fifty percent` or `rejects an expired code` appears, so q4 through q6 are false.",
+   "cost": 0.021355799999999998
+  },
+  "namesItems": false,
+  "namesTests": false
+ }
+}

@@ -1,0 +1,76 @@
+{
+ "run": "claude.intent.ts-shop.T4.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 4039,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 47.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 28936,
+  "cache_read_input_tokens": 224401,
+  "output_tokens": 9114,
+  "cost": 0.012589810000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "The function is now `salesTax` in `src/salestax.ts`, and the full suite passes: 36 of 36, the same count as before the change. I haven't committed anything.\n\n**What changed**\n- **`src/salestax.ts`** (new): exports `salesTax` and its private `roundHalfUp` helper, moved from `pricing.ts`.\n- **`src/pricing.ts`**: imports `salesTax` and no longer defines `tax`. In `price()`, the local variable was renamed `taxAmount`. Keeping the name `salesTax` would have shadowed the import and thrown at runtime.\n- **`src/salestax.test.ts`** (new): the `tax` tests moved here as `describe(\"salesTax\")`, with the `@req R-TAX-EXEMPT` comment. The `price` test stays in `pricing.test.ts`.\n- **`trace/requirements.yaml`**: only link fields changed. R-TAX-RATE and R-TAX-EXEMPT now point to `src/salestax.ts#salesTax`, and R-TAX-RATE's test link is now `src/salestax.test.ts#salesTax > rounds half up to the cent`. Item text is untouched.\n- **`README.md`**: the module table has a row for `src/salestax.ts`.\n\n**OSTF check**\n- Items linked to `tax`: R-TAX-RATE and R-TAX-EXEMPT. Both refine N-FAIR-PRICE and neither controls a risk, so no ask-first gate applied.\n- Items whose text is now false: none. Neither item's text changed.\n- Items added: none. This is a refactor with no new behavior.\n- Tests run for those items: `src/salestax.test.ts` (`salesTax > rounds half up to the cent`, `salesTax > is zero for a tax-exempt customer`) and `src/pricing.test.ts` (`price > taxes the subtotal after discounts`). All pass, along with the rest of the suite.",
+ "date": "2026-10-25"
+}

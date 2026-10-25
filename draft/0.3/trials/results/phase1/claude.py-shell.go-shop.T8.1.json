@@ -1,0 +1,68 @@
+{
+ "run": "claude.py-shell.go-shop.T8.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T8",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "checkPasses": true,
+  "usedStamp": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "checkPasses"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 9,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 2,
+  "stamps": [
+   "git show 77f9be4 | head -40; echo ---; git log --oneline --all | head; git log --all --oneline -- payments/refund.go; echo ---; ostf check --help 2>&1 | head -40; ostf stamp --help 2>&1 | head -30",
+   "ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"exit=$?\"; echo ---; ostf check --base main 2>&1; echo \"exit=$?\"; echo ---; git status --short; git diff -- trace.lock"
+  ],
+  "ostfOutputTokens": 2964,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 19964,
+  "cache_read_input_tokens": 210625,
+  "output_tokens": 4327,
+  "cost": 0.00826435
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace.lock"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "c01ad6d18d8d401294f9fbc5dd4610553de80d1b",
+ "firstMessage": null,
+ "finalMessage": "`ostf check --base main` now passes with no errors: 40 items, 109 links, 109 valid. The only remaining output is an info note about `R-VOLUME-DISCOUNT`, which is not linked to any code, test, or verification item. That note was there before and is not an error, so I left it.\n\n**What was wrong**\n\n- **Malformed lock line.** The `refrecheck` merge (`77f9be4`, \"Merge branch 'refund-tweaks'\") changed the `trace.lock` entry for `payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT` from `source.sig=` to `source.sig:`. That produced `LOCK_INVALID` and left the link unstamped. The hashes were unchanged, so the code itself had not changed.\n- **Risk-relevant function.** `CheckRefundLimit` is marked risk-relevant. I did not change its code.\n\n**What I did**\n\n- Read the item text and `CheckRefundLimit`. The code matches the item: refunds are capped at the amount left on the charge, and a day's total above `DailyRefundLimit` (50,000 cents, i.e. 500.00) needs a second approver.\n- Ran `go test ./payments/ -run 'TestCheckRefundLimit|TestRefundDailyLimit'`. Both pass. `go test ./...` passes for all packages.\n- Ran `ostf stamp 'payments/refund.go#CheckRefundLimit implements R-REFUND-LIMIT'`, quoted exactly as check printed it. This rewrote the lock line with `=`. I did not edit `trace.lock` by hand.\n\n**Changes**\n\n- `trace.lock`: one line, `=` in place of `:` on the `CheckRefundLimit` entry. This is the only file changed. I have not committed it.\n\n**Impact and additions for the summary**\n\n- Items added: none. Links added: none.\n- The impact list against `main` is empty.\n- No items were rewritten, and no item was found to be false.",
+ "date": "2026-10-25"
+}

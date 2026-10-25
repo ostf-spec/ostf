@@ -1,0 +1,82 @@
+{
+ "run": "claude.none.go-shop.T2.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. In `pricing/quote.go`, `Price` works out the subtotal after discount. It charges a flat 599 (5.99) when that amount is below 10_000 (100.00) and charges nothing otherwise, and it adds shipping to `Total`. Checkout charges `quote.Total`, so the customer pays the shipping. The new `pricing/quote_test.go` tests the threshold: 99.99 pays shipping, exactly 100.00 and above ship free, a discount that drops the order just below 100.00 pays, and a discount that leaves it at exactly 100.00 ships free. It also checks that the total includes shipping and that shipping isn't taxed. The existing `TestPrice` and `TestPlaceOrder` were updated to the new totals, and `TestPlaceOrder` checks that the amount charged includes shipping. One small flaw: the inline comments in the discount test cases have the decimal point in the wrong place (they say 11.10 where the value is 111.10), but the test values and the expected results are correct.",
+  "cost": 0.049040799999999996
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 2797,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 53.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 26126,
+  "cache_read_input_tokens": 425174,
+  "output_tokens": 8052,
+  "cost": 0.01350594
+ },
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "8c769034b325c24415b69a0782b6506366e5d896",
+ "firstMessage": null,
+ "finalMessage": "Checkout now adds shipping to the order total: orders with a subtotal after discounts of at least 100.00 ship free, and all others pay a flat 5.99. `go test ./...` passes across all packages, and `go vet` and `gofmt` are clean. I haven't committed.\n\n**What changed**\n- **`pricing/quote.go`**: `Price` now computes shipping from the subtotal after discount and adds it to `Total`. `Quote` has a new `Shipping` field, and the threshold and flat fee are named constants (`FreeShippingMin`, `FlatShipping`). `Checkout.PlaceOrder` already charges `quote.Total`, so the customer is charged the shipping amount with no change to `cart/checkout.go`.\n- **`REQUIREMENTS.md`**: new `R-SHIPPING` entry under Requirements, refining N-FAIR-PRICE, with code and test references. Shipping had no requirement before, so I added one.\n- **Tests**: new `pricing/quote_test.go` with boundary cases: 99.99, exactly 100.00, a discount that drops the order just below the threshold (pays 5.99), and a discount that leaves it at exactly 100.00 (ships free). It also checks that shipping isn't taxed.\n- **Existing tests I updated**: `TestPrice` and `TestPlaceOrder` pinned totals that now include shipping (10.348 → 10.947 and 23.00 → 28.99). The new values follow from the rule.\n- **`README.md`**: one-line note on shipping in the `pricing` row.\n\n**Choices I made that you may want to change**\n- Shipping is not taxed. The existing tax requirement covers the subtotal after discounts only, so I left tax alone.\n- The threshold is checked after the discount and before tax, which matches \"subtotal after discounts\".\n- An order with a zero subtotal would pay 5.99, but checkout rejects empty carts before pricing, so this doesn't happen in practice.",
+ "date": "2026-10-25"
+}

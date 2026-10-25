@@ -1,0 +1,110 @@
+{
+ "run": "codex.intent.ts-shop.T1.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The final answer gives R-REFUND-ORIGINAL, R-REFUND-LIMIT and R-AUDIT-MONEY by ID as reasons the method exists. It also describes what each one means: refunding to the original transaction, enforcing the remaining-charge and daily approval limits, and recording the refund in the audit log. It names the tests \"refunds to the original transaction\" and \"totals refunds per account and UTC day\" as calling the method directly. It also says \"the three `checkRefundLimit` tests\" cover the validation function that refund calls. That counts as naming the checkRefundLimit tests among those that cover what the function calls.",
+  "cost": 0.022675799999999996
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 13,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "usedMcp": false,
+  "usedShellTool": false,
+  "contextCalls": 0,
+  "stampCalls": 0,
+  "stamps": [],
+  "ostfOutputTokens": 1792,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 32.4
+ },
+ "usage": {
+  "input_tokens": 128310,
+  "cached_input_tokens": 109696,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1371,
+  "reasoning_output_tokens": 159
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LOCK_MISSING",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "39c79313f3a21ad199bdbff0f3f186ee2c1f4208",
+ "firstMessage": null,
+ "finalMessage": "`Refunder.refund` exists to refund an earlier charge to its **original transaction**, enforce the remaining charge and daily approval limits, and record the refund in the audit log. It looks up the receipt, tracks totals by charge and account/UTC day, calls the gateway with the receipt’s transaction ID, and appends an audit entry after success. These behaviors correspond to `R-REFUND-ORIGINAL`, `R-REFUND-LIMIT`, `D-REFUND-LEDGER`, and `R-AUDIT-MONEY` in [the requirements](/tmp/ostf-trials/runs/codex.intent.ts-shop.T1.3/repo/trace/requirements.yaml:141) and [design trace](/tmp/ostf-trials/runs/codex.intent.ts-shop.T1.3/repo/trace/design.yaml:14).\n\nTwo tests call the method directly in [refunds.test.ts](/tmp/ostf-trials/runs/codex.intent.ts-shop.T1.3/repo/src/refunds.test.ts:48):\n\n- **“refunds to the original transaction”** checks the gateway transaction, audit entry, and rejection of a refund exceeding the remaining charge.\n- **“totals refunds per account and UTC day”** checks the daily total, approval limit, and reset on the next UTC day.\n\nThe three `checkRefundLimit` tests in that file also cover the validation function that `refund` calls. No files were changed.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-REFUND-LIMIT": true,
+    "item:R-AUDIT-MONEY": true,
+    "item:R-REFUND-ORIGINAL": true,
+    "test:totals refunds per account and UTC day": true,
+    "test:checkRefundLimit": true,
+    "test:refunds to the original transaction": true
+   },
+   "questions": {
+    "item:R-REFUND-LIMIT": "Does the final answer name R-REFUND-LIMIT (Refund limit) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-AUDIT-MONEY": "Does the final answer name R-AUDIT-MONEY (Audit money movements) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "item:R-REFUND-ORIGINAL": "Does the final answer name R-REFUND-ORIGINAL (Refund to the original payment) as a reason the function exists, by its ID or unambiguously by its title or content?",
+    "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` as one that covers the function?",
+    "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` as one that covers the function?",
+    "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` as one that covers the function?"
+   },
+   "reason": "The answer gives R-REFUND-ORIGINAL, R-REFUND-LIMIT and R-AUDIT-MONEY by ID as reasons the method exists. It also describes each one: refunding to the original transaction, enforcing the limits, and recording an audit entry. By name, it lists \"refunds to the original transaction\" and \"totals refunds per account and UTC day\" as tests that call the method directly. It also names the three checkRefundLimit tests as further coverage, since they test the validation function that refund calls. The answer separates direct from indirect coverage, but it still presents the checkRefundLimit tests as covering the function, so q5 is true. This was the closest call of the six.",
+   "cost": 0.025563799999999998
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}

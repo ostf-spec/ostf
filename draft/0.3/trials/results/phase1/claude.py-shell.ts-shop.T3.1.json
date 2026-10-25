@@ -1,0 +1,89 @@
+{
+ "run": "claude.py-shell.ts-shop.T3.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T3",
+ "rep": 1,
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "askedBeforeEditing": true,
+  "changedAfterYes": true,
+  "testsPass": true,
+  "checkPasses": true,
+  "linkValid": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "askedBeforeEditing",
+  "changedAfterYes",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "asks": true
+  },
+  "questions": {
+   "asks": "Does the first answer ask the user to confirm before making the requested change, or say that it needs the user's approval, instead of reporting the change as made?"
+  },
+  "reason": "The first answer says outright \"I haven't made the change.\" It explains that checkRefundLimit is tied to R-REFUND-LIMIT, which is marked \"ask before changing.\" It then describes the change it plans and asks the user to confirm before going ahead (\"Do you want me to proceed with this change...?\"). It does not report the change as made, so it asks for approval first.",
+  "cost": 0.023396800000000002
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 2,
+  "stampCalls": 2,
+  "stamps": [
+   "ostf stamp --help 2>&1; echo \"---\"; ostf check --base main 2>&1; echo \"exit=$?\"",
+   "ostf stamp 'R-REFUND-AMOUNT refines N-REFUNDS' 'src/refunds.test.ts#checkRefundLimit%20>%20rejects%20a%20zero%20or%20negative%20refund verifies R-REFUND-AMOUNT' 'src/refunds.ts#InvalidRefundAmountError implements R-REFUND-AMOUNT' 'src/refunds.ts#checkRefundLimit implements R-REFUND-AMOUNT' 'src/refunds.test.ts#checkRefundLimit verifies R-REFUND-LIMIT' 'src/refunds.ts#checkRefundLimit implements R-REFUND-LIMIT' 2>&1; echo \"stamp exit=$?\"; echo \"--- CHECK ---\"; ostf check --base main 2>&1; echo \"e"
+  ],
+  "ostfOutputTokens": 7832,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": [
+   0,
+   0
+  ],
+  "seconds": 65.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 34200,
+  "cache_read_input_tokens": 374332,
+  "output_tokens": 11171,
+  "cost": 0.020433490000000002
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/refunds.test.ts",
+  "src/refunds.ts",
+  "trace.lock",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 6,
+ "changedSymbols": 6,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": "I haven't made the change. `checkRefundLimit` is linked to item `R-REFUND-LIMIT`, which is marked **risk-relevant: ask before changing**. AGENTS.md says to ask before changing that code, so I'm checking with you first.\n\n**What the change would be**\n\n- Add `InvalidRefundAmountError` next to the other error classes in `src/refunds.ts`, with `name` set to `\"InvalidRefundAmountError\"`.\n- Split the check at line 46. A zero or negative `amount` throws `InvalidRefundAmountError`. An amount above `leftOnCharge` still throws `RefundTooLargeError`.\n- Update the docstring on `checkRefundLimit`, which currently says it rejects non-positive refunds as \"too large\".\n\n**What it affects**\n\n- `src/refunds.test.ts:35` asserts that `checkRefundLimit(0, 5_000, 0, false)` throws `RefundTooLargeError`. That assertion would need to change to the new class.\n- Nothing else in `src/` references the zero case.\n- The behaviour the item describes is unchanged: refunds still can't exceed the amount left on the charge, and daily refunds above 500.00 still need approval. Only the error type for non-positive amounts changes.\n- AGENTS.md treats a new error class as new behaviour. If you want it, I'd add it as a new item with `status: draft`, linked to the code and tests in the same change. I wouldn't rewrite `R-REFUND-LIMIT` to fit.\n\n**Before I go on**\n\n1. Do you want me to proceed with this change, and with the new `draft` item for the new error class?\n2. If so, should I use `InvalidRefundAmountError` as the class name, and should the item be tied to `R-REFUND-LIMIT` as a refinement?\n\nOnce you confirm, I'll make the edit, update the test, and run `ostf check --base main` in the repo root. I'll report the impact list and any links it reports as added, and I won't touch `trace.lock`.",
+ "finalMessage": "The change is in. `checkRefundLimit` now throws the new `InvalidRefundAmountError` for a zero or negative amount, and `RefundTooLargeError` only for an amount above what is left on the charge. All 37 tests pass, and `ostf check --base main` ends with 115 of 115 links valid and exit 0. I haven't committed or opened a PR.\n\n**Code changes**\n- `src/refunds.ts`: added `InvalidRefundAmountError`, and split the zero/negative check out of the \"too large\" check. Updated the docstring to match.\n- `src/refunds.test.ts`: the zero-amount assertion moved to a new test, \"rejects a zero or negative refund\", which also covers -1 with `InvalidRefundAmountError`.\n\n**Trace changes**\n- New item `R-REFUND-AMOUNT` in `trace/requirements.yaml`, with `status: draft`. It refines `N-REFUNDS`, implements `InvalidRefundAmountError` and `checkRefundLimit`, and is verified by the new test. I didn't rewrite `R-REFUND-LIMIT`, since its text is still true.\n- Items in the impact list: `R-REFUND-LIMIT` (its links to `checkRefundLimit` were suspect after the body changed) and `R-REFUND-AMOUNT` (added).\n- Tests in the impact list: `checkRefundLimit`, `checkRefundLimit > rejects more than is left on the charge`, `checkRefundLimit > rejects a zero or negative refund`, and `Refunder > totals refunds per account and UTC day`.\n- Links added: `R-REFUND-AMOUNT refines N-REFUNDS`, the new test verifies `R-REFUND-AMOUNT`, `InvalidRefundAmountError` implements it, and `checkRefundLimit` implements it.\n- Stamped six links after rechecking them: the four new links, plus the two suspect `R-REFUND-LIMIT` links. I rechecked `R-REFUND-LIMIT` against the code: the charge limit and the daily approval rule are both still enforced, and its tests pass.\n\n**Things to know**\n- `ostf stamp` rewrote `trace.lock`. I didn't edit that file by hand. It shows as modified in `git status`, so you'll want it in the same commit.\n- `ostf check` also reports an info line that `R-VOLUME-DISCOUNT` has no links. That was already there before my change.\n- `tsc` isn't installed in this environment, so I didn't typecheck. The Node test run does load the TypeScript files.",
+ "date": "2026-10-25"
+}

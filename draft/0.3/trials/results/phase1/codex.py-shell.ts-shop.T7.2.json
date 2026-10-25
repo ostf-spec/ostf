@@ -1,0 +1,119 @@
+{
+ "run": "codex.py-shell.ts-shop.T7.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "ranTests": true,
+  "noOtherFilesChanged": true,
+  "noLockHandEdit": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "ranTests"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": true,
+   "test:caps at fifty percent": true,
+   "test:rejects an expired code": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, whether or not it says that their behavior changed, by its ID or unambiguously by its title or content?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All six are true. The final answer says the change \"affects the links for R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY, and R-DISCOUNT-PERCENT\", so it names all three items by ID as linked to the changed code (q1–q3). It also says OSTF lists \"the applyDiscount test group, including 'caps at fifty percent' and 'rejects an expired code,'\" as impacted, so it names all three tests as ones that matter for the change (q4–q6).",
+  "cost": 0.0188398
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 20,
+  "edited": false,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 6,
+  "firstOstfCall": 9,
+  "usedMcp": false,
+  "usedShellTool": true,
+  "contextCalls": 1,
+  "stampCalls": 3,
+  "stamps": [
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#applyDiscount implements R-DISCOUNT-CAP'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#applyDiscount implements R-DISCOUNT-EXPIRY'\"",
+   "/bin/zsh -lc \"ostf stamp 'src/pricing.ts#applyDiscount implements R-DISCOUNT-PERCENT'\""
+  ],
+  "ostfOutputTokens": 2381,
+  "lockHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.3
+ },
+ "usage": {
+  "input_tokens": 218623,
+  "cached_input_tokens": 198016,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2074,
+  "reasoning_output_tokens": 497
+ },
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts",
+  "trace.lock"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "6a8500f090abd47ec153cf3c9041a05bf5edc2b2",
+ "firstMessage": null,
+ "finalMessage": "Compared with `main`, the uncommitted change replaces `Math.min` with an equivalent cap check in [applyDiscount](/tmp/ostf-trials/runs/codex.py-shell.ts-shop.T7.2/repo/src/pricing.ts:41). It affects the links for **R-DISCOUNT-CAP**, **R-DISCOUNT-EXPIRY**, and **R-DISCOUNT-PERCENT**. OSTF lists the `applyDiscount` test group, including “caps at fifty percent” and “rejects an expired code,” as impacted.\n\nPricing tests passed **7/7**; downstream checkout tests passed **3/3**. After rechecking and stamping the three links, `ostf check --base main` passed with **111/111 valid links**. The stamps updated `trace.lock`; no items or links were added. OSTF also reported an unrelated, existing unlinked item: `R-VOLUME-DISCOUNT`.",
+ "date": "2026-10-25",
+ "corrected": {
+  "judge": {
+   "model": "claude-opus-5-5",
+   "answers": {
+    "item:R-DISCOUNT-CAP": true,
+    "item:R-DISCOUNT-EXPIRY": true,
+    "item:R-DISCOUNT-PERCENT": true,
+    "test:applyDiscount": true,
+    "test:caps at fifty percent": true,
+    "test:rejects an expired code": true
+   },
+   "questions": {
+    "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as a requirement that the change affects, by its ID or unambiguously by its title or content?",
+    "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+    "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+    "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+   },
+   "reason": "The final answer says the change affects the links for R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT, naming all three by ID. It also says OSTF listed the `applyDiscount` test group as impacted, and names \"caps at fifty percent\" and \"rejects an expired code\" inside that group. It reports that the pricing tests were run and passed 7/7. So the answer presents all three requirements as affected and all three tests as ones that matter for the change.",
+   "cost": 0.0183398
+  },
+  "namesItems": true,
+  "namesTests": true
+ }
+}
