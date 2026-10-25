@@ -32,6 +32,9 @@ VECTORS_02 = {
     "code-vectors.json": ("0b1fde1b4551cad0a5e60f6a78d2c27e23c9bc210f14fbdbc154bdb1493b199b", ["OSTF-141", "OSTF-170", "Annex A"]),
     "lock-vectors.json": ("004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc", ["OSTF-142", "Annex B"]),
 }
+# Requirements merged into others to stay within 35 (agent-first plan, section 7): Consumer and Analyzer into
+# OSTF-160, the release gate into OSTF-170.
+RETIRED = {"OSTF-161", "OSTF-162", "OSTF-171"}
 
 
 def load(path):
@@ -176,6 +179,9 @@ def check():
     counts["exampleOutputs"] = 5
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))
+    # Section 1.3: a retired requirement keeps its identifier and its anchor, is no longer defined, and no case names it.
+    for retired in RETIRED:
+        assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
     every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["sarif"] + cases["projections"] + cases["schemas"]
     ids = [c["id"] for c in every]

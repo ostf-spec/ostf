@@ -10,7 +10,7 @@
     "OSTF-132",
     "OSTF-135",
     "OSTF-143",
-    "OSTF-162"
+    "OSTF-160"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
@@ -472,7 +472,7 @@
    "requirements": [
     "OSTF-132",
     "OSTF-143",
-    "OSTF-162"
+    "OSTF-160"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [main.rs#run]\n",
@@ -3834,7 +3834,7 @@
    "id": "tags-in-unannexed-file-not-read",
    "requirements": [
     "OSTF-133",
-    "OSTF-162"
+    "OSTF-160"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R-A, text: A}]\n",
@@ -5383,7 +5383,7 @@
    "id": "unsupported-language-still-fires",
    "requirements": [
     "OSTF-132",
-    "OSTF-162"
+    "OSTF-160"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [lib.rs#run, Main.java#run]\n",
@@ -8599,12 +8599,9 @@
   }
  ],
  "notCovered": {
-  "OSTF-160": "The cases test readers; a Producer is tested by reading what it writes.",
-  "OSTF-161": "The cases hold Analyzer expectations; Consumer expectations, such as TAGS_NOT_BOUND, are not written yet.",
   "OSTF-163": "A claim is a statement, not behavior.",
   "OSTF-164": "A rule for annex authors; Annex A meets it with its vectors.",
-  "OSTF-171": "A release condition, not behavior.",
   "RESERVED_KEY_SKIPPED": "Only a reader of wire 1.0 or later skips keys.",
-  "TAGS_NOT_BOUND": "A Consumer code; see OSTF-161."
+  "TAGS_NOT_BOUND": "A Consumer code: the cases hold Analyzer expectations, and Consumer expectations (OSTF-160) are not written yet."
  }
 }

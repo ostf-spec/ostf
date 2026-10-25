@@ -58,7 +58,7 @@ These bind every phase. A change that breaks one is rejected, however useful.
 | P3 Freshness per kind | Replace the human stamp where evidence can replace it | Annex M on rechecks, separation of duties, the triage record, exit-code rules | Queue recall, queue precision after triage and hand stamps meet their targets on the Phase 1 repositories | M |
 | P4 Languages without hand-written annexes | A new language at a day each | The parser-delegated annex form, three new languages, a generated vector corpus | Vectors pass in both readers; the corpus and harness run in CI | M |
 | P5 Trials v2 | Replace the 0.3 scorecard with measured, controlled claims | Three arms, matched models, held-out tasks, an external judge, breadth and parallel tasks, a longitudinal replay | Every row measured; the report published with deltas and intervals | L |
-| P6 Release gate | Meet OSTF-171 | A public second implementation, two organizations on real changes, a suite version | The gate met, or the gap published | ongoing |
+| P6 Release gate | Meet the gate of OSTF-170 | A public second implementation, two organizations on real changes, a suite version | The gate met, or the gap published | ongoing |
 
 P0 and P1 run in parallel and before anything else. P2 begins only when P1's baseline exists, so that each change in P2 and P3 is judged against a number, not a reading.
 
@@ -187,7 +187,7 @@ P0 and P1 run in parallel and before anything else. P2 begins only when P1's bas
 
 ## 11. Phase 6: release gate
 
-OSTF-171 asks for a second, independently maintained implementation and two organizations using the format on real changes. The gate gains observable criteria: an organization counts after three months, at least 200 linked symbols, and a published precision and stamp count from its history. zztrace's reader is made installable, or a third party is recruited, with the generated corpus and the differential harness published first so that convergence takes days rather than weeks. The conformance suite gets a version number that claims can cite, which the status text on ostf.dev cannot name today.
+OSTF-170 asks for a second, independently maintained implementation and two organizations using the format on real changes. The gate gains observable criteria: an organization counts after three months, at least 200 linked symbols, and a published precision and stamp count from its history. zztrace's reader is made installable, or a third party is recruited, with the generated corpus and the differential harness published first so that convergence takes days rather than weeks. The conformance suite gets a version number that claims can cite, which the status text on ostf.dev cannot name today.
 
 ## 12. What stays out, on purpose
 

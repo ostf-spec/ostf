@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.14. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-171). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1, `lf1` and the lock format of 0.2 are unchanged, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
+**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.14. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1, `lf1` and the lock format of 0.2 are unchanged, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
 
 ## Abstract
 
@@ -279,11 +279,9 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 ## 9. Conformance
 
-**OSTF-160 Producer.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare. A Producer that writes `trace.lock` satisfies OSTF-142.
+**OSTF-160 Classes.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare, and satisfies OSTF-142 when it writes `trace.lock`. A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses `trace.lock` for syntax and duplicates; it does not bind symbols or tags and makes no freshness claim. An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex, computes item and code fingerprints, and reports link states and reasons against one selected source view; it names the annexes and algorithm identifiers it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
 
-**OSTF-161 Consumer.**<a id="OSTF-161"></a> A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses `trace.lock` for syntax and duplicates. A Consumer does not bind symbols or tags and makes no freshness claim.
-
-**OSTF-162 Analyzer.**<a id="OSTF-162"></a> An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex, computes item and code fingerprints, and reports link states and reasons against one selected source view. It names the annexes and algorithm identifiers it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
+<a id="OSTF-161"></a><a id="OSTF-162"></a>OSTF-161 Consumer and OSTF-162 Analyzer are retired, merged into OSTF-160.
 
 **OSTF-163 Claims.**<a id="OSTF-163"></a> A conformance claim names the class, this document's revision, the wire version, the schema identifiers, the language annexes and algorithms, and the version of the conformance suite it passes. Claims for the optional annexes, the SARIF mapping (Annex D) and the command profile (Annex I), are separate. Passing a schema alone supports no claim.
 
@@ -291,9 +289,9 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 ## 10. Versioning
 
-**OSTF-170 Compatibility.**<a id="OSTF-170"></a> The wire version follows [SemVer]. Minor versions below 1.0 MAY change anything. From 1.0 on, a minor version only adds constructs that a reader may skip under OSTF-103, and a major version may remove or change meaning. Document revisions and conformance-suite versions change independently of the wire version. Fingerprint algorithms are versioned by their identifier: a change in token or projection rules is a new identifier, never a silent change.
+**OSTF-170 Compatibility and release gate.**<a id="OSTF-170"></a> The wire version follows [SemVer]. Minor versions below 1.0 MAY change anything. From 1.0 on, a minor version only adds constructs that a reader may skip under OSTF-103, and a major version may remove or change meaning. Document revisions and conformance-suite versions change independently of the wire version. Fingerprint algorithms are versioned by their identifier: a change in token or projection rules is a new identifier, never a silent change. This draft stays below 1.0 until a second, independently maintained implementation computes its own fingerprints and states and passes the complete conformance suite, and two organizations have used the format on real changes; publication of a draft satisfies neither condition.
 
-**OSTF-171 Release gate.**<a id="OSTF-171"></a> This draft stays below 1.0 until a second, independently maintained implementation computes its own fingerprints and states and passes the complete conformance suite, and two organizations have used the format on real changes. Publication of a draft satisfies neither condition.
+<a id="OSTF-171"></a>OSTF-171 Release gate is retired, merged into OSTF-170.
 
 ## 11. Security considerations
 
@@ -536,13 +534,13 @@ its item against the code and run its tests; only if they pass, run
 | OSTF-019 no assurance | retained | OSTF-145 |
 | OSTF-020 referenced items | revised, now in Core | OSTF-113 |
 | OSTF-021 schema boundary | retained | OSTF-106 |
-| OSTF-022 conformance | retained | OSTF-160 to OSTF-163 |
-| OSTF-023 release gate | retained | OSTF-171 |
+| OSTF-022 conformance | retained | OSTF-160, OSTF-163 |
+| OSTF-023 release gate | retained | OSTF-170 |
 | OSTF-024 logs and otel | retired | none |
 
 ## Annex I (normative, optional): command profile
 
-This annex fixes three commands by name, inputs, outputs and exit codes. A tool that claims it is an Analyzer (OSTF-162), whatever its program name.
+This annex fixes three commands by name, inputs, outputs and exit codes. A tool that claims it is an Analyzer (OSTF-160), whatever its program name.
 
 **I.1 Commands.**
 
