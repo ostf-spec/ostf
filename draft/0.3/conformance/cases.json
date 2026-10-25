@@ -6761,6 +6761,388 @@
      "PROFILE_INVALID"
     ]
    }
+  },
+  {
+   "id": "lock-shards-merge",
+   "requirements": [
+    "OSTF-142"
+   ],
+   "note": "The entry whose target trace/a.yaml declares lives in its lock, trace/a.yaml.lock; the reader merges it with trace.lock.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shard-only",
+   "requirements": [
+    "OSTF-142",
+    "OSTF-143"
+   ],
+   "note": "A lock file exists, so states are reported and there is no LOCK_MISSING, though trace.lock does not.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shard-entry-elsewhere-is-read",
+   "requirements": [
+    "OSTF-142"
+   ],
+   "note": "Where an entry belongs is a rule for writers; a reader uses it in any lock file it reads.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shards-duplicate",
+   "requirements": [
+    "OSTF-142"
+   ],
+   "note": "The same identity in two lock files is LOCK_DUPLICATE, and neither entry is used.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_DUPLICATE"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shard-invalid-line",
+   "requirements": [
+    "OSTF-142"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\nnot-an-entry\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_INVALID"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ],
+    "diagnosticFiles": {
+     "LOCK_INVALID": [
+      "trace/a.yaml.lock"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lock-shard-too-large",
+   "requirements": [
+    "OSTF-105",
+    "OSTF-142"
+   ],
+   "note": "The size limit applies to each lock file; no entry of the one above it is used.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "padTo": {
+    "trace/a.yaml.lock": 8388609
+   },
+   "expect": {
+    "codes": [
+     "FILE_TOO_LARGE"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ],
+    "diagnosticFiles": {
+     "FILE_TOO_LARGE": [
+      "trace/a.yaml.lock"
+     ]
+    }
+   }
+  },
+  {
+   "id": "lock-shard-of-unread-file-ignored",
+   "requirements": [
+    "OSTF-102",
+    "OSTF-142"
+   ],
+   "note": "Only the lock files of trace.yaml and of the item files it reads are read; old.yaml is not included.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "old.yaml": "ostf: \"0.3\"\nitems: []\n",
+    "old.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shard-not-an-item-file",
+   "requirements": [
+    "OSTF-102",
+    "OSTF-142"
+   ],
+   "note": "trace/* matches trace/a.yaml.lock, but a glob matches no file whose name ends in .lock.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "expect": {
+    "codes": [],
+    "items": [
+     "R-A",
+     "R-B"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-shard-anchor-invalid",
+   "requirements": [
+    "OSTF-132",
+    "OSTF-142"
+   ],
+   "note": "A lock file is rewritten by tools, so it is not an anchor, in any ASCII case; another .lock file is.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [trace/a.yaml.lock, TRACE/A.YAML.LOCK, trace/a.yaml.lock#F, deps.lock]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace/a.yaml.lock": "trace.lock 1\n",
+    "deps.lock": "pinned\n"
+   },
+   "expect": {
+    "codes": [
+     "ANCHOR_INVALID"
+    ],
+    "links": [
+     [
+      "b.go#G",
+      "implements",
+      "R-B",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "deps.lock",
+      "implements",
+      "R-A",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ]
+    ]
+   }
   }
  ],
  "contexts": [
@@ -8095,6 +8477,96 @@
     ],
     "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:Ana%20Lima at=unknown\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=person:ana at=unknown\n"
    }
+  },
+  {
+   "id": "stamp-writes-to-shard",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-142"
+   ],
+   "note": "R-A is declared in trace/a.yaml, so its link's entry goes to trace/a.yaml.lock, created here; trace.lock is not written.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n"
+   },
+   "stamp": [
+    "a.go#F implements R-A"
+   ],
+   "expect": {
+    "codes": [],
+    "links": [
+     "a.go#F implements R-A"
+    ],
+    "items": [
+     "R-A"
+    ],
+    "locks": {
+     "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n"
+    }
+   }
+  },
+  {
+   "id": "stamp-moves-entry-to-shard",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-142"
+   ],
+   "note": "An entry found in another lock file is removed from it as the stamp writes it to its own.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n"
+   },
+   "stamp": [
+    "a.go#F implements R-A"
+   ],
+   "expect": {
+    "codes": [],
+    "links": [
+     "a.go#F implements R-A"
+    ],
+    "items": [
+     "R-A"
+    ],
+    "locks": {
+     "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+     "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE by=unknown at=unknown\n"
+    }
+   }
+  },
+  {
+   "id": "stamp-root-item-stays-in-trace-lock",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-142"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "stamp": [
+    "b.go#G implements R-B"
+   ],
+   "expect": {
+    "codes": [],
+    "links": [
+     "b.go#G implements R-B"
+    ],
+    "items": [
+     "R-B"
+    ],
+    "locks": {
+     "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw by=unknown at=unknown\n"
+    }
+   }
   }
  ],
  "impacts": [
@@ -9200,6 +9672,49 @@
       "removed": []
      },
      "lock": "absent",
+     "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-lock-kept-in-another-lock-file",
+   "requirements": [
+    "Annex C.3",
+    "OSTF-142"
+   ],
+   "note": "The base view holds trace.lock and an item file's lock, the evaluated view only the item file's: both hold a lock file, so the lock is kept.",
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace.lock": "trace.lock 1\nb.go#G implements R-B source.sig=go2:Ceey2QRm6L8-h4GQtlHlYM39VoiSkD4-PKHHMvubB5Q source.body=go2:wFUUQqBBjDh7T4XHFmZwm2DKcbYd96bHkYVG8-Ob8MU target=f1:32QAlsqQlBx8emw-xnuqfXFRf2PhneyYmcyuyAM86lw\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace/*\"]\nitems:\n  - id: R-B\n    text: B.\n    code: [b.go#G]\n",
+    "trace/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n",
+    "b.go": "package a\n\nfunc G() int { return 2 }\n",
+    "trace/a.yaml.lock": "trace.lock 1\na.go#F implements R-A source.sig=go2:5n9DNsgo15JHR8U31T9RIwZkhP_htEtGqniHrb-1x6o source.body=go2:gvBPenqsmYmYewlqLLiKYACNJuBC-bmrvsoOOr9rV2o target=f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "kept",
      "tests": []
     }
    }

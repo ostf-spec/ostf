@@ -918,8 +918,9 @@ def _unescape(value):
     return urllib.parse.unquote(value, errors="strict")
 
 
-def parse_lock(data):
-    """Entries by identity, and (code, line) problems. Each line is decoded on its own."""
+def parse_lock(data, seen=None):
+    """Entries by identity, and (code, line) problems. Each line is decoded on its own. `seen`, when
+    given, receives the identity of every well-formed entry, duplicates included."""
     entries, duplicates = {}, set()
     lines, problems = _lines(data, "LOCK_INVALID")
     if lines[0] != "trace.lock 1":
@@ -942,6 +943,8 @@ def parse_lock(data):
             if not PRINCIPAL.match(entry["provenance"].get("by", "unknown")) or entry["provenance"].get("at", "unknown") == "":
                 raise ValueError("by is a principal and at is not empty")
             key = identity(entry)
+            if seen is not None:
+                seen.add(key)
             if key in entries:
                 problems.append(("LOCK_DUPLICATE", line))
                 duplicates.add(key)
@@ -1186,7 +1189,10 @@ class Analysis:
         self.parsed = {}         # path -> go_source result or None
         self.risk = set()
         self.hashes = {}
-        self.lock = None
+        self.lock = None         # identity -> usable entry, merged from every lock file (OSTF-142)
+        self.lock_paths = ["trace.lock"]  # the lock files of trace.yaml and of the item files read
+        self.lock_files = {}     # lock path -> its usable entries
+        self.lock_seen = {}      # lock path -> every identity written in it
         try:
             self._build()
         except Stop:
@@ -1303,10 +1309,12 @@ class Analysis:
             if not clean_path(pattern):
                 self.report("PATH_INVALID", "trace.yaml", "include", str(pattern))
                 raise Stop
-            found = {p for p in self.files if p != "trace.yaml" and self.covered(p) and match_glob(pattern, p)}
+            found = {p for p in self.files if p != "trace.yaml" and not p.endswith(".lock") and self.covered(p) and match_glob(pattern, p)}
             if not found:
                 self.report("INCLUDE_EMPTY", "trace.yaml", pattern)
             matched |= found
+        # OSTF-142: an item file's lock is its path followed by .lock.
+        self.lock_paths = ["trace.lock"] + [path + ".lock" for path in sorted(matched, key=str.encode)]
         for path in sorted(matched, key=str.encode):
             document = self._load(path, {"ostf", "items"})
             if "items" not in document:
@@ -1480,8 +1488,8 @@ class Analysis:
                 if anchor is None:  # an entry of another shape (OSTF-131)
                     self.report("FORMAT_INVALID", path, ident, "malformed " + field + " entry")
                     continue
-                if split_anchor(anchor) is None:
-                    self.report("ANCHOR_INVALID", path, anchor, "malformed anchor")
+                if split_anchor(anchor) is None or self.is_lock(anchor):
+                    self.report("ANCHOR_INVALID", path, anchor, "malformed anchor, or a lock file")
                     continue
                 if "#" not in anchor and anchor in self.items:  # its identity would be the item's (OSTF-132)
                     self.report("ANCHOR_INVALID", path, anchor, "a whole-file anchor equals an item ID")
@@ -1590,10 +1598,18 @@ class Analysis:
                     del self.links[key]
 
     # binding and fingerprints (OSTF-132, OSTF-141)
+    def is_lock(self, anchor):
+        """OSTF-132: whether an anchor names a lock file, in any ASCII case."""
+        return fold(anchor.partition("#")[0]) in {fold(path) for path in self.lock_paths}
+
+    def lock_home(self, ident):
+        """OSTF-142: the lock file of the file that declares an item."""
+        return "trace.lock" if self.item_file[ident] == "trace.yaml" else self.item_file[ident] + ".lock"
+
     def bind(self, anchor):
         """('ok', fingerprints, binding) or (problem, None, None) for an anchor in this view."""
         parts = split_anchor(anchor)
-        if parts is None:
+        if parts is None or self.is_lock(anchor):
             return "invalid", None, None
         path, symbol = parts
         if path not in self.files:
@@ -1628,16 +1644,30 @@ class Analysis:
             if added <= self.risk:
                 break
             self.risk |= added
-        if "trace.lock" in self.files and self.size("trace.lock") > MAX_FILE_BYTES:
-            # OSTF-105 and OSTF-142: a lock above the size limit is not read, and no entry is used.
-            self.lock = {}
-            self.report("FILE_TOO_LARGE", "trace.lock", message="larger than 8 MiB; no entry is used")
-        elif "trace.lock" in self.files:
-            self.lock, problems = parse_lock(self.data("trace.lock"))
+        # OSTF-142: the lock files are merged; an identity in two of them is used in neither.
+        for path in (p for p in self.lock_paths if p in self.files):
+            self.lock = self.lock if self.lock is not None else {}
+            self.lock_seen[path] = set()
+            if self.size(path) > MAX_FILE_BYTES:
+                # OSTF-105: a lock file above the size limit is not read, and no entry of it is used.
+                self.lock_files[path] = {}
+                self.report("FILE_TOO_LARGE", path, message="larger than 8 MiB; no entry is used")
+                continue
+            self.lock_files[path], problems = parse_lock(self.data(path), self.lock_seen[path])
             for code, line in problems:
-                self.report(code, "trace.lock", line)
-        else:
+                self.report(code, path, line)
+        if self.lock is None:
             self.report("LOCK_MISSING", "trace.lock")
+        else:
+            homes = {}
+            for path, entries in self.lock_files.items():
+                for key in entries:
+                    homes.setdefault(key, []).append(path)
+            for key, paths in homes.items():
+                if len(paths) > 1:
+                    self.report("LOCK_DUPLICATE", paths[1], key, key + " has an entry in " + " and ".join(paths))
+                else:
+                    self.lock[key] = self.lock_files[paths[0]][key]
         for link in self.links.values():
             current = {}
             status = "ok"
@@ -1841,7 +1871,7 @@ def context(analysis, target, anchor=None, spell=lambda path: path):
         unresolved = [row]
     subjects = items | {analysis.links[k]["source"] for k in links} | links
     paths = {split_anchor(analysis.links[k]["source"])[0] for k in links if analysis.links[k]["anchor"]}
-    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") in ("trace.lock", "trace.derived")
+    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") in analysis.lock_paths + ["trace.derived"]
                                           or d.get("subject") in subjects or d.get("file") in paths]
     result["items"] = [analysis.item_row(i, True) for i in sorted(items, key=str.encode)]
     result["links"] = [analysis.link_row(analysis.links[k]) for k in sorted(links, key=str.encode)]
@@ -2019,7 +2049,7 @@ def impact(base, current, rev):
         "links": {"added": sorted(current.links.keys() - base.links.keys(), key=str.encode),
                   "removed": sorted(base.links.keys() - current.links.keys(), key=str.encode)},
         "lock": {(True, True): "kept", (False, True): "added", (True, False): "removed", (False, False): "absent"}[
-            ("trace.lock" in base.files, "trace.lock" in current.files)],
+            tuple(any(path in view.files for path in view.lock_paths) for view in views)],
         "tests": sorted(tests, key=str.encode),
     }
 
@@ -2027,9 +2057,10 @@ def impact(base, current, rev):
 # --- stamp (Annex I.4) ------------------------------------------------------
 
 def stamp(analysis, names, by="unknown", at="unknown"):
-    """Annex I.4: the json result and the new trace.lock text, or None when nothing is stamped. Each
-    stamped entry records the principal `by` and the view identifier `at` (OSTF-142)."""
-    result = {"ostf": "0.3", "diagnostics": [d for d in analysis.diagnostics if analysis.stopped or d.get("file") == "trace.lock"],
+    """Annex I.4: the json result and the new text of each lock file it writes, by path, or None when
+    nothing is stamped. Each stamped entry records the principal `by` and the view identifier `at`, and
+    goes to the lock file of its target's file, any other copy being removed (OSTF-142)."""
+    result = {"ostf": "0.3", "diagnostics": [d for d in analysis.diagnostics if analysis.stopped or d.get("file") in analysis.lock_paths],
               "items": [], "links": []}
     chosen, refused = [], []
     for name in dict.fromkeys(names):
@@ -2042,20 +2073,29 @@ def stamp(analysis, names, by="unknown", at="unknown"):
     if refused:
         result["diagnostics"] += refused
         return result, None
-    # Keep every entry a reader may use (OSTF-142); malformed lines and duplicates are dropped.
-    entries = dict(analysis.lock or {})
-    items = set()
+    # Keep, in each lock file it writes, every entry a reader may use (OSTF-142); malformed lines and
+    # duplicates are dropped.
+    usable = analysis.lock or {}
+    files = {path: {k: e for k, e in entries.items() if k in usable} for path, entries in analysis.lock_files.items()}
+    written, items = set(), set()
     for link in chosen:
-        entries[link["identity"]] = {"fingerprints": link["fingerprints"], "provenance": {"by": by, "at": at}}
+        home = analysis.lock_home(link["target"])
+        for path in files:
+            if link["identity"] in analysis.lock_seen.get(path, ()):
+                files[path].pop(link["identity"], None)
+                written.add(path)
+        files.setdefault(home, {})[link["identity"]] = {"fingerprints": link["fingerprints"], "provenance": {"by": by, "at": at}}
+        written.add(home)
         items |= {link["target"]} | (set() if link["anchor"] else {link["source"]})
-    text = lock_text(entries)
-    if len(text.encode()) > MAX_FILE_BYTES:  # a lock that no reader would use (OSTF-105)
-        result["diagnostics"].append({"code": "STAMP_REFUSED", "severity": "error", "file": "trace.lock",
-                                      "message": "the lock would be larger than 8 MiB", "hint": "split the root, so that each lock holds fewer links"})
-        return result, None
+    texts = {path: lock_text(files[path]) for path in sorted(written, key=str.encode)}
+    for path, text in texts.items():
+        if len(text.encode()) > MAX_FILE_BYTES:  # a lock file that no reader would use (OSTF-105)
+            result["diagnostics"].append({"code": "STAMP_REFUSED", "severity": "error", "file": path,
+                                          "message": path + " would be larger than 8 MiB", "hint": "split the item file or the root, so that each lock holds fewer links"})
+            return result, None
     result["items"] = [analysis.item_row(i) for i in sorted(items, key=str.encode)]
     result["links"] = [{**analysis.link_row(l), "state": "valid", "reasons": []} for l in sorted(chosen, key=lambda l: l["identity"].encode())]
-    return result, text
+    return result, texts
 
 
 # --- SARIF (Annex D) --------------------------------------------------------
@@ -2291,14 +2331,14 @@ def _run(args, analysis, target, anchor, root):
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result), end="\n" if args.format == "json" else "")
         return 1 if analysis.failed(args.strict) else 0
     if args.command == "stamp":
-        result, text = stamp(analysis, args.links, args.by, args.at)
-        if text is not None:
-            write_lock(root / "trace.lock", text)
+        result, texts = stamp(analysis, args.links, args.by, args.at)
+        for path, text in (texts or {}).items():
+            write_lock(root / path, text)
         if args.format == "json":
             print(json.dumps(result, indent=2, ensure_ascii=False))
         else:
             print("".join(line + "\n" for line in text_diagnostics(result) + ["stamped " + identity(l) for l in result["links"]]), end="")
-        return 0 if text is not None else 1
+        return 0 if texts is not None else 1
     cwd = os.path.realpath(os.getcwd())
     result, resolved = context(analysis, target, anchor, lambda p: pathlib.Path(os.path.relpath(root / p, cwd)).as_posix())
     if args.format == "json":

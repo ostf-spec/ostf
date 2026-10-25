@@ -63,17 +63,20 @@ def states(analysis):
     return {k: (l.get("state"), l.get("reasons")) for k, l in analysis.links.items()}
 
 
-def check_stamp(case_id, files, names, result, text, by="unknown", at="unknown"):
-    """Annex I.4: a stamp leaves a canonical lock in which the named links are valid and every other link
-    keeps its state; without a lock before, the others get the states an empty lock gives them."""
-    before = states(reader.Analysis(files if "trace.lock" in files else {**files, "trace.lock": "trace.lock 1\n"}))
-    again = reader.Analysis({**files, "trace.lock": text})
+def check_stamp(case_id, files, names, result, texts, by="unknown", at="unknown"):
+    """Annex I.4: a stamp leaves canonical lock files in which the named links are valid and every other link
+    keeps its state; without a lock file before, the others get the states an empty lock gives them."""
+    locked = any(path in files for path in reader.Analysis(files).lock_paths)
+    before = states(reader.Analysis(files if locked else {**files, "trace.lock": "trace.lock 1\n"}))
+    again = reader.Analysis({**files, **texts})
     assert not {"LOCK_INVALID", "LOCK_DUPLICATE"} & set(codes(again.result())), f"{case_id}: lock problems after stamping"
-    assert reader.lock_text(again.lock) == text, f"{case_id}: lock not canonical"
+    for path, text in texts.items():
+        assert reader.lock_text(reader.parse_lock(text)[0]) == text, f"{case_id}: {path} not canonical"
     for key, state in states(again).items():
         want = ("valid", []) if key in names else before[key]
         assert state == want, f"{case_id}: {key} is {state} after stamping, want {want}"
-    assert reader.stamp(again, names, by, at)[1] == text, f"{case_id}: stamping twice changes the lock"
+    assert all(again.data(path).decode() == text for path, text in reader.stamp(again, names, by, at)[1].items()), \
+        f"{case_id}: stamping twice changes a lock file"
 
 
 def sarif_validator():
@@ -178,6 +181,7 @@ def check():
     # Stamping every link of the example from no lock rebuilds its lock, tagged and item links included (Annex I.4).
     unlocked = {path: value for path, value in edited.items() if path != "trace.lock"} | {"refund.go": example.files["refund.go"]}
     result, text = reader.stamp(reader.Analysis(unlocked), sorted(example.links))
+    text = text["trace.lock"]
     assert text == example.files["trace.lock"].decode().replace("\n", " by=unknown at=unknown\n").replace("trace.lock 1 by=unknown at=unknown\n", "trace.lock 1\n") \
         and len(result["links"]) == 8, "example lock from stamp"
     counts["exampleOutputs"] = 5
@@ -230,14 +234,18 @@ def check():
             got["text"] = reader.render(analysis, case["context"])
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
     for case in cases["stamps"]:
-        result, text = reader.stamp(reader.Analysis(case_files(case)), case["stamp"], case.get("by", "unknown"), case.get("at", "unknown"))
+        result, texts = reader.stamp(reader.Analysis(case_files(case)), case["stamp"], case.get("by", "unknown"), case.get("at", "unknown"))
         expect = case["expect"]
-        got = {"codes": codes(result), "links": [reader.identity(l) for l in result["links"]],
-               "items": [i["id"] for i in result["items"]], "lock": text}
+        got = {"codes": codes(result), "links": [reader.identity(l) for l in result["links"]], "items": [i["id"] for i in result["items"]]}
+        if "locks" in expect:  # every lock file written, by path (OSTF-142)
+            got["locks"] = texts
+        else:  # trace.lock alone
+            assert texts is None or list(texts) == ["trace.lock"], f"{case['id']}: wrote {sorted(texts)}"
+            got["lock"] = texts and texts["trace.lock"]
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
         assert all(l["state"] == "valid" and l["reasons"] == [] for l in result["links"]), f"{case['id']}: stamped links are valid"
-        if text is not None:
-            check_stamp(case["id"], case_files(case), case["stamp"], result, text, case.get("by", "unknown"), case.get("at", "unknown"))
+        if texts is not None:
+            check_stamp(case["id"], case_files(case), case["stamp"], result, texts, case.get("by", "unknown"), case.get("at", "unknown"))
     for case in cases["impacts"]:
         current = reader.Analysis(case["files"])
         got = reader.impact(reader.Analysis(case["base"]), current, case["rev"])
@@ -302,7 +310,7 @@ def check():
     assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
     add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add "))
     stamped = lock.decode().replace(add, add + " by=unknown at=unknown").encode()  # OSTF-142: a writer records by and at
-    assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1].encode() == stamped, "stamp drops only the non-UTF-8 line"
+    assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1]["trace.lock"].encode() == stamped, "stamp drops only the non-UTF-8 line"
     assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
     # OSTF-105 and Annex I.4: stamp writes a lock of at most 8 MiB and refuses the whole stamp above it. The lock
     # holds entries for links outside the graph, which a stamp keeps, so that adding one entry crosses the limit.
@@ -316,7 +324,7 @@ def check():
         if over:
             assert written is None and codes(result) == ["STAMP_REFUSED"] and result["links"] == [], "stamp refuses a lock above 8 MiB"
         else:
-            assert written == full and codes(result) == [], "stamp writes a lock of 8 MiB"
+            assert written == {"trace.lock": full} and codes(result) == [], "stamp writes a lock of 8 MiB"
     # The reader's own info for statements that no link targets (OSTF-151): one diagnostic, never a failure.
     lonely = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n'
                               '  - id: R-A\n    text: Do a.\n    refines: [N-A]\n  - id: R-B\n    text: Do b.\n    status: draft\n'
@@ -384,6 +392,15 @@ def check():
             (tree / name).write_bytes(data)
         code, out = run(tree, "check")
         assert code == 0 and "math.go#Add implements R-ADD" in out and "math_test.go#TestAdd verifies R-ADD" in out, "text check names links without a state"
+        # OSTF-142: a stamp writes the entry of an item declared in an item file to that file's lock.
+        (tree / "trace").mkdir()
+        (tree / "trace" / "more.yaml").write_text('ostf: "0.3"\nitems:\n  - id: R-SUB\n    text: Subtract.\n    code: [math.go#Add]\n')
+        (tree / "trace.yaml").write_text(minimal_files["trace.yaml"].decode().replace('ostf: "0.3"\n', 'ostf: "0.3"\ninclude: [trace/*.yaml]\n'))
+        code, out = run(tree, "stamp", "math.go#Add implements R-SUB")
+        assert code == 0 and (tree / "trace" / "more.yaml.lock").read_text().startswith("trace.lock 1\nmath.go#Add implements R-SUB ") \
+            and not (tree / "trace.lock").exists(), "stamp writes an item file's lock"
+        shutil.rmtree(tree / "trace")
+        (tree / "trace.yaml").write_bytes(minimal_files["trace.yaml"])
         # OSTF-102 and I.1: a nested root shows in the text of check, which still passes.
         (tree / "svc").mkdir()
         (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems: []\n')
@@ -471,7 +488,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 34
+    counts["commandLine"] = 35
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

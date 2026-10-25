@@ -257,7 +257,8 @@ func TestSchemasAcceptCaseFiles(t *testing.T) {
 		include, _ := root["include"].([]any)
 		for name := range c.Files {
 			for _, glob := range include {
-				if g, ok := glob.(string); ok && name != "trace.yaml" && covered(c.Files, name) && matchGlob(g, name) {
+				// OSTF-102: a glob matches no file whose name ends in .lock, such as an item file's lock (OSTF-142).
+				if g, ok := glob.(string); ok && name != "trace.yaml" && !strings.HasSuffix(name, ".lock") && covered(c.Files, name) && matchGlob(g, name) {
 					selected[name] = "trace.schema.json"
 				}
 			}
