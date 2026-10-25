@@ -38,6 +38,15 @@ def load(path):
     return json.loads(path.read_text())
 
 
+def case_files(case):
+    """A case's files, each named in padTo extended with line feeds to that size, so that a case
+    near a size limit (OSTF-105) need not carry the bytes."""
+    files = dict(case["files"])
+    for path, size in case.get("padTo", {}).items():
+        files[path] = files[path].encode() + b"\n" * (size - len(files[path].encode()))
+    return files
+
+
 def links(result):
     return [[l["source"], l["type"], l["target"], l["attributes"], l["origin"], l.get("state"), l.get("reasons")] for l in result["links"]]
 
@@ -175,7 +184,7 @@ def check():
         for requirement in case["requirements"]:
             assert requirement in defined or re.fullmatch(r"Annex [A-L](\.\d+)?", requirement), f"{case['id']}: unknown requirement {requirement}"
     for case in cases["checks"]:
-        analysis = reader.Analysis(case["files"])
+        analysis = reader.Analysis(case_files(case))
         result, expect = analysis.result(), case["expect"]
         assert codes(result) == expect["codes"], f"{case['id']}: codes {codes(result)} != {expect['codes']}"
         if "links" in expect:
@@ -202,14 +211,14 @@ def check():
             got["text"] = reader.render(analysis, case["context"])
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
     for case in cases["stamps"]:
-        result, text = reader.stamp(reader.Analysis(case["files"]), case["stamp"])
+        result, text = reader.stamp(reader.Analysis(case_files(case)), case["stamp"])
         expect = case["expect"]
         got = {"codes": codes(result), "links": [reader.identity(l) for l in result["links"]],
                "items": [i["id"] for i in result["items"]], "lock": text}
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
         assert all(l["state"] == "valid" and l["reasons"] == [] for l in result["links"]), f"{case['id']}: stamped links are valid"
         if text is not None:
-            check_stamp(case["id"], case["files"], case["stamp"], result, text)
+            check_stamp(case["id"], case_files(case), case["stamp"], result, text)
     for case in cases["impacts"]:
         current = reader.Analysis(case["files"])
         got = reader.impact(reader.Analysis(case["base"]), current, case["rev"])
@@ -274,6 +283,19 @@ def check():
     assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
     assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1].encode() == lock, "stamp drops only the non-UTF-8 line"
     assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
+    # OSTF-105 and Annex I.4: stamp writes a lock of at most 8 MiB and refuses the whole stamp above it. The lock
+    # holds entries for links outside the graph, which a stamp keeps, so that adding one entry crosses the limit.
+    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add ")) + "\n"
+    filler = lambda i, pad: f"f{i:07}{'x' * pad}.go#F implements R-ADD source.sig=go2:{'A' * 43} target=f1:{'A' * 43}\n"
+    count, rest = divmod(limit - len(lock), len(filler(0, 0)))
+    for over in (0, 1):
+        full = "trace.lock 1\n" + "".join(sorted(lock.decode().splitlines(keepends=True)[1:] + [filler(i, rest + over if i == 0 else 0) for i in range(count)]))
+        assert len(full.encode()) == limit + over
+        result, written = reader.stamp(reader.Analysis({**minimal_files, "trace.lock": full.replace(add, "")}), ["math.go#Add implements R-ADD"])
+        if over:
+            assert written is None and codes(result) == ["STAMP_REFUSED"] and result["links"] == [], "stamp refuses a lock above 8 MiB"
+        else:
+            assert written == full and codes(result) == [], "stamp writes a lock of 8 MiB"
     # The reader's own info for statements that no link targets (OSTF-151): one diagnostic, never a failure.
     lonely = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n'
                               '  - id: R-A\n    text: Do a.\n    refines: [N-A]\n  - id: R-B\n    text: Do b.\n    status: draft\n'
@@ -289,7 +311,7 @@ def check():
     run_ = log["runs"][0]
     assert {"id": reader.UNLINKED} in run_["tool"]["driver"]["rules"] and \
         [r["level"] for r in run_["results"] if r["ruleId"] == reader.UNLINKED] == ["note"], "unlinked statements in SARIF"
-    counts["directChecks"] = 10
+    counts["directChecks"] = 11
 
     # Every requirement and Annex C code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
     covered = {r for case in every for r in case["requirements"]}

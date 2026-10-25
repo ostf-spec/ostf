@@ -1531,7 +1531,11 @@ class Analysis:
             if added <= self.risk:
                 break
             self.risk |= added
-        if "trace.lock" in self.files:
+        if "trace.lock" in self.files and self.size("trace.lock") > MAX_FILE_BYTES:
+            # OSTF-105 and OSTF-142: a lock above the size limit is not read, and no entry is used.
+            self.lock = {}
+            self.report("FILE_TOO_LARGE", "trace.lock", message="larger than 8 MiB; no entry is used")
+        elif "trace.lock" in self.files:
             self.lock, problems = parse_lock(self.data("trace.lock"))
             for code, line in problems:
                 self.report(code, "trace.lock", line)
@@ -1919,9 +1923,14 @@ def stamp(analysis, names):
     for link in chosen:
         entries[link["identity"]] = {"fingerprints": link["fingerprints"]}
         items |= {link["target"]} | (set() if link["anchor"] else {link["source"]})
+    text = lock_text(entries)
+    if len(text.encode()) > MAX_FILE_BYTES:  # a lock that no reader would use (OSTF-105)
+        result["diagnostics"].append({"code": "STAMP_REFUSED", "severity": "error", "file": "trace.lock",
+                                      "message": "the lock would be larger than 8 MiB", "hint": "split the root, so that each lock holds fewer links"})
+        return result, None
     result["items"] = [analysis.item_row(i) for i in sorted(items, key=str.encode)]
     result["links"] = [{**analysis.link_row(l), "state": "valid", "reasons": []} for l in sorted(chosen, key=lambda l: l["identity"].encode())]
-    return result, lock_text(entries)
+    return result, text
 
 
 # --- SARIF (Annex D) --------------------------------------------------------

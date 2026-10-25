@@ -43,6 +43,97 @@
    }
   },
   {
+   "id": "lock-at-size-limit",
+   "requirements": [
+    "OSTF-105",
+    "OSTF-142"
+   ],
+   "note": "padTo extends trace.lock with line feeds, which a reader skips, to the given size in bytes. A lock of exactly 8 MiB is read.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+   },
+   "padTo": {
+    "trace.lock": 8388608
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "valid",
+      []
+     ]
+    ]
+   }
+  },
+  {
+   "id": "lock-above-size-limit",
+   "requirements": [
+    "OSTF-105",
+    "OSTF-142"
+   ],
+   "note": "padTo extends trace.lock with line feeds, which a reader skips, to the given size in bytes. A lock one byte above 8 MiB is FILE_TOO_LARGE and none of its entries is used, so every link is unstamped and check fails on the error.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+   },
+   "padTo": {
+    "trace.lock": 8388609
+   },
+   "expect": {
+    "codes": [
+     "FILE_TOO_LARGE"
+    ],
+    "links": [
+     [
+      "math.go#Add",
+      "implements",
+      "R-ADD",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ],
+     [
+      "math_test.go#TestAdd",
+      "verifies",
+      "R-ADD",
+      {},
+      "declared",
+      "unstamped",
+      [
+       "LINK_UNSTAMPED"
+      ]
+     ]
+    ],
+    "diagnosticFiles": {
+     "FILE_TOO_LARGE": [
+      "trace.lock"
+     ]
+    }
+   }
+  },
+  {
    "id": "mistyped-tag-keeps-other-states",
    "requirements": [
     "OSTF-133",
@@ -6751,6 +6842,39 @@
      "R-A"
     ],
     "lock": "trace.lock 1\nmath.ts#add implements R-A source.sig=ts2:AwhQGZjWSBBLIklzGlDfYlRwGy4fNJ1CAeBR6INrswE source.body=ts2:Mt4_3HyBmw8qfAS1p5ukpTjfJPtsKS9rCMGH42nI6Zc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
+   }
+  },
+  {
+   "id": "stamp-over-lock-above-size-limit",
+   "requirements": [
+    "Annex I.4",
+    "OSTF-105",
+    "OSTF-142"
+   ],
+   "note": "padTo extends trace.lock with line feeds, which a reader skips, to the given size in bytes. A reader uses no entry of a lock above 8 MiB, so a stamp keeps none of them and writes the named link alone; the other link stays unstamped.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
+    "trace.lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\nmath_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n",
+    "math.go": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
+   },
+   "padTo": {
+    "trace.lock": 8388609
+   },
+   "stamp": [
+    "math.go#Add implements R-ADD"
+   ],
+   "expect": {
+    "codes": [
+     "FILE_TOO_LARGE"
+    ],
+    "links": [
+     "math.go#Add implements R-ADD"
+    ],
+    "items": [
+     "R-ADD"
+    ],
+    "lock": "trace.lock 1\nmath.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE\n"
    }
   }
  ],
