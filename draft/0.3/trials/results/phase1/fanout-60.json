@@ -1,0 +1,57 @@
+{
+ "date": "2026-10-25",
+ "reader": "reference reader (Python)",
+ "itemsPerFanout": 60,
+ "items": 186,
+ "links": 6858,
+ "functions": 6660,
+ "lockLines": 6859,
+ "lockBytes": 1458485,
+ "stampAllSeconds": 16.87,
+ "checkSeconds": 1.212,
+ "context": {
+  "item linking 1": {
+   "seconds": 1.172,
+   "bytes": 229,
+   "tokens": 57
+  },
+  "item linking 10": {
+   "seconds": 1.26,
+   "bytes": 602,
+   "tokens": 150
+  },
+  "item linking 100": {
+   "seconds": 1.176,
+   "bytes": 4395,
+   "tokens": 1099
+  },
+  "function": {
+   "seconds": 1.254,
+   "bytes": 233,
+   "tokens": 58
+  }
+ },
+ "sweep": {
+  "share": 0.05,
+  "functionsEdited": 333,
+  "impactChanged": 333,
+  "bodyChangeAll": {
+   "suspectLinks": 333,
+   "suspectItems": 89,
+   "itemsByFanout": {
+    "1": 1,
+    "10": 29,
+    "100": 59
+   }
+  },
+  "bodyChangeRisk": {
+   "suspectLinks": 30,
+   "suspectItems": 9,
+   "itemsByFanout": {
+    "10": 3,
+    "100": 6
+   }
+  }
+ },
+ "checkBaseSeconds": 2.73
+}
