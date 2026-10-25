@@ -76,7 +76,11 @@
      "items": [
       "R-TAX-RATE",
       "R-TAX-EXEMPT"
-     ]
+     ],
+     "newFile": "pricing/salestax.go",
+     "newDecl": "\\bfunc SalesTax\\(",
+     "oldFile": "pricing/tax.go",
+     "oldDecl": "\\bfunc Tax\\("
     }
    },
    "ts-shop": {
@@ -89,7 +93,11 @@
      "items": [
       "R-TAX-RATE",
       "R-TAX-EXEMPT"
-     ]
+     ],
+     "newFile": "src/salestax.ts",
+     "newDecl": "\\bfunction salesTax\\b|\\bsalesTax\\s*=",
+     "oldFile": "src/pricing.ts",
+     "oldDecl": "\\bfunction tax\\b|\\btax\\s*=\\s*(\\(|function\\b)"
     }
    }
   },
@@ -193,5 +201,6 @@
     "prompt": "The traceability check, ostf check, fails in this repository. Fix it."
    }
   }
- }
+ },
+ "phase1": "2026-10-25"
 }
