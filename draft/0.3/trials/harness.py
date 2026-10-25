@@ -4,6 +4,7 @@
 
     python3 harness.py run [--agents claude,codex] [--conditions ...] [--fixtures ...] [--tasks ...] [--reps 3] [--jobs 4]
     python3 harness.py report
+    python3 harness.py selftest
 
 The tasks, prompts and pass criteria are in tasks.json and protocol.md, frozen before any run.
 Each run copies a fixture into a fresh Git repository, applies the task's setup, puts the
@@ -313,6 +314,18 @@ def no_invented_ids(state):
     return not ({"UNKNOWN_TARGET", "TAG_UNKNOWN_ID"} & set(codes(state)))
 
 
+def conflict_reported(base, state, final):
+    """The paragraph's own behavior when a change makes another item false (protocol, Changes): the
+    check fails only on suspect links to items that the answer names and that stay as written."""
+    if any(d["severity"] == "error" for d in state["result"]["diagnostics"]):
+        return False
+    failing = [l for l in state["result"]["links"] if l.get("state") in ("suspect", "broken")]
+    before, after = items(base), items(state)
+    return bool(failing) and all(l.get("state") == "suspect" and l["target"] in final and l["target"] in before
+                                 and after.get(l["target"], {}).get("fingerprint") == before[l["target"]]["fingerprint"]
+                                 for l in failing)
+
+
 def score(task, base, state, final, found, m, second=None):
     """Pass criteria of protocol.md, by task kind. Returns (pass, criteria)."""
     kind, p = task["kind"], task.get("params", {})
@@ -354,7 +367,7 @@ def score(task, base, state, final, found, m, second=None):
         c["testLinked"] = any(k[1] == "verifies" for k in to_item)
         c["itemUnchanged"] = items(state).get(target, {}).get("fingerprint") == items(base)[target]["fingerprint"]
         c["noDuplicateItem"] = len(items(state)) == len(items(base))
-        c["checkPasses"] = state["checkExit"] == 0
+        c["checkPasses"] = state["checkExit"] == 0 or conflict_reported(base, state, final)
         c["testsPass"] = state["testsPass"]
     elif kind == "invented":
         c["idNotWritten"] = p["id"] not in state["diff"]
@@ -370,6 +383,29 @@ def score(task, base, state, final, found, m, second=None):
         c["usedStamp"] = m["stampCalls"] > 0
     c["noLockHandEdit"] = not m["lockHandEdits"]
     return all(c.values()), c
+
+
+def selftest():
+    """The scorer on states built by hand, for the criteria changed after the frozen runs (protocol, Changes)."""
+    task = {"kind": "jira", "params": {"item": "R-NEW"}}
+    items_ = [{"id": "R-NEW", "fingerprint": "f1:new"}, {"id": "R-OLD", "fingerprint": "f1:old"}]
+    base = {"result": {"diagnostics": [], "items": items_, "links": []}}
+    linked = [{"source": "a.go#F", "type": "implements", "target": "R-NEW", "state": "unstamped"},
+              {"source": "a_test.go#TestF", "type": "verifies", "target": "R-NEW", "state": "unstamped"},
+              {"source": "b.go#G", "type": "implements", "target": "R-OLD", "state": "suspect"}]
+
+    def state(links_, diagnostics=(), items__=items_):
+        return {"checkExit": 1, "result": {"diagnostics": list(diagnostics), "items": items__, "links": links_},
+                "testsPass": True, "changed": [], "diff": ""}
+    m = {"lockHandEdits": []}
+    # T5: the change makes R-OLD false; the agent says so, leaves R-OLD as written and its link suspect.
+    assert score(task, base, state(linked), "R-OLD no longer holds: ...", [], m)[0], "T5 passes the paragraph's behavior"
+    assert not score(task, base, state(linked), "Done.", [], m)[0], "T5 fails a suspect link that the answer does not name"
+    rewritten = [items_[0], {"id": "R-OLD", "fingerprint": "f1:rewritten"}]
+    assert not score(task, base, state(linked, items__=rewritten), "R-OLD no longer holds", [], m)[0], "T5 fails a rewritten item"
+    assert not score(task, base, state(linked, [{"code": "TAG_UNKNOWN_ID", "severity": "error"}]), "R-OLD", [], m)[0], \
+        "T5 fails an error diagnostic"
+    print("harness selftest passed")
 
 
 # --- one run --------------------------------------------------------------------
@@ -425,7 +461,11 @@ def main(argv=None):
     run.add_argument("--reps", type=int, default=3)
     run.add_argument("--jobs", type=int, default=4)
     commands.add_parser("report")
+    commands.add_parser("selftest")
     args = parser.parse_args(argv)
+    if args.command == "selftest":
+        selftest()
+        return 0
     if args.command == "report":
         import report
         corrected = ("The edit metrics were read again from every transcript after the write detector was corrected; "

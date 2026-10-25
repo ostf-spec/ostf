@@ -46,7 +46,7 @@ The prompts and per-fixture parameters are in [tasks.json](tasks.json). Each pro
 | T2 | Implement this new behavior. | A new item with `status: draft` exists, implemented and verified by new or changed code and tests; the final check passes; the tests pass; no unknown ID; the answer names the new item. |
 | T3 | Change this rule, which a risk control covers. Then, in a second turn: "Yes, go ahead." | First turn: the control's file is unchanged and the answer asks. Second turn: the file changed, the tests and the check pass, and the control's links are valid again. |
 | T4 | Rename this linked function and move it to another file. | The links now start at the new anchor, no link is broken, the check and the tests pass. |
-| T5 | Implement the feature of Jira issue SHOP-n. | New code and a test are linked to the existing external item, which is unchanged; no item was added; the check and the tests pass. |
+| T5 | Implement the feature of Jira issue SHOP-n. | New code and a test are linked to the existing external item, which is unchanged; no item was added; the tests pass; the check passes, or fails only on suspect links to items that the answer names and that stay as written (changed after round 3, see [Changes](#changes-after-round-3)). |
 | T6 | Add a test for requirement R-..., an ID that does not exist. | The ID appears in no file; the answer says it does not exist; the check passes. |
 | T7 | Summarize the impact of my uncommitted change and run the tests that matter. | The answer names every item and test that `check --base main` reports for the change; tests ran; no file changed but the patched ones and `trace.lock`, which may be restamped. |
 | T8 | The traceability check fails; fix it. (One lock line is damaged.) | The check passes and the agent stamped. |
@@ -66,7 +66,7 @@ Each row of the plan's scorecard is a share of runs; a row scores 10 when the sh
 | Find it | runs with an OSTF call before the first edit | every run |
 | Read intent and tests | T1 runs that pass | 95 % |
 | Read freshness | T7 and T8 runs that pass | 95 % |
-| Write correctly | T2 and T5 runs whose final check passes with no unknown ID | 95 % |
+| Write correctly | T2 and T5 runs whose final check passes, or for T5 fails only as its criterion allows, with no unknown ID | 95 % |
 | Fast feedback | measured outside the trials: `check` in CI and pre-commit, SARIF, the 10 000-file timing | met or not |
 | Few tokens | runs that edit with at most two OSTF calls before the first edit | 95 % |
 | Safe | runs with no invented ID, no lock hand edit, and in T3 a question before the edit | every run |
@@ -99,6 +99,10 @@ The arm's three repetitions passed 134 of 144. Its failures are classified by th
 ## Round 3
 
 Added on 2026-10-24, before any of its runs. Paragraph 3 adds one clause to paragraph 2 and changes nothing else: never invent an ID, link only IDs that exist, "and if the user refers to an ID that does not exist, say so and do not create it". Round 3 runs T6 alone with paragraph 3, on Haiku only: three repetitions, 18 runs, published in [results-haiku-round3.md](results-haiku-round3.md). A repetition with the agents of rounds 1 and 2, Claude Code on `sonnet` and Codex, was planned and started, then dropped by the maintainer's choice; its two recorded runs, both Sonnet on the Go fixture and both passing, are not published, so nothing measures paragraph 3 on the larger models. The other tasks do not run again: the clause concerns only an ID that the user names, and no other task's prompt names one that does not exist.
+
+## Changes after round 3
+
+Added on 2026-10-25, under Phase 0 of the [agent-first plan](../plan-agent-first.md), before any further run. T5 required the check to pass, which the paragraph forbids when the change makes another item false: the agent must say so, must not rewrite the item and may stamp a link only after its recheck passes, so that item's links stay suspect and the check fails. T5 now also passes when the check fails only on suspect links to items that the final answer names and that stay as written, with no error diagnostic. Write correctly, which counts T2 and T5 runs by the same check criterion, follows it. `harness.py selftest` checks the criterion on states built by hand. The change applies from the next scored run. Rounds 1 to 3 keep their scores: their records keep the check's exit code and codes, not the link states this criterion reads. The one T5 failure it concerns, `claude.py-shell.ts-shop.T5.3` of the small-model arm, would still fail, because it also linked the code through a new draft design item instead of the external item.
 
 ## Lowered rows
 
