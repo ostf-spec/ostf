@@ -96,8 +96,12 @@
       "properties": {
         "url": { "type": "string", "minLength": 1, "$comment": "Display template; {id} is replaced by the percent-encoded native ID." },
         "ostf": {
-          "anyOf": [{ "const": "." }, { "$ref": "#/$defs/path" }],
-          "$comment": "The root of the same repository that owns the source's items, by its path from the repository's top (OSTF-113)."
+          "anyOf": [
+            { "const": "." },
+            { "$ref": "#/$defs/path", "not": { "pattern": "^ostf://" } },
+            { "type": "string", "pattern": "^ostf://[^#\\s]+(#[^/\\\\\\r\\n#][^\\\\\\r\\n#]*)?$" }
+          ],
+          "$comment": "The root that owns the source's items: its path from the repository's top, . for the top, or for another repository its URI without an ID (OSTF-110, OSTF-113)."
         }
       },
       "patternProperties": { "^x-": {} },

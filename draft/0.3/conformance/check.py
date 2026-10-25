@@ -196,7 +196,7 @@ def check():
     assert len(ids) == len(set(ids)), "duplicate case ID"
     for case in every:
         for requirement in case["requirements"]:
-            assert requirement in defined or re.fullmatch(r"Annex [A-L](\.\d+)?", requirement), f"{case['id']}: unknown requirement {requirement}"
+            assert requirement in defined or re.fullmatch(r"Annex [A-N](\.\d+)?", requirement), f"{case['id']}: unknown requirement {requirement}"
     # The official profiles (OSTF-121) are published files, and the cases that use one carry it byte for byte.
     profiles = {path.name: path.read_text() for path in (DRAFT / "profiles").glob("*.yaml")}
     assert sorted(profiles) == ["security.yaml"], "official profiles"
@@ -453,6 +453,18 @@ def check():
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"))
         assert code == 1 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (suspect, corroborated)\n" in out, \
             "the text of check --base renders each context (Annex J)"
+        # Annex N.1: ndjson is the json result, one record per line, after the version line.
+        code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "ndjson")
+        rows = [json.loads(line) for line in out.splitlines()]
+        rebuilt = {"ostf": rows[0]["ostf"], "diagnostics": [], "items": [], "links": []}
+        for row in rows[1:]:
+            (kind, value), = row.items()
+            if kind == "impact":
+                rebuilt["impact"] = value
+            else:
+                rebuilt[{"diagnostic": "diagnostics", "item": "items", "link": "links"}[kind]].append(value)
+        assert code == 1 and rows[0] == {"ostf": "0.3"} and out.endswith("\n") and \
+            rebuilt == json.loads(run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "json")[1]), "check --format ndjson"
         code, out = run(tree, "check", "--format", "sarif")
         assert code == 1 and [r["ruleId"] for r in json.loads(out)["runs"][0]["results"]] == ["BODY_CHANGED"], "check --format sarif"
         valid_sarif(json.loads(out), "check --format sarif")
@@ -505,7 +517,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 37
+    counts["commandLine"] = 38
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

@@ -1037,6 +1037,15 @@ def match_glob(pattern, path):
     return match(0, 0)
 
 
+def source_root_ok(value):
+    """OSTF-113: a root path from the repository's top, . for the top, or for another repository
+    ostf:// and the repository, then # and a root path unless the root is at its top (OSTF-110)."""
+    if not value.startswith("ostf://"):
+        return value == "." or clean_path(value)
+    repository, mark, path = value[len("ostf://"):].partition("#")
+    return bool(repository) and not re.search(r"[\s\x00-\x1f\x7f]", repository) and (not mark or clean_path(path))
+
+
 def split_anchor(anchor):
     """Path and symbol of an anchor, or None when it is malformed or names the root's trace.lock or
     trace.derived, in any ASCII case (OSTF-132)."""
@@ -1288,8 +1297,8 @@ class Analysis:
             if "ostf" in source and not isinstance(source["ostf"], str):
                 self.report("FORMAT_INVALID", "trace.yaml", alias, f"source {alias}: ostf is a root path")
                 raise Stop
-            if "ostf" in source and source["ostf"] != "." and not clean_path(source["ostf"]):
-                self.report("PATH_INVALID", "trace.yaml", alias, f"source {alias}: ostf is a path from the repository's top, or .")
+            if "ostf" in source and not source_root_ok(source["ostf"]):
+                self.report("PATH_INVALID", "trace.yaml", alias, f"source {alias}: ostf is a path from the repository's top, ., or an OSTF URI")
                 raise Stop
         self.sources = sources
         if "profile" in root:
@@ -2264,6 +2273,14 @@ def find_root(start):
     return None
 
 
+def ndjson(result):
+    """Annex N.1: the json result as lines, the version first, then one record per line."""
+    rows = [{"ostf": result["ostf"]}] + [{"diagnostic": d} for d in result["diagnostics"]] + \
+        [{"item": i} for i in result["items"]] + [{"link": l} for l in result["links"]] + \
+        ([{"impact": result["impact"]}] if "impact" in result else [])
+    return "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows)
+
+
 def text_diagnostics(result):
     lines = []
     for d in result["diagnostics"]:
@@ -2300,7 +2317,7 @@ def main(argv=None):
     for command in ("check", "context", "stamp"):
         sub = commands.add_parser(command)
         sub.add_argument("--root", type=pathlib.Path)
-        sub.add_argument("--format", choices=["json", "text", "sarif"] if command == "check" else ["json", "text"], default="text")
+        sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["json", "text"], default="text")
         if command == "check":
             sub.add_argument("--base", metavar="REV")
             # Added option (Annex I.6): read the base view from a checkout of REV, given as the
@@ -2396,6 +2413,8 @@ def _run(args, analysis, target, anchor, root):
             result = check_base(Analysis(base), analysis, args.base, args.strict)
         if args.format == "sarif":
             print(json.dumps(sarif(analysis, result), indent=2, ensure_ascii=False))
+        elif args.format == "ndjson":
+            print(ndjson(result), end="")
         else:
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result, analysis), end="\n" if args.format == "json" else "")
         return 1 if analysis.failed(args.strict) else 0

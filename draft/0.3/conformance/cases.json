@@ -2035,6 +2035,59 @@
    }
   },
   {
+   "id": "source-names-a-root-in-another-repository",
+   "requirements": [
+    "OSTF-110",
+    "OSTF-113"
+   ],
+   "note": "A controls catalog kept in another repository is named by its OSTF URI, with the root's path after # unless the root is at the top; readers never resolve it.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: ostf://github.com/acme/controls\n    url: \"https://github.com/acme/controls/blob/main/trace.yaml#{id}\"\n  policies:\n    ostf: \"ostf://github.com/acme/handbook#security/policies\"\nitems:\n  - id: C-7\n    external: catalog:C-7\n  - id: P-2\n    external: policies:P-2\n  - id: R-A\n    text: Encrypt backups.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "items": [
+     "C-7",
+     "P-2",
+     "R-A"
+    ]
+   }
+  },
+  {
+   "id": "source-repository-uri-invalid",
+   "requirements": [
+    "OSTF-110",
+    "OSTF-113"
+   ],
+   "note": "An OSTF URI needs a repository, and a root path after # follows OSTF-105.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://github.com/acme/controls#../x\"\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "PATH_INVALID"
+    ]
+   }
+  },
+  {
+   "id": "source-repository-uri-empty",
+   "requirements": [
+    "OSTF-110",
+    "OSTF-113"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  catalog:\n    ostf: \"ostf://\"\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "PATH_INVALID"
+    ]
+   }
+  },
+  {
    "id": "no-lock",
    "requirements": [
     "OSTF-143"
@@ -11262,6 +11315,45 @@
     "sources": {
      "core": {
       "ostf": "/services/core"
+     }
+    },
+    "items": []
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-source-repository-uri",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-113"
+   ],
+   "schema": "trace.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "sources": {
+     "catalog": {
+      "ostf": "ostf://github.com/acme/controls"
+     },
+     "policies": {
+      "ostf": "ostf://github.com/acme/handbook#security/policies"
+     }
+    },
+    "items": []
+   },
+   "valid": true
+  },
+  {
+   "id": "schema-source-repository-uri-space",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-113"
+   ],
+   "schema": "trace.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "sources": {
+     "catalog": {
+      "ostf": "ostf://github.com/acme controls"
      }
     },
     "items": []
