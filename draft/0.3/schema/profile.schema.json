@@ -9,7 +9,14 @@
     "types": {
       "type": "object",
       "propertyNames": { "pattern": "^[a-z][a-z0-9-]{0,47}$" },
-      "additionalProperties": { "$ref": "#/$defs/type" }
+      "properties": {
+        "need": { "$ref": "#/$defs/type", "properties": { "kind": { "const": "statement" } } },
+        "requirement": { "$ref": "#/$defs/type", "properties": { "kind": { "const": "statement" } } },
+        "design": { "$ref": "#/$defs/type", "properties": { "kind": { "const": "statement" } } },
+        "risk": { "$ref": "#/$defs/type", "properties": { "kind": { "const": "risk" } } },
+        "verification": { "$ref": "#/$defs/type", "properties": { "kind": { "const": "verification" } } }
+      },
+      "additionalProperties": { "$ref": "#/$defs/type", "required": ["kind"], "$comment": "A new type declares its kind (OSTF-121)." }
     },
     "links": {
       "type": "object",
@@ -31,6 +38,7 @@
     "type": {
       "type": "object",
       "properties": {
+        "kind": { "enum": ["statement", "risk", "verification"], "$comment": "A default type keeps its own (OSTF-120)." },
         "description": { "type": "string" },
         "attributes": {
           "type": "object",

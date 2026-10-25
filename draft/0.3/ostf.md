@@ -51,7 +51,7 @@ Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers 
 | --- | --- |
 | root | A directory containing `trace.yaml`. Every path in that root's files is relative to it, and it covers the files beneath it that no nested root covers (OSTF-102). |
 | item | A unit of intent or evidence with a stable ID: a need, requirement, design element, risk or verification. |
-| statement | An item of type `need`, `requirement` or `design`, or a profile type declared as a link endpoint in their place. |
+| statement | An item whose type is of kind `statement`, such as a need, a requirement or a design element (OSTF-120). |
 | anchor | A reference to a file (`path`) or to a definition in a file (`path#symbol`). |
 | link | A typed, directed relationship from a source (an item or an anchor) to a target item. |
 | origin | Where a link was written: in an OSTF file (`declared`) or in a code comment (`tagged`). |
@@ -161,18 +161,18 @@ attr-name = ALPHA *47( ALPHA / DIGIT )
 
 ## 5. Vocabulary
 
-**OSTF-120 Default vocabulary.**<a id="OSTF-120"></a> Without a profile, the default vocabulary applies. Its types are `need`, `requirement`, `design`, `risk` and `verification`; the first three are statements. Its link types are:
+**OSTF-120 Default vocabulary.**<a id="OSTF-120"></a> Without a profile, the default vocabulary applies. Every type has a kind, `statement`, `risk` or `verification`, and link rules and risk relevance follow the kind, never the type's name. The default types are `need`, `requirement` and `design`, of kind `statement`, `risk`, of kind `risk`, and `verification`, of kind `verification`. Its link types are:
 
 | Link | From | To | Acyclic | Inverse reading | Meaning |
 | --- | --- | --- | --- | --- | --- |
 | `refines` | statement | statement | yes | `refined_by` | The source states the target in more detail. |
-| `controls` | statement | `risk` | no | `controlled_by` | The source reduces the probability or severity of the target. |
+| `controls` | statement | risk | no | `controlled_by` | The source reduces the probability or severity of the target. |
 | `implements` | `code` | statement | no | `implemented_by` | The definition carries the statement. |
-| `verifies` | `tests`, `verification` | statement, `verification` | no | `verified_by` | The test or verification provides evidence for the target. |
+| `verifies` | `tests`, verification | statement, verification | no | `verified_by` | The test or verification provides evidence for the target. |
 
-`code` and `tests` denote anchors (OSTF-132). A `risk` is anything that can cause harm or loss: a security breach, a financial loss or an injury alike. A `verification` is a check that is not an automated test, such as an inspection or a review procedure. Inverse readings are computed by tools and never stored. The default vocabulary declares no attributes.
+In the table, statement, risk and verification stand for every type of that kind, a profile's included, and `code` and `tests` denote anchors (OSTF-132). A `risk` is anything that can cause harm or loss: a security breach, a financial loss or an injury alike. A `verification` is a check that is not an automated test, such as an inspection or a review procedure. Inverse readings are computed by tools and never stored. The default vocabulary declares no attributes.
 
-**OSTF-121 Profiles.**<a id="OSTF-121"></a> The root MAY name a profile file with `profile: <path>`. A profile carries `ostf`, and OPTIONAL `types`, `links` and `fingerprints` mappings. A type name matches `type-name`; a link name matches `link-name`. An entry whose name exists in the default vocabulary merges over the default definition, property by property; an entry with a new name defines a new type or link, and a new link MUST declare `from` and `to`. Link endpoints are type names or the anchor kinds `code` and `tests`; only `implements` and `verifies` MAY list anchor kinds in `from`. A type or link MAY carry a `description`. A type MAY declare `attributes` (OSTF-114); a link MAY declare string-valued link attributes, other than `to`, `ref`, `source` and `target`, with allowed values and a required flag, `acyclic`, and an `inverse` name. `fingerprints` carries `bodyChange` (OSTF-144). A profile that fails its schema or these rules is `PROFILE_INVALID` and graph construction stops. A profile is a file in the repository; OSTF defines no profile registry and readers MUST NOT fetch one.
+**OSTF-121 Profiles.**<a id="OSTF-121"></a> The root MAY name a profile file with `profile: <path>`. A profile carries `ostf`, and OPTIONAL `types`, `links` and `fingerprints` mappings. A type name matches `type-name`; a link name matches `link-name`. An entry whose name exists in the default vocabulary merges over the default definition, property by property; an entry with a new name defines a new type or link. A new type MUST declare its `kind`, and a default type keeps its own. A new link MUST declare `from` and `to`. Link endpoints in a profile are type names or the anchor kinds `code` and `tests`, and endpoints a profile lists for a default link replace the kinds of OSTF-120; only `implements` and `verifies` MAY list anchor kinds in `from`. A type or link MAY carry a `description`. A type MAY declare `attributes` (OSTF-114); a link MAY declare string-valued link attributes, other than `to`, `ref`, `source` and `target`, with allowed values and a required flag, `acyclic`, and an `inverse` name. `fingerprints` carries `bodyChange` (OSTF-144). A profile that fails its schema or these rules is `PROFILE_INVALID` and graph construction stops. A profile is a file in the repository; OSTF defines no profile registry and readers MUST NOT fetch one.
 
 ```abnf
 type-name = LOALPHA *47( LOALPHA / DIGIT / "-" )
@@ -184,7 +184,7 @@ Example profile (informative):
 ```yaml
 ostf: "0.3"
 types:
-  hazard: {description: A potential source of harm in the ISO 14971 sense.}
+  hazard: {kind: risk, description: A potential source of harm in the ISO 14971 sense.}
   requirement:
     attributes:
       safetyClass: {type: string, values: [A, B, C], meaning: true}
@@ -197,7 +197,7 @@ fingerprints:
   bodyChange: risk
 ```
 
-Under this profile `mitigates` makes nothing risk-relevant (OSTF-144), so `bodyChange: risk` ignores body changes to the code of a requirement that mitigates a hazard; `controls: {to: [risk, hazard]}` in place of `mitigates` would count them.
+Under this profile a requirement that `mitigates` a hazard is a control, since `hazard` is of kind risk (OSTF-144), so `bodyChange: risk` counts body changes to its code; `controls` also reaches a hazard, with no entry in the profile.
 
 ## 6. Links
 
@@ -259,7 +259,7 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 `broken` takes precedence over `unstamped`, which takes precedence over `suspect`. Reasons are reported with the state. Restoring the recorded content restores `valid`. A link with `UNSUPPORTED_LANGUAGE` (OSTF-132) has no state.
 
-**OSTF-144 Suspect rules.**<a id="OSTF-144"></a> An Analyzer compares the recorded and current fingerprints key by key; a key present on only one side differs. A differing `source` or `target` is `ITEM_CHANGED`. A differing `source.sig` is `SIGNATURE_CHANGED`. A differing `source.body` with an unchanged `source.sig` is `BODY_CHANGED` and counts according to the profile's `fingerprints.bodyChange`: `all` (the default) counts every body change; `risk` counts a body change only when the link is risk-relevant; `none` counts no body change. An item with a `controls` link is a control. A control, every item that `refines` it directly or transitively, and every link whose source or target is one of those items are risk-relevant. Risk relevance follows the link name, not the endpoint types: a profile link with another name, such as `mitigates` in the example of OSTF-121, makes no item a control, whatever its target's type; a profile that needs one extends `controls` to its own types. A body change that does not count leaves the link `valid`.
+**OSTF-144 Suspect rules.**<a id="OSTF-144"></a> An Analyzer compares the recorded and current fingerprints key by key; a key present on only one side differs. A differing `source` or `target` is `ITEM_CHANGED`. A differing `source.sig` is `SIGNATURE_CHANGED`. A differing `source.body` with an unchanged `source.sig` is `BODY_CHANGED` and counts according to the profile's `fingerprints.bodyChange`: `all` (the default) counts every body change; `risk` counts a body change only when the link is risk-relevant; `none` counts no body change. An item that links to an item of kind risk, by a link of any type, is a control (OSTF-120). A control, every item that `refines` it directly or transitively, and every link whose source or target is one of those items are risk-relevant. A body change that does not count leaves the link `valid`.
 
 **OSTF-145 Meaning of a valid link.**<a id="OSTF-145"></a> A valid link means only that the fingerprinted inputs are unchanged since the recorded recheck. It is not approval, correctness, execution, test success, compliance or release authorization. Code outside an anchor, such as a helper it calls, a constant, a configuration file or a dependency, can change without changing the anchor's fingerprint. Analyses that follow such dependencies are tool behavior.
 

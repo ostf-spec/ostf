@@ -49,7 +49,10 @@ FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
 ALGORITHMS = {"f1", "go2", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
-STATEMENTS = ["need", "requirement", "design"]
+# OSTF-120: the default types and their kinds. A default link names kinds, written "kind:" and the kind,
+# each standing for every type of that kind once the profile is merged.
+KINDS = ("statement", "risk", "verification")
+DEFAULT_TYPES = {"need": "statement", "requirement": "statement", "design": "statement", "risk": "risk", "verification": "verification"}
 SEVERITY = {
     "FORMAT_INVALID": "error", "VERSION_UNSUPPORTED": "error", "RESERVED_KEY_SKIPPED": "info",
     "UNKNOWN_KEY": "error", "PATH_INVALID": "error", "FILE_TOO_LARGE": "error",
@@ -1003,15 +1006,24 @@ def split_anchor(anchor):
 
 def default_vocabulary():
     return {
-        "types": {t: {} for t in STATEMENTS + ["risk", "verification"]},
+        "types": {t: {"kind": k} for t, k in DEFAULT_TYPES.items()},
         "links": {
-            "refines": {"from": list(STATEMENTS), "to": list(STATEMENTS), "acyclic": True, "inverse": "refined_by"},
-            "controls": {"from": list(STATEMENTS), "to": ["risk"], "inverse": "controlled_by"},
-            "implements": {"from": ["code"], "to": list(STATEMENTS), "inverse": "implemented_by"},
-            "verifies": {"from": ["tests", "verification"], "to": STATEMENTS + ["verification"], "inverse": "verified_by"},
+            "refines": {"from": ["kind:statement"], "to": ["kind:statement"], "acyclic": True, "inverse": "refined_by"},
+            "controls": {"from": ["kind:statement"], "to": ["kind:risk"], "inverse": "controlled_by"},
+            "implements": {"from": ["code"], "to": ["kind:statement"], "inverse": "implemented_by"},
+            "verifies": {"from": ["tests", "kind:verification"], "to": ["kind:statement", "kind:verification"], "inverse": "verified_by"},
         },
         "bodyChange": "all",
     }
+
+
+def resolve_kinds(vocabulary):
+    """OSTF-120: each kind among a link's endpoints becomes every type of that kind, the profile's included."""
+    for spec in vocabulary["links"].values():
+        for end in ("from", "to"):
+            spec[end] = [t for e in spec[end] for t in
+                         ([n for n, d in vocabulary["types"].items() if d["kind"] == e[5:]] if e.startswith("kind:") else [e])]
+    return vocabulary
 
 
 def merge_profile(vocabulary, profile):
@@ -1025,9 +1037,13 @@ def merge_profile(vocabulary, profile):
     for name, spec in mapping(profile.get("types", {}), set(profile.get("types", {}))).items():
         if not TYPE_NAME.fullmatch(name):
             raise ValueError("type name")
-        mapping(spec, {"description", "attributes"})
+        mapping(spec, {"description", "attributes", "kind"})
         if not isinstance(spec.get("description", ""), str):
             raise ValueError("description")
+        if name in vocabulary["types"] and spec.get("kind", vocabulary["types"][name]["kind"]) != vocabulary["types"][name]["kind"]:
+            raise ValueError("a default type keeps its kind")
+        if name not in vocabulary["types"] and spec.get("kind") not in KINDS:
+            raise ValueError("a new type declares its kind: statement, risk or verification")
         for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
             mapping(declared, {"type", "values", "required", "meaning"})
             if not ATTRIBUTE_NAME.fullmatch(attribute) or declared.get("type") not in {"string", "text", "number", "boolean", "list"}:
@@ -1063,7 +1079,7 @@ def merge_profile(vocabulary, profile):
                 anchor = e in {"code", "tests"}
                 if anchor and (end == "to" or name not in {"implements", "verifies"}):
                     raise ValueError("anchor kinds only in from of implements and verifies")
-                if not anchor and e not in vocabulary["types"]:
+                if not anchor and not e.startswith("kind:") and e not in vocabulary["types"]:
                     raise ValueError("unknown endpoint type " + e)
     fingerprints = mapping(profile.get("fingerprints", {}), {"bodyChange"})
     if "bodyChange" in fingerprints:
@@ -1233,6 +1249,7 @@ class Analysis:
             except (ValueError, TypeError, KeyError) as error:
                 self.report("PROFILE_INVALID", name, message=str(error))
                 raise Stop
+        resolve_kinds(self.vocabulary)
         documents = [("trace.yaml", root)]
         include = root.get("include", [])
         if not isinstance(include, list):
@@ -1560,7 +1577,8 @@ class Analysis:
     def _freshness(self):
         types = self.vocabulary["types"]
         self.hashes = {ident: fingerprint("f1", item_projection(item, types)) for ident, item in self.items.items()}
-        controls = {l["source"] for l in self.links.values() if l["type"] == "controls" and not l["anchor"]}
+        # OSTF-144: an item that links to an item of kind risk is a control.
+        controls = {l["source"] for l in self.links.values() if not l["anchor"] and types[self.items[l["target"]]["type"]]["kind"] == "risk"}
         self.risk = set(controls)
         while True:
             added = {l["source"] for l in self.links.values() if l["type"] == "refines" and not l["anchor"] and l["target"] in self.risk}
@@ -1626,7 +1644,7 @@ class Analysis:
         reports whether links are fresh, so without it such a statement passes in silence.
         The count and the first ten IDs keep it short on a large imported set."""
         targets = {link["target"] for link in self.links.values()}
-        statements = set(self.vocabulary["links"]["implements"]["to"])
+        statements = {name for name, spec in self.vocabulary["types"].items() if spec["kind"] == "statement"}
         found = sorted((i for i, item in self.items.items() if item["type"] in statements
                         and item["status"] != "obsolete" and i not in targets), key=str.encode)
         if found:
