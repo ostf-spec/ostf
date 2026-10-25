@@ -136,9 +136,65 @@
    },
    "expect": {
     "codes": [
-     "LOCK_MISSING"
+     "LOCK_MISSING",
+     "NESTED_ROOT"
     ],
     "links": []
+   }
+  },
+  {
+   "id": "nested-roots-reported",
+   "requirements": [
+    "OSTF-102",
+    "Annex I.1"
+   ],
+   "note": "Every trace.yaml beneath the root but its own is reported, at any depth and with or without a root between, so that a green check is never read as covering a nested root.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() {}\n",
+    "svc/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: S-A\n    text: Do s.\n",
+    "svc/deep/trace.yaml": "ostf: \"0.3\"\nitems: []\n",
+    "lib/x/trace.yaml": "not read",
+    "lib/x/trace.yaml.bak": "ostf: \"0.3\"\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "LOCK_MISSING",
+     "NESTED_ROOT"
+    ],
+    "items": [
+     "R-A"
+    ],
+    "diagnosticFiles": {
+     "NESTED_ROOT": [
+      "lib/x/trace.yaml",
+      "svc/deep/trace.yaml",
+      "svc/trace.yaml"
+     ]
+    }
+   }
+  },
+  {
+   "id": "nested-root-reported-when-root-fails",
+   "requirements": [
+    "OSTF-102",
+    "OSTF-150"
+   ],
+   "note": "A nested root is a fact of the file tree, so it is reported even when graph construction stops.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems: [\n",
+    "sub/trace.yaml": "ostf: \"0.3\"\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "FORMAT_INVALID",
+     "NESTED_ROOT"
+    ],
+    "diagnosticFiles": {
+     "NESTED_ROOT": [
+      "sub/trace.yaml"
+     ]
+    }
    }
   },
   {
@@ -730,7 +786,9 @@
      "R": "f1:WZPzG071WjzsPnYjiUM8p0AaMEBAdHSMpRnqalHDsI4"
     },
     "diagnosticFiles": {
-     "DUPLICATE_ID": "z.yaml"
+     "DUPLICATE_ID": [
+      "z.yaml"
+     ]
     }
    }
   },
@@ -3782,7 +3840,8 @@
    },
    "expect": {
     "codes": [
-     "LOCK_MISSING"
+     "LOCK_MISSING",
+     "NESTED_ROOT"
     ],
     "items": [
      "R-A",
@@ -3967,7 +4026,8 @@
    },
    "expect": {
     "codes": [
-     "LOCK_MISSING"
+     "LOCK_MISSING",
+     "NESTED_ROOT"
     ],
     "items": [
      "R-A",
@@ -7161,7 +7221,8 @@
    "rev": "main",
    "expect": {
     "codes": [
-     "LOCK_MISSING"
+     "LOCK_MISSING",
+     "NESTED_ROOT"
     ],
     "impact": {
      "base": "main",

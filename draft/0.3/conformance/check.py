@@ -190,8 +190,8 @@ def check():
             assert next(i["fingerprint"] for i in result["items"] if i["id"] == ident) == value, f"{case['id']}: fingerprint of {ident}"
         for ident, value in expect.get("linkFingerprints", {}).items():
             assert [l["fingerprints"] for l in result["links"] if reader.identity(l) == ident] == [value], f"{case['id']}: fingerprints of {ident}"
-        for code, file in expect.get("diagnosticFiles", {}).items():
-            assert {d.get("file") for d in result["diagnostics"] if d["code"] == code} == {file}, f"{case['id']}: file of {code}"
+        for code, files in expect.get("diagnosticFiles", {}).items():
+            assert sorted({d.get("file") for d in result["diagnostics"] if d["code"] == code}) == files, f"{case['id']}: files of {code}"
     for case in cases["contexts"]:
         analysis = reader.Analysis(case["files"])
         result, resolved = reader.context(analysis, case["context"])
@@ -298,7 +298,7 @@ def check():
     covered |= {code for case in load(VECTORS / "lock-vectors.json") for code in case["errors"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
     annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))
-    assert len(annex_c) == 36, "Annex C.1 codes"
+    assert len(annex_c) == 37, "Annex C.1 codes"
     for name, reason in cases["notCovered"].items():
         assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
     for name in sorted(defined | annex_c):
@@ -341,6 +341,12 @@ def check():
             (tree / name).write_bytes(data)
         code, out = run(tree, "check")
         assert code == 0 and "math.go#Add implements R-ADD" in out and "math_test.go#TestAdd verifies R-ADD" in out, "text check names links without a state"
+        # OSTF-102 and I.1: a nested root shows in the text of check, which still passes.
+        (tree / "svc").mkdir()
+        (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems: []\n')
+        code, out = run(tree, "check")
+        assert code == 0 and any("NESTED_ROOT" in line and "svc/trace.yaml" in line for line in out.splitlines()), "text check names a nested root"
+        os.remove(tree / "svc" / "trace.yaml")
         # I.1: --strict also fails on LOCK_MISSING with links in the graph and on an unstamped link.
         assert run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 without a lock"
         (tree / "trace.lock").write_text("trace.lock 1\n")
@@ -419,7 +425,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 31
+    counts["commandLine"] = 32
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

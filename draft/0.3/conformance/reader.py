@@ -63,6 +63,7 @@ SEVERITY = {
     "UNSUPPORTED_LANGUAGE": "warning", "PARSE_ERROR": "warning", "TAG_UNKNOWN_ID": "error",
     "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info", "LOCK_MISSING": "info",
     "LOCK_INVALID": "error", "LOCK_DUPLICATE": "error", "STAMP_REFUSED": "error",
+    "NESTED_ROOT": "info",
 }
 # This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
 OWN_PREFIX = "ostf-reader."
@@ -1160,6 +1161,11 @@ class Analysis:
     def _build(self):
         if "trace.yaml" not in self.files:
             return  # Annex C.3: a base view without the root's trace.yaml has an empty graph.
+        # OSTF-102: every other trace.yaml beneath the root is a nested root that this result does not cover.
+        for path in sorted((p for p in self.files if p.endswith("/trace.yaml")), key=str.encode):
+            directory = path[:-len("/trace.yaml")]
+            self.report("NESTED_ROOT", path, message=f"nested root {directory}/ is not covered here",
+                        hint=f"check it on its own, with --root {directory}")
         root = self._load("trace.yaml", {"ostf", "profile", "include", "tags", "sources", "items"})
         self.root = root
         if "tags" in root and not isinstance(root["tags"], bool):
