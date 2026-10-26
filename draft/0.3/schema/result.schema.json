@@ -79,6 +79,8 @@
         },
         "state": { "enum": ["valid", "suspect", "unstamped", "broken"] },
         "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the state, never part of it." },
+        "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the source." },
+        "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." },
         "reasons": {
           "type": "array",
           "items": { "enum": ["LINK_BROKEN", "LINK_UNSTAMPED", "UNKNOWN_ALGORITHM", "ITEM_CHANGED", "FILE_CHANGED", "DEFINITION_CHANGED", "SIGNATURE_CHANGED", "BODY_CHANGED"] }

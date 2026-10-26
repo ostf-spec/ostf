@@ -94,6 +94,50 @@ def sarif_validator():
     return check
 
 
+def scripted_history(case, directory):
+    """Annex I.3: a Git repository for a history case, and its commit identifiers by subject. Each commit applies
+    `files` to the tree of its first parent, by default the commit before it, a null deleting a file; HEAD is the
+    last commit; `depth` clones it shallow; `worktree` edits the checkout. Without commits, a plain directory."""
+    checkout = directory / "repo"
+    checkout.mkdir()
+    ids = {}
+    if case["commits"]:
+        env = {**os.environ, "GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GIT_AUTHOR_NAME": "ostf",
+               "GIT_AUTHOR_EMAIL": "ostf@example.com", "GIT_COMMITTER_NAME": "ostf", "GIT_COMMITTER_EMAIL": "ostf@example.com"}
+        git = lambda *args, stdin=None, cwd=checkout, extra=None: subprocess.run(
+            ["git", *args], cwd=cwd, input=stdin, capture_output=True, check=True, env={**env, **(extra or {})}).stdout.decode().strip()
+        git("init", "-q", "-b", "main")
+        trees, previous = {}, None
+        for commit in case["commits"]:
+            parents = commit.get("parents", [previous] if previous else [])
+            files = dict(trees[parents[0]]) if parents else {}
+            for path, text in commit["files"].items():
+                if text is None:
+                    files.pop(path)
+                else:
+                    files[path] = text
+            index = {"GIT_INDEX_FILE": str(directory / "index")}
+            git("read-tree", "--empty", extra=index)
+            entries = "".join(f"100644 {git('hash-object', '-w', '--stdin', stdin=text.encode())}\t{path}\n" for path, text in sorted(files.items()))
+            git("update-index", "--index-info", stdin=entries.encode(), extra=index)
+            tree = git("write-tree", extra=index)
+            ids[commit["subject"]] = git("commit-tree", tree, "-m", commit["subject"], *[x for parent in parents for x in ("-p", ids[parent])])
+            trees[commit["subject"]], previous = files, commit["subject"]
+        git("update-ref", "refs/heads/main", ids[previous])
+        git("reset", "-q", "--hard", "main")
+        if "depth" in case:
+            git("clone", "-q", "--depth", str(case["depth"]), f"file://{checkout}", "clone", cwd=directory)
+            checkout = directory / "clone"
+    for path, text in case.get("worktree", {}).items():
+        target = checkout / path
+        if text is None:
+            target.unlink()
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(text.encode())
+    return checkout, ids
+
+
 def check():
     for name, version in re.findall(r"^([A-Za-z0-9_-]+)==([^\s]+)", (HERE / "requirements.txt").read_text(), re.MULTILINE):
         assert importlib.metadata.version(name) == version, f"unexpected installed tool version: {name}"
@@ -189,7 +233,7 @@ def check():
     for retired in RETIRED:
         assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
-    every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["sarif"] + cases["projections"] + cases["schemas"] + cases["migrations"]
+    every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["projections"] + cases["schemas"] + cases["migrations"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
     for case in every:
@@ -256,6 +300,11 @@ def check():
         got = result.get("impact")
         assert got == case["expect"]["impact"], f"{case['id']}:\n got {got}\nwant {case['expect']['impact']}"
         assert codes(result) == case["expect"]["codes"], f"{case['id']}: codes {codes(result)}"
+        for key, anchors in case["expect"].get("hints", {}).items():  # OSTF-132 under a base view, by text
+            code, subject = key.split(" ", 1)
+            found = [d for d in result["diagnostics"] if d["code"] == code and d.get("subject") == subject]
+            assert len(found) == 1 and ("hint" in found[0]) == bool(anchors) and all(a in found[0].get("hint", "") for a in anchors), \
+                f"{case['id']}: hint of {key}: {[d.get('hint') for d in found]}, want {anchors}"
         # C.3: exactly the items that a context names carry their text in the result.
         named = {i for c in (got or {}).get("contexts", []) for i in c["items"]}
         assert {i["id"] for i in result["items"] if "text" in i} == {i for i in named if "text" in reader.Analysis(case["files"]).items[i]}, \
@@ -529,6 +578,29 @@ def check():
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
     counts["commandLine"] = 40
+
+    # Annex I.3: change information, from scripted Git histories run through the command line. Each commit has
+    # its own subject, and every commit identifier in the output, whole or cut to 12 characters, is replaced by
+    # its subject before comparing, so that a case holds whatever object format, names and dates Git uses.
+    for case in cases["histories"]:
+        with tempfile.TemporaryDirectory() as temp:
+            checkout, ids = scripted_history(case, pathlib.Path(temp))
+            where = checkout / case.get("root", ".")
+            args = [ids.get(arg, arg) for arg in case["run"]]
+            code, out = run(where, *args, "--format", "json")
+            assert code in (0, 1), f"{case['id']}: exit {code}"
+            for subject, commit in ids.items():
+                out = out.replace(commit, subject)
+            result = json.loads(out)
+            got = {"changes": {reader.identity(l): [l.get("sourceChangedIn"), l.get("targetChangedIn")] for l in result["links"]
+                               if "sourceChangedIn" in l or "targetChangedIn" in l}}
+            if "text" in case["expect"]:
+                text = run(where, *args)[1]
+                for subject, commit in ids.items():
+                    text = text.replace(commit, subject).replace(commit[:12], subject)
+                got["text"] = text
+            assert got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
+    counts["historyCases"] = len(cases["histories"])
     return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 

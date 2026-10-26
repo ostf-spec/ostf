@@ -52,6 +52,8 @@ PRINCIPAL = re.compile(r"unknown\Z|(?:person|agent|ci):.+\Z", re.S)
 ALGORITHMS = {"f1", "go2", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
+# Annex C.3, Annex I.3: the fields whose change changes an item, all but its ID, links, code, tests and x- keys.
+CHANGE_FIELDS = ("type", "title", "text", "status", "section", "rationale", "aliases", "attributes", "external", "revision")
 # OSTF-120: the default types and their kinds. A default link names kinds, written "kind:" and the kind,
 # each standing for every type of that kind once the profile is merged.
 KINDS = ("statement", "risk", "verification")
@@ -154,6 +156,11 @@ def parse_yaml(data):
 
 def fingerprint(algorithm, data):
     return algorithm + ":" + base64.urlsafe_b64encode(hashlib.sha256(data).digest()).decode().rstrip("=")
+
+
+def _span_text(source, start, end):
+    """The text of a definition's span, compared after CRLF becomes LF (Annex C.3, Annex I.3)."""
+    return source[start:end].replace(b"\r\n", b"\n")
 
 
 def normalize_text(text):
@@ -405,7 +412,7 @@ def go_source(source, path="", algorithm="go2"):
                     spans.append((spelled(name_node), start, end, end, False))
         for name, start, end, header, member in spans:
             definition = {"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                          "function": function, "member": member,
+                          "function": function, "member": member, "text": _span_text(source, start, end),
                           "sig": _token_bytes(tree.root_node, source, start, header, omitted, (start, end)),
                           "body": _token_bytes(tree.root_node, source, start, end, omitted, (start, end))}
             definition["test"] = is_test(definition, path)
@@ -614,7 +621,7 @@ def ts_source(source, path="", algorithm="ts2"):
             end = following.end_byte
         header = body.start_byte if body is not None else end
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                            "member": member, "test": test,
+                            "member": member, "test": test, "text": _span_text(source, start, end),
                             "sig": _ts_tokens(root, source, start, header, omitted),
                             "body": _ts_tokens(root, source, start, end, omitted)})
 
@@ -806,7 +813,8 @@ def py_source(source, path=""):
 
     def add(name, start, end, header, member, test=False):
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                            "member": member, "test": test, "sig": stream(start, header), "body": stream(start, end)})
+                            "member": member, "test": test, "text": _span_text(source, start, end),
+                            "sig": stream(start, header), "body": stream(start, end)})
 
     def names(target):
         if isinstance(target, ast.Name):  # as written, not as the parser normalizes it (L.2)
@@ -1184,8 +1192,11 @@ ASCII_FOLD = str.maketrans("ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuv
 class Analysis:
     """One root evaluated in one source view (OSTF-150)."""
 
-    def __init__(self, files):
+    def __init__(self, files, items_only=False):
         self.files = files
+        self.items_only = items_only  # stop after step 4, for an item's fields in a commit (Annex I.3)
+        self.history = None      # the evaluated view's History, for change information (Annex I.3)
+        self.texts = None        # (kind, text) -> anchors of this view, for broken links under a base (OSTF-132)
         self.diagnostics = []
         self.stopped = False
         self.vocabulary = default_vocabulary()
@@ -1347,6 +1358,8 @@ class Analysis:
         for path, document in documents:
             for raw in document.get("items", []):
                 self._register(path, raw)
+        if self.items_only:
+            return
         # step 5
         for ident in list(self.items):
             self._item_links(ident)
@@ -1804,13 +1817,25 @@ class Analysis:
                     row[key] = item[key]
         return row
 
-    def link_row(self, link):
+    def link_row(self, link, changes=False):
+        """A link of the result; with `changes`, one that the result describes, with its change information (I.3)."""
         row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin", "fingerprints")}
         if "state" in link:
             row["state"], row["reasons"] = link["state"], link["reasons"]
         if "corroboration" in link:
             row["corroboration"] = link["corroboration"]
+        if changes:
+            for key, value in zip(("sourceChangedIn", "targetChangedIn"), self.changed_in(link)):
+                if value is not None:
+                    row[key] = value
         return row
+
+    def changed_in(self, link):
+        """Annex I.3: the view identifiers of the last commits that changed a link's source and its target."""
+        if self.history is None:
+            return None, None
+        return (self.history.changed_in("anchor" if link["anchor"] else "item", link["source"]),
+                self.history.changed_in("item", link["target"]))
 
     def result(self):
         return {
@@ -1919,7 +1944,7 @@ def context(analysis, target, anchor=None, spell=lambda path: path):
     result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") in analysis.lock_paths + ["trace.derived"]
                                           or d.get("subject") in subjects or d.get("file") in paths]
     result["items"] = [analysis.item_row(i, True) for i in sorted(items, key=str.encode)]
-    result["links"] = [analysis.link_row(analysis.links[k]) for k in sorted(links, key=str.encode)]
+    result["links"] = [analysis.link_row(analysis.links[k], True) for k in sorted(links, key=str.encode)]
     return result, not unresolved
 
 
@@ -1940,9 +1965,13 @@ def render(analysis, target, anchor=None):
         return text
 
     def state(link):
-        """Rule 5: the state, then the corroboration (OSTF-146), in parentheses."""
-        shown = [link[k] for k in ("state", "corroboration") if k in link]
-        return f" ({', '.join(shown)})" if shown else ""
+        """Rule 5: the state, then the corroboration (OSTF-146), then the change information (I.3), in parentheses."""
+        shown = ", ".join(link[k] for k in ("state", "corroboration") if k in link)
+        changes = analysis.changed_in(link)
+        if any(changes):
+            changed = "changed " + " ".join(value[:12] if value else "-" for value in changes)
+            shown = shown + "; " + changed if shown else changed
+        return f" ({shown})" if shown else ""
 
     def name(link, inverse=False):
         base = vocabulary[link["type"]].get("inverse", link["type"] + "_by") if inverse else link["type"]
@@ -2022,12 +2051,57 @@ def _parsed(view, path):
 
 
 def _definitions(view, path):
-    """Body token streams by full symbol; a file that does not parse has none (C.3)."""
+    """Span texts by full symbol, same-named definitions in source order; a file that does not parse has none (C.3)."""
     parsed = _parsed(view, path) if path in view.files else None
     groups = {}
     for d in parsed["definitions"] if parsed else []:
-        groups.setdefault(d["name"], []).append(d["body"])
-    return {name: b" ".join(bodies) for name, bodies in groups.items()}
+        groups.setdefault(d["name"], []).append(d["text"])
+    return {name: b" ".join(texts) for name, texts in groups.items()}
+
+
+def _file_text(view, path):
+    return view.data(path).replace(b"\r\n", b"\n") if path in view.files else None
+
+
+def item_fields(item):
+    """Annex C.3, Annex I.3: what is compared when an item changes."""
+    return {key: item[key] for key in CHANGE_FIELDS if key in item}
+
+
+def anchor_text(path, symbol, data):
+    """Annex I.3: an anchor's text in its file's bytes, after CRLF becomes LF: the file's for a whole-file
+    anchor, else the span texts of the definitions it binds to, joined as A.2 joins them; None when it
+    binds to nothing."""
+    if data is None:
+        return None
+    if not symbol:
+        return data.replace(b"\r\n", b"\n")
+    annex = annex_for(path)
+    parsed = annex.parse(data, path) if annex else None
+    found = annex.select(parsed["definitions"], symbol, path) if parsed else []
+    return b" ".join(d["text"] for d in found) if found else None
+
+
+def moved_hint(base, current, link):
+    """OSTF-132 under a base view: for a broken declared link, a hint naming the definitions or files of the
+    evaluated view whose text is the text its anchor has in the base view, or None."""
+    path, symbol = split_anchor(link["source"])
+    text = anchor_text(path, symbol, base.data(path) if path in base.files else None)
+    if text is None:
+        return None
+    if current.texts is None:  # every covered file and definition, by text, built once
+        current.texts = {}
+        for where in sorted(current.files, key=str.encode):
+            if not current.covered(where) or current.is_lock(where) or where == "trace.derived":
+                continue
+            current.texts.setdefault(("file", _file_text(current, where)), []).append(where)
+            parsed = _parsed(current, where) if annex_for(where) else None
+            for d in parsed["definitions"] if parsed else []:
+                current.texts.setdefault(("defs", d["text"]), []).append(where + "#" + d["name"])
+    found = sorted(set(current.texts.get(("defs" if symbol else "file", text), [])), key=str.encode)
+    if not found:
+        return None
+    return "moved? the same content is at " + ", ".join(found[:3]) + (f" and {len(found) - 3} more" if len(found) > 3 else "")
 
 
 def _file_sig(view, path):
@@ -2064,7 +2138,7 @@ def impact(base, current, rev):
             if before.get(name) != after.get(name):
                 changed[path + "#" + name] = set()
     for path in {l["source"] for v in views for l in v.links.values() if l["anchor"] and "#" not in l["source"]}:
-        if _file_sig(base, path) != _file_sig(current, path):
+        if _file_text(base, path) != _file_text(current, path):
             changed[path] = set()
     for view in views:
         for link in view.links.values():
@@ -2078,7 +2152,7 @@ def impact(base, current, rev):
     added = sorted(current.items.keys() - base.items.keys(), key=str.encode)
     removed = sorted(base.items.keys() - current.items.keys(), key=str.encode)
     modified = sorted((i for i in current.items.keys() & base.items.keys()
-                       if current.hashes[i] != base.hashes[i] or current.items[i]["status"] != base.items[i]["status"]), key=str.encode)
+                       if item_fields(current.items[i]) != item_fields(base.items[i])), key=str.encode)
     named = set().union(*changed.values()) | set(added) | set(modified)
     tests = {l["source"] for l in current.links.values()
              if l["anchor"] and l["type"] == "verifies" and l.get("status") == "ok" and l["target"] in named}
@@ -2119,6 +2193,16 @@ def check_base(base, current, rev, strict=False):
     """Annex I.1: the result of check --base, with impact (C.3), and each nested root evaluated on its own
     with the same options, one whose check would exit 1 being NESTED_ROOT_FAILED (OSTF-102)."""
     found = impact(base, current, rev)
+    if found is not None:
+        # OSTF-132: under a base view, the hint of a broken declared link compares texts, not a recorded fingerprint.
+        for link in current.links.values():
+            if link["anchor"] and link["origin"] == "declared" and link["status"] not in ("ok", "unsupported"):
+                hint = moved_hint(base, current, link)
+                for d in current.diagnostics:
+                    if d["code"] == "BROKEN_LINK" and d.get("subject") == link["source"] and d.get("file") == link["file"]:
+                        d.pop("hint", None)
+                        if hint:
+                            d["hint"] = hint
     for d in [d for d in current.diagnostics if d["code"] == "NESTED_ROOT"]:
         directory = d["file"][:-len("/trace.yaml")]
         if Analysis(nested_view(current.files, directory)).failed(strict):
@@ -2130,6 +2214,9 @@ def check_base(base, current, rev, strict=False):
         # C.3: the items that a context names carry the fields a context adds (I.3).
         named = {i for c in found["contexts"] for i in c["items"]}
         result["items"] = [current.item_row(row["id"], row["id"] in named) for row in result["items"]]
+        # I.3: so do the links that a context names, with their change information.
+        described = {key for c in found["contexts"] for key in c["links"]}
+        result["links"] = [current.link_row(current.links[key], key in described) for key in sorted(current.links, key=str.encode)]
     return result
 
 
@@ -2401,6 +2488,119 @@ class GitError(Exception):
     """Git could not read the base revision."""
 
 
+def _git(root, *args, stdin=None):
+    """Git's plumbing in `root`, which runs no hooks, filters or repository code."""
+    import subprocess
+    done = subprocess.run(["git", "--literal-pathspecs", "-c", "core.fsmonitor=false", "-C", str(root), *args], input=stdin, capture_output=True)
+    if done.returncode != 0:
+        raise GitError(f"git {args[0]}: {done.stderr.decode(errors='replace').strip()}")
+    return done.stdout
+
+
+class History:
+    """Annex I.3: change information from the first-parent history of the evaluated view, newest first,
+    read with Git's plumbing. A side changed in the first commit in which it differs from that side in
+    the commit's first parent, or in an empty view for a commit without one. There is no history
+    outside a Git checkout or before its first commit, and the walk gives up at a commit whose parents
+    the history does not hold, as at the edge of a shallow clone."""
+
+    def __init__(self, root):
+        self.root = root
+        self.commits = None      # [(commit, paths it changed from its first parent)], newest first
+        self.shallow = set()
+        self.prefix = ""         # the root's path from the repository's top, with a final /
+        self.found = {}          # (kind, side) -> commit or None
+        self.blobs = {}          # object name -> bytes
+        self.graphs = {}         # commit -> the items of the root in it, as an items-only Analysis
+
+    def load(self):
+        if self.commits is not None:
+            return
+        self.commits = []
+        try:
+            self.prefix = _git(self.root, "rev-parse", "--show-prefix").decode().removesuffix("\n")
+            log = _git(self.root, "log", "--first-parent", "--diff-merges=first-parent", "--no-renames", "--no-ext-diff",
+                       "--name-only", "-z", "--format=%x01%H", "HEAD", "--")
+            shallow = pathlib.Path(_git(self.root, "rev-parse", "--git-path", "shallow").decode().removesuffix("\n"))
+        except (GitError, OSError):
+            return
+        shallow = shallow if shallow.is_absolute() else pathlib.Path(self.root) / shallow
+        self.shallow = set(shallow.read_text().split()) if shallow.is_file() else set()
+        for chunk in log.split(b"\x01")[1:]:
+            commit, *paths = chunk.split(b"\0")
+            self.commits.append((commit.decode(), {p.lstrip(b"\n").decode("utf-8", "surrogateescape") for p in paths} - {""}))
+
+    def changed_in(self, kind, side):
+        """The commit that last changed an item (kind "item", by ID) or an anchor, or None."""
+        if (kind, side) not in self.found:
+            self.load()
+            self.found[kind, side] = self._walk(kind, side)
+        return self.found[kind, side]
+
+    def _walk(self, kind, side):
+        path = self.prefix + split_anchor(side)[0] if kind == "anchor" else None
+        for n, (commit, paths) in enumerate(self.commits):
+            if commit in self.shallow:
+                return None
+            # A commit that touches neither the anchor's file nor a file of the root outside every annex
+            # changes neither; an item lives in OSTF files, never in annexed code.
+            if path not in paths if kind == "anchor" else not any(p.startswith(self.prefix) and annex_for(p) is None for p in paths):
+                continue
+            parent = self.commits[n + 1][0] if n + 1 < len(self.commits) else None
+            if self._value(kind, side, commit) != self._value(kind, side, parent):
+                return commit
+        return None
+
+    def _value(self, kind, side, commit):
+        if commit is None:
+            return None
+        if kind == "item":
+            graph = self._graph(commit)
+            return item_fields(graph.items[side]) if side in graph.items else None
+        path, symbol = split_anchor(side)
+        found = self._list(commit, path)
+        return anchor_text(path, symbol, self.blob(found[path]) if path in found else None)
+
+    def _list(self, commit, path=None):
+        """The blobs beneath the root in a commit, or the one at `path`, by path relative to the root;
+        symbolic links are skipped, as views skip them."""
+        where = [self.prefix + path] if path is not None else [self.prefix] if self.prefix else []
+        try:
+            listing = _git(self.root, "ls-tree", "-z", "--full-tree", *([] if path is not None else ["-r"]), "--end-of-options", commit, *where)
+        except GitError:
+            return {}
+        found = {}
+        for entry in listing.split(b"\0"):
+            meta, _, name = entry.partition(b"\t")
+            fields = meta.split()
+            name = name.decode("utf-8", "surrogateescape")
+            if len(fields) == 3 and fields[1] == b"blob" and fields[0] != b"120000" and name.startswith(self.prefix):
+                found[name[len(self.prefix):]] = fields[2].decode()
+        return found
+
+    def blob(self, name):
+        if name not in self.blobs:
+            out = _git(self.root, "cat-file", "blob", name)
+            self.blobs[name] = out
+        return self.blobs[name]
+
+    def _graph(self, commit):
+        if commit not in self.graphs:
+            self.graphs[commit] = Analysis(GitFiles(self, self._list(commit)), items_only=True)
+        return self.graphs[commit]
+
+
+class GitFiles(dict):
+    """The files of a root in a commit, by path, each read from Git when first used."""
+
+    def __init__(self, history, blobs):
+        super().__init__(blobs)
+        self.history = history
+
+    def __getitem__(self, path):
+        return self.history.blob(dict.__getitem__(self, path))
+
+
 def git_view(root, rev):
     """The files under `root` at Git revision `rev`, by path relative to root, read with Git's
     plumbing commands, which run no hooks, filters or repository code. A revision without the
@@ -2441,6 +2641,7 @@ def _run(args, analysis, target, anchor, root):
     if args.command == "check":
         result = analysis.result()
         if args.base is not None:
+            analysis.history = History(root)
             base = Tree(args.base_tree) if args.base_tree is not None else git_view(root, args.base)
             result = check_base(Analysis(base), analysis, args.base, args.strict)
         if args.format == "sarif":
@@ -2467,6 +2668,7 @@ def _run(args, analysis, target, anchor, root):
             print("".join(line + "\n" for line in text_diagnostics(result) + ["stamped " + identity(l) for l in result["links"]]), end="")
         return 0 if texts is not None else 1
     cwd = os.path.realpath(os.getcwd())
+    analysis.history = History(root)
     result, resolved = context(analysis, target, anchor, lambda p: pathlib.Path(os.path.relpath(root / p, cwd)).as_posix())
     if args.format == "json":
         print(json.dumps(result, indent=2, ensure_ascii=False))

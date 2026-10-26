@@ -10,7 +10,7 @@ inputs:
     description: Directory that holds trace.yaml, relative to the workspace.
     default: "."
   base:
-    description: Base branch for impact (Annex C.3). Defaults to the pull request's base branch; empty outside pull requests.
+    description: Base branch for impact (Annex C.3). Defaults to the pull request's base branch; empty outside pull requests. With a base, the Action fetches the full history, which change information reads (Annex I.3).
     default: ""
   sarif:
     description: Upload the SARIF result to GitHub code scanning, which needs the security-events write permission.
@@ -47,7 +47,14 @@ runs:
           exit 0
         fi
         if [ -n "$BASE" ]; then
-          if ! git fetch --no-tags --depth=1 origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"; then
+          # Change information walks the first-parent history (Annex I.3), which a shallow checkout lacks:
+          # fetch it whole, and the base branch with it, so no commit at the edge of a clone is named.
+          if [ "$(git rev-parse --is-shallow-repository)" = true ] && ! git fetch --no-tags --unshallow origin; then
+            echo "ostf: cannot fetch the history, so the check cannot run" >&2
+            echo "exit-code=2" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if ! git fetch --no-tags origin "+refs/heads/$BASE:refs/remotes/origin/$BASE"; then
             echo "ostf: cannot fetch the base branch $BASE, so the check cannot run" >&2
             echo "exit-code=2" >> "$GITHUB_OUTPUT"
             exit 0

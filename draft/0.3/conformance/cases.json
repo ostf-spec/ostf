@@ -9543,7 +9543,8 @@
       ],
       "changed": [
        "R-A",
-       "R-B"
+       "R-B",
+       "R-E"
       ],
       "removed": [
        "R-C"
@@ -9564,7 +9565,8 @@
       "a_test.go#TestF"
      ]
     }
-   }
+   },
+   "note": "Revision 0.16: an item changes when any field other than its links differs, so a new rationale changes R-E (Annex C.3)."
   },
   {
    "id": "impact-adoption",
@@ -10597,6 +10599,480 @@
      },
      "lock": "kept",
      "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-comment-inside-a-definition",
+   "requirements": [
+    "Annex C.3"
+   ],
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 /* one */ }\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [
+      {
+       "anchor": "a.go#F",
+       "items": [
+        "R-A"
+       ]
+      }
+     ],
+     "contexts": [
+      {
+       "context": "a.go#F",
+       "items": [
+        "R-A"
+       ],
+       "links": [
+        "a.go#F implements R-A"
+       ]
+      }
+     ],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-crlf-alone-is-no-change",
+   "requirements": [
+    "Annex C.3"
+   ],
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\r\n\r\nfunc F() int { return 1 }\r\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [],
+     "contexts": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
+    }
+   }
+  },
+  {
+   "id": "impact-broken-link-hint-by-text",
+   "requirements": [
+    "Annex C.3",
+    "OSTF-132"
+   ],
+   "base": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n\nfunc G() int { return 1 }\n"
+   },
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc G() int { return 1 }\n",
+    "b.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "rev": "main",
+   "expect": {
+    "codes": [
+     "BROKEN_LINK",
+     "LOCK_MISSING"
+    ],
+    "impact": {
+     "base": "main",
+     "coverage": "direct",
+     "changed": [
+      {
+       "anchor": "a.go#F",
+       "items": [
+        "R-A"
+       ]
+      },
+      {
+       "anchor": "b.go#F",
+       "items": []
+      }
+     ],
+     "contexts": [],
+     "items": {
+      "added": [],
+      "changed": [],
+      "removed": []
+     },
+     "links": {
+      "added": [],
+      "removed": []
+     },
+     "lock": "absent",
+     "tests": []
+    },
+    "hints": {
+     "BROKEN_LINK a.go#F": [
+      "b.go#F"
+     ]
+    }
+   }
+  }
+ ],
+ "histories": [
+  {
+   "id": "history-each-side-last-changed",
+   "requirements": [
+    "Annex I.3",
+    "Annex J"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n  - id: R-B\n    text: Do b.\n    code: [a.go#G]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n\nfunc G() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "two",
+     "files": {
+      "a.go": "package a\n\nfunc F() int { return 2 }\n\nfunc G() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "three",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a well.\n    code: [a.go#F]\n  - id: R-B\n    text: Do b.\n    code: [a.go#G]\n"
+     }
+    },
+    {
+     "subject": "four",
+     "files": {
+      "a.go": "package a\n\nfunc F() int { return 2 }\n\nfunc G() int { return 3 }\n",
+      "notes.txt": "Notes.\n"
+     }
+    }
+   ],
+   "run": [
+    "context",
+    "a.go#F"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "two",
+      "three"
+     ]
+    },
+    "text": "a.go#F\n  implements R-A (changed two three)\n    | Do a well.\n"
+   }
+  },
+  {
+   "id": "history-text-after-crlf-becomes-lf",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "comment-inside",
+     "files": {
+      "a.go": "package a\n\nfunc F() int {\n\t// one\n\treturn 1\n}\n"
+     }
+    },
+    {
+     "subject": "crlf",
+     "files": {
+      "a.go": "package a\r\n\r\nfunc F() int {\r\n\t// one\r\n\treturn 1\r\n}\r\n"
+     }
+    },
+    {
+     "subject": "comment-above",
+     "files": {
+      "a.go": "package a\r\n\r\n// F returns one.\r\nfunc F() int {\r\n\t// one\r\n\treturn 1\r\n}\r\n"
+     }
+    }
+   ],
+   "run": [
+    "context",
+    "a.go#F"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "comment-inside",
+      "one"
+     ]
+    }
+   }
+  },
+  {
+   "id": "history-first-parent-names-the-merge",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "side",
+     "files": {
+      "a.go": "package a\n\nfunc F() int { return 2 }\n"
+     }
+    },
+    {
+     "subject": "two",
+     "parents": [
+      "one"
+     ],
+     "files": {
+      "notes.txt": "Notes.\n"
+     }
+    },
+    {
+     "subject": "merge",
+     "parents": [
+      "two",
+      "side"
+     ],
+     "files": {
+      "a.go": "package a\n\nfunc F() int { return 2 }\n"
+     }
+    }
+   ],
+   "run": [
+    "context",
+    "a.go#F"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "merge",
+      "one"
+     ]
+    }
+   }
+  },
+  {
+   "id": "history-shallow-stops-at-its-edge",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "two",
+     "files": {
+      "a.go": "package a\n\nfunc F() int { return 2 }\n"
+     }
+    },
+    {
+     "subject": "three",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a well.\n    code: [a.go#F]\n"
+     }
+    },
+    {
+     "subject": "four",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a well.\n    code: [a.go#F]\n    rationale: Because.\n"
+     }
+    }
+   ],
+   "depth": 2,
+   "run": [
+    "context",
+    "a.go#F"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      null,
+      "four"
+     ]
+    }
+   }
+  },
+  {
+   "id": "history-none-without-a-repository",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [],
+   "worktree": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+    "a.go": "package a\n\nfunc F() int { return 1 }\n"
+   },
+   "run": [
+    "context",
+    "a.go#F"
+   ],
+   "expect": {
+    "changes": {}
+   }
+  },
+  {
+   "id": "history-item-moved-to-another-file",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "moved",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\ninclude: [items/*.yaml]\nitems: []\n",
+      "items/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n"
+     }
+    }
+   ],
+   "run": [
+    "context",
+    "R-A"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "one",
+      "one"
+     ]
+    }
+   }
+  },
+  {
+   "id": "history-whole-file-and-deleted-definition",
+   "requirements": [
+    "Annex I.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F, conf.txt]\n",
+      "a.go": "package a\n\nfunc F() int { return 1 }\n\nfunc G() int { return 1 }\n",
+      "conf.txt": "on\n"
+     }
+    },
+    {
+     "subject": "conf",
+     "files": {
+      "conf.txt": "off\n"
+     }
+    },
+    {
+     "subject": "gone",
+     "files": {
+      "a.go": "package a\n\nfunc G() int { return 1 }\n"
+     }
+    }
+   ],
+   "run": [
+    "context",
+    "R-A"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "gone",
+      "one"
+     ],
+     "conf.txt implements R-A": [
+      "conf",
+      "one"
+     ]
+    }
+   }
+  },
+  {
+   "id": "history-check-base-describes-its-contexts",
+   "requirements": [
+    "Annex I.3",
+    "Annex C.3"
+   ],
+   "commits": [
+    {
+     "subject": "one",
+     "files": {
+      "svc/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n  - id: R-B\n    text: Do b.\n    code: [b.go#H]\n",
+      "svc/a.go": "package a\n\nfunc F() int { return 1 }\n",
+      "svc/b.go": "package a\n\nfunc H() int { return 1 }\n"
+     }
+    },
+    {
+     "subject": "two",
+     "files": {
+      "svc/a.go": "package a\n\nfunc F() int { return 2 }\n",
+      "README": "Read me.\n"
+     }
+    }
+   ],
+   "root": "svc",
+   "run": [
+    "check",
+    "--base",
+    "one"
+   ],
+   "expect": {
+    "changes": {
+     "a.go#F implements R-A": [
+      "two",
+      "one"
+     ]
     }
    }
   }
