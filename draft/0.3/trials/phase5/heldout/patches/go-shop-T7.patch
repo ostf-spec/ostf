@@ -1,0 +1,15 @@
+diff --git a/pricing/tax.go b/pricing/tax.go
+--- a/pricing/tax.go
++++ b/pricing/tax.go
+@@ -11,8 +11,9 @@ type Region struct {
+ // Tax returns the sales tax on amount in region r, rounded half up to the
+ // cent. A tax-exempt customer pays no tax.
+ func Tax(amount Money, r Region, exempt bool) Money {
+-	if exempt || amount <= 0 {
++	if amount <= 0 || exempt {
+ 		return 0
+ 	}
+-	return Money(roundHalfUp(int64(amount)*r.RatePPM, 1_000_000))
++	ppm := int64(amount) * r.RatePPM
++	return Money(roundHalfUp(ppm, 1_000_000))
+ }

@@ -1,0 +1,17 @@
+diff --git a/src/pricing.ts b/src/pricing.ts
+--- a/src/pricing.ts
++++ b/src/pricing.ts
+@@ -48,10 +48,11 @@ export function applyDiscount(subtotal: Cents, d: Discount, now: Date): Cents {
+ 
+ /** Returns the sales tax on `amount` in region `r`, rounded half up to the cent. A tax-exempt customer pays none. */
+ export function tax(amount: Cents, r: Region, exempt: boolean): Cents {
+-  if (exempt || amount <= 0) {
++  if (amount <= 0 || exempt) {
+     return 0;
+   }
+-  return roundHalfUp(amount * r.ratePpm, 1_000_000);
++  const ppm = amount * r.ratePpm;
++  return roundHalfUp(ppm, 1_000_000);
+ }
+ 
+ /** Quotes an order: takes the discount code `d`, when given, off `subtotal`, then adds sales tax on what is left. */
