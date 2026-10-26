@@ -1,0 +1,455 @@
+{
+ "frozen": "2026-10-25",
+ "phase": 5,
+ "months": 6,
+ "changesPerMonth": 6,
+ "note": "Each month's changes start on branches of the month's first commit and merge into main in the order listed; agents alternate, Claude Code for odd changes and Codex for even ones.",
+ "history": {
+  "go-shop": [
+   {
+    "id": "M1.1",
+    "month": 1,
+    "kind": "rename",
+    "prompt": "Rename Cart.Remove in cart/cart.go to Cart.Delete, and update its callers and tests."
+   },
+   {
+    "id": "M1.2",
+    "month": 1,
+    "kind": "refactor",
+    "prompt": "Refactor Stock.Available in inventory/inventory.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M1.3",
+    "month": 1,
+    "kind": "feature",
+    "prompt": "Add a method Logout to Sessions in accounts/session.go that ends a session, so that validating its token afterwards fails with ErrNoSession. Test it."
+   },
+   {
+    "id": "M1.4",
+    "month": 1,
+    "kind": "feature",
+    "prompt": "Add a method Total to AuditLog in payments/audit.go that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it."
+   },
+   {
+    "id": "M1.5",
+    "month": 1,
+    "kind": "behavior",
+    "prompt": "Make ApplyDiscount in pricing/discount.go reject a discount code with a negative percent, with a new error. Test it."
+   },
+   {
+    "id": "M1.6",
+    "month": 1,
+    "kind": "test",
+    "prompt": "Add a test that the sales tax on an amount of zero is zero."
+   },
+   {
+    "id": "M2.1",
+    "month": 2,
+    "kind": "rename",
+    "prompt": "Rename Stock.Release in inventory/inventory.go to Stock.Cancel, and update its callers and tests."
+   },
+   {
+    "id": "M2.2",
+    "month": 2,
+    "kind": "refactor",
+    "prompt": "Refactor Sessions.Register in accounts/session.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M2.3",
+    "month": 2,
+    "kind": "feature",
+    "prompt": "Add a function RegionByCode in a new file pricing/regions.go that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and an error for any other code. Test it."
+   },
+   {
+    "id": "M2.4",
+    "month": 2,
+    "kind": "feature",
+    "prompt": "Add a method Has to Cart in cart/cart.go that reports whether a SKU is in the cart, and test it."
+   },
+   {
+    "id": "M2.5",
+    "month": 2,
+    "kind": "behavior",
+    "prompt": "Raise the largest quantity that a cart line may hold from 99 to 199.",
+    "makesFalse": "R-CART-QTY"
+   },
+   {
+    "id": "M2.6",
+    "month": 2,
+    "kind": "test",
+    "prompt": "Add a test that a customer whose session has expired cannot place an order."
+   },
+   {
+    "id": "M3.1",
+    "month": 3,
+    "kind": "move",
+    "prompt": "Move the Quote type and the Price function from pricing/quote.go into a new file pricing/price.go, keeping their names, and delete pricing/quote.go."
+   },
+   {
+    "id": "M3.2",
+    "month": 3,
+    "kind": "refactor",
+    "prompt": "Refactor Cart.Add in cart/cart.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M3.3",
+    "month": 3,
+    "kind": "feature",
+    "prompt": "Add a method Held to Stock in inventory/inventory.go that returns the units of a SKU that unexpired reservations hold, and test it."
+   },
+   {
+    "id": "M3.4",
+    "month": 3,
+    "kind": "feature",
+    "prompt": "Add a function ParseMoney to pricing/money.go that parses an amount such as 12.05 into Money and rejects more than two decimal places. Test it."
+   },
+   {
+    "id": "M3.5",
+    "month": 3,
+    "kind": "behavior",
+    "prompt": "Make a session last 60 minutes without use instead of 30.",
+    "makesFalse": "R-SESSION-EXPIRY"
+   },
+   {
+    "id": "M3.6",
+    "month": 3,
+    "kind": "test",
+    "prompt": "Add a test that a cart with one line of three units at 12.00 has a subtotal of 36.00."
+   },
+   {
+    "id": "M4.1",
+    "month": 4,
+    "kind": "rename",
+    "prompt": "Rename Stock.Confirm in inventory/inventory.go to Stock.Commit, and update its callers and tests."
+   },
+   {
+    "id": "M4.2",
+    "month": 4,
+    "kind": "refactor",
+    "prompt": "Refactor Checkout.PlaceOrder in cart/checkout.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M4.3",
+    "month": 4,
+    "kind": "feature",
+    "prompt": "Add a method Expired to Discount in pricing/discount.go that reports whether the code has expired at a given time, and test it."
+   },
+   {
+    "id": "M4.4",
+    "month": 4,
+    "kind": "feature",
+    "prompt": "Add a method Len to AuditLog in payments/audit.go that returns the number of entries, and test it."
+   },
+   {
+    "id": "M4.5",
+    "month": 4,
+    "kind": "behavior",
+    "prompt": "Make the cap on discounts 40 percent of the subtotal instead of 50.",
+    "makesFalse": "R-DISCOUNT-CAP"
+   },
+   {
+    "id": "M4.6",
+    "month": 4,
+    "kind": "test",
+    "prompt": "Add a test that registering the same email twice fails with ErrEmailTaken."
+   },
+   {
+    "id": "M5.1",
+    "month": 5,
+    "kind": "rename",
+    "prompt": "Rename Sessions.Validate in accounts/session.go to Sessions.Check, and update its callers and tests."
+   },
+   {
+    "id": "M5.2",
+    "month": 5,
+    "kind": "refactor",
+    "prompt": "Refactor Money.String in pricing/money.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M5.3",
+    "month": 5,
+    "kind": "feature",
+    "prompt": "Add a method Preview to Checkout in cart/checkout.go that takes the same session token, cart and discount as PlaceOrder and returns the quote that PlaceOrder would charge, without reserving stock or charging. Test it."
+   },
+   {
+    "id": "M5.4",
+    "month": 5,
+    "kind": "feature",
+    "prompt": "Add a method Clear to Cart in cart/cart.go that removes every line, and test it."
+   },
+   {
+    "id": "M5.5",
+    "month": 5,
+    "kind": "behavior",
+    "prompt": "Make Tax in pricing/tax.go round half to even instead of half up.",
+    "makesFalse": "R-TAX-RATE"
+   },
+   {
+    "id": "M5.6",
+    "month": 5,
+    "kind": "test",
+    "prompt": "Add a test that a refund of a receipt that does not exist fails."
+   },
+   {
+    "id": "M6.1",
+    "month": 6,
+    "kind": "move",
+    "prompt": "Move the function Tax from pricing/tax.go into a new file pricing/salestax.go, keeping its name."
+   },
+   {
+    "id": "M6.2",
+    "month": 6,
+    "kind": "refactor",
+    "prompt": "Refactor Processor.receipt in payments/charge.go so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M6.3",
+    "month": 6,
+    "kind": "feature",
+    "prompt": "Add a method Units to Order in cart/checkout.go that returns the number of units over its lines, and test it."
+   },
+   {
+    "id": "M6.4",
+    "month": 6,
+    "kind": "feature",
+    "prompt": "Add a function RatePercent to pricing/tax.go that formats a region's rate as a percentage, such as 14.975%, and test it."
+   },
+   {
+    "id": "M6.5",
+    "month": 6,
+    "kind": "behavior",
+    "prompt": "Make a reservation hold stock for 20 minutes instead of 15.",
+    "makesFalse": "R-STOCK-EXPIRY"
+   },
+   {
+    "id": "M6.6",
+    "month": 6,
+    "kind": "test",
+    "prompt": "Add a test that reading the audit log returns a copy, so that changing the copy does not change the log."
+   }
+  ],
+  "ts-shop": [
+   {
+    "id": "M1.1",
+    "month": 1,
+    "kind": "rename",
+    "prompt": "Rename the remove method of Cart in src/cart.ts to discard, and update its callers and tests."
+   },
+   {
+    "id": "M1.2",
+    "month": 1,
+    "kind": "refactor",
+    "prompt": "Refactor the available method of Stock in src/inventory.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M1.3",
+    "month": 1,
+    "kind": "feature",
+    "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it."
+   },
+   {
+    "id": "M1.4",
+    "month": 1,
+    "kind": "feature",
+    "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it."
+   },
+   {
+    "id": "M1.5",
+    "month": 1,
+    "kind": "behavior",
+    "prompt": "Make applyDiscount in src/pricing.ts reject a discount code with a negative percent, with a new error class. Test it."
+   },
+   {
+    "id": "M1.6",
+    "month": 1,
+    "kind": "test",
+    "prompt": "Add a test that the sales tax on an amount of zero is zero."
+   },
+   {
+    "id": "M2.1",
+    "month": 2,
+    "kind": "rename",
+    "prompt": "Rename the release method of Stock in src/inventory.ts to cancel, and update its callers and tests."
+   },
+   {
+    "id": "M2.2",
+    "month": 2,
+    "kind": "refactor",
+    "prompt": "Refactor the register method of Sessions in src/accounts.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M2.3",
+    "month": 2,
+    "kind": "feature",
+    "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it."
+   },
+   {
+    "id": "M2.4",
+    "month": 2,
+    "kind": "feature",
+    "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it."
+   },
+   {
+    "id": "M2.5",
+    "month": 2,
+    "kind": "behavior",
+    "prompt": "Raise the largest quantity that a cart line may hold from 99 to 199.",
+    "makesFalse": "R-CART-QTY"
+   },
+   {
+    "id": "M2.6",
+    "month": 2,
+    "kind": "test",
+    "prompt": "Add a test that a customer whose session has expired cannot place an order."
+   },
+   {
+    "id": "M3.1",
+    "month": 3,
+    "kind": "move",
+    "prompt": "Move the function price from src/pricing.ts into a new file src/price.ts, keeping its name, and update its imports."
+   },
+   {
+    "id": "M3.2",
+    "month": 3,
+    "kind": "refactor",
+    "prompt": "Refactor the add method of Cart in src/cart.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M3.3",
+    "month": 3,
+    "kind": "feature",
+    "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it."
+   },
+   {
+    "id": "M3.4",
+    "month": 3,
+    "kind": "feature",
+    "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it."
+   },
+   {
+    "id": "M3.5",
+    "month": 3,
+    "kind": "behavior",
+    "prompt": "Make a session last 60 minutes without use instead of 30.",
+    "makesFalse": "R-SESSION-EXPIRY"
+   },
+   {
+    "id": "M3.6",
+    "month": 3,
+    "kind": "test",
+    "prompt": "Add a test that a cart with one line of three units at 12.00 has a subtotal of 36.00."
+   },
+   {
+    "id": "M4.1",
+    "month": 4,
+    "kind": "rename",
+    "prompt": "Rename the confirm method of Stock in src/inventory.ts to commit, and update its callers and tests."
+   },
+   {
+    "id": "M4.2",
+    "month": 4,
+    "kind": "refactor",
+    "prompt": "Refactor the placeOrder method of Checkout in src/checkout.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M4.3",
+    "month": 4,
+    "kind": "feature",
+    "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it."
+   },
+   {
+    "id": "M4.4",
+    "month": 4,
+    "kind": "feature",
+    "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it."
+   },
+   {
+    "id": "M4.5",
+    "month": 4,
+    "kind": "behavior",
+    "prompt": "Make the cap on discounts 40 percent of the subtotal instead of 50.",
+    "makesFalse": "R-DISCOUNT-CAP"
+   },
+   {
+    "id": "M4.6",
+    "month": 4,
+    "kind": "test",
+    "prompt": "Add a test that registering the same email twice throws EmailTakenError."
+   },
+   {
+    "id": "M5.1",
+    "month": 5,
+    "kind": "rename",
+    "prompt": "Rename the validate method of Sessions in src/accounts.ts to check, and update its callers and tests."
+   },
+   {
+    "id": "M5.2",
+    "month": 5,
+    "kind": "refactor",
+    "prompt": "Refactor the function formatCents in src/money.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M5.3",
+    "month": 5,
+    "kind": "feature",
+    "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it."
+   },
+   {
+    "id": "M5.4",
+    "month": 5,
+    "kind": "feature",
+    "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it."
+   },
+   {
+    "id": "M5.5",
+    "month": 5,
+    "kind": "behavior",
+    "prompt": "Make tax in src/pricing.ts round half to even instead of half up.",
+    "makesFalse": "R-TAX-RATE"
+   },
+   {
+    "id": "M5.6",
+    "month": 5,
+    "kind": "test",
+    "prompt": "Add a test that a refund of a receipt that does not exist fails."
+   },
+   {
+    "id": "M6.1",
+    "month": 6,
+    "kind": "move",
+    "prompt": "Move the function tax from src/pricing.ts into a new file src/salestax.ts, keeping its name, and update its imports."
+   },
+   {
+    "id": "M6.2",
+    "month": 6,
+    "kind": "refactor",
+    "prompt": "Refactor the receipt method of Processor in src/payments.ts so that it is easier to read, without changing what it does."
+   },
+   {
+    "id": "M6.3",
+    "month": 6,
+    "kind": "feature",
+    "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it."
+   },
+   {
+    "id": "M6.4",
+    "month": 6,
+    "kind": "feature",
+    "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it."
+   },
+   {
+    "id": "M6.5",
+    "month": 6,
+    "kind": "behavior",
+    "prompt": "Make a reservation hold stock for 20 minutes instead of 15.",
+    "makesFalse": "R-STOCK-EXPIRY"
+   },
+   {
+    "id": "M6.6",
+    "month": 6,
+    "kind": "test",
+    "prompt": "Add a test that reading the audit log returns a copy, so that changing the copy does not change the log."
+   }
+  ]
+ }
+}
