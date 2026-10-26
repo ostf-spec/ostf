@@ -139,6 +139,18 @@ Drafted for the maintainer's ruling and written before any run, with no mechanis
 1. *Recommended.* Corroborated: ostf.dev stops saying that the derived record confirms agent-declared links, and gives the measured share. Link churn: ostf.dev stops saying that links survive a rename or a move, and gives the broken links per 100 merged changes beside `none`'s stale references. Breadth: the claim that agents link threats, controls and decisions as they link requirements is restated for the tasks that met it, each with its pass rate. Tokens: the claim of a small read per change is restated at the measured median.
 2. Keep each claim on ostf.dev with the measured number and the target beside it, marked as missed, rather than withdrawing it.
 
+## Rulings
+
+*Given by the maintainer on 2026-10-26 at 06:38 MDT (12:38 UTC), after reading [results-phase5.md](results-phase5.md).* The ruling confirms the recommended option of each missed row as the fallback above pre-registered it, and replaces none. Since it came after the report was read, it is not a pre-registered fallback of its own: what applies is what was written before the run, and the ruling records that the maintainer keeps it.
+
+| Row | Result against target | Option that applies |
+| --- | --- | --- |
+| Guarded, hand edits of `trace.derived` | 14 against 0 | Option 1 of a miss on Guarded: the next revision, 0.17, moves `trace.derived` and corroboration from Core to an optional annex, a cut, and Corroborated is reported as information. |
+| Breadth | 24 of 36 cells, 67 %, against 95 % | Option 1 of a miss on a secondary row: the claim that agents link threats, controls and decisions as they link requirements is restated per task, threats 12 of 12, controls 12 of 12 and decisions 0 of 12. |
+| Tokens | median 1365 per changed symbol against 600 | Option 1 of a miss on a secondary row: the claim of a small read per change is restated at the measured median, 1365, beside 818 in `none`, the plain file. |
+
+Guarded's other two parts, invented IDs and instructions in item text followed, were met at 0 and withdraw nothing. Over baseline is met, and nothing changes for it. The plan's scorecard (section 2) restates the claims in this repository; ostf.dev restates its own once, when the site moves to revision 0.17 after the push. The human sample stays pending: its 149 verdicts in [results/phase5/human-sample.md](results/phase5/human-sample.md) have no label yet, and the report says so.
+
 ## Budget
 
 Priced by [budget.py](budget.py) from the usage and timing fields of the 264 Phase 1 run records at the list prices of 2026-10-25 per million tokens: `claude-haiku-5-5` 0.10 input, 0.125 cache write, 0.01 cache read and 0.50 output for prompts up to 100,000 tokens, five times that above; `claude-opus-5-5` 4.00, 5.00, 0.20 and 20.00; `gpt-6-sol` 2.00 input, 2.50 cache write, 0.20 cached input and 10.00 output up to 272,000 tokens; `gpt-6-astra` 10.00, 12.50, 1.00 and 50.00. A Haiku run is priced at the cost Claude Code recorded for it, which applies the long-prompt prices request by request, 1.69 USD for Phase 1's 132 Haiku runs against 1.32 USD at the short-prompt prices; a Codex run at its tokens and `gpt-6-sol`'s short-context prices, reasoning tokens counted as output; a judge call at the cost Claude Code recorded for the Opus judge. A task that Phase 1 did not run is priced as the Phase 1 task closest to it in work, T9, T10 and a T12 run as T2, T11 as T4, T13 as T2 and T6 together, T14 as T3, and a longitudinal change as T2, T4 and T5 together, and the `rules` arm as `none`.

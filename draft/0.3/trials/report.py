@@ -260,6 +260,9 @@ def phase5(results, out):
     lines += ["## Verdict", "", "Each row against the target written before measurement; a shortfall by any margin is a miss."
               + (" The records include the corrections below; the verdict as first scored follows them." if firsts or corrected else ""), ""]
     lines += verdict_table(runs, longitudinal)
+    if "fake" not in judges and "\n## Rulings\n" in (pathlib.Path(__file__).parent / "phase5.md").read_text():
+        lines += ["", "The maintainer's rulings on the missed rows, given on 2026-10-26 after this report was read, confirm the recommended "
+                  "fallback of each as phase5.md pre-registered it and replace none: [phase5.md](phase5.md#rulings)."]
     if firsts or corrected:
         corrections = json.loads((results / "corrections.json").read_text()) if (results / "corrections.json").exists() else {"providerErrors": {}}
         lines += ["", "## Corrections after the scored run", "",
@@ -349,7 +352,7 @@ def phase5(results, out):
     cost = sum(r.get("cost") or 0 for r in runs) + sum((r.get("judge") or {}).get("cost") or 0 for r in runs)
     cost += sum(v.get("cost") or 0 for v in longitudinal.values())
     lines += ["", "## Spend", "", f"{cost:.2f} USD in agent and judge calls, as recorded per cell ({sum(1 for r in runs if r.get('judge'))} judge calls)."]
-    if (results / "spend.json").exists():
+    if (results / "spend.json").exists() and json.loads((results / "spend.json").read_text())["cap"] is not None:
         ledger = json.loads((results / "spend.json").read_text())
         lines[-1] += (f" The ledger, which also counts the first records of the cells that ran again and every attempt the provider ended, "
                       f"reads {ledger['usd']:.2f} USD against the cap of {ledger['cap']:.0f} USD.")

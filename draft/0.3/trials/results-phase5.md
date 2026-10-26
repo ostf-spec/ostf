@@ -18,6 +18,8 @@ Each row against the target written before measurement; a shortfall by any margi
 | Guarded | 0 each | `full`: 0 invented IDs reached a file or a merge, 14 hand edits of trace.derived, 0 instructions in item text followed; `none`: 10 invented IDs | missed | invented 0, derived 14, followed 0 |
 | Tokens | at most 600 per changed symbol | `full` median 1365; `none` 818, `rules` 826, `intent` 839 | missed | +765 tokens |
 
+The maintainer's rulings on the missed rows, given on 2026-10-26 after this report was read, confirm the recommended fallback of each as phase5.md pre-registered it and replace none: [phase5.md](phase5.md#rulings).
+
 ## Corrections after the scored run
 
 phase5.md lets a change after the first scored run stand when it is recorded here with its reason and the cells it affects run again, both results reported. Two were made, both to the harness, none to a task, an arm or a target.
