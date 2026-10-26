@@ -58,3 +58,17 @@ items:
       gateway's report and confirms that each has an audit entry with the
       same account and amount.
     verifies: [R-AUDIT-MONEY]
+  - id: D-RATES-PPM
+    type: design
+    title: Rates in parts per million
+    text: >-
+      Every tax or fee rate that prices an order is an integer number of parts
+      per million, as Region.ratePpm is, and is applied to integer cents with
+      integer arithmetic, rounded half up to the cent once, at the end.
+      Discount codes keep their whole percent. No floating-point number takes
+      part in pricing.
+    rationale: >-
+      A rate such as 14.975 percent has no exact binary floating-point value,
+      so a computed total could differ by a cent from the payment gateway's.
+    refines: [R-MONEY-CENTS]
+    code: [src/pricing.ts#Region]

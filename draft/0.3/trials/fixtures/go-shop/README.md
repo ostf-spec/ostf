@@ -10,6 +10,7 @@ A small online shop in Go, with no dependencies outside the standard library. Am
 | `inventory` | Stock on hand and time-limited reservations |
 | `payments` | Charges with an idempotency key, refunds within a daily limit, and an append-only audit log |
 | `accounts` | Registration, login with lockout, and idle-expiring sessions |
+| `deploy` | Terraform for the database and the load balancer, which no test runs |
 
 The card gateway is an interface (`payments.Gateway`); the tests use fakes, so nothing talks to a network.
 

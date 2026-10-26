@@ -47,3 +47,11 @@ items:
       A cart line with 10 or more units gets 5 percent off that line, rounded
       down to the cent, before any discount code applies. The volume discount
       counts toward the fifty percent cap on discounts.
+  - id: R-ORDER-NOTE
+    external: jira:SHOP-62
+    revision: "1"
+    title: Order note
+    text: >-
+      A customer may add a note of at most 200 characters to an order at
+      checkout. A longer note is rejected and the order is not placed. The
+      order keeps its note.

@@ -1,0 +1,49 @@
+ostf: "0.3"
+items:
+  - id: THREAT-CARD-TESTING
+    type: threat
+    title: Card testing
+    text: >-
+      An attacker who holds a list of stolen card numbers places many small
+      orders from one account in a short time, to learn which cards the
+      gateway accepts.
+  - id: THREAT-OVERSIZED-CART
+    type: threat
+    title: Oversized cart
+    text: >-
+      An attacker fills a cart with thousands of different products, so that
+      pricing and reserving it at checkout exhaust the service.
+  - id: THREAT-DB-SNAPSHOT
+    type: threat
+    title: Stolen database snapshot
+    text: >-
+      An attacker who obtains a copy of the database volume or of a backup
+      snapshot reads customers' emails and password hashes.
+  - id: THREAT-EAVESDROP
+    type: threat
+    title: Eavesdropping
+    text: >-
+      An attacker on the network between a customer and the shop reads
+      session tokens or card details in transit.
+  - id: C-DB-ENCRYPTION
+    type: control
+    title: Database encryption at rest
+    text: >-
+      The database volume and every backup snapshot are encrypted at rest with
+      a key that the shop manages, and the key rotates every year.
+    controls: [THREAT-DB-SNAPSHOT]
+  - id: C-TLS-ONLY
+    type: control
+    title: TLS only
+    text: >-
+      The load balancer serves HTTPS only, with TLS 1.2 or later, and
+      redirects plain HTTP to HTTPS.
+    controls: [THREAT-EAVESDROP]
+  - id: V-INFRA-REVIEW
+    type: verification
+    title: Infrastructure review
+    text: >-
+      Before each release, a second engineer reviews every change under
+      deploy/ against the controls it carries, applies it to the staging
+      account, and records the outcome in the release checklist.
+    verifies: [C-DB-ENCRYPTION, C-TLS-ONLY]

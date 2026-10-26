@@ -12,6 +12,7 @@ A small online shop in TypeScript, with no dependencies and no build step. Amoun
 | `src/payments.ts` | Charges with an idempotency key, through a card `Gateway` interface |
 | `src/refunds.ts` | Refunds within a daily limit, back to the original charge |
 | `src/accounts.ts` | Registration, login with lockout, and idle-expiring sessions |
+| `deploy/` | Terraform for the database and the load balancer, which no test runs |
 | `src/audit.ts` | Append-only audit log of charges and refunds |
 | `src/money.ts` | The `Cents` type and formatting |
 
