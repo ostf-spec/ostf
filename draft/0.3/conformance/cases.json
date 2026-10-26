@@ -1,7 +1,7 @@
 {
  "suite": {
   "version": 2,
-  "sha256": "cec8decc2136b9401046484e228e9981c96c85cecb7f663264e4a03f91ed6f33"
+  "sha256": "de3a5b5039eebf99d9efe97eb97d1614dcf211ec7123d48b46905ceb43b385d7"
  },
  "checks": [
   {
@@ -1347,6 +1347,60 @@
       "@req R-D",
       "@req R-E",
       "@req R-F"
+     ]
+    }
+   }
+  },
+  {
+   "id": "tag-closing-delimiter-in-line-comment",
+   "requirements": [
+    "OSTF-133",
+    "Annex A.4",
+    "Annex C.4",
+    "Annex D.2"
+   ],
+   "note": "*/ closes only a block comment. In a // or # comment it is text on the comment line, so the tag also names */, which resolves to nothing: TAG_UNKNOWN_ID, while R-A is still linked. The block comment's own */ is its delimiter.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - {id: R-A, text: A.}\n  - {id: R-B, text: B.}\n",
+    "a.go": "package a\n\n// @req R-A */\nfunc F() {}\n\n/* @req R-B */\nfunc G() {}\n",
+    "a.py": "# @req R-A */\ndef f():\n    pass\n"
+   },
+   "expect": {
+    "codes": [
+     "TAG_UNKNOWN_ID"
+    ],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "tagged"
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-B",
+      {},
+      "tagged"
+     ],
+     [
+      "a.py#f",
+      "implements",
+      "R-A",
+      {},
+      "tagged"
+     ]
+    ],
+    "diagnosticFiles": {
+     "TAG_UNKNOWN_ID": [
+      "a.go",
+      "a.py"
+     ]
+    },
+    "diagnosticSubjects": {
+     "TAG_UNKNOWN_ID": [
+      "*/"
      ]
     }
    }

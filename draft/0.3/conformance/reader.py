@@ -1265,7 +1265,8 @@ class Analysis:
             for comment in parsed["comments"]:
                 for offset, line in enumerate(comment["lines"]):
                     line = line.rstrip("\r")
-                    match = re.search(r"@req(-file)?[ \t]+(.*?)(?:\*/)?$", line)
+                    # _comment has already removed a block comment's */; in a // or # comment, */ is text (OSTF-133).
+                    match = re.search(r"@req(-file)?[ \t]+(.*)$", line)
                     if not match:
                         continue
                     # Annex D.2: the tag, from @req to the end of its comment line, without the comment's
