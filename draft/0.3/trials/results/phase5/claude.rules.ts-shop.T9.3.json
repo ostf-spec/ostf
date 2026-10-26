@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.ts-shop.T9.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds MAX_PRODUCTS = 50 and a new CartFullError. Cart.add throws that error before the push, only when the product is new and the cart already holds 50 lines. Because the throw comes before any change, the cart is left unchanged. The new test fills the cart with 50 products and checks that a 51st throws CartFullError. It also checks that lines() is deep-equal to the snapshot taken before the call. A second test checks that units of an existing product can still be added to a full cart. Together these implement the requested mitigation and test it.",
+  "cost": 0.0300048
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3736,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 24343,
+  "cache_read_input_tokens": 220900,
+  "output_tokens": 8055,
+  "cost": 0.011106700000000002
+ },
+ "cost": 0.011107,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/cart.test.ts",
+  "src/cart.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The cart now holds at most 50 different products. A 51st product throws a new `CartFullError` and leaves the cart unchanged. The full suite passes: 38 tests, up from 36, with the two new ones included.\n\n**Changes**\n- `src/cart.ts`: added `MAX_PRODUCTS = 50` and `CartFullError`. `Cart.add` throws the error only when the product is new and the cart already has 50 lines. The check runs before the push, so the cart is unchanged on error. Topping up a product already in the cart is still allowed.\n- `src/cart.test.ts`: two tests. One checks that a 51st product is rejected and the cart is unchanged. The other checks that units of an existing product can still be added to a full cart.\n- `REQUIREMENTS.md`: new entry **R-CART-MAX-PRODUCTS**, status draft, refines N-BUY, controls THREAT-OVERSIZED-CART, with its code and both tests listed. No existing entry was edited.\n\n**AGENTS.md review**\n- **R-CART-ADD** (refines N-BUY; lists `Cart.add`): still true. `Cart > adds an item` passes.\n- **R-CART-QTY** (refines N-BUY; lists `Cart.add`): still true. `Cart > rejects a quantity outside 1 to 99` passes.\n- **R-CART-REMOVE** and **R-CART-SUBTOTAL** list `src/cart.ts`, but I did not change those functions.\n- **Entries touched that control a risk or threat, or refine one:** R-CART-MAX-PRODUCTS is new and controls THREAT-OVERSIZED-CART. R-CART-ADD and R-CART-QTY refine only N-BUY, so the ask-first rule did not apply to my change. Please review the new entry in the PR.\n- **Future edits:** `Cart.add` now sits under an entry that controls a threat. Changing it will need your approval first.\n\nI did not commit or push. I also did not check checkout directly against the threat's \"pricing and reserving at checkout\" concern. The cap limits what a cart can hold, and checkout takes its lines from the cart.",
+ "date": "2026-10-26"
+}

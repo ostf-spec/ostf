@@ -1,0 +1,85 @@
+{
+ "run": "claude.rules.go-shop.T10.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.TimeLeft(id) (time.Duration, error)` to inventory/inventory.go. It returns the time left before a reservation expires, and returns ErrNoReservation for unknown or expired holds. It also adds `TestTimeLeft`, which checks a fresh reservation, one partway through its hold, an unknown ID, and one at its expiry time. That covers what the user asked for. q2: TimeLeft gets the current time from `s.now()`, the clock injected through the constructor, and never calls time.Now directly. The test moves the fake clock forward (`c.t = c.t.Add(...)`) instead of sleeping. That is exactly what D-CLOCK requires.",
+  "cost": 0.0307366
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5136,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 22055,
+  "cache_read_input_tokens": 152507,
+  "output_tokens": 5563,
+  "cost": 0.00871877
+ },
+ "cost": 0.008719,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "inventory/inventory.go",
+  "inventory/inventory_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 2,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added `Stock.TimeLeft` to `inventory/inventory.go`, with a test and a new requirement entry. The full test suite passes (`go test ./...`), and `gofmt` and `go vet` are clean. I did not commit.\n\n**The method**\n\n```go\nfunc (s *Stock) TimeLeft(id string) (time.Duration, error)\n```\n\nIt returns the time until the reservation expires. An unknown or expired reservation returns `ErrNoReservation`, the same error `Confirm` uses. It is read-only and does not remove expired holds. Expiry uses the same `now.Before(h.Expires)` rule as `available`.\n\nI chose the error return over a `(Duration, bool)` pair so callers handle it the same way they handle `Confirm`. Say if you'd prefer the bool form.\n\n**Test**\n\n`TestTimeLeft` in `inventory/inventory_test.go` checks a fresh reservation (full `HoldDuration`), a reservation after 5 minutes (10 minutes left), an unknown ID, and a reservation at its expiry time.\n\n**REQUIREMENTS.md**\n\nI added one new entry, `R-STOCK-TIME-LEFT`, with status draft. It refines `N-NO-OVERSELL` and lists `Stock.TimeLeft` and `TestTimeLeft`. Its code and test carry the `// @req R-STOCK-TIME-LEFT` annotation, as the other entries do.\n\n**Review notes for the pull request**\n\n- **Entries whose listed code I changed:** none. I only added code to `inventory/inventory.go` and a test to `inventory/inventory_test.go`. The existing listed functions and tests are unchanged, so R-STOCK-RESERVE, R-STOCK-RELEASE, R-STOCK-EXPIRY, D-RESERVATION-HOLD and D-CLOCK all remain true.\n- **Entries touched that control or refine a risk or threat:** none. R-STOCK-EXPIRY and D-RESERVATION-HOLD refine a need or another requirement, not a risk or threat, so no approval gate applied.\n- **Tests run:** `TestTimeLeft` and the other inventory tests in `./inventory`, plus the full `go test ./...`. All pass.",
+ "date": "2026-10-26"
+}

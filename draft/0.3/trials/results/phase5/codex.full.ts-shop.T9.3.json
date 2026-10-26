@@ -1,0 +1,92 @@
+{
+ "run": "codex.full.ts-shop.T9.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds MAX_PRODUCTS = 50 and a new CartCapacityError. In Cart.add, the error is thrown when the SKU is new (i < 0) and the cart already holds 50 items. This check runs before any change to the cart, so a rejected add leaves it as it was, while updates to existing products still work. The new test fills the cart with 50 different products. It then checks that adding a 51st throws CartCapacityError and that the lines match their earlier state. It also checks that an existing product can still be updated and that removing a product frees a slot. So the diff implements the requested mitigation and includes a test for it.",
+  "cost": 0.026944799999999998
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 17,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 10,
+  "contextCalls": 2,
+  "checkCalls": 3,
+  "traceOutputTokens": 7165,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 96.5
+ },
+ "usage": {
+  "input_tokens": 307238,
+  "cached_input_tokens": 279680,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2839,
+  "reasoning_output_tokens": 663
+ },
+ "cost": 0.146072,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/cart.test.ts",
+  "src/cart.ts",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": 7,
+ "changedSymbols": 7,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "The cart now holds at most **50 different products**. Adding a 51st throws the new `CartCapacityError` and leaves the cart unchanged. The test also confirms that an existing product can still be updated and that removing a product frees a slot.\n\n`node --test` passed all 37 tests, and `ostf check --base main` passed. The trace check lists **C-CART-CAPACITY** as the new draft, risk-relevant control for **THREAT-OVERSIZED-CART**. The change keeps **R-CART-ADD** and **R-CART-QTY** true. Its listed tests are `Cart`, `Cart > adds an item`, `Cart > rejects a 51st product without changing the cart`, and `Cart > rejects a quantity outside 1 to 99`.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,501 @@
+{
+ "run": "claude.full.go-shop.T12.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T12",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true,
+  "checkGreenAfterEachMerge": true,
+  "noDerivedHandEdit": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Clear to Cart in cart/cart.go that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 62.4
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 18,
+    "cache_creation_input_tokens": 24124,
+    "cache_read_input_tokens": 233444,
+    "output_tokens": 5608,
+    "cost": 0.009965040000000001
+   },
+   "cost": 0.009965,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 1,
+    "contextCalls": 3,
+    "checkCalls": 3,
+    "traceOutputTokens": 6468,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/cart.go",
+    "cart/cart_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Cart.Clear()` to `cart/cart.go`, with a test and a new trace item. `go test ./...` passes, and `ostf check --base main` exits 0 with no warnings. The two `UNLINKED` info lines (R-ORDER-NOTE, R-VOLUME-DISCOUNT) were there before my change. I have not committed.\n\n**Changes**\n- `cart/cart.go`: `Clear()` sets `c.lines = nil`. Clearing an empty cart is a no-op.\n- `cart/cart_test.go`: `TestClear` checks that the lines and subtotal are zero after clearing, that a second clear is harmless, and that the cart accepts adds again afterwards.\n- `trace/requirements.yaml`: new item **R-CART-CLEAR** (\"Clear cart\", `status: draft`), refines N-BUY, with `code: [cart/cart.go#Cart.Clear]` and `tests: [cart/cart_test.go#TestClear]`. I picked this ID to match the existing R-CART-* naming; you didn't name one.\n\n**Summary for review**\n- **Risk-relevant items touched:** none. No `RISK-*` item or `controls` link involves the cart, so no review is needed on that basis.\n- **Existing items kept true:** R-CART-ADD, R-CART-QTY, R-CART-REMOVE, R-CART-SUBTOTAL. Their code and tests are unchanged and still pass. N-BUY is unchanged; R-CART-CLEAR refines it.\n- **Tests named:** `TestClear` (new) verifies R-CART-CLEAR. The existing cart tests (`TestAddMergesLines`, `TestAddRejectsBadQuantity`, `TestRemove`, `TestSubtotal`) still pass.\n\nI left the `@req` comments off the new code and test. Putting both a comment and a trace field on the same link produced `LINK_DUPLICATE` warnings, so the trace fields carry the links."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Preview to Checkout in cart/checkout.go that takes the same session token, cart and discount as PlaceOrder and returns the quote that PlaceOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 114.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 30,
+    "cache_creation_input_tokens": 43910,
+    "cache_read_input_tokens": 548676,
+    "output_tokens": 15073,
+    "cost": 0.021808260000000003
+   },
+   "cost": 0.021808,
+   "metrics": {
+    "calls": 15,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 7022,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/checkout.go",
+    "cart/checkout_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Checkout.Preview` to `cart/checkout.go`, with a test and a new trace item. `go test ./...` passes and `ostf check --base main` exits 0 with no warnings. Nothing is committed.\n\n**What `Preview` does:** It takes the same `token`, `cart` and `discount` as `PlaceOrder`. It validates the session, rejects an empty cart with `ErrEmptyCart`, and returns `pricing.Price(...)`. It stops before stock reservation and payment, so it never reserves stock or charges.\n\n- **Stock is not checked.** A cart can get a quote from `Preview` that `PlaceOrder` later refuses for lack of stock. The doc comment says so.\n- **Session side effect.** `Validate` refreshes the session's idle timer, as `PlaceOrder` already does. This is not a stock or charge side effect.\n- **`PlaceOrder` is unchanged.** I duplicated the six-line price path rather than refactoring it, so a future change to `PlaceOrder`'s pricing would need the same change in `Preview`. The test guards against that drift.\n\n**Test:** `TestPreview` in `cart/checkout_test.go` uses a 10% discount on a 20.00 cart in the QC region. It checks the quote is 20.70 and that stock and the audit log are untouched. It then calls `PlaceOrder` and checks it charges the same quote. It also covers an unknown session and an empty cart.\n\n**Trace:** I added `R-CHECKOUT-PREVIEW` to `trace/requirements.yaml` with `status: draft`, `refines: [N-BUY]`, `code: [cart/checkout.go#Checkout.Preview]` and `tests: [cart/checkout_test.go#TestPreview]`. I used a new ID because the policy calls for a new item for new behavior, and no existing item covers this. Items I checked:\n- `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` (on `PlaceOrder`): still true, since `PlaceOrder` is unchanged.\n- No existing item is made false.\n- Tests listed: `TestPlaceOrder` and `TestPlaceOrderNeedsSession` are unchanged, and `TestPreview` is new.\n\n**Risk-relevant items:** My change touches none. No `RISK-*` item is linked to `PlaceOrder`, `Preview`, or the session code I called.\n\n**Also:**\n- I left out `@req` comments on the new symbols. With both a trace field and an `@req` comment, `ostf check` warns that the link is declared twice. The trace fields alone give the same links, and the output confirms them.\n- `ostf check` reports two pre-existing unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. These are informational, and I didn't touch them.\n- `trace.derived` is a generated coverage file that I did not regenerate."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Held to Stock in inventory/inventory.go that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 63.0
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 30888,
+    "cache_read_input_tokens": 295823,
+    "output_tokens": 7952,
+    "cost": 0.01311383
+   },
+   "cost": 0.013114,
+   "metrics": {
+    "calls": 13,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 5,
+    "ostfCallsBeforeFirstEdit": 3,
+    "firstOstfCall": 3,
+    "contextCalls": 3,
+    "checkCalls": 4,
+    "traceOutputTokens": 8838,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "inventory/inventory.go",
+    "inventory/inventory_test.go",
+    "trace/design.yaml"
+   ],
+   "finalMessage": "I added `Stock.Held(sku)` to `inventory/inventory.go`. It returns the units of a SKU held by unexpired reservations. The full test suite passes, `gofmt` and `go vet` are clean, and `ostf check --base main` exits 0. I did not commit.\n\n**Changes**\n- **`inventory/inventory.go`**: `Held` takes the lock and calls a new unlocked helper, `held`, which sums unexpired holds. `available` now returns `onHand - held`, so the hold rule lives in one place and its behavior is unchanged.\n- **`inventory/inventory_test.go`**: new `TestHeld`. It checks zero with no reservations, the sum across two reservations, a SKU that is held but not in another hold, and zero after expiry.\n- **`trace/design.yaml`**: new draft item `D-STOCK-HELD` (`status: draft`), refining `D-RESERVATION-HOLD`. It links `inventory/inventory.go#Stock.Held` and `inventory/inventory_test.go#TestHeld`. I chose a new ID rather than reusing an existing one because the policy calls for new behavior to get its own item.\n\n**Trace summary**\n- **`D-STOCK-HELD`** (new, draft): implemented by `Stock.Held` and verified by `TestHeld`. It is a new item, so nothing existing is made false by it.\n- **`D-RESERVATION-HOLD`**: `available` still implements it and `TestConfirm` still verifies it. Its text is still true because the behavior did not change. The `available` change is listed as touched in the `ostf check` impact output.\n- **`R-STOCK-EXPIRY`**: still true. It points at `Stock.Available`, `Stock.Confirm`, `HoldDuration` and `TestReservationExpires`, none of which changed behavior.\n- **Tests listed**: `TestConfirm` (existing, unchanged), `TestHeld` (new).\n- **Risk-relevant items touched**: none. No inventory item is tied to a `RISK-*` control.\n\n**Notes**\n- My first `ostf check` run reported two `LINK_DUPLICATE` warnings because I declared the links both in `design.yaml` and with `@req` comments. I removed the comments and kept the YAML fields, which is the approach the other inventory items use. The check is clean now.\n- `ostf check` also reports two existing unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. These predate my change and I left them alone."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Logout to Sessions in accounts/session.go that ends a session, so that validating its token afterwards fails with ErrNoSession. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 61.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 22618,
+    "cache_read_input_tokens": 252374,
+    "output_tokens": 5769,
+    "cost": 0.009933840000000003
+   },
+   "cost": 0.009934,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 5,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 1,
+    "contextCalls": 2,
+    "checkCalls": 3,
+    "traceOutputTokens": 4020,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "accounts/session.go",
+    "accounts/session_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "`Sessions.Logout` is in place. After it runs, `Validate` on that token returns `ErrNoSession`. The accounts tests pass, including the new `TestLogout`, and so does the rest of `go test ./...`.\n\n**Changes**\n- **`accounts/session.go`**: `func (s *Sessions) Logout(token string) error` deletes the session under the mutex. An unknown token returns `ErrNoSession`, so a second logout also fails. I chose that over returning nil, so the error tells the caller whether anything was actually ended.\n- **`accounts/session_test.go`**: `TestLogout` checks that logout succeeds on a live session, that `Validate` then returns `ErrNoSession`, and that a second logout returns `ErrNoSession`.\n- **`trace/requirements.yaml`**: new item `R-SESSION-LOGOUT`, `status: draft`, refining `N-ACCOUNT-SAFE`. Its code and tests are linked by the `@req R-SESSION-LOGOUT` comments on `Logout` and `TestLogout`, the same way R-SESSION-EXPIRY is linked.\n\n**Trace**\n- `ostf check --base main` reports no errors and no warnings from my changes. The only info line is about `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` having no links, which was already there.\n- Items listed by the check: `R-SESSION-LOGOUT` is the new item. It is linked to `Sessions.Logout` and `TestLogout`. The check also lists `N-ACCOUNT-SAFE` as the item it refines.\n- No existing item was edited. `R-SESSION-EXPIRY` (`Validate`) and `R-LOGIN-LOCKOUT` (`Login`, marked risk-relevant) are unchanged, and my change keeps both true.\n- Risk-relevant items touched: none. `R-LOGIN-LOCKOUT` and the `Login` code are untouched, so nothing needs your sign-off under that policy.\n\n**Notes**\n- `Logout` on a session that has already idled out succeeds and removes it. A later `Validate` then returns `ErrNoSession` rather than `ErrSessionExpired`. I left that as is.\n- Nothing is committed."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Total to AuditLog in payments/audit.go that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 62.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 22,
+    "cache_creation_input_tokens": 32611,
+    "cache_read_input_tokens": 329147,
+    "output_tokens": 7884,
+    "cost": 0.01375787
+   },
+   "cost": 0.013758,
+   "metrics": {
+    "calls": 13,
+    "callsBeforeFirstEdit": 5,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 2,
+    "contextCalls": 2,
+    "checkCalls": 3,
+    "traceOutputTokens": 9198,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "payments/audit.go",
+    "payments/audit_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `AuditLog.Total(account, action string) pricing.Money` to `payments/audit.go`, with a test. `go test ./...` and `go vet` pass, and `ostf check --base main` reports no errors (rc=0).\n\n- **Method:** it sums `Amount` over the entries whose `Account` and `Action` match exactly, and returns 0 when none match. It holds the same lock as `Append` and `Entries`. It does not filter by sign, which is fine here because charges and refunds are both stored as positive amounts.\n- **Test:** `TestAuditTotal` in `payments/audit_test.go` covers two charges and one refund for one account, another account's entries, unknown account, unknown action, and an empty log.\n- **Trace:** the policy says new behavior gets a new item, so I added `R-AUDIT-TOTAL` to `trace/requirements.yaml` with `status: draft`, `refines: [N-ACCOUNT-SAFE]`, `code: [payments/audit.go#AuditLog.Total]`, and `tests: [payments/audit_test.go#TestAuditTotal]`. I created that ID myself; you did not name one. I didn't use `@req` comments in the code because they duplicated the trace links and produced `LINK_DUPLICATE` warnings.\n\nItems in the change, for your review:\n- **R-AUDIT-APPEND-ONLY** (not risk-relevant): its code and test files changed, but the item stays true. `Total` only reads and never returns the internal slice. Its text and links are unchanged.\n- **N-ACCOUNT-SAFE**: the new item refines it. Its text is unchanged.\n- **Risk-relevant items:** none of the touched items carry a `RISK-*` control, so no risk-relevant item is affected and nothing needed your sign-off.\n- **Tests listed:** `R-AUDIT-APPEND-ONLY` lists `payments/audit_test.go` as a whole file, so it now includes `TestAuditTotal`. The new item lists `TestAuditTotal`.\n\n`ostf check` still shows an info note about `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` having no links. That predates my change. I did not regenerate `trace.derived`, which doesn't list the new test. I have not committed anything."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Expired to Discount in pricing/discount.go that reports whether the code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 80.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 22,
+    "cache_creation_input_tokens": 27238,
+    "cache_read_input_tokens": 304882,
+    "output_tokens": 7743,
+    "cost": 0.01237012
+   },
+   "cost": 0.01237,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 5,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 1,
+    "contextCalls": 2,
+    "checkCalls": 4,
+    "traceOutputTokens": 6869,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/discount.go",
+    "pricing/discount_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Discount.Expired(now time.Time) bool` in `pricing/discount.go`, with a test. `go test ./...` passes and `ostf check --base main` exits 0 with no errors or warnings. I haven't committed anything.\n\n**Changes**\n- **`pricing/discount.go`**: `Expired` returns `!now.Before(d.Expires)`, so a code is expired at its expiry instant and after. `ApplyDiscount` now calls it in place of the inline check. Behavior is unchanged. I did this so the boundary rule lives in one place.\n- **`pricing/discount_test.go`**: `TestDiscountExpired` checks the instant itself, one nanosecond after, and one nanosecond before.\n- **`trace/requirements.yaml`**: new item `R-DISCOUNT-EXPIRED-AT`, `status: draft`, refining `N-FAIR-PRICE`, linked to `pricing/discount.go#Discount.Expired` and `pricing/discount_test.go#TestDiscountExpired`. I created this ID because the policy asks for new behavior to be a new draft item. Please review its wording.\n- I first put `@req` comments on the method and test as well. That produced `LINK_DUPLICATE` warnings, so I removed them and kept the links in the yaml, which is how `R-DISCOUNT-PERCENT` and `R-DISCOUNT-CAP` are linked.\n\n**Items in the trace (root `trace.yaml`, which includes `trace/*.yaml`)**\n- `R-DISCOUNT-EXPIRY`: still true. `ApplyDiscount` still rejects expired codes with an error that names the code. Its test `TestApplyDiscount/rejects_expired` passes.\n- `R-DISCOUNT-CAP`: still true. Its logic is untouched. Test `TestApplyDiscount/caps_at_fifty_percent` passes.\n- `R-DISCOUNT-PERCENT`: still true. Test `TestApplyDiscount` passes.\n- `R-DISCOUNT-EXPIRED-AT`: new, draft. Tests `TestDiscountExpired`.\n\n**Risk-relevant items**\n- None touched. The discount items have no `controls: [RISK-…]` link, so I didn't need to stop and ask first.\n\nThe check still reports two pre-existing info notes about unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. Those predate this change and I left them alone."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function ParseMoney to pricing/money.go that parses an amount such as 12.05 into Money and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 62.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 24055,
+    "cache_read_input_tokens": 194311,
+    "output_tokens": 7325,
+    "cost": 0.01041821
+   },
+   "cost": 0.010418,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 2,
+    "contextCalls": 2,
+    "checkCalls": 3,
+    "traceOutputTokens": 5745,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/money.go",
+    "pricing/money_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `ParseMoney` to `pricing/money.go` with tests, and `ostf check --base main` exits 0.\n\n```go\nfunc ParseMoney(s string) (Money, error)\n```\n\nIt accepts an optional leading `-`, one or more digits, and at most two digits after a point. So `\"12.05\"` → 1205, `\"12\"` → 1200, `\"12.5\"` → 1250, `\"-3.10\"` → -310, and `String()` output round-trips. It rejects `\"12.053\"` and `\"12.050\"` (three decimal places, even with a trailing zero), plus empty input, `\"12.\"`, `\".50\"`, `\"+1.00\"`, `\"1,000.00\"`, `\"1e3\"`, and values that overflow int64.\n\n**Tests:** `TestParseMoney` covers valid and invalid tables, and `TestMoneyRoundTrip` checks that `ParseMoney` reads back what `String` writes. `go test ./...` passes and `gofmt` and `go vet` are clean.\n\n**Traceability:**\n- **New item `R-MONEY-PARSE`** (in `trace/requirements.yaml`, `status: draft`). It refines `N-FAIR-PRICE`, links to `pricing/money.go#ParseMoney`, and lists `pricing/money_test.go#TestParseMoney` in `tests:`. I used the `tests:` field rather than an `@req` comment, because having both produced a `LINK_DUPLICATE` warning.\n- **`R-MONEY-CENTS`** (existing, `code: pricing/money.go#Money`): still true. I did not change `Money` or its `String` method.\n- **Existing tests:** `TestMoneyString` (`@req R-MONEY-CENTS`) is unchanged and passes.\n- **Risk-relevant items touched:** none. `N-FAIR-PRICE` is a need, and `R-MONEY-CENTS` has no `controls:` link. So nothing needs to go to a separate reviewer on that basis.\n- **Remaining `ostf` info:** `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no code or test links. That was already true before my change, and I did not touch them.\n\nNothing is committed. The changes are in `pricing/money.go`, `pricing/money_test.go`, and `trace/requirements.yaml`."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a String method to Quote in pricing/quote.go that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 63.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 23222,
+    "cache_read_input_tokens": 173475,
+    "output_tokens": 5656,
+    "cost": 0.009208550000000001
+   },
+   "cost": 0.009209,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 3,
+    "contextCalls": 1,
+    "checkCalls": 3,
+    "traceOutputTokens": 6082,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/quote.go",
+    "pricing/quote_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Quote.String` and a test for it. The test passes, and `go test ./...` passes across all packages.\n\n**Changes**\n- `pricing/quote.go`: `String()` formats the quote as `subtotal 10.00, discount 1.00, tax 1.35, total 10.35`, using the existing `Money.String` for each amount.\n- `pricing/quote_test.go` (new): `TestQuoteString` checks that exact string for `Quote{Subtotal: 1000, Discount: 100, Tax: 135, Total: 1035}`.\n- `trace/requirements.yaml`: new item `R-QUOTE-STRING`, `status: draft`, refining `N-FAIR-PRICE`, linked to `pricing/quote.go#Quote.String` and `pricing/quote_test.go#TestQuoteString`.\n\n**Choices I made**\n- I linked the test through the item's `tests:` field and did not add an `@req` comment. The comment as well produced a `LINK_DUPLICATE` warning.\n- I put the item under `N-FAIR-PRICE`, the closest need. Change that if you'd rather it sit elsewhere.\n\n**Trace check (`ostf check --base main`)**\n- No errors. The change adds `R-QUOTE-STRING`, which the check lists as uncorroborated because it is a draft.\n- The check lists only the new item and its two links. It names no existing item as affected.\n- Two warnings were already there before my change and I left them alone: `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` are not linked to any code, tests or verification.\n\n**Risk items**\n- None of my changes touch a risk-relevant item. `Price` in `quote.go` is unchanged and still implements `R-TAX-RATE`, which is not a risk item. `R-QUOTE-STRING` does not control any risk item, so nothing needs a separate review for this change."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function RatePercent to pricing/tax.go that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 74.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 26104,
+    "cache_read_input_tokens": 260344,
+    "output_tokens": 8065,
+    "cost": 0.01185874
+   },
+   "cost": 0.011859,
+   "metrics": {
+    "calls": 17,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 5,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 3,
+    "contextCalls": 2,
+    "checkCalls": 4,
+    "traceOutputTokens": 4978,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/tax.go",
+    "pricing/tax_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `RatePercent(r Region) string` to `pricing/tax.go` with a table test, and `ostf check --base main` now exits 0 with no errors or warnings. The full `go test ./...` passes.\n\n**What it does:** It converts parts per million to a percentage using integer arithmetic only, with trailing zeros trimmed. `149_750` gives `\"14.975%\"`, `100_000` gives `\"10%\"`, `5_000` gives `\"0.5%\"`, `1` gives `\"0.0001%\"`, and `0` gives `\"0%\"`. Negative rates get a leading `-`, which the test does not cover. `TestRatePercent` in `pricing/tax_test.go` checks those cases.\n\n**OSTF changes:**\n- **New item `R-TAX-RATE-DISPLAY`** (`status: draft`) in `trace/requirements.yaml`. It refines `N-FAIR-PRICE`, is implemented by `pricing/tax.go#RatePercent`, and is verified by `pricing/tax_test.go#TestRatePercent`. I did not add `@req` comments because they duplicated the trace links and `ostf check` flagged them as duplicates.\n- **Existing items:** `R-TAX-RATE`, `R-TAX-EXEMPT`, `R-MONEY-CENTS`, and `D-RATES-PPM` are untouched and still true. The new function doesn't change `Tax`, `Price`, or `Region`.\n- **Risk-relevant items:** None touched. Nothing in the `pricing/tax.go` chain is linked to a `RISK-*` item through `controls:`.\n- **Tests listed:** `pricing/tax_test.go#TestRatePercent` (new). Existing `TestTax`, `TestTaxExempt`, and `TestPrice` still pass.\n\n`ostf check` also reports two pre-existing unlinked statements, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. I left those alone since they are outside this change.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function RegionByCode in a new file pricing/regions.go that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and an error for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 67.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 26,
+    "cache_creation_input_tokens": 27485,
+    "cache_read_input_tokens": 374277,
+    "output_tokens": 6747,
+    "cost": 0.01261587
+   },
+   "cost": 0.012616,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 4,
+    "contextCalls": 3,
+    "checkCalls": 3,
+    "traceOutputTokens": 7298,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/regions.go",
+    "pricing/regions_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `RegionByCode` in `pricing/regions.go`, with tests in `pricing/regions_test.go`. The tests pass, `go vet` is clean, and `ostf check --base main` exits 0.\n\n**Behavior**\n- `RegionByCode(\"QC\")` returns `Region{Code: \"QC\", RatePPM: 149_750}` (14.975%), `\"ON\"` returns 130_000 (13%), and `\"AB\"` returns 50_000 (5%).\n- Any other code returns an error wrapping a new `ErrUnknownRegion` sentinel, in the same style as `ErrDiscountExpired`. Matching is case-sensitive, so `\"qc\"` is an error.\n\n**Tests**\n- `TestRegionByCode` checks the code and rate for each of the three regions. It also checks that `\"\"`, `\"qc\"`, `\"BC\"`, `\"NS\"` and `\"QCON\"` return `ErrUnknownRegion`.\n\n**Trace (AGENTS.md)**\n- New item `R-TAX-REGION` in `trace/requirements.yaml`, with `status: draft`, refining `N-FAIR-PRICE`. It links to `pricing/regions.go#RegionByCode` and `pricing/regions_test.go#TestRegionByCode`.\n- I did not put an `@req` comment in the Go files. It duplicated the trace link and made `ostf check` warn `LINK_DUPLICATE`.\n- Existing items: none are made false. `R-TAX-RATE`, `R-TAX-EXEMPT`, `D-RATES-PPM` and `R-MONEY-CENTS` are unchanged, and I did not touch `tax.go`, `quote.go` or any `RISK-*` item. No risk-relevant item was touched, so there is nothing to flag for review.\n- The two unlinked statements `ostf` reports, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`, were there before my change.\n\n**Left for you**\n- Nothing calls `RegionByCode` yet. `cart/checkout.go` still takes a `Region` value, so wiring it to a region code from the request is a separate change.\n- Nothing is committed."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  }
+ ],
+ "conflicts": 1,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 66518,
+  "edited": true,
+  "calls": 126,
+  "ostfCalls": 38
+ },
+ "timing": {
+  "seconds": 712.1
+ },
+ "usage": {
+  "input_tokens": 208,
+  "cache_creation_input_tokens": 282255,
+  "cache_read_input_tokens": 2966753,
+  "output_tokens": 77822
+ },
+ "cost": 0.125051,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

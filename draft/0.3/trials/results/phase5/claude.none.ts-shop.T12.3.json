@@ -1,0 +1,491 @@
+{
+ "run": "claude.none.ts-shop.T12.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noConflict": true,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 28.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16224,
+    "cache_read_input_tokens": 82188,
+    "output_tokens": 1461,
+    "cost": 0.00479798
+   },
+   "cost": 0.004798,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4084,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "finalMessage": "I added `Cart.has(sku: string): boolean` to `src/cart.ts`. It returns true when the cart has a line for that SKU. I also added a test for it, and the full suite passes (37 tests, up from 36).\n\nThe method reuses the existing `indexOf` helper, placed next to `remove`. The new test in `src/cart.test.ts` checks an empty cart, a SKU that was added, a different SKU, and a SKU after it is removed.\n\nNo requirement in `REQUIREMENTS.md` covers `has`, so I didn't add an `@req` tag or a requirement entry. If you want it traced, I can add a requirement for it.\n\nI haven't committed anything."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 30.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 19153,
+    "cache_read_input_tokens": 144026,
+    "output_tokens": 2148,
+    "cost": 0.006346060000000001
+   },
+   "cost": 0.006346,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4056,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts"
+   ],
+   "finalMessage": "I added `orderUnits` to `src/checkout.ts`. It takes an order's lines and returns the sum of their quantities. The full suite passes: 37 tests, up from 36.\n\n```ts\nexport function orderUnits(lines: CartLine[]): number {\n  return lines.reduce((sum, line) => sum + line.quantity, 0);\n}\n```\n\n- **Signature:** I took `lines: CartLine[]` rather than the whole `Order`, since the request was about the lines. If you'd rather pass an `Order`, that's a one-line change.\n- **Test:** `src/checkout.test.ts` has a new `orderUnits` suite. It covers an empty list (0) and two lines with quantities 2 and 5 (7).\n- **Requirements:** `REQUIREMENTS.md` has no entry for unit counting, so I didn't add a `@req` tag or a requirement. Tell me if you want one.\n\nI haven't committed anything."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a holdCount method to Stock in src/inventory.ts that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 29.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 17355,
+    "cache_read_input_tokens": 83297,
+    "output_tokens": 2006,
+    "cost": 0.005307770000000001
+   },
+   "cost": 0.005308,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4334,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "finalMessage": "I added `Stock.holdCount()` to `src/inventory.ts` and a test for it. The full suite passes: 37 tests, up from 36, with 0 failures.\n\nThe method returns the number of holds whose expiry time is still in the future, using the same `now < expires` check that `available` uses. A hold is counted until the instant it expires, and not after.\n\nThe new test, \"counts the reservations that have not expired\" in `src/inventory.test.ts`, covers:\n- an empty stock returns 0;\n- two live holds return 2;\n- the earlier hold drops out exactly at its expiry time;\n- releasing a hold removes it from the count;\n- after the second hold expires too, the count returns to 0.\n\nThe method is tagged `// @req D-RESERVATION-HOLD`, the design decision it falls under, and the test uses the same tag. I did not change `REQUIREMENTS.md`, and I did not commit."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add an accountCount method to Sessions in src/accounts.ts that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 30.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 17595,
+    "cache_read_input_tokens": 84060,
+    "output_tokens": 1526,
+    "cost": 0.0051234
+   },
+   "cost": 0.005123,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4677,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/accounts.test.ts",
+    "src/accounts.ts"
+   ],
+   "finalMessage": "I added `Sessions.accountCount()` to `src/accounts.ts`. It returns the number of registered accounts, and I added a test for it. The full suite passes: 37 tests, 0 failures.\n\n- **Method:** `accountCount()` returns `this.byEmail.size`, the same map `register` writes to, so it counts exactly the accounts that can log in.\n- **Test:** `counts registered accounts` in `src/accounts.test.ts` checks that a new store reports 0, that two registrations report 2, and that a duplicate-email registration, which throws, leaves the count at 2.\n\nNo requirement in `REQUIREMENTS.md` covers the count, so I didn't add an `@req` tag or touch the requirements file. Nothing is committed."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 29.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16485,
+    "cache_read_input_tokens": 108194,
+    "output_tokens": 1971,
+    "cost": 0.005365440000000001
+   },
+   "cost": 0.005365,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3802,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts"
+   ],
+   "finalMessage": "I added `size()` to `AuditLog` in `src/audit.ts`. It returns the number of entries, and the full suite passes (37 tests, up from 36).\n\n```ts\n/** Returns the number of entries in the log. */\nsize(): number {\n  return this.log.length;\n}\n```\n\nThe new test, `counts its entries` in `src/audit.test.ts`, checks that an empty log reports 0, that it reports 2 after two appends, and that the count is unchanged after popping from the copy returned by `entries()`. That last check confirms the append-only guarantee in R-AUDIT-APPEND-ONLY still holds.\n\n`size()` has no requirement ID of its own, so I didn't add a `// @req` tag to the test. If you want it traced in REQUIREMENTS.md, it would fall under R-AUDIT-APPEND-ONLY, which lists `src/audit.test.ts` as its test.\n\nI did not commit anything."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function describeDiscount to src/pricing.ts that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 47.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 18035,
+    "cache_read_input_tokens": 112236,
+    "output_tokens": 2483,
+    "cost": 0.00597186
+   },
+   "cost": 0.005972,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4129,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "finalMessage": "I added `describeDiscount` to `src/pricing.ts` and two tests for it in `src/pricing.test.ts`. The full suite passes: 38 tests, up from 36, with 0 failures.\n\n```ts\nexport function describeDiscount(d: Discount): string {\n  return `${d.code} (${d.percent}% until ${d.expires.toISOString().slice(0, 10)})`;\n}\n```\n\n`describeDiscount({ code: \"SAVE10\", percent: 10, expires: new Date(\"2026-12-31T00:00:00Z\") })` returns `\"SAVE10 (10% until 2026-12-31)\"`.\n\nDecisions to check:\n- **UTC date:** the date is taken in UTC, the same clock `applyDiscount` uses when it compares expiry, so the printed date is the date the code actually stops working. A local-time format could show a different day for some users. The second test pins this behaviour.\n- **Placement:** the function sits between `applyDiscount` and `tax`.\n\n`REQUIREMENTS.md` has no entry for this function, so I did not add a requirement ID or link it to one. I also did not run `tsc`, since TypeScript isn't installed in the repo; the tests run through Node's type stripping."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function splitCents to src/money.ts that returns the dollars and the cents of an amount as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 66.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 16963,
+    "cache_read_input_tokens": 154180,
+    "output_tokens": 4405,
+    "cost": 0.007138299999999999
+   },
+   "cost": 0.007138,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 2510,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/money.test.ts",
+    "src/money.ts"
+   ],
+   "finalMessage": "I added `splitCents` to `src/money.ts` and covered it in `src/money.test.ts`. The full suite passes: 39 tests, up from 36.\n\n```ts\nexport function splitCents(amount: Cents): [dollars: number, cents: number]\n```\n\n- **Return shape:** a tuple of two integers, so `splitCents(1205)` gives `[12, 5]`.\n- **Negative amounts:** the sign goes on both parts, so `splitCents(-310)` gives `[-3, -10]` and `dollars * 100 + cents` always equals the input. The alternative `[-3, 10]` would be wrong, since -3 dollars plus 10 cents is not -3.10.\n- **Validation:** it calls the existing `cents()` check, so fractional input throws `RangeError`.\n- **Negative zero:** the first version returned `-0` in some cases, such as `splitCents(-7)`. I normalized that to `0`.\n\nThe tests are in the existing `money` block, which is tagged `@req R-MONEY-CENTS`. They cover positive, zero, negative and fractional inputs.\n\nI didn't commit anything. `REQUIREMENTS.md` lists the code for R-MONEY-CENTS as `cents` and `formatCents`, so you may want to add `splitCents` there."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function savingsPercent in a new file src/savings.ts that returns a quote's discount as a whole percent of its subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 55.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 18780,
+    "cache_read_input_tokens": 111078,
+    "output_tokens": 2654,
+    "cost": 0.00619478
+   },
+   "cost": 0.006195,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3540,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/savings.test.ts",
+    "src/savings.ts"
+   ],
+   "finalMessage": "I added `savingsPercent` in `src/savings.ts`, with tests in `src/savings.test.ts`. The full suite passes: 40 tests, up from 36, with the 4 new ones passing.\n\n- **Function:** `savingsPercent(quote: Quote): number` returns `Math.floor(discount * 100 / subtotal)`. It uses the existing `Quote` type from `src/pricing.ts`, and the arithmetic is integer-only, in line with R-MONEY-CENTS and D-RATES-PPM.\n- **Empty subtotal:** returns 0 instead of dividing by zero. That case wasn't specified, so I chose it.\n- **Tests:** cover a plain 10% discount, rounding down (166 of 1000 gives 16, 149 of 999 gives 14), no discount, and an empty subtotal.\n\nI didn't add a requirement ID to `REQUIREMENTS.md` or an `@req` tag, because no existing requirement covers this helper. If it should trace to one, tell me which and I'll add it. Nothing is committed."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function withTax in a new file src/with-tax.ts that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 30.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 18464,
+    "cache_read_input_tokens": 82899,
+    "output_tokens": 2283,
+    "cost": 0.00566409
+   },
+   "cost": 0.005664,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3640,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/with-tax.test.ts",
+    "src/with-tax.ts"
+   ],
+   "finalMessage": "I added `withTax` in `src/with-tax.ts` with tests in `src/with-tax.test.ts`. The full suite passes: 40 tests, 0 failures.\n\n```ts\nexport function withTax(amount: Cents, r: Region, exempt = false): Cents {\n  return amount + tax(amount, r, exempt);\n}\n```\n\nIt reuses the existing `tax` function in `src/pricing.ts`, so the rounding stays the same as the rest of pricing (integer parts-per-million, rounded half up to the cent) and there is no second copy of the tax logic. I also gave it an optional `exempt` flag, which defaults to `false`, to match `tax`. If you want the simpler two-argument form, that's a small change.\n\nThe tests cover the tax being added (10,000 → 11,498 in Quebec's 14.975% rate), zero input, a tax-exempt customer, and a zero-rate region.\n\nI tagged the code and tests with `@req R-TAX-RATE`, the requirement it implements. I did not edit `REQUIREMENTS.md` or the module table in `README.md`, so `withTax` isn't listed there yet. I also didn't commit anything."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function freeShippingGap in a new file src/shipping.ts that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 32.3
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 17013,
+    "cache_read_input_tokens": 108269,
+    "output_tokens": 2218,
+    "cost": 0.00559529
+   },
+   "cost": 0.005595,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3540,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/shipping.test.ts",
+    "src/shipping.ts"
+   ],
+   "finalMessage": "I added `freeShippingGap` in `src/shipping.ts` with tests in `src/shipping.test.ts`. The full suite passes: 38 tests, up from 36, with nothing failing.\n\n```ts\nexport const FREE_SHIPPING_THRESHOLD: Cents = 10_000;\n\nexport function freeShippingGap(subtotal: Cents): Cents {\n  return Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);\n}\n```\n\n- **Units:** the subtotal and the return value are integer cents, matching the rest of the shop (R-MONEY-CENTS). 100.00 is `10_000`.\n- **Tests:** they cover a gap from zero, a mid-range subtotal, the one-cent-short case (`9_999` gives `1`), and the at-and-above cases (`10_000` and `25_000` both give `0`).\n\n`REQUIREMENTS.md` has no free-shipping requirement, so I didn't add a `// @req` tag or a new entry. If you want one, I can add an ID such as `R-FREE-SHIPPING` with its code and test links. I haven't committed anything."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  }
+ ],
+ "conflicts": 0,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 38312,
+  "edited": true,
+  "calls": 61,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 382.6
+ },
+ "usage": {
+  "input_tokens": 98,
+  "cache_creation_input_tokens": 176067,
+  "cache_read_input_tokens": 1070427,
+  "output_tokens": 23155
+ },
+ "cost": 0.057504,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

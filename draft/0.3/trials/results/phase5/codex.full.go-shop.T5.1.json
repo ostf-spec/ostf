@@ -1,0 +1,98 @@
+{
+ "run": "codex.full.go-shop.T5.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "Yes, the diff implements the requirement and adds tests that check it. PriceLines gives each line with 10 or more units 5% off that line (lineSubtotal*5/100). Integer division rounds this down to the cent for each line separately. The discount code is then applied to what is left after the volume discount (ApplyDiscount(subtotal-volume)). The volume discount counts toward the 50% cap, because the code discount is limited to subtotal*MaxDiscountPercent/100 - volume. PlaceOrder now goes through PriceLines, so checkout uses the new pricing. The new TestPriceLines covers four things: the 9-versus-10 unit threshold, rounding per line (49.5→49 and 50.5→50, total 99), the code being applied after the volume discount (500 + 950 = 1450), and the combined cap (total discount 5000 on a 10000 subtotal). TestPlaceOrderVolumeDiscount checks the discount through the checkout itself.",
+  "cost": 0.048620800000000006
+ },
+ "metrics": {
+  "calls": 35,
+  "callsBeforeFirstEdit": 15,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 12,
+  "contextCalls": 3,
+  "checkCalls": 4,
+  "traceOutputTokens": 13746,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 108.7
+ },
+ "usage": {
+  "input_tokens": 607080,
+  "cached_input_tokens": 564736,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 6294,
+  "reasoning_output_tokens": 2167
+ },
+ "cost": 0.282245,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "trace.yaml",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Checkout now applies a 5% discount to each cart line with at least 10 units, rounds each line’s discount down to the cent, then applies any discount code. The combined discount stays within 50% of the original subtotal. The quote exposes the volume portion separately, and `trace.yaml` links the implementation and tests to the existing requirement.\n\n`go test ./...`, `git diff --check`, and `ostf check --base main` pass. The trace check still reports the unrelated, unlinked R-ORDER-NOTE item.\n\nThe trace check lists R-VOLUME-DISCOUNT, R-DISCOUNT-CAP, R-TAX-RATE, R-CHECKOUT-ORDER, and R-CHECKOUT-SESSION; this change keeps each true. R-DISCOUNT-CAP is the risk-relevant item touched and should receive principal review in the pull request. Its listed tests are `TestApplyDiscount/caps_at_fifty_percent` and `TestPriceLines`; the other listed tests are `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderVolumeDiscount`, `TestPrice`, and `TestTax`.",
+ "date": "2026-10-25"
+}

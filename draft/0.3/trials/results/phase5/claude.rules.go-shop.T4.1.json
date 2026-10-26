@@ -1,0 +1,70 @@
+{
+ "run": "claude.rules.go-shop.T4.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4128,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19189,
+  "cache_read_input_tokens": 160012,
+  "output_tokens": 4640,
+  "cost": 0.007759320000000001
+ },
+ "cost": 0.007759,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I moved `Tax` to `pricing/salestax.go` and renamed it `SalesTax`. `go vet ./...` is clean and `go test ./...` passes in every package.\n\n**Changes**\n- `pricing/salestax.go` (new): contains `SalesTax`, with the same body and doc comment, renamed.\n- `pricing/tax.go`: `Region` is the only thing left in it.\n- `pricing/quote.go`: `Price` now calls `SalesTax`.\n- `pricing/tax_test.go`: the calls and the error messages use `SalesTax`. I left the test names `TestTax` and `TestTaxExempt` as they are.\n\n**REQUIREMENTS.md entries**\nThree entries name code in `pricing/tax.go`, and the move makes two of them false. I did not edit them, per AGENTS.md. You should update them in this PR or decide otherwise.\n- **R-TAX-RATE** (refines N-FAIR-PRICE): lists `Tax` in `pricing/tax.go`. That is now false; the function is `SalesTax` in `pricing/salestax.go`. The `Price` code and tests (`TestPrice`, `TestTax`) still hold and pass. Touched: `Price`'s call site only.\n- **R-TAX-EXEMPT** (refines N-FAIR-PRICE): lists `Tax` in `pricing/tax.go`. That is now false in the same way. `TestTaxExempt` passes.\n- **D-RATES-PPM** (refines R-MONEY-CENTS): lists `Region` in `pricing/tax.go`. Still true, since `Region` did not move.\n\nNone of these controls or refines a risk or threat, so I did not need to ask before changing the code. I added no new entries, since this is a rename and move with no new behavior.\n\nI have not committed anything.",
+ "date": "2026-10-25"
+}

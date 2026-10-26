@@ -1,0 +1,84 @@
+{
+ "run": "codex.full.go-shop.T4.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": false,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 22,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "contextCalls": 1,
+  "checkCalls": 3,
+  "traceOutputTokens": 8311,
+  "derivedHandEdits": [
+   "/tmp/ostf-trials/phase5/codex.full.go-shop.T4.3/repo/trace.derived"
+  ]
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 83.6
+ },
+ "usage": {
+  "input_tokens": 323834,
+  "cached_input_tokens": 279296,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2960,
+  "reasoning_output_tokens": 394
+ },
+ "cost": 0.178475,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go",
+  "trace.derived",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `ApplyDiscount` to `DiscountAmount` and moved it to [pricing/discountamount.go](/tmp/ostf-trials/phase5/codex.full.go-shop.T4.3/repo/pricing/discountamount.go). Updated the caller, test name, and trace links.\n\n`go test ./...` passes, and `ostf check --base main` passes. The traced behavior remains true for **R-DISCOUNT-PERCENT**, **R-DISCOUNT-CAP** (the risk-relevant cap), **R-DISCOUNT-EXPIRY**, and **R-TAX-RATE**. The check lists `TestDiscountAmount`, its `caps_at_fifty_percent` and `rejects_expired` subtests, `TestPrice`, and `TestTax`.\n\nThe trace check also reports two existing informational unlinked items: R-ORDER-NOTE and R-VOLUME-DISCOUNT.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,80 @@
+{
+ "run": "codex.rules.go-shop.T11.2",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "review",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {
+  "saysNoTest": false
+ },
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1 is true. Under \"Tests covering it,\" the answer says \"none are listed for C-DB-ENCRYPTION.\" The user asked which tests cover the file, so this tells them no automated test covers it. It does say \"listed\" rather than stating outright that no test exists, but the meaning is still clear. q2 is true. The answer names V-INFRA-REVIEW by its ID and calls it \"the documented manual verification,\" which identifies it as how C-DB-ENCRYPTION is verified.",
+  "cost": 0.018668599999999997
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3160,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 48.4
+ },
+ "usage": {
+  "input_tokens": 126204,
+  "cached_input_tokens": 101376,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1071,
+  "reasoning_output_tokens": 129
+ },
+ "cost": 0.081931,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Linked [deploy/database.tf](/tmp/ostf-trials/phase5/codex.rules.go-shop.T11.2/repo/deploy/database.tf) to **C-DB-ENCRYPTION** in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.rules.go-shop.T11.2/repo/REQUIREMENTS.md:284). The change keeps the control entry true; it changes no code or tests.\n\n**Tests covering it:** none are listed for C-DB-ENCRYPTION. **V-INFRA-REVIEW** is the documented manual verification. The control addresses **THREAT-DB-SNAPSHOT**, so that link should be reviewed in the pull request. `git diff --check` passed.",
+ "date": "2026-10-26"
+}

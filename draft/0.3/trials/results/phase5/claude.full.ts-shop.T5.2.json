@@ -1,0 +1,97 @@
+{
+ "run": "claude.full.ts-shop.T5.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds volumeDiscount, which takes 5% off each line of 10 or more units, rounded down per line. applyDiscount applies the code's percentage to the subtotal minus the volume discount, so the volume discount comes first. It also limits the code's discount to the room left under 50% of the subtotal after the volume discount, so the volume discount counts toward the cap. price includes the volume discount in the total discount, and checkout passes volumeDiscount(lines) into it. New tests cover per-line rounding (999x10 gives 499), lines under 10 units, the code applying after the volume discount (950), the cap including the volume discount (4,500 and 5,000), the full quote, and a 10-unit checkout charging 10,923. That figure matches 10,000 - 500 plus Quebec tax on 9,500. The diff implements the requirement and tests it.",
+  "cost": 0.0669968
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 1,
+  "checkCalls": 2,
+  "traceOutputTokens": 14348,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 87.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 49790,
+  "cache_read_input_tokens": 326403,
+  "output_tokens": 18601,
+  "cost": 0.022524529999999997
+ },
+ "cost": 0.022525,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 18,
+ "changedSymbols": 18,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented as `R-VOLUME-DISCOUNT` and the change is in the working tree, not committed. The suite passes (43 of 43, up from 36) and `ostf check --base main` exits 0.\n\n**What changed**\n- `src/pricing.ts`: new `volumeDiscount(lines)` takes 5% off each line of 10 or more units, rounded down per line. `applyDiscount` and `price` take the volume discount as an optional argument, so existing callers are unchanged. The code applies to the amount after the volume discount, and the volume discount plus the code together stay within 50% of the subtotal.\n- `src/checkout.ts`: passes `volumeDiscount(lines)` into `price`.\n- Tests: five in `src/pricing.test.ts` and one in `src/checkout.test.ts` (a 10-unit mug order charges 10,923 cents). Each carries an `@req R-VOLUME-DISCOUNT` comment, which is how `ostf` links them. I did not add `code:` or `tests:` fields to `trace.yaml`.\n\n**Items in the trace**\n- `R-VOLUME-DISCOUNT` (SHOP-57, rev 2): now implemented and verified by the tests above. `ostf` no longer reports it as unlinked.\n- `R-DISCOUNT-CAP`: still true, since the total discount is capped at 50% and now includes the volume discount. Its rationale is about configuration risk, so please review this change in the pull request.\n- `R-DISCOUNT-PERCENT`: **no longer strictly true.** It says the code takes its percentage \"off the subtotal\". For a qualifying line, the code now takes it off the subtotal less the volume discount, because SHOP-57 says the volume discount applies first. I did not rewrite the item. Someone needs to decide whether the text changes or the behaviour does.\n- `R-TAX-RATE`, `R-DISCOUNT-EXPIRY`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, `R-CART-SUBTOTAL`: still true. The existing tests for them (for example \"caps at fifty percent\", \"rejects an expired code\", \"taxes the subtotal after discounts\") pass.\n- Risk-controlling items (`R-CHARGE-AMOUNT`, `R-REFUND-LIMIT`, `R-LOGIN-LOCKOUT`): not touched.\n- `R-ORDER-NOTE` (SHOP-62) is still unlinked. It is outside this ticket, so I left it alone.\n\nI did not commit. Say if you want a branch and commit.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,68 @@
+{
+ "run": "codex.rules.ts-shop.T4.2",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3322,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.2
+ },
+ "usage": {
+  "input_tokens": 188721,
+  "cached_input_tokens": 150656,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2624,
+  "reasoning_output_tokens": 671
+ },
+ "cost": 0.139211,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T4.2/repo/src/salestax.ts). Pricing and its tests now use the new function. `npm test` passes: 36 tests.\n\nR-TAX-RATE and R-TAX-EXEMPT still hold. Their listed tests pass (`price > taxes the subtotal after discounts`, `tax > rounds half up to the cent`, and `tax > is zero for a tax-exempt customer`), but both entries now have an outdated code reference to `tax` in `src/pricing.ts`. No changed entry controls or refines a risk or threat.",
+ "date": "2026-10-26"
+}

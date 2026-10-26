@@ -1,0 +1,79 @@
+{
+ "run": "codex.intent.go-shop.T4.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5290,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 60.1
+ },
+ "usage": {
+  "input_tokens": 218532,
+  "cached_input_tokens": 198144,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2200,
+  "reasoning_output_tokens": 177
+ },
+ "cost": 0.104175,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `ApplyDiscount` to `DiscountAmount`, moved it to [pricing/discountamount.go](/tmp/ostf-trials/phase5/codex.intent.go-shop.T4.3/repo/pricing/discountamount.go), and updated its caller, tests, and trace links.\n\nR-DISCOUNT-PERCENT, R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY, and R-TAX-RATE remain true. Their linked tests, `TestDiscountAmount`, `TestTax`, and `TestPrice`, passed with `go test ./...`. No touched item controls or refines a risk or threat control.",
+ "date": "2026-10-26"
+}

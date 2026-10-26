@@ -1,0 +1,69 @@
+{
+ "run": "codex.none.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 71.8
+ },
+ "usage": {
+  "input_tokens": 197478,
+  "cached_input_tokens": 161152,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2905,
+  "reasoning_output_tokens": 381
+ },
+ "cost": 0.137742,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 21,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `applyDiscount` to `discountAmount` and moved it to [src/discount.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T4.3/repo/src/discount.ts). Pricing now calls the new function, and the tests and requirement references use its new name. The existing discount type, cap, and expiry error remain available through `pricing.ts`.\n\n`npm test` passes: 36 tests, 0 failures.",
+ "date": "2026-10-26"
+}

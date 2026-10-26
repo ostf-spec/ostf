@@ -1,0 +1,495 @@
+{
+ "run": "claude.rules.ts-shop.T12.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 26.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 18318,
+    "cache_read_input_tokens": 113440,
+    "output_tokens": 3213,
+    "cost": 0.0064055
+   },
+   "cost": 0.006405,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3532,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "finalMessage": "I added `Cart.has(sku)` to `src/cart.ts`, with a test and a draft requirement entry. The full suite passes (37 tests), and the cart tests pass (5 of 5). I haven't committed.\n\n- **`src/cart.ts`**: `has(sku: string): boolean` returns `indexOf(...) >= 0`. It is tagged `// @req R-CART-HAS`.\n- **`src/cart.test.ts`**: new test `reports whether a sku is in the cart`. It covers an absent SKU, a present one, and a removed one.\n- **`REQUIREMENTS.md`**: new entry `R-CART-HAS: Cart membership`, status draft, refines `N-BUY`, listing `Cart.has` in `src/cart.ts` and the new test in `src/cart.test.ts`. I placed it before `R-MONEY-CENTS`.\n\nFor the pull request review:\n\n- **Entries touching changed files:** `R-CART-ADD`, `R-CART-QTY`, `R-CART-REMOVE` and `R-CART-SUBTOTAL` all list code in `src/cart.ts` and tests in `src/cart.test.ts`. I did not change their functions or tests, so they remain true. Their tests pass.\n- **Risk or threat entries:** none of the touched entries controls a risk or threat, or refines one that does. `R-CART-HAS` refines the need `N-BUY`, so no change needs your sign-off under AGENTS.md."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 46.0
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 23050,
+    "cache_read_input_tokens": 283501,
+    "output_tokens": 5866,
+    "cost": 0.010380010000000002
+   },
+   "cost": 0.01038,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4182,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/checkout.test.ts",
+    "src/checkout.ts"
+   ],
+   "finalMessage": "I added `orderUnits` to `src/checkout.ts`. It returns the sum of `quantity` over the lines it's given, so `orderUnits(order.lines)` gives an order's unit count. The full suite passes: 37 tests, including the new one.\n\n**Changes**\n- `src/checkout.ts`: exported `orderUnits(lines: CartLine[]): number`, tagged `// @req R-ORDER-UNITS`.\n- `src/checkout.test.ts`: added an `orderUnits` test that checks the sum over two lines and zero for an empty list.\n- `REQUIREMENTS.md`: new entry `R-ORDER-UNITS` with `Status: draft`, refining N-BUY, listing `orderUnits` and its test.\n\nI read the function as taking the lines, not the whole `Order`. If you wanted `orderUnits(order)`, that's a one-line change.\n\n**Entries for the code I touched (per AGENTS.md)**\n- **R-CHECKOUT-ORDER** (lists `Checkout.placeOrder` in `src/checkout.ts`, test `Checkout > places an order`): still true. I didn't change `placeOrder`.\n- **R-CHECKOUT-SESSION** (lists `Checkout.placeOrder`, test `Checkout > needs a valid session`): still true, for the same reason.\n- **R-STOCK-RELEASE** (lists `Checkout > releases stock when the charge is declined`): still true. That test is unchanged; only the import line in its file changed.\n- **R-ORDER-UNITS** (new, draft): lists `orderUnits` and `orderUnits > counts the units over all lines`, both added here.\n\nNone of the touched entries controls a risk or threat, or refines one that does, so I didn't need your sign-off before changing code. Nothing in this change makes an existing entry false.\n\n**Tests run:** `npm test`, the full suite, which covers the tests listed above. The change is not committed."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a holdCount method to Stock in src/inventory.ts that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 31.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 21218,
+    "cache_read_input_tokens": 144146,
+    "output_tokens": 4997,
+    "cost": 0.008184760000000001
+   },
+   "cost": 0.008185,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5443,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "finalMessage": "I added `Stock.holdCount()` to `src/inventory.ts`. It returns the number of reservations whose expiry time has not passed. The full suite passes: 37 tests, up from 36. Nothing is committed.\n\n**Changes**\n- **`src/inventory.ts`**: `holdCount()` counts holds with `now < expires`, the same boundary `available()` uses. Expired holds that were never released or confirmed are not counted.\n- **`src/inventory.test.ts`**: `Stock > counts reservations that have not expired` checks the count across two holds, one expiring first, and after a release.\n- **`REQUIREMENTS.md`**: new draft entry `D-RESERVATION-COUNT`, refining `D-RESERVATION-HOLD`, listing `Stock.holdCount` and the new test. No existing entry was edited.\n\n**For PR review (per AGENTS.md)**\n- Existing entries that list `Stock` code: `D-CLOCK` (`Stock.constructor`), `D-RESERVATION-HOLD` (`available`, `confirm`), `R-STOCK-RESERVE`, `R-STOCK-RELEASE` (`release`), `R-STOCK-EXPIRY` (`HOLD_MS`, `available`, `confirm`). I did not change any of those functions, so they remain true.\n- No entry I touched controls a risk or threat, or refines one that does. `D-RESERVATION-HOLD` and the requirements it refines (`R-STOCK-EXPIRY`, `R-STOCK-RESERVE`) only refine `N-NO-OVERSELL`, so no approval was needed before the change.\n- Tests run: the whole suite (`npm test`). The new test is `Stock > counts reservations that have not expired` in `src/inventory.test.ts`."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add an accountCount method to Sessions in src/accounts.ts that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 35.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 21445,
+    "cache_read_input_tokens": 119109,
+    "output_tokens": 4989,
+    "cost": 0.00797559
+   },
+   "cost": 0.007976,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4740,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/accounts.test.ts",
+    "src/accounts.ts"
+   ],
+   "finalMessage": "I added `Sessions.accountCount()` to `src/accounts.ts`. It returns the number of registered accounts, and the full suite passes (37 tests, up from 36).\n\n- **Code:** `accountCount()` returns the size of the email map that `register` writes to. It sits after `register` and is tagged `// @req R-ACCOUNT-COUNT`.\n- **Test:** `Sessions > counts registered accounts` in `src/accounts.test.ts` checks the count after one registration, after a second, and after a rejected duplicate email. The duplicate check asserts `EmailTakenError` specifically.\n- **Requirements:** AGENTS.md asks for a new entry in the same change, so I added `R-ACCOUNT-COUNT` to `REQUIREMENTS.md` with `Status: draft`, listing the method and the test. It has no `Refines:` line, since the request didn't say what it serves. Tell me if it should refine `N-ACCOUNT-SAFE`.\n\nEntries that list code in the same file, checked against the change:\n- `R-SESSION-EXPIRY`, `R-LOGIN-LOCKOUT`, `R-PASSWORD-HASH` and `D-CLOCK` list `Sessions.validate`, `Sessions.login`, `Sessions.register`, `hashPassword` and `Sessions.constructor`. I didn't change any of them, so they stay true. Their tests in `src/accounts.test.ts` also pass unchanged.\n- None of the entries I touched controls or refines a risk or threat, so no approval was needed. The only entry I added is `R-ACCOUNT-COUNT`.\n\nI did not commit anything."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 45.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 19628,
+    "cache_read_input_tokens": 113969,
+    "output_tokens": 4736,
+    "cost": 0.00743429
+   },
+   "cost": 0.007434,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3589,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/audit.test.ts",
+    "src/audit.ts"
+   ],
+   "finalMessage": "I added `AuditLog.size()` to `src/audit.ts`, which returns the number of entries. I added a test for it, and the full suite passes (37 tests, up from 36).\n\n**Changes**\n- `src/audit.ts`: new `size(): number` method that returns the log length.\n- `src/audit.test.ts`: new test `AuditLog > counts its entries`. It checks an empty log, then two appends.\n- `REQUIREMENTS.md`: new entry `R-AUDIT-SIZE` with `Status: draft`, refining `N-ACCOUNT-SAFE`, listing `AuditLog.size` in `src/audit.ts` and the new test. I chose this ID and refinement myself. Adjust them if you prefer a different one.\n\n**Requirements check**\n- `R-AUDIT-APPEND-ONLY` lists `src/audit.ts` and `src/audit.test.ts`, so it is the entry this change touches. The change keeps it true, since `size()` only reads the log. Its tests were run as part of the full suite.\n- No entry I touched controls a risk or threat, or refines one. `R-AUDIT-APPEND-ONLY` refines `N-ACCOUNT-SAFE`, which is a need, so no approval was needed before editing.\n- I did not commit anything. The changes are in the working tree for your review."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function describeDiscount to src/pricing.ts that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 48.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 20166,
+    "cache_read_input_tokens": 199710,
+    "output_tokens": 4776,
+    "cost": 0.0084199
+   },
+   "cost": 0.00842,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4129,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "finalMessage": "I added `describeDiscount` to `src/pricing.ts` and tests for it. The full suite passes (38/38).\n\n```ts\ndescribeDiscount({ code: \"SAVE10\", percent: 10, expires: new Date(\"2026-12-31T00:00:00Z\") })\n// \"SAVE10 (10% until 2026-12-31)\"\n```\n\nChoices I made that you may want to change:\n- **Capped percent:** the label shows `min(percent, MAX_DISCOUNT_PERCENT)`, so a mistyped 100% code reads \"50%\", matching what `applyDiscount` actually takes off.\n- **UTC date:** the expiry date is formatted from UTC (`toISOString`). A code that expires at a local-time boundary could show the previous day in some timezones.\n\nChanges:\n- `src/pricing.ts`: new exported `describeDiscount` after `applyDiscount`.\n- `src/pricing.test.ts`: a `describeDiscount` block with two tests, one for the basic format and one for the cap.\n- `REQUIREMENTS.md`: new entry `R-DISCOUNT-LABEL` (status `draft`, refines `N-FAIR-PRICE`), listing `describeDiscount` in `src/pricing.ts` and its tests. I did not commit anything.\n\nPer AGENTS.md, for the review:\n- **Entries listing `src/pricing.ts`:** `R-DISCOUNT-PERCENT`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`, `R-TAX-RATE`, `R-TAX-EXEMPT`, and `D-RATES-PPM` list functions I did not touch. Their code and tests are unchanged, so they remain true.\n- **Entries controlling or refining a risk or threat:** none of the entries I touched are of that kind. The `R-DISCOUNT-*` entries refine `N-FAIR-PRICE`, which is a need, not a risk, so no approval was needed before editing that file.\n- **Tests run:** `node --test src/pricing.test.ts` (9/9) and `npm test` (38/38)."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function splitCents to src/money.ts that returns the dollars and the cents of an amount as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 63.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 22,
+    "cache_creation_input_tokens": 23444,
+    "cache_read_input_tokens": 314236,
+    "output_tokens": 7198,
+    "cost": 0.01143236
+   },
+   "cost": 0.011432,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3820,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/money.test.ts",
+    "src/money.ts"
+   ],
+   "finalMessage": "I added `splitCents` to `src/money.ts`, with tests. The full suite passes (39/39) via `npm test`. I haven't committed anything.\n\n**The function:** `splitCents(amount)` returns `[dollars, cents]` as two integers. Both parts carry the sign of the amount, so `dollars * 100 + cents === amount`, and `cents` is between -99 and 99. It matches how `formatCents` already treats negatives:\n- `splitCents(1205)` gives `[12, 5]`\n- `splitCents(-310)` gives `[-3, -10]`\n- `splitCents(12.5)` throws `RangeError`\n\nThe sign convention was my choice. If you'd rather have floored values (`-310` → `[-4, 90]`, so cents are always 0–99), say so and I'll change it.\n\nRunning the tests caught a `-0` for negative amounts under a dollar, so the function now normalizes it to `0`.\n\n**REQUIREMENTS.md:** I added a new entry, `R-CENTS-SPLIT`, with status draft. It refines `R-MONEY-CENTS`, lists `splitCents` in `src/money.ts` as its code, and `splitCents` in `src/money.test.ts` as its tests. I didn't touch any existing entry's text.\n\n**Entries for the code I changed (for PR review):**\n- **R-MONEY-CENTS** lists `src/money.ts` (`Cents`, `cents`) and `src/money.test.ts` (`money`). Both are unchanged, so the entry stays true. It refines N-FAIR-PRICE, a need, not a risk or threat.\n- **R-CENTS-SPLIT** (new, draft) is the new code and test. It refines R-MONEY-CENTS, which controls no risk or threat.\n- No entry I changed controls a risk or threat, or refines one that does. So I didn't need to ask before editing.\n\n**Tests:** `node --test src/money.test.ts` runs the new `splitCents` suite (5/5 in the `money` file). `npm test` runs all 39 tests, and they all pass."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function savingsPercent in a new file src/savings.ts that returns a quote's discount as a whole percent of its subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 41.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 21697,
+    "cache_read_input_tokens": 178722,
+    "output_tokens": 4300,
+    "cost": 0.00827802
+   },
+   "cost": 0.008278,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5236,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/savings.test.ts",
+    "src/savings.ts"
+   ],
+   "finalMessage": "I added `savingsPercent` in `src/savings.ts` with tests in `src/savings.test.ts`. The full suite passes (40 tests, up from 36). I did not commit.\n\n```ts\nexport function savingsPercent(q: Quote): number {\n  if (q.subtotal <= 0) return 0;\n  return Math.floor((q.discount * 100) / q.subtotal);\n}\n```\n\nIt takes a `Quote` from `src/pricing.ts`. Integer cents keep the division exact enough to floor correctly, and a zero subtotal returns 0 rather than dividing by zero. The tests cover a whole percent, rounding down (149 of 1,000 gives 14), no discount, and an empty subtotal.\n\n**REQUIREMENTS.md**\n- Added a new entry, `R-SAVINGS-PERCENT`, with status `draft`. It refines `N-FAIR-PRICE`, lists `savingsPercent` in `src/savings.ts` as its code, and lists the `savingsPercent` tests in `src/savings.test.ts` as its tests.\n- The new entry is a display helper with no risk or threat link, so I did not need your sign-off to add it.\n\n**Entries touched:**\n- None of the existing entries changed, and no existing code was edited, so nothing that controls a risk or threat, or refines one, was touched.\n- Only the new entry, `R-SAVINGS-PERCENT`, is new, and it refines `N-FAIR-PRICE`. That is a need, not a risk or threat.\n\nI did not add a row to the module table in `README.md`. Say if you want one."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function withTax in a new file src/with-tax.ts that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 50.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 21382,
+    "cache_read_input_tokens": 208151,
+    "output_tokens": 4530,
+    "cost": 0.00862451
+   },
+   "cost": 0.008625,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5112,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/with-tax.test.ts",
+    "src/with-tax.ts"
+   ],
+   "finalMessage": "I added `withTax` in `src/with-tax.ts` with three tests in `src/with-tax.test.ts`. The full suite passes (39 tests, up from 36).\n\n```ts\nexport function withTax(amount: Cents, r: Region): Cents {\n  return amount + tax(amount, r, false);\n}\n```\n\nIt reuses the existing `tax` from `src/pricing.ts`, so the rounding matches the checkout path. For example, `withTax(10_000, quebec)` returns `11_498`. The function takes no tax-exempt flag, because the request didn't mention one. If you want exempt customers handled here, it's a small change.\n\n**REQUIREMENTS.md:** I added a new entry, `R-TAX-WITH: Amount with sales tax`, with status `draft`. It refines `R-TAX-RATE`, lists `withTax` in `src/with-tax.ts` as its code, and lists `withTax` in `src/with-tax.test.ts` as its test. The tests carry an `@req R-TAX-WITH` annotation, matching the other test files.\n\nFor the pull request review:\n- **Existing entries changed:** none. I added no code to `pricing.ts` and changed no existing function or test, so `R-TAX-RATE` and its entries are still true.\n- **Risk or threat entries touched:** none. `R-TAX-RATE` refines `N-FAIR-PRICE`, which controls nothing, so no change needed your approval.\n- **Tests run:** `node --test src/with-tax.test.ts` (3 pass) and `node --test` (39 pass, 0 fail).\n\nI haven't committed anything. The changes are in the working tree: `REQUIREMENTS.md` modified, and `src/with-tax.ts` and `src/with-tax.test.ts` added."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function freeShippingGap in a new file src/shipping.ts that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 39.5
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 21255,
+    "cache_read_input_tokens": 139741,
+    "output_tokens": 3634,
+    "cost": 0.00746661
+   },
+   "cost": 0.007467,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4482,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/shipping.test.ts",
+    "src/shipping.ts"
+   ],
+   "finalMessage": "I added `freeShippingGap` in `src/shipping.ts`. It returns `FREE_SHIPPING_THRESHOLD` (10_000 cents) minus the subtotal, or 0 when the subtotal already reaches it. The full suite passes: 39 tests, 0 failures.\n\n- **`src/shipping.ts`**: the function takes a subtotal in integer cents and rejects fractions of a cent through the existing `cents()` check, as `cart.ts` does.\n- **`src/shipping.test.ts`**: covers a gap below the threshold, zero at and above it, and the fractional-cent rejection.\n- **`REQUIREMENTS.md`**: no existing entry covered free shipping, so I added `R-FREE-SHIPPING-GAP` as a new entry with status draft. I chose that ID myself; you didn't name one. It lists the new code and test, and I placed it after `R-CART-SUBTOTAL`.\n\nPer AGENTS.md, for the review:\n- **Entries whose code I changed:** none existed. The only entry touched is the new `R-FREE-SHIPPING-GAP`, which is true of the code as written.\n- **Tests run:** `node --test` (via `npm test`), covering all modules.\n- **Risk, threat, or refinement entries touched:** none. The new entry doesn't refine or control anything.\n\nI haven't committed anything."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 3,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 44265,
+  "edited": true,
+  "calls": 84,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 429.5
+ },
+ "usage": {
+  "input_tokens": 142,
+  "cache_creation_input_tokens": 211603,
+  "cache_read_input_tokens": 1814725,
+  "output_tokens": 48239
+ },
+ "cost": 0.084602,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

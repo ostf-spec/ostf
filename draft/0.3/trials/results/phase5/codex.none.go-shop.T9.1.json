@@ -1,0 +1,80 @@
+{
+ "run": "codex.none.go-shop.T9.1",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `ErrOrderRateLimit` error to `PlaceOrder`. It keeps a list of order times for each account and refuses the order once three successful orders fall inside the last ten minutes. The check runs under a mutex, after the empty-cart check and before pricing, stock reservation and payment, so nothing is charged when it fires. A success is recorded only after the stock is confirmed, so declined orders don't count. The new tests cover the case the user asked about. A fourth order is refused, and the audit shows only three charges and unchanged stock. The tests also cover the window edges (refused just before ten minutes, allowed at exactly ten), a second account being unaffected, declines not counting, and concurrent requests. So the diff makes the mitigation and adds tests for it.",
+  "cost": 0.0418008
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 9816,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 73.0
+ },
+ "usage": {
+  "input_tokens": 329936,
+  "cached_input_tokens": 302848,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3922,
+  "reasoning_output_tokens": 894
+ },
+ "cost": 0.162906,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now returns the new `ErrOrderRateLimit` for a fourth completed order from the same account within a rolling ten-minute window. The check runs before stock reservation and payment, and a lock prevents concurrent requests from exceeding the limit. Declined orders do not count.\n\nI linked the control to `THREAT-CARD-TESTING` in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.none.go-shop.T9.1/repo/REQUIREMENTS.md) and added tests for the limit, window boundary, account isolation, declines, and concurrency. `go test ./...` and `go test -race ./cart` pass.",
+ "date": "2026-10-25"
+}

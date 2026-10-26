@@ -1,0 +1,71 @@
+{
+ "run": "claude.none.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4046,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 20396,
+  "cache_read_input_tokens": 140491,
+  "output_tokens": 4613,
+  "cost": 0.0077918100000000014
+ },
+ "cost": 0.007792,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "`ApplyDiscount` is now `DiscountAmount`, and it lives in the new file `pricing/discountamount.go`. `go vet ./...` and `go test ./...` pass across all five packages, and the renamed test and its four subtests run and pass.\n\nChanges:\n- **`pricing/discountamount.go`** (new): the function, its doc comment, and the `@req R-DISCOUNT-EXPIRY` tag, unchanged apart from the name.\n- **`pricing/discount.go`**: the function is removed. `Discount`, `MaxDiscountPercent` and `ErrDiscountExpired` stay here, and the unused `fmt` import is dropped.\n- **`pricing/quote.go`**: the one call site now uses `DiscountAmount`.\n- **`pricing/discount_test.go`**: the test is renamed to `TestDiscountAmount` and its calls updated. The file itself stays where it was.\n- **`REQUIREMENTS.md`**: the code and test pointers for R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY now name the new function, file and test. I changed these beyond the literal request so the requirements don't point at a name that no longer exists.\n\nChoices I made that you may want to change:\n- The test stayed in `discount_test.go` rather than moving to `discountamount_test.go`, since you only asked to move the function.\n- The shared `Discount` type and error stayed in `discount.go`.",
+ "date": "2026-10-26"
+}

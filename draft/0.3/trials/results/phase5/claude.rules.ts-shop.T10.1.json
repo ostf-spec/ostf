@@ -1,0 +1,87 @@
+{
+ "run": "claude.rules.ts-shop.T10.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: Yes. In the diff, `price()` works out `afterDiscount = subtotal - discount` and sets the fee to `serviceFee(afterDiscount)`, which is 2.5% of that amount. Tax is still computed on `afterDiscount` alone, so the fee is not taxed, and the fee is added to `total`. The numbers in the tests are consistent: 9,000 × 2.5% = 225, and 9,000 + 225 + 1,348 = 10,573. In checkout, a fee of 50 on 2,000 gives 2,350. The diff also adds new tests for the fee amount, half-up rounding, the fee not being taxed, and the fee applying to a tax-exempt customer, and it updates the existing tests for the new totals. q2: Yes. `SERVICE_FEE_PPM = 25_000` is an integer number of parts per million. `serviceFee` multiplies integer cents by that rate and rounds half up once with `roundHalfUp(..., 1_000_000)`, the same way `tax` does. No floating-point number is used, and discount codes still use their whole percent.",
+  "cost": 0.052320599999999995
+ },
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4738,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 68.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 38289,
+  "cache_read_input_tokens": 313979,
+  "output_tokens": 15350,
+  "cost": 0.018474390000000004
+ },
+ "cost": 0.018474,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 13,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The 2.5% service fee is in, and the full suite passes: 40 tests, up from 36, with four new ones for the fee.\n\n**What changed**\n- `src/pricing.ts`: new `SERVICE_FEE_PPM = 25_000` and `serviceFee(amount)`, rounded half up to the cent. `price()` computes the fee on the subtotal after discounts, computes tax on that same base without the fee, and adds the fee into `total`. `Quote` has a new `fee` field.\n- `src/checkout.ts` is unchanged. It already charges `quote.total`, so the fee flows into the charge.\n- `src/checkout.test.ts`: \"places an order\" now expects a fee of 50 and a total of 2,350 (was 2,300). The tax stays at 300 because the fee is not in the tax base.\n- `src/pricing.test.ts`: the `price` expectation now includes the fee (225) and total (10,573), with tax unchanged at 1,348. Added tests for the fee rate, half-up rounding, the fee not being taxed, and the fee applying to a tax-exempt customer.\n- `REQUIREMENTS.md`: new entry **R-SERVICE-FEE** (status draft, refines N-FAIR-PRICE) listing its code and tests.\n- `README.md`: pricing row mentions the service fee.\n\n**Choices I made**\n- The fee applies to every order, including tax-exempt customers, since you said every order pays it.\n- Rounding is half up to the cent, following D-RATES-PPM.\n- The rate is one constant, not per region.\n- Nothing is committed.\n\n**Requirements check (per AGENTS.md)**\n- **R-TAX-RATE** (code: `price`): still true. Tax is still on the post-discount subtotal, now excluding the fee. Its test `price > taxes the subtotal after discounts` was updated for the new total and still checks tax = 1,348.\n- **R-CHECKOUT-ORDER** (test: `Checkout > places an order`): still true. `placeOrder` is untouched; the test's expected values changed.\n- **R-TAX-EXEMPT** (code: `tax`): untouched and still true.\n- **R-MONEY-CENTS** (code: `Cents`/`cents`): untouched and still true.\n- **D-RATES-PPM** (code listed: `Region`): still true. The new rate is integer ppm, integer arithmetic, rounded once at the end. Its code list names only `Region`, and I did not edit it, so `SERVICE_FEE_PPM` is not listed there.\n- None of the entries I touched controls a risk or threat, or refines one that does, so I did not need to ask before changing code.\n\n**Needs your review: R-CHARGE-AMOUNT**\nThis entry controls RISK-WRONG-CHARGE. I did not change its code (`validateAmount` in `payments.ts`), but the fee makes totals about 2.5% larger. An order with a subtotal just under 10,000.00 can now be declined by the 10,000.00 cap where it previously passed. The declined charge is safe, not wrong, but the entry's rationale, \"No order in the catalog can cost more than 10,000.00,\" may no longer hold. I left the entry as written. Whether the cap should move is your call.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,79 @@
+{
+ "run": "codex.intent.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3717,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 82.3
+ },
+ "usage": {
+  "input_tokens": 231793,
+  "cached_input_tokens": 208000,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3366,
+  "reasoning_output_tokens": 572
+ },
+ "cost": 0.128566,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 21,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `applyDiscount` to `discountAmount` and moved it to [src/discount.ts](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T4.3/repo/src/discount.ts). Pricing now imports it from there. I updated the tests, requirement links, and README.\n\nThe change keeps R-DISCOUNT-PERCENT, R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY, and R-TAX-RATE true. Their linked tests passed: `discountAmount` (all four cases), `tax > rounds half up to the cent`, and `price > taxes the subtotal after discounts`. The full suite passed, 36/36. No touched item controls a risk or threat or refines one that does.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,497 @@
+{
+ "run": "claude.rules.go-shop.T12.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Has to Cart in cart/cart.go that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 29.5
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 18095,
+    "cache_read_input_tokens": 83555,
+    "output_tokens": 3415,
+    "cost": 0.006162850000000001
+   },
+   "cost": 0.006163,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3980,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "finalMessage": "I added `Cart.Has` to `cart/cart.go` and a test for it, `TestHas`, in `cart/cart_test.go`. `Has` returns true when the SKU has a line in the cart. The full suite passes, and `gofmt` and `go vet` are clean.\n\nFollowing AGENTS.md, I also added a new requirement entry, **R-CART-HAS: Cart membership**, to `REQUIREMENTS.md`. It has `Status: draft`, refines N-BUY, and lists `Cart.Has` and `TestHas`. I chose the ID myself because the request didn't name one. Rename it if your numbering differs.\n\n**Review notes for the pull request**\n\n- **Entries whose code I changed:** none. I added a method to `cart/cart.go` and a test to `cart/cart_test.go`, but no existing function or test changed.\n- **Existing entries that list `cart/cart.go` or `cart/cart_test.go`:** R-CART-ADD, R-CART-QTY, R-CART-REMOVE and R-CART-SUBTOTAL. Their listed functions and tests are untouched, so they remain true.\n- **Risk or threat entries touched:** none. The cart entries refine N-BUY, a need, and none controls a risk or threat, so no approval was needed before editing.\n- **Tests run:** `TestHas` and the existing cart tests (`TestAddMergesLines`, `TestAddRejectsBadQuantity`, `TestRemove`, `TestSubtotal`) pass, and `go test ./...` passes across all packages.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Units to Order in cart/checkout.go that returns the number of units over its lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 33.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 21629,
+    "cache_read_input_tokens": 111207,
+    "output_tokens": 4474,
+    "cost": 0.0076758700000000004
+   },
+   "cost": 0.007676,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5736,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "cart/checkout.go",
+    "cart/checkout_test.go"
+   ],
+   "finalMessage": "I added `Order.Units()` to `cart/checkout.go`, with a table-driven test `TestOrderUnits` in `cart/checkout_test.go`. It returns the sum of `Quantity` over the order's lines. `go test ./cart/` passes, and `gofmt` and `go vet` are clean. Nothing is committed.\n\n**Requirements (per AGENTS.md)**\n\n- **New entry `R-ORDER-UNITS`** (status: draft) in `REQUIREMENTS.md`. It lists `Order.Units` in `cart/checkout.go` and `TestOrderUnits` in `cart/checkout_test.go`, and refines `N-BUY`. Nothing already in the file covered `Order` or units, so this is new behavior, not a change to an existing entry.\n- **Existing entries:** `cart/checkout.go` is listed under `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, both for `Checkout.PlaceOrder`. I did not change `PlaceOrder`, so both entries stay true. Neither controls or refines a risk or threat, so no question to you was needed.\n- **Entries touched that control a risk or threat, or refine one that does:** none.\n\n**Choices I made**\n\n- I used a value receiver, since `Order` has no other methods and is returned by value.\n- I gave the entry the ID `R-ORDER-UNITS` and marked it `Refines: N-BUY`. Change either if you want it classified differently.\n- The repo had no status convention, so I wrote `- Status: draft` as a plain bullet on the entry."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Holds to Stock in inventory/inventory.go that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 38.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 21090,
+    "cache_read_input_tokens": 88404,
+    "output_tokens": 5762,
+    "cost": 0.00798384
+   },
+   "cost": 0.007984,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4771,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "inventory/inventory.go",
+    "inventory/inventory_test.go"
+   ],
+   "finalMessage": "I added `Stock.Holds()` to `inventory/inventory.go` and a `TestHolds` test. The full test suite passes, and `gofmt` and `go vet` are clean.\n\n`Holds` takes no arguments and returns how many reservations are still unexpired. A reservation counts as expired from the moment `now` reaches its `Expires` time, the same boundary `Available` and `Confirm` use. Expired holds that haven't been released or confirmed yet are not counted.\n\nThe test covers four cases: zero on a new stock, two live holds, a hold made later that outlives the first two, and zero once everything has expired. It uses the injected clock, so no sleeping.\n\nPer AGENTS.md:\n\n- **New entry `R-STOCK-HOLDS`** (status: draft) added to REQUIREMENTS.md under Requirements. It refines `N-NO-OVERSELL`, lists `Stock.Holds` as code and `TestHolds` as its test. This is the new entry the rules require for new behavior; I did not take the ID from you.\n- **Existing entries listing `inventory/inventory.go`**: R-STOCK-RESERVE, R-STOCK-RELEASE, R-STOCK-EXPIRY, D-RESERVATION-HOLD and D-CLOCK. I did not change any function they list, and they stay true. I also did not change any of their tests.\n- **Entries I touched that control a risk or threat, or refine one that does**: none. `N-NO-OVERSELL` is a need, not a risk, so no approval was needed.\n- **Tests run**: `go test ./inventory` (including `TestHolds` and the existing inventory tests), then `go test ./...`. All passed.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Accounts to Sessions in accounts/session.go that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 33.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 20697,
+    "cache_read_input_tokens": 118551,
+    "output_tokens": 4931,
+    "cost": 0.00779141
+   },
+   "cost": 0.007791,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4493,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "accounts/session.go",
+    "accounts/session_test.go"
+   ],
+   "finalMessage": "I added `Sessions.Accounts()` to `accounts/session.go`, which returns the number of registered accounts. I also added `TestAccounts` and a draft requirement entry. All tests pass.\n\n**What changed**\n- `accounts/session.go`: `Accounts()` takes the lock and returns `len(s.byEmail)`. It sits after `Register`.\n- `accounts/session_test.go`: `TestAccounts` checks the count for an empty store, after one registration, after a rejected duplicate email, and after a second registration.\n- `REQUIREMENTS.md`: new entry `R-ACCOUNT-COUNT` with `Status: draft`, code `Sessions.Accounts` in `accounts/session.go`, and tests `TestAccounts` in `accounts/session_test.go`. It refines nothing. I chose this ID myself because the new behavior needed an entry.\n\n**Requirements check**\n- No existing entry lists `Accounts`, so nothing was already bound to it.\n- Entries that name `accounts/session.go`, and that I did not change:\n  - `R-PASSWORD-HASH` (refines N-ACCOUNT-SAFE, no risk or threat). Still true. Its code is `Register` and `hashPassword`, and I did not change either. Its test `TestLogin` is unchanged.\n  - `R-LOGIN-LOCKOUT` (controls RISK-ACCOUNT-TAKEOVER). Still true. Its code is `Sessions.Login`, which I did not change. Its test is `TestLoginLockout`.\n  - `R-SESSION-EXPIRY` (refines N-ACCOUNT-SAFE). Still true. Its code is `Sessions.Validate`, which I did not change. Its test is `TestSessionExpiry`.\n  - `D-CLOCK` (refines R-SESSION-EXPIRY and R-STOCK-EXPIRY). Still true. Its code is `NewSessions`, which I did not change.\n- Entries that control a risk or threat, or refine one that does, and that my change touches: none. I did not need to ask before editing.\n\n**Tests run**\n- `go test ./accounts/ -v -count=1`: all four tests pass (`TestAccounts`, `TestLogin`, `TestLoginLockout`, `TestSessionExpiry`).\n- `go test ./cart/ ./accounts/ -count=1`: both packages pass. `cart` uses `Sessions` through checkout.\n- `go vet ./accounts/` and `gofmt -l accounts` are clean.\n\nNothing is committed yet."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Len to AuditLog in payments/audit.go that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 36.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 17543,
+    "cache_read_input_tokens": 123858,
+    "output_tokens": 4436,
+    "cost": 0.0069663799999999994
+   },
+   "cost": 0.006966,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3162,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "payments/audit.go",
+    "payments/audit_test.go"
+   ],
+   "finalMessage": "I added `AuditLog.Len` in `payments/audit.go`, with a test, and all tests pass (`go vet` and `gofmt` are clean too).\n\n- **`payments/audit.go`:** `Len` takes the log's lock and returns `len(l.entries)`.\n- **`payments/audit_test.go`:** `TestAuditLen` checks 0 on an empty log and 2 after two appends.\n- **`REQUIREMENTS.md`:** I added a new entry, `R-AUDIT-LEN`, with status draft, listing `AuditLog.Len` and `TestAuditLen`. It has no `Refines:` line because nothing in the file fits it cleanly. Existing entries have no status field, so the `Status: draft` line is my choice to follow AGENTS.md.\n\nFor the PR review:\n\n- **R-AUDIT-APPEND-ONLY** (code `payments/audit.go`, tests `payments/audit_test.go`): the change keeps it true. `Len` only reads and does not add, remove or alter entries. I did not edit that entry. It refines N-ACCOUNT-SAFE, which is a need, not a risk or threat.\n- **Entries that control a risk or threat, or refine one that does:** none of the code or tests I changed falls under one, so no approval was needed before the change.\n- **Tests run:** `TestAuditEntriesAreCopies`, `TestAuditLen` and `TestAuditStampsTime` pass, and `go test ./...` passes across all packages."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a String method to Discount in pricing/discount.go that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 41.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 18997,
+    "cache_read_input_tokens": 142111,
+    "output_tokens": 4148,
+    "cost": 0.0072957099999999995
+   },
+   "cost": 0.007296,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3810,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/discount.go",
+    "pricing/discount_test.go"
+   ],
+   "finalMessage": "I added `Discount.String`, which formats a discount as `SAVE10 (10% until 2026-12-31)`, with a test. The pricing package tests pass, and `gofmt` and `go vet` are clean.\n\n**Changes**\n- `pricing/discount.go`: `func (d Discount) String() string`, annotated `// @req R-DISCOUNT-FORMAT`. It prints the code, the whole percent, and the expiry date in `2006-01-02` form. The time of day and time zone are not shown.\n- `pricing/discount_test.go`: `TestDiscountString`, which checks the exact `SAVE10 (10% until 2026-12-31)` output for an expiry of 23:59 UTC on 2026-12-31.\n- `REQUIREMENTS.md`: new entry `R-DISCOUNT-FORMAT` with status draft, refining N-FAIR-PRICE, listing `Discount.String` and `TestDiscountString`. AGENTS.md requires new behavior to be recorded as an entry, so I added it in the same change.\n\n**Review notes for the pull request**\n- Entries whose listed code is in `pricing/discount.go`: R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY. All three list `ApplyDiscount`, which I did not change, so they stay true. Their tests (`TestApplyDiscount`) still pass.\n- Entries I changed that control a risk or threat, or refine one: none. The only entry I touched is R-DISCOUNT-FORMAT, which refines N-FAIR-PRICE, a need rather than a risk or threat.\n- Tests run: `go test ./pricing/` (includes `TestDiscountString` and `TestApplyDiscount`), all passing.\n\nI did not commit anything."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Split to Money in pricing/money.go that returns its dollars and its cents as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 43.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 19938,
+    "cache_read_input_tokens": 137157,
+    "output_tokens": 4999,
+    "cost": 0.00785987
+   },
+   "cost": 0.00786,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 5,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4167,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/money.go",
+    "pricing/money_test.go"
+   ],
+   "finalMessage": "I added `Money.Split` in `pricing/money.go`, with a test, and a new draft entry in `REQUIREMENTS.md`. The package tests pass (`go test ./pricing/`), and `gofmt` and `go vet` are clean. I did not commit.\n\n`Split` returns `(dollars, cents int64)`, with both parts taking the sign of the amount, so `1205` gives `12, 5` and `-310` gives `-3, -10`. That matches how `String` formats the same values.\n\n**Requirements (per AGENTS.md):**\n- **R-MONEY-SPLIT** (new, status draft, refines R-MONEY-CENTS): code is `Money.Split` in `pricing/money.go`, tests are `TestMoneySplit` in `pricing/money_test.go`. I chose this ID because the entry is new; it is not an existing one.\n- **R-MONEY-CENTS** (code: `Money` in `pricing/money.go`): still true. I added a method and did not change the type or its representation. Its test, `TestMoneyString`, passes.\n\nNo entry I touched controls a risk or threat, or refines one that does. R-MONEY-CENTS refines N-FAIR-PRICE, which is a need, so I did not need to ask before editing `money.go`."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Savings to Quote in pricing/quote.go that returns the discount as a whole percent of the subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 41.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 19469,
+    "cache_read_input_tokens": 107178,
+    "output_tokens": 4196,
+    "cost": 0.007064580000000001
+   },
+   "cost": 0.007065,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4467,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/quote.go",
+    "pricing/quote_test.go"
+   ],
+   "finalMessage": "I added `Quote.Savings()` in `pricing/quote.go` with a table test, and the `pricing` package tests pass. I did not commit anything.\n\n**The method** returns `int64` (the same type as `Discount.Percent`): `Discount * 100 / Subtotal`, truncated. It returns 0 when the subtotal is zero or negative, which avoids a division by zero.\n\nOne behavior to know about: because the discount is already rounded down to the cent, the percent can come out one below the code's nominal rate. For example, a 10% code on a 9.99 subtotal discounts 99 cents, and `Savings()` returns 9. I followed the spec as written, and the `rounds_down` case covers this kind of truncation.\n\n**The test** is `TestQuoteSavings` in the new `pricing/quote_test.go`. It covers a whole percent, rounding down, no discount, zero subtotal and negative subtotal.\n\n**Requirements (AGENTS.md)**\n- No existing entry lists `Quote` or `Savings`. `Price` in `quote.go` is listed under R-TAX-RATE, which refines N-FAIR-PRICE and controls no risk or threat. I did not change `Price`, so that entry stays true.\n- I added a new entry, **R-QUOTE-SAVINGS** (status: draft, refines N-FAIR-PRICE), listing `Quote.Savings` in `pricing/quote.go` and `TestQuoteSavings` in `pricing/quote_test.go`.\n- The change touches no entry that controls a risk or threat, or refines one that does, so no question to you was needed.\n- Tests run: `TestQuoteSavings`, plus `TestPrice`, `TestTax` and `TestTaxExempt`, which are listed under R-TAX-RATE and R-TAX-EXEMPT for `quote.go`. All pass. I also ran `go vet` and the full `pricing` package.\n\nFiles changed: `pricing/quote.go`, `pricing/quote_test.go` (new), `REQUIREMENTS.md`."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function WithTax to pricing/tax.go that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 45.5
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 18124,
+    "cache_read_input_tokens": 83736,
+    "output_tokens": 4029,
+    "cost": 0.006477460000000001
+   },
+   "cost": 0.006477,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3872,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/tax.go",
+    "pricing/tax_test.go"
+   ],
+   "finalMessage": "I added `WithTax` to `pricing/tax.go`, with a test and a new requirements entry. The pricing package tests pass, and `gofmt` and `go vet` are clean.\n\n```go\n// WithTax returns amount plus the sales tax on it in region r, as Tax\n// computes it. A tax-exempt customer pays amount with no tax added.\nfunc WithTax(amount Money, r Region, exempt bool) Money {\n\treturn amount + Tax(amount, r, exempt)\n}\n```\n\nI gave it the same `exempt` parameter as `Tax`, so it follows the same rounding and exemption rules. If you want a signature without the flag, that is a small change.\n\n**Changes**\n- `pricing/tax.go`: new `WithTax`.\n- `pricing/tax_test.go`: new `TestWithTax` with `// @req R-TAX-ADD`. It covers 10,000 → 11,498, 100 → 115, 0 → 0, and an exempt 10,000 → 10,000 in Quebec.\n- `REQUIREMENTS.md`: new entry `R-TAX-ADD` (Amount with sales tax) with status `draft`, refining `N-FAIR-PRICE`, listing `WithTax` and `TestWithTax`. No existing entry was edited.\n\n**AGENTS.md review**\n- Entries that list `pricing/tax.go`:\n  - `R-TAX-RATE`: stays true. Its `Tax` and `Price` code is unchanged, and `TestPrice` and `TestTax` pass.\n  - `R-TAX-EXEMPT`: stays true. `Tax` is unchanged, and `TestTaxExempt` passes.\n  - `D-RATES-PPM`: stays true. The code it lists is `Region`, which is unchanged. `WithTax` uses the same integer path through `Tax`.\n- Tests I ran: `TestTax`, `TestTaxExempt`, `TestPrice`, and the new `TestWithTax`, plus the full `./pricing` package.\n- Entries touched that control or refine a risk or threat: none. `R-TAX-ADD` refines `N-FAIR-PRICE`, which is a need, not a risk or threat. No approval was needed."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function FreeShippingGap in a new file pricing/shipping.go that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 34.3
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 18308,
+    "cache_read_input_tokens": 86593,
+    "output_tokens": 2852,
+    "cost": 0.005954330000000001
+   },
+   "cost": 0.005954,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4520,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/shipping.go",
+    "pricing/shipping_test.go"
+   ],
+   "finalMessage": "I added `FreeShippingGap` in `pricing/shipping.go`, with a test in `pricing/shipping_test.go`. It returns `10000 - subtotal` in cents, or zero at or above 100.00. The `pricing` package tests pass, and `gofmt` and `go vet` are clean.\n\nPer AGENTS.md, I also added a draft entry to `REQUIREMENTS.md`, `R-FREE-SHIPPING-GAP`, which lists the function and test. I chose that ID myself because you didn't name one. The entry doesn't refine a need, so I left that line out.\n\nFor the pull request:\n- **Existing entries:** I changed no code under any existing entry, so none is affected.\n- **Entries touched:** None of the entries I touched controls or refines a risk or threat. The only entry I touched is the new draft `R-FREE-SHIPPING-GAP`.\n- **Tests run:** `TestFreeShippingGap` and the full `./pricing` package."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 2,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 42978,
+  "edited": true,
+  "calls": 68,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 378.9
+ },
+ "usage": {
+  "input_tokens": 98,
+  "cache_creation_input_tokens": 193890,
+  "cache_read_input_tokens": 1082350,
+  "output_tokens": 43242
+ },
+ "cost": 0.071232,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

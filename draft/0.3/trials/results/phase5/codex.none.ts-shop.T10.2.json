@@ -1,0 +1,86 @@
+{
+ "run": "codex.none.ts-shop.T10.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff adds `serviceFee` to `Quote`. In `price()` the fee is 2.5% of the subtotal after discounts. Tax is still worked out on the discounted subtotal only, so the fee is not taxed. The fee is added to the total, and the payment charge follows the total. The tests check this: an existing checkout test and an existing pricing test were updated, and three new tests cover a discounted order (fee 45 on 1,800), half-up rounding (fee 3 on 100) and a tax-exempt customer (fee 25, tax 0). I checked the expected totals by hand and they add up. q2: The fee rate is an integer parts-per-million constant, `SERVICE_FEE_RATE_PPM = 25_000`. It is applied the same way as `Region.ratePpm`, with integer multiplication of cents and one `roundHalfUp(..., 1_000_000)` at the end. Discount codes are untouched, and no floating-point number is used in pricing.",
+  "cost": 0.0422126
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 74.2
+ },
+ "usage": {
+  "input_tokens": 247208,
+  "cached_input_tokens": 188544,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2782,
+  "reasoning_output_tokens": 189
+ },
+ "cost": 0.184747,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Added a 2.5% service fee to every checkout quote. It is calculated on the subtotal after discounts, rounded to the nearest cent, included in the order total and payment charge, and excluded from sales tax.\n\nUpdated the requirements and tests. The full suite passes: **39 tests**.",
+ "date": "2026-10-26"
+}

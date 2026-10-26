@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.ts-shop.T9.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "Yes on q1. The diff adds a new `OrderRateError` to `src/checkout.ts`, along with a private `admit` method that keeps a sliding window of order times for each account. `placeOrder` calls `admit` after the session and empty-cart checks but before pricing, stock reservation and the charge. Once an account has 3 orders less than ten minutes old, its fourth is refused before anything is charged. Refused attempts are not counted. Three new tests in `src/checkout.test.ts` check this. The first confirms a fourth order within ten minutes throws `OrderRateError`, with no gateway call and no change to stock or the audit log. The second confirms an order is allowed again once the oldest order is ten minutes old. The window logic gives the right result here: at 12:10 the 12:00 order is no longer counted. The third confirms the limit is kept per account. The counts live in memory, one set per process, which the agent pointed out. That is a limit on how far the mitigation reaches, but the diff still does what the user asked.",
+  "cost": 0.0516168
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5240,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 77.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 37311,
+  "cache_read_input_tokens": 424655,
+  "output_tokens": 15769,
+  "cost": 0.01959565
+ },
+ "cost": 0.019596,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 15,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "I added the order rate limit to checkout. An account's fourth order within ten minutes is now refused with `OrderRateError` before pricing, stock reservation, or charge. The full suite passes: 39 tests, the 36 existing plus 3 new. I did not commit.\n\n**What changed**\n- `src/checkout.ts`: a new `OrderRateError`, the constants `MAX_ORDERS_PER_WINDOW = 3` and `ORDER_WINDOW_MS` (10 minutes), and a private `admit` method. `placeOrder` calls `admit` after the session and empty-cart checks and before pricing, so nothing is reserved or charged on refusal.\n- `src/checkout.test.ts`: the test clock is now movable. Three new tests cover refusing the fourth order (the gateway is never called, and stock and audit are unchanged), a fourth order being allowed once the oldest of three is ten minutes old, and the count being kept per account. I also disabled the throw briefly: the three new tests failed, then I restored it.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-RATE`, `status: draft`, `refines: [N-ACCOUNT-SAFE]`, `controls: [THREAT-CARD-TESTING]`, linked to `placeOrder` and `admit` and to the three tests. I chose this ID; you did not name one.\n\n**Trace impact**\n- `R-CHECKOUT-ORDER` (linked to `placeOrder`) stays true. The gate runs before the price, reserve, charge, and confirm steps, and those keep their order. The empty-cart refusal is unchanged.\n- `R-CHECKOUT-SESSION` (linked to `placeOrder` and the session test) stays true. The session is still validated first.\n- Neither of those items controls a risk or threat, so changing this code did not need your sign-off first.\n- **For PR review:** `R-CHECKOUT-RATE` is a new item that controls `THREAT-CARD-TESTING`. It was previously uncontrolled.\n- Tests run: `npm test`, all 39 passing.\n\n**Decisions you may want to change**\n- The window is sliding. A fourth order is refused if three orders from that account are less than ten minutes old.\n- Any order that passes the session and non-empty-cart checks counts, even if the charge is later declined or stock runs out. Refused attempts do not count.\n- The counts are in memory, per process. They reset on restart and are not shared between instances. If the shop runs more than one instance, this does not mitigate the threat. A shared store would be needed.\n\n**Product trade-off:** a real customer who places four orders in ten minutes will now be refused. The limit is 3 per 10 minutes, so raise `MAX_ORDERS_PER_WINDOW` if that is too strict.",
+ "date": "2026-10-25"
+}

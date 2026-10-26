@@ -1,0 +1,80 @@
+{
+ "run": "claude.intent.ts-shop.T4.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6127,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 52.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 27909,
+  "cache_read_input_tokens": 321767,
+  "output_tokens": 9542,
+  "cost": 0.01357267
+ },
+ "cost": 0.013573,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` into `src/salestax.ts` and renamed it `salesTax`. All 36 tests pass, the same count as before the change. I did not commit.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private `roundHalfUp` helper, which had no other callers.\n- **`src/pricing.ts`**: the old function and helper are gone. `price` imports `salesTax` and keeps its behavior.\n- **`src/pricing.test.ts`**: imports `salesTax`, and the `describe` is renamed to `salesTax`. The tests stay in this file.\n- **`trace/requirements.yaml`**: I updated the `code:` and `tests:` pointers for R-TAX-RATE and R-TAX-EXEMPT to the new file and name. This is a traceability change, not a change to the item text. Please review it in the PR.\n- **`README.md`**: added a row for `src/salestax.ts` in the module table.\n\n**Trace items, per AGENTS.md**\n- **R-TAX-RATE** (refines N-FAIR-PRICE): linked to `salesTax` and `price`. The change keeps it true. Tests: `src/pricing.test.ts` \"salesTax > rounds half up to the cent\" and \"price > taxes the subtotal after discounts\".\n- **R-TAX-EXEMPT** (refines N-FAIR-PRICE): linked to `salesTax`. The change keeps it true. Test: `src/pricing.test.ts` \"salesTax > is zero for a tax-exempt customer\".\n- **Risk or threat items touched:** none. Neither item controls a risk, and neither refines an item that does, so I did not need to ask first. I left the risk-controlling items alone: R-CHARGE-AMOUNT, R-REFUND-LIMIT and R-LOGIN-LOCKOUT.\n\n**Limitations**\n- I could not parse the YAML with a parser because PyYAML isn't installed. I checked the edits by reading them, and they only change scalar values in existing lists.\n- I kept `Region` in `pricing.ts`. `salestax.ts` imports it as a type-only import, which avoids a runtime import cycle.\n- I did not rename the `tax` property on `Quote`, since you asked only about the function.",
+ "date": "2026-10-26"
+}

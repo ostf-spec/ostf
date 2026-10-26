@@ -1,0 +1,490 @@
+{
+ "run": "claude.none.go-shop.T12.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T12",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Clear to Cart in cart/cart.go that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 17.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 17535,
+    "cache_read_input_tokens": 86038,
+    "output_tokens": 1748,
+    "cost": 0.005242180000000001
+   },
+   "cost": 0.005242,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4826,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "finalMessage": "I added `Cart.Clear()` to `cart/cart.go`. It sets the lines to nil, so the cart is empty afterwards and can be reused. I also added `TestClear` in `cart/cart_test.go`. It checks that the cart is empty after clearing, that clearing an empty cart is safe, and that `Add` works again afterwards.\n\n`gofmt` and `go vet` are clean, `TestClear` passes, and the full `go test ./...` suite passes.\n\nREQUIREMENTS.md has no entry for clearing a cart, so I did not add a requirement ID or an `@req` tag. If you want this traced, I can add an entry such as `R-CART-CLEAR` and tag the method and test with it."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Preview to Checkout in cart/checkout.go that takes the same session token, cart and discount as PlaceOrder and returns the quote that PlaceOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 31.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 22620,
+    "cache_read_input_tokens": 146512,
+    "output_tokens": 5557,
+    "cost": 0.00876882
+   },
+   "cost": 0.008769,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3959,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/checkout.go",
+    "cart/checkout_test.go"
+   ],
+   "finalMessage": "I added `Checkout.Preview(token, c, d)` to `cart/checkout.go`. It returns the same `pricing.Quote` that `PlaceOrder` would charge, without reserving stock or charging. All tests pass, including the new ones, and `gofmt` and `go vet` are clean.\n\n- **Shared pricing:** the session check, empty-cart check and pricing now live in one private helper, `quote`. `PlaceOrder` and `Preview` both call it, so the preview can't drift from the charged amount. `PlaceOrder`'s behaviour is unchanged.\n- **Tests:** I added five to `cart/checkout_test.go`:\n  - The preview matches `PlaceOrder`'s quote for a discounted cart with tax. It checks the total against 20.70, which is 10% off and then 14.975% tax.\n  - Previewing leaves stock untouched and writes no audit entry, and a real `PlaceOrder` still succeeds afterwards.\n  - An unknown session returns `ErrNoSession`.\n  - An empty cart returns `ErrEmptyCart`.\n  - An expired discount returns `ErrDiscountExpired`.\n\nDecisions for you to review:\n- **Session refresh:** `Preview` goes through `Sessions.Validate`, which resets the 30-minute idle timer, as `PlaceOrder` does. This is a use of the session, not a stock or charge side effect, but say if you want previews to leave the timer alone.\n- **Stock not checked:** `Preview` does not check whether stock is available, so it can return a quote for an order that `PlaceOrder` would later reject for lack of stock. The quote itself doesn't depend on stock.\n- **Requirements:** `REQUIREMENTS.md` has no entry for preview, so the tests reuse `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION` and `R-DISCOUNT-EXPIRY`. I did not add a new requirement ID, since that's a product decision.\n\nI haven't committed anything."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Held to Stock in inventory/inventory.go that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 29.3
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 19582,
+    "cache_read_input_tokens": 171816,
+    "output_tokens": 3601,
+    "cost": 0.007436460000000001
+   },
+   "cost": 0.007436,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4659,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "inventory/inventory.go",
+    "inventory/inventory_test.go"
+   ],
+   "finalMessage": "I added `Stock.Held(sku string) int` to `inventory/inventory.go`. It returns the units of a SKU held by reservations that have not yet expired. The full test suite passes, and `gofmt` and `go vet` are clean.\n\n- **Code:** `Held` takes the lock and calls a new lock-free helper, `held`. `available` now computes `onHand - held`, so the hold arithmetic lives in one place. The existing `Available` behaviour is unchanged.\n- **Tests:** `TestHeld` and `TestHeldExpiresAndConfirms` in `inventory/inventory_test.go` cover no holds, several reservations on one SKU, an unknown SKU, release, expiry at the 15-minute boundary, and confirm. Both are tagged `@req D-RESERVATION-HOLD`.\n\nI did not update `REQUIREMENTS.md`. The `D-RESERVATION-HOLD` entry lists its code as `Stock.Confirm` and `Stock.available`, so you may want to add `Stock.Held` there."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Logout to Sessions in accounts/session.go that ends a session, so that validating its token afterwards fails with ErrNoSession. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 17.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 17456,
+    "cache_read_input_tokens": 57178,
+    "output_tokens": 2016,
+    "cost": 0.00507158
+   },
+   "cost": 0.005072,
+   "metrics": {
+    "calls": 3,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4861,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "accounts/session.go",
+    "accounts/session_test.go"
+   ],
+   "finalMessage": "I added `Sessions.Logout(token string) error` to `accounts/session.go`. After it runs, `Validate` on that token returns `ErrNoSession`. The full test suite passes, and gofmt and go vet are clean.\n\n- **Behavior:** `Logout` deletes the session. It returns `ErrNoSession` if the token isn't a live session, so a second logout of the same token also fails. I chose this over silently succeeding so callers can tell when a logout did nothing. If you'd rather make repeated logouts idempotent, that's a one-line change.\n- **Test:** `TestLogout` in `accounts/session_test.go` logs in twice, logs out one token, and checks that its validation fails with `ErrNoSession`, that a second logout fails with `ErrNoSession`, and that the other session still validates.\n- **Requirements:** REQUIREMENTS.md has no entry for logout, so I didn't add a requirement ID or an `@req` tag. If you want logout tracked as a requirement, tell me the ID and I'll add the entry and tag.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Total to AuditLog in payments/audit.go that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 23.4
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 17031,
+    "cache_read_input_tokens": 109293,
+    "output_tokens": 2202,
+    "cost": 0.00560113
+   },
+   "cost": 0.005601,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3980,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "payments/audit.go",
+    "payments/audit_test.go"
+   ],
+   "finalMessage": "I added `AuditLog.Total(account, action string) pricing.Money` to `payments/audit.go`. It sums the amounts of one account's entries for one action, and returns zero when nothing matches.\n\nThe method takes the same lock as `Append` and `Entries`, so it is safe for concurrent use. I added `TestAuditTotal` to `payments/audit_test.go`. It covers summing charges, summing refunds, ignoring other accounts, and returning zero for an unknown account or action. The new test passes, `go vet` and `gofmt` are clean, and the full `go test ./...` passes.\n\nNo requirement in REQUIREMENTS.md describes this method, so I left that file unchanged. Nothing is committed."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Expired to Discount in pricing/discount.go that reports whether the code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 21.3
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16601,
+    "cache_read_input_tokens": 82116,
+    "output_tokens": 2077,
+    "cost": 0.00518066
+   },
+   "cost": 0.005181,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3925,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/discount.go",
+    "pricing/discount_test.go"
+   ],
+   "finalMessage": "I added `Discount.Expired(now time.Time) bool` to `pricing/discount.go` and tested it. The full suite passes, and `gofmt` and `go vet` are clean.\n\n- **Method:** `Expired` returns `!now.Before(d.Expires)`, so a code counts as expired at its `Expires` instant, not just after it. This matches the existing check in `ApplyDiscount`.\n- **Refactor:** `ApplyDiscount` now calls `d.Expired(now)` instead of repeating the comparison, so the expiry rule lives in one place. Its behaviour is unchanged.\n- **Test:** `TestDiscountExpired` in `pricing/discount_test.go` covers one nanosecond before expiry (false), exactly at expiry (true), and an hour after (true).\n\nThe work is not committed. `R-DISCOUNT-EXPIRY` in `REQUIREMENTS.md` still points only at `ApplyDiscount` and its test, so you may want to add `Discount.Expired` to its code and test lines."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function ParseMoney to pricing/money.go that parses an amount such as 12.05 into Money and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 47.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 22,
+    "cache_creation_input_tokens": 22541,
+    "cache_read_input_tokens": 303183,
+    "output_tokens": 6703,
+    "cost": 0.01089373
+   },
+   "cost": 0.010894,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4202,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/money.go",
+    "pricing/money_test.go"
+   ],
+   "finalMessage": "I added `ParseMoney` to `pricing/money.go` and a table test for it. The full suite passes (`go vet` and `go test ./...` on all packages).\n\n**Behavior**\n- `ParseMoney(\"12.05\")` returns `Money(1205)`. `\"12.5\"` and `\"12\"` are also accepted.\n- Anything with more than two decimal places is rejected, e.g. `\"12.345\"`.\n- Malformed input is rejected with an error that wraps a new sentinel, `ErrInvalidMoney`, so callers can use `errors.Is`.\n\n**Choices I made that you may want to change**\n- **Negative amounts are accepted** with a leading `-`, because `Money` and `String()` already support them (`\"-3.10\"`). If you want only non-negative prices, that's a one-line check.\n- **Rejected inputs:** empty strings, `\"12.\"`, `\".5\"`, a leading `+`, whitespace, exponents, thousands separators, and values that overflow int64 cents. The overflow check is exact, so the largest accepted value is `92233720368547758.07`.\n\n**Requirements:** the function falls under R-MONEY-CENTS. I tagged `TestParseMoney` with `@req R-MONEY-CENTS` and added it and `ParseMoney` to that entry in `REQUIREMENTS.md`.\n\nI didn't commit anything."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a String method to Quote in pricing/quote.go that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 19.5
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16800,
+    "cache_read_input_tokens": 110767,
+    "output_tokens": 1708,
+    "cost": 0.00532267
+   },
+   "cost": 0.005323,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4210,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/quote.go",
+    "pricing/tax_test.go"
+   ],
+   "finalMessage": "I added a `String` method to `Quote` in `pricing/quote.go`, with a test in `pricing/tax_test.go`. The full test suite passes, and `gofmt` and `go vet` are clean.\n\n- **Method:** `Quote.String()` builds the text with `fmt.Sprintf` and formats each amount through `Money.String()`, so the cents formatting stays in one place (`R-MONEY-CENTS`). Output for the example is `subtotal 10.00, discount 1.00, tax 1.35, total 10.35`.\n- **Test:** `TestQuoteString` checks that exact output for a quote with those values.\n\nI didn't change any requirement entries in `REQUIREMENTS.md`, since none covers this formatting. I also didn't commit anything."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function RatePercent to pricing/tax.go that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 21.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 16927,
+    "cache_read_input_tokens": 81529,
+    "output_tokens": 2689,
+    "cost": 0.005545990000000001
+   },
+   "cost": 0.005546,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3788,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/tax.go",
+    "pricing/tax_test.go"
+   ],
+   "finalMessage": "I added `RatePercent` to `pricing/tax.go` and a test for it in `pricing/tax_test.go`. The new test passes, and `go test ./...` passes across all packages.\n\n```go\nfunc RatePercent(r Region) string\n```\n\nIt takes the region's `RatePPM` and returns the percentage with trailing zeros dropped, using integer arithmetic only, in line with D-RATES-PPM. Quebec's 149,750 ppm gives `\"14.975%\"`, 50,000 ppm gives `\"5%\"`, and 0 gives `\"0%\"`.\n\nThe test is `TestRatePercent`, a table covering 14.975%, 5%, 0%, the smallest non-zero rate (`\"0.0001%\"`), and a large value (`\"10000%\"`).\n\nI did not change `REQUIREMENTS.md`. No requirement asks for a percentage formatter, so I didn't add a code or test link for it under R-TAX-RATE."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function RegionByCode in a new file pricing/regions.go that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and an error for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 16.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 18025,
+    "cache_read_input_tokens": 57091,
+    "output_tokens": 2321,
+    "cost": 0.0053370100000000005
+   },
+   "cost": 0.005337,
+   "metrics": {
+    "calls": 4,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4731,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/regions.go",
+    "pricing/regions_test.go"
+   ],
+   "finalMessage": "I added `RegionByCode` in `pricing/regions.go` and tests in `pricing/regions_test.go`. The new test passes, and so does the full suite (`go test ./...`), with `gofmt` and `go vet` clean.\n\n```go\nfunc RegionByCode(code string) (Region, error)\n```\n\n- **QC**, **ON** and **AB** return `Region` values with `RatePPM` of 149_750, 130_000 and 50_000. These are the same parts-per-million form that `Region` and `Tax` already use, per D-RATES-PPM, so no floating point is involved.\n- **Any other code** returns the zero `Region` and an error that wraps a new sentinel, `ErrUnknownRegion`, the same pattern as `ErrDiscountExpired`. Callers can test it with `errors.Is`.\n\nI chose exact, case-sensitive matching, so `\"qc\"` and `\"QC \"` are rejected. That follows \"any other code\" literally. If you want lowercase or padded input accepted, that is a small change to normalise the code first.\n\nThe tests cover the three valid codes and a set of invalid ones: empty, `BC`, `qc`, `QC ` and `NY`. I did not edit `REQUIREMENTS.md`, since no requirement ID covers region lookup. Nothing is committed."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "pricing/tax_test.go"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  }
+ ],
+ "conflicts": 1,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 43141,
+  "edited": true,
+  "calls": 56,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 245.8
+ },
+ "usage": {
+  "input_tokens": 104,
+  "cache_creation_input_tokens": 185118,
+  "cache_read_input_tokens": 1205523,
+  "output_tokens": 30622
+ },
+ "cost": 0.064401,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

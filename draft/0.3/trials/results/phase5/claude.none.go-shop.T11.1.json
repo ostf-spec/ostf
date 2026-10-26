@@ -1,0 +1,79 @@
+{
+ "run": "claude.none.go-shop.T11.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1 is true. The answer says plainly that \"no automated tests cover that control.\" It also says there are no test files under deploy/ and no Terraform test files, and that none of the Go tests reference C-DB-ENCRYPTION. q2 is true. Under the heading \"Verification that does exist,\" the answer names V-INFRA-REVIEW by its ID. It describes it as the manual second-engineer review and staging apply for changes under deploy/, checked against the controls each file carries. That presents it as how C-DB-ENCRYPTION is actually verified.",
+  "cost": 0.018408599999999997
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 1,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3748,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 10.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 14644,
+  "cache_read_input_tokens": 55134,
+  "output_tokens": 1536,
+  "cost": 0.00424874
+ },
+ "cost": 0.004249,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/database.tf` to C-DB-ENCRYPTION, but no automated tests cover that control.\n\n**Link added:** In `REQUIREMENTS.md`, under `### C-DB-ENCRYPTION`, I added `- Code: \\`deploy/database.tf\\``. The file sets `storage_encrypted = true` and a KMS key with `rotation_period_in_days = 365` on the `aws_db_instance` and `aws_kms_key` resources, which matches the control's text.\n\n**Tests:** None. The repo has no test files under `deploy/` and no Terraform test files (`*.tftest.hcl` or similar). The only tests are the Go tests in `accounts`, `cart`, `inventory`, `payments` and `pricing`, and none of them reference C-DB-ENCRYPTION. I did not add a `Tests:` line because there is no test to point to.\n\n**Verification that does exist:** V-INFRA-REVIEW says a second engineer reviews every change under `deploy/` against the controls it carries, applies it to the staging account, and records the outcome in the release checklist. That is a manual review and staging apply, not a test.\n\n**Test run:** `go test ./...` passes for all five packages. Those results were cached, so they reflect the current code. I only changed a Markdown file, so nothing else needed re-testing.",
+ "date": "2026-10-26"
+}

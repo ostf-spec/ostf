@@ -1,0 +1,80 @@
+{
+ "run": "codex.intent.ts-shop.T4.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5517,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.1
+ },
+ "usage": {
+  "input_tokens": 237118,
+  "cached_input_tokens": 212224,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2483,
+  "reasoning_output_tokens": 371
+ },
+ "cost": 0.120773,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T4.2/repo/src/salestax.ts). Pricing, the tests, and the trace links now use the new name.\n\nR-TAX-RATE and R-TAX-EXEMPT remain true. Their verifying tests, `salesTax > rounds half up to the cent`, `salesTax > is zero for a tax-exempt customer`, and `price > taxes the subtotal after discounts`, pass. The full suite passes: 36 tests. No risk or threat control item was touched.",
+ "date": "2026-10-26"
+}

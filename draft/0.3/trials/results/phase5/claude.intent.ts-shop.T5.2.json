@@ -1,0 +1,98 @@
+{
+ "run": "claude.intent.ts-shop.T5.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff implements R-VOLUME-DISCOUNT as recorded. The new `volumeDiscount` function gives 5% off any line of 10 or more units, rounded down with Math.floor. Lines under 10 units get nothing. In `price()`, the volume discounts are added up first, and the discount code then applies to the subtotal minus the volume discount, so the volume discount comes \"before any discount code applies\". The combined discount is capped at 50% of the subtotal, so the volume discount counts toward the fifty percent cap. Checkout now passes the cart lines to `price()`. The new tests cover each part: the rounding, the under-10 case, the order of discounts (500 + 950 = 1450) and the cap (500 + 4750 = 5250, capped to 5000). I checked those numbers against the code and they are right. There is also an end-to-end checkout test for a 10-unit line.",
+  "cost": 0.0567568
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4348,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 93.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 42244,
+  "cache_read_input_tokens": 369102,
+  "output_tokens": 20071,
+  "cost": 0.022177520000000003
+ },
+ "cost": 0.022178,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.yaml",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 16,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented, and the suite passes: 41 tests, up from 36. I did not commit.\n\nI have no Jira access here, so I worked from the local mirror of SHOP-57, which is `R-VOLUME-DISCOUNT` (revision 2) in `trace.yaml`. Check that text against Jira before merging.\n\n**What changed**\n- `src/pricing.ts`: new `volumeDiscount(line)` gives 5% off a line of 10 or more units, rounded down to the cent. `price()` now takes cart lines instead of a subtotal. It takes the volume discounts first, then the code's percent of what is left, then caps the combined discount at 50% of the subtotal. Tax is charged after all discounts.\n- `src/checkout.ts`: passes the lines to `price()`.\n- `src/pricing.test.ts`: updated the existing `price` call; added tests for the per-line rule, the order of discounts, and the cap.\n- `src/checkout.test.ts`: added an end-to-end case for 10 units (discount 500, charge 10,923).\n- `trace.yaml`: added `code` and `tests` links to `R-VOLUME-DISCOUNT`. I did not change its text or revision.\n- `trace/requirements.yaml`: added `src/pricing.ts#price` and one test link to `R-DISCOUNT-CAP`, since the cap now also lives in `price()`.\n\n**Interpretations I chose**\n- The discount code's percent applies to the subtotal after the volume discount (\"before any discount code applies\").\n- The 50% cap applies to the combined volume and code discount, measured against the full subtotal.\n- Volume discount is 5% of `unitPrice × quantity` for the line, rounded down.\n\n**Linked items and whether they still hold**\n- `R-VOLUME-DISCOUNT`: implemented. Tests: `src/pricing.test.ts` (`volumeDiscount`, and the two new `price` tests) and `src/checkout.test.ts` (`charges the volume discount on a line of 10 units`).\n- `R-DISCOUNT-PERCENT` (linked to `applyDiscount`): **no longer exactly true.** Its text says the code takes its percent \"off the subtotal\". On carts with a 10+ unit line, the code now applies to the subtotal minus the volume discount. I did not rewrite the item. Please decide whether to amend it or accept the wording. Test: `src/pricing.test.ts#applyDiscount`.\n- `R-DISCOUNT-CAP` (linked to `applyDiscount` and now `price`): still true. Tests: `src/pricing.test.ts#applyDiscount > caps at fifty percent` and the new cap test under `price`.\n- `R-DISCOUNT-EXPIRY` (`applyDiscount`): still true. Test: `src/pricing.test.ts#applyDiscount > rejects an expired code`.\n- `R-TAX-RATE` (`price`): still true. Tax is on the subtotal after discounts. Test: `src/pricing.test.ts#price > taxes the subtotal after discounts`.\n- `R-CHECKOUT-ORDER` (`placeOrder`): still true. The cart is still priced before stock is reserved and the charge is made. Test: `src/checkout.test.ts#Checkout > places an order`.\n- `R-CHECKOUT-SESSION` (`placeOrder`): unchanged and still true. Test: `src/checkout.test.ts#Checkout > needs a valid session`.\n\n**Risk and threat items**\n- None of the changed code is linked to an item that controls a risk, or to an item that refines one. So I did not need to ask before changing it.\n- `R-DISCOUNT-CAP` is the closest. Its rationale is about losses from configuration errors, but it has no `controls` field. My change enforces the cap on the combined discount. Please have a reviewer look at that in the pull request.\n- `R-CHARGE-AMOUNT` (controls `RISK-WRONG-CHARGE`) is untouched. Totals can only go down, and they stay positive because the discount is at most half the subtotal.\n\n**No new items.** The behavior is covered by the existing SHOP-57 item, so I did not add a draft item.",
+ "date": "2026-10-26"
+}

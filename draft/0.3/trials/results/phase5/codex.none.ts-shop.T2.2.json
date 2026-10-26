@@ -1,0 +1,81 @@
+{
+ "run": "codex.none.ts-shop.T2.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "Yes. In `pricing.ts`, the diff works out the subtotal after discounts. Shipping is 0 when that amount is at least 10_000 cents (100.00) and 599 cents (5.99) otherwise. It adds `shipping` to the `Quote` and includes it in `total`. That matches the request. Checkout already charges the quote total, and the updated checkout tests show this: the receipt amount is now 2_899 for the ordinary order and 11_498 for the free-shipping order. The new and changed tests cover the edge cases: 9_999 pays shipping, exactly 10_000 ships free, a discount that brings the subtotal down to exactly 10_000 ships free, and a discount that brings it below 10_000 pays shipping. The tests also check that shipping is in the total and in the amount charged. The expected numbers are consistent with each other: 9_000 + 1_348 + 599 = 10_947, and 10_000 + 1_498 + 0 = 11_498.",
+  "cost": 0.0360328
+ },
+ "metrics": {
+  "calls": 22,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3562,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.0
+ },
+ "usage": {
+  "input_tokens": 236467,
+  "cached_input_tokens": 213760,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2906,
+  "reasoning_output_tokens": 281
+ },
+ "cost": 0.120036,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Shipping is now part of the order quote and checkout charge. Orders with a subtotal after discounts of at least 100.00 ship free; all others pay 5.99.\n\nI added tests for the threshold, discounts, and the amount charged at checkout. `npm test` passes: 38 tests.",
+ "date": "2026-10-26"
+}

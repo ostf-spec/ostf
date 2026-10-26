@@ -1,0 +1,70 @@
+{
+ "run": "claude.rules.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4091,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 20443,
+  "cache_read_input_tokens": 137752,
+  "output_tokens": 5217,
+  "cost": 0.00807582
+ },
+ "cost": 0.008076,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I renamed `Tax` to `SalesTax` and moved it into `pricing/salestax.go`. `go vet` is clean and `go test ./...` passes in all five packages. I didn't commit anything.\n\n**Changes**\n- `pricing/salestax.go` (new): `SalesTax`, same body and doc comment.\n- `pricing/tax.go`: keeps only `Region`.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt` and the file name, so the test references in REQUIREMENTS.md still resolve.\n\n**REQUIREMENTS.md entries** (I left the file unchanged, as AGENTS.md requires)\n- **R-TAX-RATE** (refines N-FAIR-PRICE; not a risk or threat control): code `Price` in `pricing/quote.go` and `Tax` in `pricing/tax.go`. Behavior is unchanged. The `Tax` code reference is now false: the function is `SalesTax` in `pricing/salestax.go`. Tests `TestPrice` and `TestTax` pass.\n- **R-TAX-EXEMPT** (refines N-FAIR-PRICE; not a risk or threat control): code `Tax` in `pricing/tax.go`. Same situation: behavior is unchanged, but the reference is now false. Test `TestTaxExempt` passes.\n- **D-RATES-PPM** (refines R-MONEY-CENTS): lists `Region` in `pricing/tax.go`. `Region` did not move, so it stays true.\n\nNo entry I touched controls or refines a risk or threat, so I did not need to ask first. No new entry was needed, since this is a rename and not new behavior.\n\n**Needs your decision:** R-TAX-RATE and R-TAX-EXEMPT now point at a function that no longer exists at that location. I didn't edit them, because AGENTS.md says to report such changes rather than rewrite the entries. Someone should update their code references (`SalesTax` in `pricing/salestax.go`) in the pull request.",
+ "date": "2026-10-26"
+}

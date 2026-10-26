@@ -1,0 +1,98 @@
+{
+ "run": "claude.full.ts-shop.T2.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "listsAddedItem": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the item it added (R-SHIPPING-FEE) by its ID?"
+  },
+  "reason": "q1 is true. The diff adds `shipping(afterDiscount)` to `src/pricing.ts`. It returns 0 when the subtotal after discounts is at least 10,000 cents and 599 otherwise. `price()` works the shipping out from the discounted subtotal, keeps it out of the tax, and adds it to the total, which is what the user asked for. New tests check the 100.00 boundary, that shipping is added to the total but not the tax, and checkout with orders on both sides of the threshold. The existing expectations were updated to match, and the figures agree with a 14.975% tax rate: 2,000 + 300 + 599 = 2,899, and 10,000 + 1,498 = 11,498. q2 is true. The final answer names R-SHIPPING-FEE several times, as a new draft item, and lists the tests linked to it.",
+  "cost": 0.0490846
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 2,
+  "checkCalls": 5,
+  "traceOutputTokens": 14332,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 97.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 54761,
+  "cache_read_input_tokens": 612072,
+  "output_tokens": 17782,
+  "cost": 0.025966720000000006
+ },
+ "cost": 0.025967,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 14,
+ "changedSymbols": 14,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout and included in the order total. Orders with a subtotal after discounts of at least 100.00 ship free, and all others pay 5.99. The full suite passes (40 tests, 4 of them new), and `ostf check --base main` exits 0 with no warnings. I haven't committed anything.\n\n**Choices I made that you should confirm**\n- **Shipping is not taxed.** You didn't say either way. I kept it out of the tax base so the existing sales-tax rule stays as written.\n- **The threshold uses the subtotal after discounts, before tax.** A 110.00 cart with a 10% code is 99.00 after discount, so it pays 5.99.\n\n**Changes**\n- `src/pricing.ts`: new `shipping()`, `SHIPPING_FEE` and `FREE_SHIPPING_MIN` constants. `Quote` gains a `shipping` field, and `price()` adds it to `total`. Tax is still computed on the discounted subtotal alone.\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE`, `status: draft`, refines `N-FAIR-PRICE`, with code `src/pricing.ts#shipping` and four tests.\n- Tests:\n  - New: shipping fee under 100.00, free at 100.00 and above, shipping added to the total but not the tax, and a checkout test with both cases (2,899 for a 20.00 order, 11,498 for a 100.00 order).\n  - Updated: `places an order` total moves from 2,300 to 2,899, and the `price` expectation now includes shipping (total 10,947).\n- `README.md`: the `pricing.ts` row now mentions shipping.\n\n**Trace items**\n- **Kept true:** `R-TAX-RATE` (tax is still on the subtotal after discounts) and `R-CHECKOUT-ORDER` (checkout still prices, reserves, charges, then confirms). Its test `places an order` changed expectation, as noted above.\n- **New item `R-SHIPPING-FEE` (draft):** its four tests are `shipping > charges the flat fee under 100.00`, `shipping > ships free at 100.00 and above`, `price > adds shipping to the total but not to the tax`, and `Checkout > charges shipping in the order total`. I didn't change `R-SHIPPING-FEE`'s draft status.\n- **Pre-existing, not mine:** `ostf` reports `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` as unlinked. Neither has code or tests.\n\n**Risk-relevant items**\n- I touched no risk-relevant code. `payments.ts`, `refunds.ts` and `accounts.ts` are unchanged.\n- The shipping fee does flow into the charge, which `R-CHARGE-AMOUNT` caps at 10,000.00. A total within 5.99 of that cap, after tax, will now be rejected. Orders that large already exceed the cap at a 14.975% tax rate for subtotals above about 8,700.00, so this is an edge case, but it is a change to a risk control's behaviour. Someone should review it in the pull request.",
+ "date": "2026-10-26"
+}

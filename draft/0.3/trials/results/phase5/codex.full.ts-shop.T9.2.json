@@ -1,0 +1,93 @@
+{
+ "run": "codex.full.ts-shop.T9.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff in src/checkout.ts adds a new `OrderRateLimitError`. It also keeps a per-account list of recent attempt times inside the Checkout instance. Before pricing, reserving stock or charging, it drops attempts older than ten minutes and throws if three or more remain. So the fourth order within ten minutes is refused before anything is charged, which is what the user asked for. The attempt is recorded before the charge, so declined charges count too. That fits the card-testing threat. The diff also adds two tests. The first checks that the fourth order throws `OrderRateLimitError`, that the gateway was charged only three times, and that stock and audit were untouched. It also checks that another account is not blocked and that orders work again once ten minutes have passed. The second checks that declined charges count toward the limit. Two limits don't change the answer. The limit is held in one instance's memory. The trace file change the answer mentions does not appear in this diff. Neither affects whether the code mitigates the threat and is tested.",
+  "cost": 0.061252
+ },
+ "metrics": {
+  "calls": 28,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 8,
+  "contextCalls": 1,
+  "checkCalls": 4,
+  "traceOutputTokens": 12230,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 185.0
+ },
+ "usage": {
+  "input_tokens": 540962,
+  "cached_input_tokens": 488832,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 7125,
+  "reasoning_output_tokens": 2287
+ },
+ "cost": 0.296146,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now throws `OrderRateLimitError` on a fourth payment-reaching attempt from the same account within a rolling ten minutes, before calling the gateway. Declined charges count, so they cannot be used for repeated card testing. The new draft, risk-relevant control `C-CHECKOUT-ORDER-LIMIT` is linked to `THREAT-CARD-TESTING` in [trace/threats.yaml](/tmp/ostf-trials/phase5/codex.full.ts-shop.T9.2/repo/trace/threats.yaml).\n\nAll 38 tests pass, and `ostf check --base main` reports no errors. The trace check lists `C-CHECKOUT-ORDER-LIMIT`, `R-CHECKOUT-ORDER`, and `R-CHECKOUT-SESSION`; the change keeps each true. Its listed checkout tests are “places an order,” “needs a valid session,” “refuses a fourth order from one account within ten minutes before charging,” and “counts declined charges toward the limit.”\n\nThe attempt history lives in the `Checkout` instance, so a deployment with multiple instances would need a shared store to enforce one limit across them.",
+ "providerAttempts": [],
+ "date": "2026-10-26"
+}

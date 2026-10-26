@@ -1,0 +1,84 @@
+{
+ "run": "claude.intent.go-shop.T11.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/network.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-TLS-ONLY is verified?"
+  },
+  "reason": "q1: The answer says \"No tests cover it.\" It also says that `deploy/` is not exercised by any test and that the `go test ./...` tests don't cover this file. So it clearly tells the user that no automated test covers deploy/network.tf. q2: The answer names V-INFRA-REVIEW by its ID. It says this item verifies C-TLS-ONLY through a manual review of `deploy/` changes before each release, so it is presented as the way the control is verified.",
+  "cost": 0.0169886
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4123,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 18079,
+  "cache_read_input_tokens": 131765,
+  "output_tokens": 4015,
+  "cost": 0.00694215
+ },
+ "cost": 0.006942,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/network.tf` to C-TLS-ONLY. No tests cover it.\n\n**The link:** C-TLS-ONLY is defined in `trace/threats.yaml`, not `trace.yaml`. I added one line to that item:\n\n```yaml\n    code: [deploy/network.tf]\n```\n\nThe diff touches nothing else, and the item text is unchanged. I used the bare file path because this is Terraform and has no symbol. The other `code:` entries use `file#Symbol`, so tell me if your tooling expects something else. I did not commit.\n\n**Tests:** None. C-TLS-ONLY has no `tests:` field, no test references it, and `deploy/` is not exercised by any test (the README says so). The only linked item is V-INFRA-REVIEW, which verifies C-TLS-ONLY through a manual review of `deploy/` changes before each release. That is a process check, not an automated test.\n\n**Does the control still hold?** Reading `deploy/network.tf`, yes:\n- The port 443 listener is HTTPS with `ELBSecurityPolicy-TLS13-1-2-2021-06`, which allows only TLS 1.2 and 1.3.\n- The port 80 listener only redirects (HTTP 301) to HTTPS on 443.\n\nI checked this by reading the file. I did not run Terraform.\n\n**Items for review:**\n- **C-TLS-ONLY** is the item I touched. It controls THREAT-EAVESDROP, a threat, so the reviewer should look at this link.\n- I did not change any code linked to a risk or threat control, so I did not need to ask first.\n\n**Checks:** `go test ./...` passes. None of those tests cover this file. I could not validate the YAML because `pyyaml` is not installed here. The edit matches the indentation of the neighboring lines.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.go-shop.T9.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new error, `ErrTooManyOrders`, and a per-account check, `recordAttempt`, that keeps attempt timestamps under a mutex. `PlaceOrder` calls it after the session and empty-cart checks and before pricing, reserving stock or charging. With `MaxOrdersPerWindow = 3` and `OrderWindow = 10 * time.Minute`, a fourth attempt within ten minutes is refused before anything is charged, which is what the user asked for. The new test `TestPlaceOrderRateLimit` uses a controlled clock. It checks that the fourth attempt returns `ErrTooManyOrders`, that no audit or charge entry and no stock reservation happen for the refused attempt, that an attempt just inside the window is still refused, and that an order succeeds once the window has passed. So the diff both implements the mitigation and adds a test that checks it.",
+  "cost": 0.043192799999999996
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4063,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 75.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 32,
+  "cache_creation_input_tokens": 34077,
+  "cache_read_input_tokens": 547898,
+  "output_tokens": 13563,
+  "cost": 0.01907908
+ },
+ "cost": 0.019079,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The card-testing limit is in place. A fourth order attempt from the same account within ten minutes now returns `ErrTooManyOrders` before pricing, stock reservation or charging. All packages pass `go test ./...`, and `go vet` is clean.\n\n**What changed**\n- `cart/checkout.go`: `PlaceOrder` calls a new `recordAttempt` after the session and empty-cart checks and before pricing. It keeps per-account attempt timestamps in memory, under a mutex. Constants `MaxOrdersPerWindow = 3` and `OrderWindow = 10 * time.Minute` hold the limits.\n- `cart/checkout_test.go`: new `TestPlaceOrderRateLimit`. It checks that the fourth attempt fails with `ErrTooManyOrders`, that it adds no audit entry and reserves no stock, that it is still refused just inside the window, and that it succeeds once the window has passed.\n- `REQUIREMENTS.md`: new draft entry `R-ORDER-RATE`, with `Controls: THREAT-CARD-TESTING`, listing the code and `TestPlaceOrderRateLimit`. No existing entry was rewritten.\n\n**Interpretation choices**\n- I count attempts, not successful orders. A card-testing run is mostly declined charges, so counting only successes would not limit it.\n- A refused attempt is not counted, so the window reopens ten minutes after the third accepted attempt.\n- Empty-cart calls are not counted.\n\n**Entries for review**\n- `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` list `Checkout.PlaceOrder`, the code I changed. Both remain true: the session is still checked first, and the price, reserve, charge, confirm order holds for successful orders. Their tests `TestPlaceOrder` and `TestPlaceOrderNeedsSession` pass. Neither controls or refines a risk or threat, so I did not need to ask first.\n- `R-ORDER-RATE` is new and controls `THREAT-CARD-TESTING`. It is draft and needs review in the pull request.\n\n**Limits of this mitigation**\n- The count lives in process memory. With several server instances, each one enforces its own limit, and a restart resets it.\n- The limit is per account. An attacker who uses many accounts is not covered by this change.\n- No commit or PR was made.",
+ "date": "2026-10-26"
+}

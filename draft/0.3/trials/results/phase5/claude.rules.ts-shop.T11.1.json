@@ -1,0 +1,79 @@
+{
+ "run": "claude.rules.ts-shop.T11.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says plainly that no test covers C-DB-ENCRYPTION. It also quotes the README saying deploy/ is Terraform \"which no test runs\", and notes that nothing in src/ references deploy/. Together these tell the user that no automated test covers deploy/database.tf or can run it. q2: The answer says the only verification listed for this control is V-INFRA-REVIEW, and describes it as a manual release review of changes under deploy/. That names it by ID as how C-DB-ENCRYPTION is verified.",
+  "cost": 0.016568600000000003
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3894,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 20.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 17986,
+  "cache_read_input_tokens": 141215,
+  "output_tokens": 3310,
+  "cost": 0.006665549999999999
+ },
+ "cost": 0.006666,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added the link to REQUIREMENTS.md, and no test covers `C-DB-ENCRYPTION`.\n\n**Change:** Under `C-DB-ENCRYPTION` I added `- Code: \\`deploy/database.tf\\`` after its `Controls:` line. That is the only change; `deploy/database.tf` is untouched.\n\n**Tests:** None. Nothing in `src/` references the control or `deploy/`, and `README.md` says `deploy/` is \"Terraform for the database and the load balancer, which no test runs.\" The only verification listed for this control is `V-INFRA-REVIEW`, a manual release review of changes under `deploy/`, not a test. Because the entry has no tests and I changed no code, there was nothing to run.\n\n**Entries touched, for the PR reviewer:**\n- `C-DB-ENCRYPTION`: this entry controls `THREAT-DB-SNAPSHOT`, so it falls under the rule about risk and threat controls. I added a link to its code and did not change its text. From reading `deploy/database.tf`, the text still holds: `storage_encrypted = true`, a customer-managed KMS key, and `enable_key_rotation` with a 365-day period. I did not verify that against a live AWS account.\n- `THREAT-DB-SNAPSHOT`: not edited; it is referenced by the control I changed.\n\nNothing in the entry became false, so there was nothing to report under that rule. I did not commit the change.",
+ "date": "2026-10-26"
+}

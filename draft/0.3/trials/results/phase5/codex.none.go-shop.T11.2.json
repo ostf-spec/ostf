@@ -1,0 +1,78 @@
+{
+ "run": "codex.none.go-shop.T11.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "review",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says \"No automated test specifically covers this control.\" The control is the one deploy/database.tf carries, so this tells the user that no automated test covers the file. The word \"specifically\" softens it a little. Mentioning that the Go suite passes doesn't claim those tests cover the Terraform file. q2: The answer names V-INFRA-REVIEW by its ID as the control's listed verification and describes it (review of deployment changes plus a staging apply before release). That clearly identifies it as how C-DB-ENCRYPTION is verified.",
+  "cost": 0.0164886
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 1543,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 42.0
+ },
+ "usage": {
+  "input_tokens": 142242,
+  "cached_input_tokens": 103936,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1235,
+  "reasoning_output_tokens": 161
+ },
+ "cost": 0.111359,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Linked `deploy/database.tf` to C-DB-ENCRYPTION in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.none.go-shop.T11.2/repo/REQUIREMENTS.md:284).\n\nNo automated test specifically covers this control. Its listed verification is **V-INFRA-REVIEW**, a review of deployment changes and a staging apply before release. The Go suite passes (`go test ./...`).",
+ "date": "2026-10-26"
+}

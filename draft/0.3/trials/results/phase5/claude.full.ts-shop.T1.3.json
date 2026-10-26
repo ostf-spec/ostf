@@ -1,0 +1,97 @@
+{
+ "run": "claude.full.ts-shop.T1.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "explain",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": false,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-AUDIT-MONEY": true,
+   "item:R-CHARGE-AMOUNT": true,
+   "item:R-CHARGE-DECLINE": true,
+   "item:R-IDEMPOTENT-CHARGE": true,
+   "test:appends an audit entry": true,
+   "test:does not remember a declined charge": true,
+   "test:returns the first receipt on retry": true,
+   "test:refunds to the original transaction": false,
+   "test:accepts one cent and the maximum": true,
+   "test:rejects amounts out of range": true
+  },
+  "questions": {
+   "item:R-AUDIT-MONEY": "Does the final answer explain that src/payments.ts#Processor.charge exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-AMOUNT": "Does the final answer explain that src/payments.ts#Processor.charge exists because of R-CHARGE-AMOUNT (Charge amount), which states: \"A charge must be more than zero and at most 10,000.00. Any other amount is rejected before the payment gateway is called.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-DECLINE": "Does the final answer explain that src/payments.ts#Processor.charge exists because of R-CHARGE-DECLINE (Declined charge), which states: \"A declined charge returns an error with the gateway's reason and is not stored under its idempotency key, so the customer can retry with the same key.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-IDEMPOTENT-CHARGE": "Does the final answer explain that src/payments.ts#Processor.charge exists because of R-IDEMPOTENT-CHARGE (Idempotent charge), which states: \"A retry with the same idempotency key returns the first receipt without creating a second charge.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:appends an audit entry": "Does the final answer name the test `appends an audit entry` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:does not remember a declined charge": "Does the final answer name the test `does not remember a declined charge` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:returns the first receipt on retry": "Does the final answer name the test `returns the first receipt on retry` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:accepts one cent and the maximum": "Does the final answer name the test `accepts one cent and the maximum` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:rejects amounts out of range": "Does the final answer name the test `rejects amounts out of range` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer gives four reasons the function exists, and each one matches a requirement. It validates the amount, rejecting zero, negative and over-10,000.00 amounts before the gateway is called (R-CHARGE-AMOUNT). It returns the first receipt on a retry with the same key without calling the gateway again (R-IDEMPOTENT-CHARGE). It removes a declined charge's key so the customer can retry with that key (R-CHARGE-DECLINE). It appends a charge entry to the audit log and says this supports R-AUDIT-MONEY, though it does not list the entry's fields. It names these tests: 'returns the first receipt on retry', 'does not remember a declined charge', 'appends an audit entry', 'rejects amounts out of range' and 'accepts one cent and the maximum'. It mentions src/refunds.test.ts only as a file and never names the test 'refunds to the original transaction', so q8 is false.",
+  "cost": 0.035791
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "contextCalls": 1,
+  "checkCalls": 0,
+  "traceOutputTokens": 4831,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 16782,
+  "cache_read_input_tokens": 100445,
+  "output_tokens": 2929,
+  "cost": 0.00582635
+ },
+ "cost": 0.005826,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Why `Processor.charge` exists:** it is the single entry point that moves money to a customer's card through the payment gateway. It does four things (`src/payments.ts:83-101`):\n\n1. **Validates the amount.** It calls `validateAmount`, so zero, negative, fractional-cent, or over-10,000.00 amounts are rejected before the gateway is called.\n2. **Makes charges idempotent.** A retry with the same key returns the first receipt without calling the gateway again. Reusing a key with a different account or amount throws `KeyReusedError`. This is the `@req R-IDEMPOTENT-CHARGE` behavior.\n3. **Records the result.** On success it stores the receipt by ID and appends a `charge` entry to the audit log.\n4. **Handles declines.** If the gateway declines, the key is removed from the store, so the customer can retry with the same key (`R-CHARGE-DECLINE`).\n\nIts only production caller is `Checkout.placeOrder` (`src/checkout.ts:59`), which passes the order total under the checkout's idempotency key. If the charge fails, checkout releases the stock hold.\n\n**Tests that cover it:**\n\nDirectly, in `src/payments.test.ts`:\n- `Processor > returns the first receipt on retry`: the gateway is called once for two identical charges, and both return the same receipt. This is tagged `@req R-IDEMPOTENT-CHARGE`.\n- `Processor > rejects a reused key with another amount`: checks the `KeyReusedError` path. The design item `D-IDEMPOTENCY-STORE` points here.\n- `Processor > does not remember a declined charge`: a decline is followed by a successful retry under the same key. This is tagged `@req R-CHARGE-DECLINE`.\n- `Processor > appends an audit entry`: checks the audit record for a charge. This supports `R-AUDIT-MONEY`.\n\nIndirectly:\n- `validateAmount > rejects amounts out of range` and `validateAmount > accepts one cent and the maximum` cover the amount check that `charge` calls. The `R-CHARGE-AMOUNT` item lists these as its tests. Nothing in `payments.test.ts` calls `Processor.charge` with an out-of-range amount, so that path is only covered by the `validateAmount` tests.\n- `src/checkout.test.ts` exercises `charge` through checkout, including `releases stock when the charge is declined`.\n- `src/refunds.test.ts` calls `charge` to set up refund scenarios.\n\nI did not change any files. I used `ostf context` for the traceability links and read the source and tests directly.",
+ "date": "2026-10-26"
+}

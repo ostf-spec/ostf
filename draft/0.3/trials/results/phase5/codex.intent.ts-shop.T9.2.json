@@ -1,0 +1,91 @@
+{
+ "run": "codex.intent.ts-shop.T9.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `OrderRateLimitError` and per-account tracking of order attempts in `Checkout`. On each attempt, `placeOrder` first drops timestamps older than ten minutes. If three or more remain, it throws before reserving stock or calling `payments.charge`, so a fourth order within ten minutes is refused before anything is charged. The attempt is recorded before the charge, so declined charges also count, which fits the card-testing threat. The check and the push happen with no `await` in between, so concurrent calls can't slip past the limit. New tests confirm that the fourth attempt throws `OrderRateLimitError`. They also check that the gateway was charged only three times, that the audit log and stock are unchanged, that accounts are limited separately, that the window expires after ten minutes, and that declined charges count. The diff does what was asked and tests it.",
+  "cost": 0.0456328
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4244,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 129.8
+ },
+ "usage": {
+  "input_tokens": 322680,
+  "cached_input_tokens": 277632,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5518,
+  "reasoning_output_tokens": 1895
+ },
+ "cost": 0.219752,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 13,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now throws `OrderRateLimitError` on a fourth attempt from the same account within a rolling ten minutes, before calling the payment gateway. Declined charges count toward the limit, which addresses the card testing threat. The new draft control is in [trace/threats.yaml](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T9.2/repo/trace/threats.yaml).\n\nLinked items: **C-CHECKOUT-RATE-LIMIT** controls **THREAT-CARD-TESTING**. The change keeps **R-CHECKOUT-ORDER**, **R-CHECKOUT-SESSION**, and **R-STOCK-RELEASE** true. The [checkout tests](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T9.2/repo/src/checkout.test.ts) cover the fourth attempt before charging, account separation, window expiry, declined charges, and the existing order, session, and stock release behavior. `npm test`: 39 passed.",
+ "date": "2026-10-26"
+}

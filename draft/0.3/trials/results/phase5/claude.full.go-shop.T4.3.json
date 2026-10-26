@@ -1,0 +1,82 @@
+{
+ "run": "claude.full.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 2,
+  "contextCalls": 2,
+  "checkCalls": 2,
+  "traceOutputTokens": 6472,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 25198,
+  "cache_read_input_tokens": 193374,
+  "output_tokens": 6576,
+  "cost": 0.01026294
+ },
+ "cost": 0.010263,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 4,
+ "changedSymbols": 4,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "The function is renamed to `DiscountAmount` and moved to `pricing/discountamount.go`. Tests pass, and `ostf check --base main` exits 0. Nothing is committed.\n\n**Changes**\n- `pricing/discountamount.go` (new): `DiscountAmount` with its doc comment and `// @req R-DISCOUNT-EXPIRY`, unchanged apart from the name.\n- `pricing/discount.go`: the function is removed, along with the `fmt` import that only it used. `Discount`, `MaxDiscountPercent` and `ErrDiscountExpired` stay here.\n- `pricing/quote.go`: `Price` calls `DiscountAmount`.\n- `pricing/discount_test.go`: calls use `DiscountAmount`. I kept the test name `TestApplyDiscount`, because the trace items link to it and the rename was only for the function.\n- `trace/requirements.yaml`: the `code:` links for R-DISCOUNT-PERCENT and R-DISCOUNT-CAP now point to `pricing/discountamount.go#DiscountAmount`. Item text is unchanged. Without this, `ostf check` fails on the broken link.\n\n**Verification**\n- `gofmt -l pricing` is clean, `go vet ./pricing/` passes, and `go test ./...` passes in all packages.\n- `ostf check --base main` exits 0. Its only message is the existing info line about R-ORDER-NOTE and R-VOLUME-DISCOUNT having no links, which was there before my change.\n\n**Trace items**\n- **R-DISCOUNT-PERCENT**: still true. The code is the same, only moved and renamed.\n- **R-DISCOUNT-CAP**: still true. Its code link and verification now point to the new location. This is the item with the rationale about configuration errors. It is not marked risk-relevant, since no `controls:` link ties it to a RISK item. Please confirm that reading.\n- **R-DISCOUNT-EXPIRY**: still true. Its verification is `TestApplyDiscount/rejects_expired`, unchanged.\n- **R-TAX-RATE**: still true. `Price` now calls the renamed function, and its tests are `TestPrice` and `TestTax`, both passing.\n- **Risk-relevant items touched**: none. No item typed `risk` and no item with a `controls:` link was affected.\n\n**Left alone**\n- `trace.derived` is tracked in git and still mentions `pricing/discount.go#ApplyDiscount`. I did not regenerate it, because `ostf` has no command for that. It will need regenerating if you rely on it.",
+ "date": "2026-10-26"
+}

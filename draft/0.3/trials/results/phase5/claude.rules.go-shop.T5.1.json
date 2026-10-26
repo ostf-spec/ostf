@@ -1,0 +1,87 @@
+{
+ "run": "claude.rules.go-shop.T5.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what R-VOLUME-DISCOUNT asks. In `pricing/volume.go`, `VolumeDiscount` takes 5% off each line with 10 or more units. Integer division on each line's amount rounds it down to the cent, one line at a time. `Price` subtracts the volume discount first, then applies the discount code to what is left, so the volume discount comes before any code. It then caps volume plus code together at `MaxDiscountPercent` (50%) of the subtotal, so the volume discount counts toward the cap. `PlaceOrder` now passes the cart lines to `Price`, so the charged amount includes the volume discount. There are new tests for each part. `TestVolumeDiscount` checks 9 versus 10 units, rounding down and per-line rounding. `TestPriceVolume` checks that the code applies after the volume discount and that the cap covers both. `TestPlaceOrderVolumeDiscount` checks the amount charged at checkout.",
+  "cost": 0.056032799999999994
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4085,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 89.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 40540,
+  "cache_read_input_tokens": 435125,
+  "output_tokens": 18624,
+  "cost": 0.02177365
+ },
+ "cost": 0.021774,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "pricing/volume.go",
+  "pricing/volume_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented as requirement R-VOLUME-DISCOUNT. The full suite passes uncached with `go test -count=1 ./...`, and `gofmt` and `go vet` are clean. Nothing is committed.\n\n**Behaviour**\n- A cart line with 10 or more units takes 5% off its own price, rounded down to the cent per line (`pricing/volume.go`).\n- The discount code applies to the subtotal after the volume discount, since the requirement says the volume discount applies \"before any discount code\".\n- Volume plus code together are capped at 50% of the cart subtotal, enforced in `Price` (`pricing/quote.go`).\n- `Price` now takes the cart's lines instead of a subtotal, and `PlaceOrder` passes them in (`cart/checkout.go`). Charges therefore reflect the volume discount.\n\n**Requirement entries**\n- **R-VOLUME-DISCOUNT**: I added Code and Tests lines, which the entry lacked. It refines nothing and controls no risk or threat, so no approval was needed. The file has no status field, so I did not add one.\n- **R-DISCOUNT-CAP**: I added `Price` to its code and `TestPriceVolume/volume_counts_toward_cap` to its tests, because the cap now applies to volume plus code. The entry still holds. It refines N-FAIR-PRICE only.\n- **R-DISCOUNT-PERCENT** (\"takes its percentage off the subtotal\"): this is now imprecise. The code takes its percentage off the subtotal after the volume discount, which is the reading I chose. I did not rewrite the entry. Please decide whether the entry should say \"after the volume discount\", or whether the code should use the full subtotal.\n- **R-TAX-RATE, R-CART-SUBTOTAL, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION**: their code changed (`Price`, `Cart.Subtotal` is unchanged, `PlaceOrder`), but the text still holds and their tests pass. None of them controls or refines a risk or threat, so no approval was needed.\n- No entry that controls a risk or threat was touched. `Processor.Charge` and `ValidateAmount` were not changed.\n\n**Tests**\n- `TestVolumeDiscount` and `TestPriceVolume` in `pricing/volume_test.go`, and `TestPlaceOrderVolumeDiscount` in `cart/checkout_test.go` are new.\n- `TestPrice` in `pricing/tax_test.go` was updated only for the new `Price` signature.\n\nFor review, the pull request should name the entries above and the tests in `pricing` and `cart`.",
+ "date": "2026-10-25"
+}

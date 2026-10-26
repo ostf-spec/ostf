@@ -1,0 +1,81 @@
+{
+ "run": "claude.full.ts-shop.T4.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 3,
+  "checkCalls": 4,
+  "traceOutputTokens": 8572,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 57.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 31516,
+  "cache_read_input_tokens": 391012,
+  "output_tokens": 9713,
+  "cost": 0.015072420000000003
+ },
+ "cost": 0.015072,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "The function is now `salesTax` in `src/salestax.ts`, and all 36 tests pass. `ostf check --base main` exits 0 with no errors.\n\n**Changes**\n- **`src/salestax.ts`** (new): contains `salesTax` and its private helper `roundHalfUp`, moved unchanged. The only other user of `roundHalfUp` was `tax`, so it moved with it.\n- **`src/pricing.ts`**: imports `salesTax` and calls it from `price()`. I renamed the local `salesTax` variable in `price()` to `taxAmount`, since it would otherwise shadow the import. `Region` stays here, so `salestax.ts` imports it as a type only.\n- **`src/pricing.test.ts`**: imports `salesTax` from `./salestax.ts` and calls it. I kept the `describe(\"tax\")` label because trace links name those tests.\n- **`trace/requirements.yaml`**: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point at `src/salestax.ts#salesTax`. The first check run failed on the old `src/pricing.ts#tax` link, which is why this changed. I did not touch any item text.\n\n**Trace items (root `trace.yaml`, which includes `trace/*.yaml`)**\n- **R-TAX-RATE**: still true. `salesTax` is charged on the post-discount subtotal, rounded half up. Tests still listed: `pricing.test.ts#tax > rounds half up to the cent` and `pricing.test.ts#price > taxes the subtotal after discounts`.\n- **R-TAX-EXEMPT**: still true. Exempt customers get zero tax. Test still listed: `pricing.test.ts#tax > is zero for a tax-exempt customer`.\n- **D-RATES-PPM**: still true. It links `src/pricing.ts#Region`, which did not move.\n- **Risk-relevant items**: none touched. The tax items have no `controls:` and aren't risk items. `price()` feeds checkout's charge, but its behavior is unchanged, and R-CHARGE-AMOUNT lives in `payments.ts`, which I did not edit.\n\n**Things to know**\n- `ostf check` marks the new `salesTax` links \"uncorroborated\". `trace.derived` still records coverage for the old `tax` symbol. I didn't regenerate it, because I don't know which command produces it. Regenerating it would likely clear the marks.\n- The two `UNLINKED` notes (R-ORDER-NOTE, R-VOLUME-DISCOUNT) were already there before my change.\n- Nothing is committed. The working tree has the modified `pricing.ts`, `pricing.test.ts` and `requirements.yaml`, plus the new `salestax.ts`.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,83 @@
+{
+ "run": "codex.intent.ts-shop.T11.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "review",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says plainly that \"No automated test is linked to this control.\" It also says that the 36 tests from `npm test` \"do not verify database encryption.\" Together, these tell the user that no automated test covers the Terraform file's control. q2: The answer names V-INFRA-REVIEW by its ID as the listed verification for C-DB-ENCRYPTION. It also describes it as a second-engineer review and staging check before release.",
+  "cost": 0.0161326
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3821,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 39.3
+ },
+ "usage": {
+  "input_tokens": 183826,
+  "cached_input_tokens": 164736,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1454,
+  "reasoning_output_tokens": 358
+ },
+ "cost": 0.089247,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Linked [deploy/database.tf](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T11.1/repo/deploy/database.tf) to **C-DB-ENCRYPTION** in [trace/threats.yaml](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T11.1/repo/trace/threats.yaml:35). The change only adds a trace link; it leaves the control and Terraform behavior unchanged. C-DB-ENCRYPTION controls **THREAT-DB-SNAPSHOT**, so it should be reviewed in the pull request.\n\n**No automated test is linked to this control.** Its listed verification is **V-INFRA-REVIEW**, a second-engineer review and staging check before release. I ran `npm test`: all 36 tests passed, but they do not verify database encryption.",
+ "date": "2026-10-26"
+}

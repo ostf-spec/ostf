@@ -1,0 +1,89 @@
+{
+ "run": "claude.none.go-shop.T7.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer says ApplyDiscount, the changed function, implements R-DISCOUNT-CAP, R-DISCOUNT-PERCENT and R-DISCOUNT-EXPIRY, so it links all three to the changed code. It says outright that the cap logic is preserved. For PERCENT and EXPIRY it gives no item-by-item verdict. It does say the change has no effect on behavior and that pricing output stays the same, which means those two still hold. It also reports that rejects_expired passes. On tests, it names TestApplyDiscount and its subtests caps_at_fifty_percent and rejects_expired as relevant, and reports running them and seeing them pass.",
+  "cost": 0.0257038
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3539,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 16396,
+  "cache_read_input_tokens": 108028,
+  "output_tokens": 2508,
+  "cost": 0.0056144800000000016
+ },
+ "cost": 0.005614,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The uncommitted change in `pricing/discount.go` is a refactor. It replaces `percent := min(d.Percent, MaxDiscountPercent)` with an explicit `if` that clamps `percent` to `MaxDiscountPercent` (50). For `int64` values the result is identical to the builtin `min`, including negative and zero percentages, so pricing output does not change.\n\n**What it touches:**\n- `ApplyDiscount` is the only changed function. Its one caller is `pricing/quote.go:19`, used during quoting and checkout.\n- It implements R-DISCOUNT-CAP (no discount over 50%), R-DISCOUNT-PERCENT, and R-DISCOUNT-EXPIRY. The cap logic is preserved.\n\n**Tests run (uncached, `-count=1`):**\n- `go test ./...` passes in all five packages: accounts, cart, inventory, payments, pricing.\n- In `pricing`, `TestApplyDiscount` and its subtests pass: `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent` (R-DISCOUNT-CAP), and `rejects_expired` (R-DISCOUNT-EXPIRY). `TestPrice`, `TestTax`, `TestTaxExempt`, and `TestMoneyString` also pass.\n- In `cart`, `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, and `TestPlaceOrderReleasesStockOnDecline` pass, covering the checkout path that calls `ApplyDiscount` through `Price`.\n\nThe explicit `if` avoids the builtin `min`, which needs Go 1.21 or later. If the module targets an older Go version, this may be the reason for the change. I didn't check `go.mod` to confirm that.",
+ "date": "2026-10-25"
+}

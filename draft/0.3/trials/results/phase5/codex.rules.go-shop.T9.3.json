@@ -1,0 +1,80 @@
+{
+ "run": "codex.rules.go-shop.T9.3",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a `MaxProducts = 50` constant and a new `ErrTooManyProducts` error. In `Add`, it checks `len(c.lines) >= MaxProducts` after the branch that merges into an existing line and before the append. So a 51st different product is rejected before anything changes, and adding more units of a product already in the cart still works. The new test `TestAddRejectsTooManyProducts` fills the cart with 50 products and checks that the 51st returns `ErrTooManyProducts`. It also confirms the lines are the same as before the failed add, and that merging into an existing product at the limit still succeeds. That covers the mitigation the user asked for and tests it.",
+  "cost": 0.0261208
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3315,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 75.1
+ },
+ "usage": {
+  "input_tokens": 216277,
+  "cached_input_tokens": 196864,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2633,
+  "reasoning_output_tokens": 519
+ },
+ "cost": 0.109719,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/cart.go",
+  "cart/cart_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The cart now accepts at most **50 different products**. Adding a 51st returns the new `ErrTooManyProducts` error and leaves the cart unchanged. Adding units of a product already in the cart still works.\n\nI added the draft control **C-CART-PRODUCT-LIMIT** for **THREAT-OVERSIZED-CART** in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.rules.go-shop.T9.3/repo/REQUIREMENTS.md). The changes keep **R-CART-ADD** and **R-CART-QTY** true.\n\nThe listed tests `TestAddMergesLines`, `TestAddRejectsBadQuantity`, and `TestAddRejectsTooManyProducts` pass. `go test ./...` also passes.",
+ "date": "2026-10-26"
+}

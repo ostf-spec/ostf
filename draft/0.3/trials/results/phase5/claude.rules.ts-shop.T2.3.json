@@ -1,0 +1,83 @@
+{
+ "run": "claude.rules.ts-shop.T2.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds an optional `giftWrap` flag to `Checkout.placeOrder`, which defaults to false, and passes it through to `price()`. `price()` adds `GIFT_WRAP_FEE = 450` cents once per order, after tax is worked out on the discounted subtotal. So the fee is not taxed and is added to the total. The quote has a new `giftWrap` field and the amount charged comes from the total. Two new tests check this: a pricing test (10,000 − 1,000 + 1,348 tax + 450 = 10,798) and a checkout test that asserts tax 300, wrap 450, and both total and receipt amount 2,750. The existing pricing assertion was updated for the new field. The change does what the user asked and is tested.",
+  "cost": 0.039896799999999996
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3757,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 55.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 35131,
+  "cache_read_input_tokens": 294651,
+  "output_tokens": 11547,
+  "cost": 0.01574801
+ },
+ "cost": 0.015748,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Gift wrapping is in checkout. A customer can ask for it when placing an order, and it adds 4.50 to the total without tax. All 38 tests pass (36 existing, 2 new). I haven't committed.\n\n**How it works**\n- `placeOrder` takes an optional `giftWrap` flag, which defaults to false, so existing callers are unchanged.\n- `price()` in `src/pricing.ts` adds `GIFT_WRAP_FEE = 450` cents after tax, so the fee is never taxed or discounted. The quote gets a new `giftWrap` field, and the total and the amount charged both include it.\n\n**Tests**\n- `price > adds the gift wrap fee untaxed`: a 10,000 subtotal with a 10% code gives tax 1,348, wrap 450, total 10,798.\n- `Checkout > adds gift wrap to the order total`: a 2,000 cart gives total and charged amount 2,750.\n- I also added `giftWrap: 0` to the existing `price` assertion, since the quote shape changed.\n\n**REQUIREMENTS.md**\n- New entry R-GIFT-WRAP, status `draft`, refining N-BUY, listing `GIFT_WRAP_FEE`, `price` and `Checkout.placeOrder` with the two new tests.\n- The existing entries had no status line, so the `Status:` line is new in this file.\n\n**Entries touched (for the PR reviewer)**\n- **R-TAX-RATE** (`price`): still true. Tax is still charged on the subtotal after discounts, and the wrap fee is not in that base. Its test `price > taxes the subtotal after discounts` was updated for the new field.\n- **R-CHECKOUT-ORDER** (`placeOrder`): still true. Order of pricing, reserving, charging and confirming is unchanged. `places an order` passes.\n- **R-CHECKOUT-SESSION** (`placeOrder`): still true. `needs a valid session` passes.\n- **Risk or threat controls, or refinements of them:** none of the entries I changed controls a risk or threat or refines one that does, so I didn't need to stop and ask.\n- **R-CHARGE-AMOUNT** (controls RISK-WRONG-CHARGE) is not changed. Its input can now include the 450 fee, but `payments.ts` is untouched and the charge still goes through `validateAmount`. Worth a look in review.\n\n**Not changed:** R-ORDER-NOTE has no code or tests listed, and checkout has no note support. I left it alone.",
+ "date": "2026-10-26"
+}

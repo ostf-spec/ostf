@@ -1,0 +1,78 @@
+{
+ "run": "codex.intent.ts-shop.T4.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5889,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 47.0
+ },
+ "usage": {
+  "input_tokens": 200838,
+  "cached_input_tokens": 177152,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2715,
+  "reasoning_output_tokens": 540
+ },
+ "cost": 0.115352,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Moved `tax` from [pricing.ts](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T4.1/repo/src/pricing.ts) to [salestax.ts](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T4.1/repo/src/salestax.ts) as `salesTax`. Updated the pricing call, tests, and requirement links. `npm test` passes: 36 tests.\n\nThe changed code links to **R-TAX-RATE** and **R-TAX-EXEMPT**; both remain true. Their linked tests are `salesTax > rounds half up to the cent` and `price > taxes the subtotal after discounts`, with tax exemption checked by `salesTax > is zero for a tax-exempt customer`. No risk or threat control item was touched.",
+ "date": "2026-10-25"
+}

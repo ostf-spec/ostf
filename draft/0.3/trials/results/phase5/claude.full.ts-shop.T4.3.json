@@ -1,0 +1,81 @@
+{
+ "run": "claude.full.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "contextCalls": 2,
+  "checkCalls": 3,
+  "traceOutputTokens": 8408,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 51.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 34025,
+  "cache_read_input_tokens": 222673,
+  "output_tokens": 10523,
+  "cost": 0.014294830000000001
+ },
+ "cost": 0.014295,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 13,
+ "changedSymbols": 13,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "I moved `applyDiscount` to `src/discount.ts` and renamed it `discountAmount`. All 36 tests pass, and `ostf check --base main` exits 0. Nothing is committed.\n\n**Changes**\n- **`src/discount.ts`** (new): holds `discountAmount`, with its doc comment and `// @req R-DISCOUNT-EXPIRY` line moved over unchanged.\n- **`src/pricing.ts`**: imports `discountAmount` and `price()` calls it. `Discount`, `MAX_DISCOUNT_PERCENT` and `DiscountExpiredError` stay here, so `checkout.ts` needs no change.\n- **`src/pricing.test.ts`**: imports `discountAmount` from `./discount.ts`. The describe block is renamed to `discountAmount`, which changes the test IDs in the trace.\n- **`trace/requirements.yaml`**: only the `code:` and `tests:` link paths changed for R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY. Item text is untouched.\n\n**Trace items**\n- **R-DISCOUNT-PERCENT**: still true. Its code is now `src/discount.ts#discountAmount`, and its test is `src/pricing.test.ts#discountAmount`.\n- **R-DISCOUNT-CAP**: still true. Its test is `src/pricing.test.ts#discountAmount > caps at fifty percent`.\n- **R-DISCOUNT-EXPIRY**: still true. Its test is `src/pricing.test.ts#discountAmount > rejects an expired code`.\n- **R-TAX-RATE**: untouched and still true. It links `src/pricing.ts#price` and `tax`, and its tests are unchanged.\n- No other items were touched.\n\n**Risk-relevant items:** none of the three discount items carries a `controls:` link to a RISK item, so none is risk-relevant by the field. R-DISCOUNT-CAP's rationale does describe the wrong-charge scenario, so you may want a reviewer to look at it in the pull request. I did not touch any RISK-linked item (R-CHARGE-AMOUNT, R-REFUND-LIMIT, R-LOGIN-LOCKOUT).\n\n**Things to know**\n- `pricing.ts` and `discount.ts` now import each other. This works because neither uses the other's exports at module load, and the smoke import of both succeeds. If you'd rather avoid the cycle, `DiscountExpiredError` and `Discount` could move into `discount.ts` as well, but I kept the change to the function you asked for.\n- `trace.derived` still refers to `applyDiscount`. I did not regenerate it because I don't know the command that produces it.\n- `ostf check` reports the two existing unlinked items, R-ORDER-NOTE and R-VOLUME-DISCOUNT. That was already the case before my change.",
+ "date": "2026-10-26"
+}

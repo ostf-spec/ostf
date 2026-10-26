@@ -1,0 +1,70 @@
+{
+ "run": "codex.none.go-shop.T4.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3384,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 51.3
+ },
+ "usage": {
+  "input_tokens": 136449,
+  "cached_input_tokens": 102784,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2058,
+  "reasoning_output_tokens": 133
+ },
+ "cost": 0.109797,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `ApplyDiscount` to `DiscountAmount` and moved it to [pricing/discountamount.go](/tmp/ostf-trials/phase5/codex.none.go-shop.T4.3/repo/pricing/discountamount.go). I updated the caller, tests, and requirement references. The discount behavior is unchanged, and `go test ./...` passes.",
+ "date": "2026-10-26"
+}

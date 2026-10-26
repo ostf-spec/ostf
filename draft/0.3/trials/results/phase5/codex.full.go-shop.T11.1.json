@@ -1,0 +1,87 @@
+{
+ "run": "codex.full.go-shop.T11.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "review",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {
+  "saysNoTest": false
+ },
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "For q1, the answer has a \"Tests:\" section that says \"None are listed for this control.\" It then says the only verification is a review and staging procedure, not a test. Together these tell the user that no automated test covers the file. It does say \"listed\" rather than stating outright that no test exists, but the meaning is still clear. For q2, the answer names V-INFRA-REVIEW by its ID as the listed verification for C-DB-ENCRYPTION and describes it as a review and staging procedure. That matches Infrastructure review.",
+  "cost": 0.018964599999999998
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 16,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 13,
+  "contextCalls": 2,
+  "checkCalls": 3,
+  "traceOutputTokens": 2869,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.9
+ },
+ "usage": {
+  "input_tokens": 206037,
+  "cached_input_tokens": 173824,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1460,
+  "reasoning_output_tokens": 296
+ },
+ "cost": 0.116751,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Linked [deploy/database.tf](/tmp/ostf-trials/phase5/codex.full.go-shop.T11.1/repo/deploy/database.tf) to `C-DB-ENCRYPTION` in [trace/threats.yaml](/tmp/ostf-trials/phase5/codex.full.go-shop.T11.1/repo/trace/threats.yaml:28). `ostf check --base main` passes and confirms the new link.\n\n**Tests:** None are listed for this control. Its listed verification is `V-INFRA-REVIEW`, a review and staging procedure.\n\nThe trace also names `THREAT-DB-SNAPSHOT` as the threat this control addresses. This link-only change keeps `C-DB-ENCRYPTION`, `THREAT-DB-SNAPSHOT`, and `V-INFRA-REVIEW` true; it does not change the database configuration.",
+ "date": "2026-10-26"
+}

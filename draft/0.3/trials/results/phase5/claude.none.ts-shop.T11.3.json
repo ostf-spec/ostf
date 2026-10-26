@@ -1,0 +1,80 @@
+{
+ "run": "claude.none.ts-shop.T11.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noCodeChanged": false,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/network.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-TLS-ONLY is verified?"
+  },
+  "reason": "q1: The final answer says \"no automated test covers it.\" It also says no test touches TLS, HTTPS or `deploy/`, and that the README says `deploy/` is not run by any test. That tells the user that no automated test covers or runs the file. q2: The answer names V-INFRA-REVIEW by its ID as the only verification for C-TLS-ONLY. It also describes it as a manual review plus a staging apply before each release.",
+  "cost": 0.0163406
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4450,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17376,
+  "cache_read_input_tokens": 82691,
+  "output_tokens": 2830,
+  "cost": 0.0057179100000000005
+ },
+ "cost": 0.005718,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "deploy/network.tf"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**C-TLS-ONLY is linked to `deploy/network.tf`, but no automated test covers it.** Its only verification is the manual infrastructure review, V-INFRA-REVIEW.\n\n**What I changed**\n- `REQUIREMENTS.md`: added `- Code: \\`deploy/network.tf\\`` under C-TLS-ONLY. C-TLS-ONLY had no Code entry before, so the file was not linked from the requirement.\n- `deploy/network.tf`: added a comment under the header naming C-TLS-ONLY, so the link also works from the file side.\n\n**Does the file meet the control?** Yes, on reading:\n- The HTTPS listener on port 443 uses `ELBSecurityPolicy-TLS13-1-2-2021-06`, which allows TLS 1.2 and 1.3 only.\n- The HTTP listener on port 80 returns a 301 redirect to HTTPS on port 443.\n\nI have not applied the Terraform or checked it against AWS.\n\n**Tests covering it:** none. `package.json` runs `node --test` over the `src/` test files, and none of them touch TLS, HTTPS, or `deploy/`. The README also says `deploy/` is not run by any test. The `npm test` run after my edits passed 36 of 36, but that run does not exercise this control.\n\n**Gap:** C-TLS-ONLY is verified only by V-INFRA-REVIEW, which is a manual review and a staging apply before each release. If you want an automated check, a `terraform validate` or policy-as-code check on `deploy/network.tf` would need a tool and a test entry that the repo does not have yet. I did not add one.",
+ "date": "2026-10-26"
+}

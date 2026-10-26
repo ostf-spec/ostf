@@ -1,0 +1,82 @@
+{
+ "run": "codex.none.ts-shop.T2.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "implement",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. `placeOrder` takes an optional `giftWrap` flag, which defaults to false, and passes it to `price`. `price` adds a flat 450-cent fee (`GIFT_WRAP_FEE`) once per order. The fee is not part of the taxed amount, since tax is still worked out on subtotal minus discount. It is added to the total, shown in the quote, and recorded on the order. The charge uses the quote total, so the customer pays the fee. New tests cover this: in pricing.test.ts, a quote with wrapping shows the same tax as before and the total rises by exactly 450. In checkout.test.ts, a wrapped order is checked for its quote, receipt amount and audit amount, and an existing test now checks that orders without wrapping have no fee. The final answer also says the project requirements were updated, but no such file change appears in the diff. That claim doesn't affect this judgment, which is about the code.",
+  "cost": 0.0380688
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6145,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 104.9
+ },
+ "usage": {
+  "input_tokens": 324720,
+  "cached_input_tokens": 294144,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3420,
+  "reasoning_output_tokens": 390
+ },
+ "cost": 0.158081,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Gift wrapping is available as an optional choice when placing an order. It adds **$4.50 once per order** to the total and charge, without increasing sales tax. The order and quote record the choice and fee.\n\nUpdated the project requirements and tested checkout with and without wrapping. `npm test` passes all 38 tests.",
+ "date": "2026-10-26"
+}

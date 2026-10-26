@@ -1,0 +1,91 @@
+{
+ "run": "claude.intent.go-shop.T7.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All six are true. Under \"Trace items linked to the changed code\", the final answer lists R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY. It ties each one to ApplyDiscount, either through the code link or the @req tag, and says each is \"still true\". It also lists the tests it ran as relevant: `go test ./pricing/ -run TestApplyDiscount -v`, with the subtests caps_at_fifty_percent and rejects_expired named. Those same tests are repeated next to the trace items they cover.",
+  "cost": 0.0232358
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3963,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 19325,
+  "cache_read_input_tokens": 105917,
+  "output_tokens": 4109,
+  "cost": 0.00697967
+ },
+ "cost": 0.00698,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The uncommitted change in `pricing/discount.go` replaces `min(d.Percent, MaxDiscountPercent)` with an explicit `if`. For `int64` values the two forms are identical, including for negative percents, so the cap and rounding work the same as on `main`. Nothing else in the repo changed.\n\n**Tests run (all pass):**\n- `go test ./pricing/ -run TestApplyDiscount -v`: `takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent`, `rejects_expired`\n- `go test ./pricing/ -run 'TestPrice|TestTax' -v`: `TestPrice` covers `ApplyDiscount` through `Price` in `pricing/quote.go`\n- `go test ./...`: accounts, cart, inventory, payments, pricing all `ok`\n- `go vet ./...`: clean\n\n**Trace items linked to the changed code** (`trace/requirements.yaml`):\n- **R-DISCOUNT-PERCENT** (`code: pricing/discount.go#ApplyDiscount`, test `TestApplyDiscount`): still true.\n- **R-DISCOUNT-CAP** (`code: pricing/discount.go#ApplyDiscount`, test `TestApplyDiscount/caps_at_fifty_percent`): still true. It refines N-FAIR-PRICE, a need, and carries no `controls` field, so the ask-first rule does not apply. Its rationale does mention a 100%-typo risk, so you may want a reviewer to look at that.\n- **R-DISCOUNT-EXPIRY** (`@req` on `ApplyDiscount`, test `rejects_expired`): code path unchanged, still true.\n- **R-TAX-RATE** and **D-RATES-PPM** are not linked to `ApplyDiscount` directly, but they consume its output through `Price`. Their tests pass and their behavior is unchanged.\n\n**Risk or threat items touched:** none. The change does not touch code linked to R-CHARGE-AMOUNT (RISK-WRONG-CHARGE) or R-REFUND-LIMIT (RISK-REFUND-ABUSE), and no item in the chain refines a risk-controlling item.\n\n**Pre-existing gap, not introduced here:** a negative `Percent` is not guarded, so a negative code would raise the price. This is the same on `main`. You may want a follow-up item or a guard, but I haven't changed anything.\n\nI did not commit the change.",
+ "date": "2026-10-26"
+}

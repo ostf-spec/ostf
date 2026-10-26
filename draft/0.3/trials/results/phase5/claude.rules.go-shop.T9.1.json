@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.go-shop.T9.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `ErrTooManyOrders` and an `admit` check in `PlaceOrder`. The check runs after the session and empty-cart checks and before pricing, stock reservation and the charge. It keeps a mutex-guarded list of admitted attempt times for each account, read from the injected `Now` clock. When three attempts fall within the 10-minute window, it refuses the order. So a fourth order inside ten minutes fails before anything is charged. The new `TestPlaceOrderRateLimit` places three orders, then tries a fourth one second before the window ends. It checks that the fourth fails with `ErrTooManyOrders`, that no audit or charge entry was added, and that no stock was reserved. It also checks that a different account is unaffected and that the first account is allowed again once the window has passed. The diff therefore implements the requested mitigation and adds a test that checks it.",
+  "cost": 0.0467048
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3591,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 79.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 32924,
+  "cache_read_input_tokens": 328202,
+  "output_tokens": 15594,
+  "cost": 0.01766582
+ },
+ "cost": 0.017666,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added the per-account order limit to checkout. A fourth order from the same account within ten minutes now fails with `ErrTooManyOrders` before any stock is reserved or charged. The full test suite passes, including the new test under `-race`. Nothing is committed.\n\n**Change**\n- `cart/checkout.go`: `PlaceOrder` calls a new `admit` method after the session and empty-cart checks and before pricing, reservation, and charge. `admit` keeps a per-account list of admitted attempt times under a mutex, using the existing `Now` clock. It refuses when three attempts fall inside the window. Refused attempts aren't recorded, so the window doesn't extend while an account is refused. Declined charges still count, since card testing relies on declines.\n- `cart/checkout_test.go`: `TestPlaceOrderRateLimit` checks four things. The fourth order is refused with no audit entry and no stock held. A second account is unaffected. The first account is admitted again exactly at ten minutes.\n- `REQUIREMENTS.md`: new entry `R-ORDER-RATE: Order rate limit`, status draft, refining N-ACCOUNT-SAFE and controlling THREAT-CARD-TESTING. It lists `Checkout.PlaceOrder` and `Checkout.admit` as code and `TestPlaceOrderRateLimit` as its test.\n\n**Entries and code, per AGENTS.md**\n- `Checkout.PlaceOrder` is listed under R-CHECKOUT-ORDER and R-CHECKOUT-SESSION. My change keeps both true: the new check runs before the charge sequence and does not reorder it.\n- Neither of those two entries controls or refines a risk or threat, so the ask-first rule did not apply to `PlaceOrder`. The new entry is the only one that touches the threat.\n- Tests for those entries (`TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderReleasesStockOnDecline`) are unchanged and pass.\n- Entry touched that controls a threat: **R-ORDER-RATE** (new, draft). This needs review in the pull request.\n- `D-CLOCK` (injected clock) is still true, since the limiter reads `Now`.\n\n**Limits to review**\n- The count is in memory, per `Checkout` instance. It resets on restart and isn't shared across instances, so a multi-instance deployment would allow up to three orders per instance.\n- An attempt is counted once admitted, even if pricing or stock reservation fails afterwards.\n- Accounts with no recent orders keep an empty map entry. This is a small, bounded leak per account.",
+ "date": "2026-10-25"
+}

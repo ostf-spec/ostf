@@ -1,0 +1,82 @@
+{
+ "run": "claude.full.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 2,
+  "checkCalls": 3,
+  "traceOutputTokens": 6776,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 33.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 25332,
+  "cache_read_input_tokens": 235424,
+  "output_tokens": 5808,
+  "cost": 0.010326440000000001
+ },
+ "cost": 0.010326,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "I moved `Tax` to `SalesTax` in its own file, `pricing/salestax.go`. The build, `go vet`, and `go test ./...` all pass, and `ostf check --base main` exits 0, same as before the change.\n\n**What changed**\n- `pricing/salestax.go` (new): `SalesTax` with its doc comment and body, unchanged except for the name.\n- `pricing/tax.go`: keeps only the `Region` type, which `D-RATES-PPM` links to.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls and failure messages use `SalesTax`. I kept the test names `TestTax` and `TestTaxExempt` because the trace links to them.\n- `trace/requirements.yaml`: the `code:` links for `R-TAX-RATE` and `R-TAX-EXEMPT` now point to `pricing/salestax.go#SalesTax`. Without this, `ostf check` would fail on the moved symbol. Only the link changed, not the item text.\n\n**Trace items**\n- `R-TAX-RATE` and `R-TAX-EXEMPT` (refine `N-FAIR-PRICE`): still true. Their behavior is unchanged, and their tests `TestTax`, `TestTaxExempt`, and `TestPrice` still pass.\n- `D-RATES-PPM` (linked to `pricing/tax.go#Region`): still true, since `Region` did not move.\n- Risk-relevant items: none touched. No item that controls a `RISK-*` item is affected.\n\n**Not done**\n- `trace.derived` still mentions `pricing/tax.go#Tax`. It looks like a generated file and I found no command to regenerate it, so I left it alone. It will need regenerating.\n- I did not commit.",
+ "date": "2026-10-26"
+}

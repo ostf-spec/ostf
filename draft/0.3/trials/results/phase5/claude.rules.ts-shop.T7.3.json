@@ -1,0 +1,87 @@
+{
+ "run": "claude.rules.ts-shop.T7.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-TAX-EXEMPT": true,
+   "item:R-TAX-RATE": true,
+   "test:taxes the subtotal after discounts": true,
+   "test:is zero for a tax-exempt customer": true,
+   "test:rounds half up to the cent": true
+  },
+  "questions": {
+   "item:R-TAX-EXEMPT": "Does the final answer name R-TAX-EXEMPT (Tax exemption) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-TAX-RATE": "Does the final answer name R-TAX-RATE (Sales tax) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:taxes the subtotal after discounts": "Does the final answer name the test `taxes the subtotal after discounts` as one that matters for the change, run or to be run?",
+   "test:is zero for a tax-exempt customer": "Does the final answer name the test `is zero for a tax-exempt customer` as one that matters for the change, run or to be run?",
+   "test:rounds half up to the cent": "Does the final answer name the test `rounds half up to the cent` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All five are yes. Under \"Impact on requirements\", the final answer names R-TAX-EXEMPT and links it to `tax`, the function that changed, and says the change keeps it true. It does the same for R-TAX-RATE, linking it to `tax` and `price` in `src/pricing.ts`. It also lists the tests that matter for the change: `price > taxes the subtotal after discounts` and `tax > rounds half up to the cent` for R-TAX-RATE, and `tax > is zero for a tax-exempt customer` for R-TAX-EXEMPT. It says these were run as part of `npm test` and the `pricing.test.ts` run, so all three named tests count as ones that matter.",
+  "cost": 0.022432
+ },
+ "metrics": {
+  "calls": 8,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4132,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 19797,
+  "cache_read_input_tokens": 155170,
+  "output_tokens": 4921,
+  "cost": 0.007973
+ },
+ "cost": 0.007973,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The uncommitted change is a behavior-neutral refactor of `tax()` in `src/pricing.ts`. Tests pass.\n\n**What changed**\n- The guard is reordered from `exempt || amount <= 0` to `amount <= 0 || exempt`. Both branches return `0` and neither has side effects, so the result is the same for every input.\n- The product `amount * r.ratePpm` is pulled into a local `ppm` before `roundHalfUp(ppm, 1_000_000)`. The arithmetic is identical.\n\n**Impact on requirements** (I read `REQUIREMENTS.md` and made no code changes)\n- **R-TAX-RATE** (Sales tax, refines N-FAIR-PRICE): code is `tax` and `price` in `src/pricing.ts`. The change keeps it true. Tests: `price > taxes the subtotal after discounts` and `tax > rounds half up to the cent`.\n- **R-TAX-EXEMPT** (Tax exemption, refines N-FAIR-PRICE): code is `tax`. The change keeps it true. Test: `tax > is zero for a tax-exempt customer`.\n- **D-RATES-PPM** (Rates in parts per million, refines R-MONEY-CENTS): lists only `Region` as code, but the integer ppm arithmetic it describes lives in `tax`. The change keeps it true. No test is listed for this entry.\n- **R-MONEY-CENTS** and **N-FAIR-PRICE**: not directly changed, but they are in the same area.\n\nNone of the touched entries controls a risk or threat, and none refines one. The only risk-controlling entry in this area is R-CHARGE-AMOUNT (controls RISK-WRONG-CHARGE), which lives in `src/payments.ts` and is untouched. So no entry needs your sign-off under the AGENTS.md rules. Your PR reviewer should still see the entries above.\n\n**Tests run**\n- `npm test` (`node --test`): 36 tests, 36 pass, 0 fail, exit 0.\n- `pricing.test.ts` alone: 7 tests, 7 pass.\n\nTest gap: nothing covers a negative amount passed to `tax()`. The `amount <= 0` guard is unchanged in effect, so this is not a regression, but it is untested.\n\nNothing has been committed.",
+ "date": "2026-10-26"
+}

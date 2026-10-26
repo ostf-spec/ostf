@@ -1,0 +1,93 @@
+{
+ "run": "claude.full.ts-shop.T9.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `OrderLimitError` and a private `admit` method. `placeOrder` calls `admit` after the session and empty-cart checks and before pricing, stock reservation and charging. `admit` keeps a sliding ten-minute window of attempts for each account. It throws once three attempts are already recorded, so the fourth order within ten minutes is refused before anything is charged. The check and the count run with no await between them. A new test places three orders, then asserts that the fourth is rejected with `OrderLimitError`. It also asserts that the audit log shows no new charge and that no stock was reserved. Finally, it moves the injected clock forward and checks that a later order succeeds. The boundary arithmetic holds: the first attempt falls out of the window at exactly ORDER_WINDOW_MS. So the diff implements the requested mitigation and adds a test that checks it.",
+  "cost": 0.0457888
+ },
+ "metrics": {
+  "calls": 22,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 9534,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 98.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 47668,
+  "cache_read_input_tokens": 620095,
+  "output_tokens": 18333,
+  "cost": 0.024904049999999997
+ },
+ "cost": 0.024904,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "changedSymbols": 10,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "The checkout now refuses a fourth order from the same account within ten minutes. The refusal happens before pricing, stock reservation or charge, and it raises a new `OrderLimitError`. All 37 tests pass and `ostf check --base main` is clean. I did not commit anything.\n\n**What changed**\n- `src/checkout.ts`: `placeOrder` calls a new private `admit` right after the session and empty-cart checks. `admit` allows three attempts per account in any sliding ten-minute window. The check and the count run with no `await` between them, so concurrent calls cannot both get through. The constants are `MAX_ORDERS_PER_WINDOW` and `ORDER_WINDOW_MS`.\n- `src/checkout.test.ts`: a new test, \"refuses a fourth order within ten minutes\". It shows the fourth order is refused with no new charge and no stock reserved. It also shows a refused attempt does not count, so the next order goes through once the window clears. `newShop` now takes an optional clock so the test can move time forward. I checked that the test fails when the limit check is disabled.\n- `trace/requirements.yaml`: a new item, `R-ORDER-LIMIT`, with `status: draft`, `refines: [N-ACCOUNT-SAFE]`, `controls: [THREAT-CARD-TESTING]`, and `code: [src/checkout.ts#OrderLimitError]`. The admit method and the test are linked through their `@req R-ORDER-LIMIT` comments.\n\n**Choices I made that you may want to change**\n- Declined charges count as attempts. That is the card-testing case, where most attempts are declined. Refused attempts do not count.\n- Attempts that fail for out-of-stock reasons also count, because the check runs before stock is reserved.\n- The counts live in memory inside the `Checkout` instance. They reset on restart and are not shared across multiple server instances. If you run more than one instance, this needs a shared store.\n\n**Trace impact**\n- Risk-relevant items touched: `R-ORDER-LIMIT` is new and controls `THREAT-CARD-TESTING`, and OSTF marks it \"risk-relevant: ask before changing\". It needs another principal's review in the pull request. The code it links to, `admit` and `OrderLimitError`, is therefore in scope for that review.\n- `R-CHECKOUT-ORDER` (\"prices, reserves, charges, confirms, in that order\") is still true. The refusal is an extra precondition before pricing, not a change to the order of those steps.\n- `R-CHECKOUT-SESSION` is still true. The session check still runs first.\n- No existing requirement was reworded. `R-CHARGE-AMOUNT`, which is risk-relevant, is untouched because `payments.ts` did not change.\n- Tests named by the touched items: `src/checkout.test.ts#Checkout > refuses a fourth order within ten minutes` (new), plus the existing `places an order` and `needs a valid session` tests in the same file, which still pass.\n- `THREAT-CARD-TESTING` now has a control. `trace.derived` was not regenerated. I did not find a command for that, and `ostf check` does not require it.",
+ "date": "2026-10-26"
+}

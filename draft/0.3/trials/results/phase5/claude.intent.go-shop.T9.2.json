@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.go-shop.T9.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new error, `ErrTooManyOrders`. It also adds a mutex-guarded attempt log for each account and an `admit()` check that refuses an account once it already has three attempts within ten minutes, measured with the injected `Now` clock. `PlaceOrder` calls `admit()` after the session and empty-cart checks but before pricing, stock reservation and charging, so a refused fourth order charges nothing. Refused attempts are not recorded. Two new tests check the behaviour. `TestPlaceOrderRateLimit` confirms that the fourth order is refused, that no audit entry or stock reservation is made, that another account is unaffected, and that the window reopens at exactly ten minutes. `TestPlaceOrderRateLimitCountsDeclines` confirms that declined charges count toward the limit. This matches what the user asked for: a new error, a refusal before any charge, and a test.",
+  "cost": 0.049132800000000004
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4598,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 81.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 38007,
+  "cache_read_input_tokens": 330822,
+  "output_tokens": 16361,
+  "cost": 0.019092120000000004
+ },
+ "cost": 0.019092,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now refuses a fourth order from the same account within ten minutes. The refusal happens before pricing, stock reservation, or any charge, and it returns a new `ErrTooManyOrders`. All tests pass, including the new ones. Nothing is committed.\n\n**Behavior**\n- Each account may make three order attempts in any ten-minute window. A fourth is refused with `ErrTooManyOrders`, and nothing is reserved, charged, or audited.\n- Attempts count whether or not the charge succeeds, because card testing mostly produces declines.\n- The window reopens exactly ten minutes after the first attempt. The check uses the injected `Now` clock, as D-CLOCK requires.\n- Refused attempts are not recorded, so retrying during the window doesn't extend the block.\n\n**Changes**\n- `cart/checkout.go`: `MaxOrdersPerWindow`, `OrderWindow`, `ErrTooManyOrders`, a mutex-guarded attempt log on `Checkout`, and `admit()`, called from `PlaceOrder` after the session and empty-cart checks.\n- `cart/checkout_test.go`: `TestPlaceOrderRateLimit` (fourth refused, nothing charged or reserved, another account unaffected, window reopens at exactly ten minutes) and `TestPlaceOrderRateLimitCountsDeclines`.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-RATE`, `status: draft`, `refines: [N-ACCOUNT-SAFE]`, `controls: [THREAT-CARD-TESTING]`, linked to `admit`, `PlaceOrder`, and both tests. I chose `N-ACCOUNT-SAFE` because the threat uses one account to test cards.\n\n**Verification**\n- `go vet`, `gofmt`, and `go test ./...` pass.\n- The trace YAML parses.\n\n**For review in the pull request**\n- **Linked items for changed code:**\n  - `R-CHECKOUT-ORDER` (on `PlaceOrder`): still true. Orders still price, reserve, charge, and confirm in that order, and empty carts are still rejected. The new refusal is an extra precondition, but the item doesn't mention rate limiting, so it is now incomplete. I left its text alone.\n  - `R-CHECKOUT-SESSION` (on `PlaceOrder`): still true. Only session holders can place orders.\n  - Neither item controls or refines a risk or threat, so the ask-first rule didn't apply.\n- **Items that control a threat:** `R-CHECKOUT-RATE` is new and controls `THREAT-CARD-TESTING`. No existing item was touched.\n- **Tests run:** all of `go test ./...`, including `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderReleasesStockOnDecline`, and the two new tests.\n\n**Limits of this mitigation**\n- The limit is per account. An attacker with many accounts can still test cards, and the threat text doesn't cover that case.\n- The attempt log is in memory. It resets on restart and isn't shared between server instances.\n- The `R-CHECKOUT-RATE` text and the `ten minutes` boundary are my reading of the request. Please confirm them before the item leaves draft.",
+ "date": "2026-10-26"
+}

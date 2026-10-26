@@ -1,0 +1,99 @@
+{
+ "run": "claude.full.go-shop.T2.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "listsAddedItem": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the item it added (R-SHIPPING) by its ID?"
+  },
+  "reason": "q1: The diff adds `Shipping(subtotal)` in `pricing/shipping.go`. It returns 0 when the subtotal is 100.00 or more and 599 (5.99) otherwise. `Price` calls it on the subtotal after discounts and adds the result to `Total`. That matches the request. The diff also adds new tests: boundary cases in `TestShipping`, a check in `TestShippingUsesSubtotalAfterDiscount` that a discount can bring an order under 100.00, and a checkout test for free shipping. It updates the existing expected totals by exactly 5.99 each (23.00→28.99, 103.48→109.47), which fits with the new charge. q2: The final answer names R-SHIPPING by its ID in the \"Trace items\" section and says it is new with status draft.",
+  "cost": 0.0490286
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 6,
+  "contextCalls": 1,
+  "checkCalls": 4,
+  "traceOutputTokens": 8018,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 100.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 44,
+  "cache_creation_input_tokens": 47578,
+  "cache_read_input_tokens": 792752,
+  "output_tokens": 19514,
+  "cost": 0.027204520000000006
+ },
+ "cost": 0.027205,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "changedSymbols": 10,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Shipping is in: an order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99 that is added to the total. `go test ./...` passes and `ostf check --base main` exits 0 with no errors.\n\n**What changed**\n- `pricing/shipping.go` (new): the shipping rule, `Shipping(subtotal)`, returning 0 at 100.00 or more and 5.99 otherwise.\n- `pricing/quote.go`: `Quote` gets a `Shipping` field. `Price` computes shipping on the subtotal after discounts and adds it to `Total`. `PlaceOrder` already charges `quote.Total`, so the charge includes shipping without changes to `cart/checkout.go`.\n- Tests: `pricing/shipping_test.go` (threshold boundaries and a discount that drops the subtotal under 100.00), and `cart/checkout_test.go#TestPlaceOrderShipping` (free shipping at checkout).\n- Two existing expectations changed because totals now include shipping: `TestPlaceOrder` 23.00 → 28.99, and `TestPrice` total 103.48 → 109.47.\n\n**Choices I made** (redirect me if you want otherwise)\n- Shipping is not taxed. Tax stays on the subtotal after discounts, as R-TAX-RATE requires.\n- The new item refines N-FAIR-PRICE.\n- The code uses `trace` fields only, not `@req` comments. Having both made `ostf check` report `LINK_DUPLICATE` warnings.\n\n**Trace items**\n- **R-SHIPPING** (new, `status: draft`): linked to `pricing/shipping.go#Shipping`, `pricing/quote.go#Price`, and tests `pricing/shipping_test.go#TestShipping`, `pricing/shipping_test.go#TestShippingUsesSubtotalAfterDiscount`, `pricing/tax_test.go#TestPrice`, `cart/checkout_test.go#TestPlaceOrderShipping`.\n- **R-TAX-RATE**: still true. Its code is `pricing/quote.go#Price` and its tests are `TestTax` and `TestPrice`. Tax is still on the subtotal after discounts. I updated `TestPrice`'s expected values.\n- **R-CHECKOUT-ORDER**: still true. Its test is `TestPlaceOrder`, whose expected total I updated to 28.99.\n- **N-FAIR-PRICE**: still true. Shipping is a price the customer pays, computed exactly in integer cents.\n\n**Risk-relevant items**\n- I did not change any code under a risk-relevant item. R-CHARGE-AMOUNT (`payments/charge.go`, controls RISK-WRONG-CHARGE), R-REFUND-LIMIT, and R-LOGIN-LOCKOUT are untouched.\n- R-CHARGE-AMOUNT is still true, but its effect has changed. The 10,000.00 cap now applies to totals that include shipping. At the Quebec rate used in the tests, an order with a subtotal of about 8,692.00 to 8,697.00 now fails the cap, where it passed before. Changing that cap is your call.\n\n**Pre-existing `ostf` notes (not from this change)**\n- R-VOLUME-DISCOUNT and R-ORDER-NOTE have no linked code or tests, so `ostf` reports them as unlinked.\n\nNothing is committed. The changes are in the working tree: four modified files and two new ones.",
+ "date": "2026-10-25"
+}

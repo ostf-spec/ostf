@@ -1,0 +1,96 @@
+{
+ "run": "codex.full.go-shop.T10.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff does what the user asked. The new ServiceFee is 2.5% of the subtotal after discounts. Tax is still worked out on the after-discount amount only, so the fee is not taxed. The fee is added to Total, and the receipt charges Total. The tests cover this. TestPrice and TestPlaceOrder were updated. The new TestPriceServiceFee covers four cases: taxed, discounted, exempt, and half-cent rounding. The expected values check out: 2.5% of 9,000 is 225; 2.5% of 900 is 22.5, which rounds to 23; 2.5% of 20 is 0.5, which rounds to 1; and the tax figures leave the fee out. q2: The diff follows D-RATES-PPM. The fee rate is the integer 25,000 parts per million. It is multiplied against integer cents and rounded half up once, using roundHalfUp(x*25_000, 1_000_000). No floating-point number is used, and discount percentages are unchanged. One small drawback: the rate is an unnamed number written straight into the code, but that does not break the decision.",
+  "cost": 0.0404326
+ },
+ "metrics": {
+  "calls": 29,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 5,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 9,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 6916,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 84.6
+ },
+ "usage": {
+  "input_tokens": 539493,
+  "cached_input_tokens": 505600,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5132,
+  "reasoning_output_tokens": 941
+ },
+ "cost": 0.229636,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Added a **2.5% service fee** to the subtotal after discounts. The quote shows the fee separately, excludes it from sales tax, and includes it in the amount charged.\n\n`go test ./...` and `ostf check --base main` pass. The trace check lists `TestPlaceOrder`, `TestPrice`, `TestPriceServiceFee`, and `TestTax`. The change keeps `N-BUY`, `N-FAIR-PRICE`, `R-CHECKOUT-ORDER`, and `R-TAX-RATE` true; the new `R-SERVICE-FEE` is linked as a draft requirement. No risk-relevant item was touched.",
+ "date": "2026-10-26"
+}

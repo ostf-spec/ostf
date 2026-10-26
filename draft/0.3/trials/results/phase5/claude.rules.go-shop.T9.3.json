@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.go-shop.T9.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `MaxProducts = 50` and a new error, `ErrTooManyProducts`. In `Cart.Add`, the cap check comes after the branch that merges into an existing line and before the append. So a new 51st distinct product is rejected and the cart is not changed, while adding more units of a product already in the cart still works. The new test `TestAddRejectsTooManyProducts` fills the cart with 50 products. It then checks that a 51st returns `ErrTooManyProducts` (using `errors.Is`) and that the lines are unchanged (comparing them to a clone). Finally, it checks that adding to an existing product still succeeds. The code and the test together match the request.",
+  "cost": 0.0317568
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3695,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 39.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 23925,
+  "cache_read_input_tokens": 346892,
+  "output_tokens": 6948,
+  "cost": 0.01173032
+ },
+ "cost": 0.01173,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/cart.go",
+  "cart/cart_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The cart now rejects a 51st distinct product with a new error, and leaves the cart unchanged. The full test suite passes.\n\n**Changes**\n- `cart/cart.go`: added `MaxProducts = 50` and `ErrTooManyProducts`. `Cart.Add` returns that error only when a new product would get a new line and the cart already has 50. Adding more units of a product already in the cart still works.\n- `cart/cart_test.go`: added `TestAddRejectsTooManyProducts`. It fills the cart with 50 products, checks that a 51st fails with `ErrTooManyProducts` and that the lines are unchanged, then checks that adding units of an existing product still succeeds.\n- `REQUIREMENTS.md`: added a new entry, `R-CART-PRODUCTS` (status draft), which refines N-BUY and controls THREAT-OVERSIZED-CART. Its code and test are listed. No existing entry was edited.\n\n**Entries touched, for review**\n- `R-CART-ADD` (code: `Cart.Add`; test: `TestAddMergesLines`): it still holds. Merging into an existing line is unchanged. It refines N-BUY, so it does not control or refine a risk or threat control, and I didn't need to ask first.\n- `R-CART-QTY` (code: `Cart.Add`; test: `TestAddRejectsBadQuantity`): it still holds. The quantity range check is unchanged. It also refines N-BUY only.\n- Entries I touched that control a risk or threat, or refine one that does: none.\n- `R-CART-PRODUCTS` (new, draft): controls THREAT-OVERSIZED-CART. Its code and tests are the ones listed above.\n\n**Notes**\n- THREAT-OVERSIZED-CART had no control entry before this change. It has one now, but it is still a draft.\n- The cap is on distinct products, which is what the threat describes. Per-line quantity was already capped at 99, so a cart is now bounded at 50 × 99 = 4,950 units.\n- I haven't committed the changes. Run `go test ./...` in the repo to reproduce the results.",
+ "date": "2026-10-26"
+}

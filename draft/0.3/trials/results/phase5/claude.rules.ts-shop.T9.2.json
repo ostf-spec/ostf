@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.ts-shop.T9.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `TooManyOrdersError` and a per-account sliding window: `MAX_ORDERS_PER_WINDOW = 3` over `VELOCITY_WINDOW_MS` of ten minutes. The check in `placeOrder` runs after the session and empty-cart checks but before pricing, stock reservation and charging. A fourth order inside the window is refused, and refused attempts are not recorded. Two new tests check this. The first shows a fourth order is refused with TooManyOrdersError, the gateway is called only three times, nothing is audited and stock is untouched. The second checks the ten-minute boundary: the order is refused at 1 ms before ten minutes and accepted at exactly ten. So the diff implements the requested mitigation and tests it.",
+  "cost": 0.0438248
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3902,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 35237,
+  "cache_read_input_tokens": 374138,
+  "output_tokens": 14208,
+  "cost": 0.017894980000000005
+ },
+ "cost": 0.017895,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added the velocity limit in checkout. The fourth order from one account within ten minutes now fails with a new `TooManyOrdersError` before pricing, stock reservation, or any charge. The full suite passes: 38 tests, including two new ones.\n\n**Behavior**\n- The check runs after the session and empty-cart checks and before pricing, so an unauthenticated caller doesn't consume a slot.\n- Declined orders count toward the limit, since a card tester's attempts are what the threat is about.\n- A refused attempt doesn't count, so the window only moves forward from the three orders that were allowed.\n- The window is sliding: an order exactly ten minutes old no longer counts.\n- The counter lives in memory inside the `Checkout` instance. It resets on restart and isn't shared across server instances. If the shop runs more than one instance, this needs a shared store before it protects anything.\n- The limit is per account, so an attacker with many accounts isn't stopped by it.\n\n**Requirements register (`REQUIREMENTS.md`)**\n- **New entry R-CHECKOUT-VELOCITY** (status: draft). It refines N-ACCOUNT-SAFE and controls THREAT-CARD-TESTING. Code: `Checkout.placeOrder`, `MAX_ORDERS_PER_WINDOW`, `VELOCITY_WINDOW_MS`. Tests: the two new tests in `src/checkout.test.ts`. This is the only entry I added or touched that controls a threat.\n- **R-CHECKOUT-SESSION** (refines N-ACCOUNT-SAFE; code `Checkout.placeOrder`; test \"needs a valid session\"). Still true. The session is still validated first and the order is still placed for that account. I added a second `@req` annotation to `placeOrder` for the new entry.\n- **R-CHECKOUT-ORDER** (refines N-BUY; code `Checkout.placeOrder`; test \"places an order\"). Still true. The price, reserve, charge, confirm order is unchanged, and the empty-cart rejection is unchanged.\n- **R-STOCK-RELEASE** (refines N-NO-OVERSELL; test \"releases stock when the charge is declined\"). Not changed. The test is in the same file but I didn't edit it, and it still passes.\n\n**Asking first:** The code I changed sits under no entry that controls or refines a risk or threat, so I didn't need to stop and ask. The one new entry does control THREAT-CARD-TESTING, so reviewers should look at its wording.\n\n**Tests run:** `npm test` (38 pass, 0 fail). The five checkout tests I ran individually also pass.\n\nI haven't made a commit or pull request. The entry uses a `Status: draft` line that the other entries don't have, because the project rules asked for a status on new entries.",
+ "date": "2026-10-26"
+}

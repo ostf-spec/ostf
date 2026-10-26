@@ -1,0 +1,89 @@
+{
+ "run": "claude.rules.ts-shop.T7.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": true,
+   "test:caps at fifty percent": true,
+   "test:rejects an expired code": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer names R-DISCOUNT-CAP, R-DISCOUNT-PERCENT and R-DISCOUNT-EXPIRY as entries that list the changed function applyDiscount. For each one it says the change keeps it true. It names the test path `applyDiscount > caps at fifty percent`, so both the `applyDiscount` test group and `caps at fifty percent` are named as relevant tests that were run and passed. It also names `rejects an expired code` as the test for R-DISCOUNT-EXPIRY and says it passes. So all six items are named as tied to the change, and the answer says whether each requirement still holds.",
+  "cost": 0.024959799999999997
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5008,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 19050,
+  "cache_read_input_tokens": 79277,
+  "output_tokens": 3733,
+  "cost": 0.0064700700000000005
+ },
+ "cost": 0.00647,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The change replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if` that clamps `percent` to 50. For every input, including `NaN` and `-0`, the result matches the old code, so the 50% cap works the same way. The diff is a refactor only, and I could not find a reason for it in the repo.\n\n**Requirements entries (per AGENTS.md)**\n\nThe changed function is `applyDiscount` in `src/pricing.ts`. Entries that list it:\n\n- **R-DISCOUNT-CAP** (refines N-FAIR-PRICE): the change keeps it true. Its test, `applyDiscount > caps at fifty percent`, passes.\n- **R-DISCOUNT-PERCENT** (refines N-FAIR-PRICE): the change keeps it true. Its test passes.\n- **R-DISCOUNT-EXPIRY** (refines N-FAIR-PRICE): the change keeps it true. Its test, `rejects an expired code`, passes.\n\nNone of these controls a risk or threat, or refines one. Their chain stops at the need N-FAIR-PRICE. So the change does not need your sign-off under the AGENTS.md rule. No entry became false.\n\nIndirect dependencies, not changed:\n- **R-TAX-RATE** and **R-TAX-EXEMPT** list `price` and `tax`, which are unchanged. `price` calls `applyDiscount`, so `taxes the subtotal after discounts` covers the path, and it passes.\n- **R-VOLUME-DISCOUNT** says volume discounts count toward the same 50% cap. No code in the repo implements it, so this change does not affect it.\n\nOne observation: the `@req` tag above `applyDiscount` names only R-DISCOUNT-EXPIRY, and nothing tags the cap. I did not change it.\n\n**Tests run** (Node v26.12.1)\n- `node --test src/pricing.test.ts`: 7 of 7 pass.\n- `npm test` (full suite): 36 of 36 pass, 0 fail. This includes the checkout tests, since `checkout.ts` imports `price`.\n\nI made no edits and did not commit.",
+ "date": "2026-10-26"
+}

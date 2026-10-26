@@ -1,0 +1,70 @@
+{
+ "run": "claude.rules.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4758,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 27140,
+  "cache_read_input_tokens": 174562,
+  "output_tokens": 8835,
+  "cost": 0.011592520000000002
+ },
+ "cost": 0.011593,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` into `src/salestax.ts` as `salesTax`. The test suite passes, 36 of 36, the same count as before the change. I did not commit.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private helper `roundHalfUp`. It imports `Region` as a type from `pricing.ts`, which is erased at runtime, so there is no runtime cycle.\n- **`src/pricing.ts`**: `tax` and `roundHalfUp` are removed. `price` imports `salesTax`. Its local variable `salesTax` became `taxAmount`, because it would otherwise shadow the import.\n- **`src/pricing.test.ts`**: imports `salesTax` and calls it. The `describe(\"tax\")` name stays, so the test IDs that REQUIREMENTS.md cites still resolve.\n- **`README.md`**: the module table has a row for `src/salestax.ts`, and the `pricing.ts` row no longer claims sales tax.\n\n**REQUIREMENTS.md entries**\n\nNo entry was edited. None of the entries I touched controls or refines a risk or threat. They refine only N-FAIR-PRICE, which is a need, so no ask-first was needed.\n\n- **R-TAX-RATE** (refines N-FAIR-PRICE): cites `price` and `tax` in `src/pricing.ts`.\n  - `price` is still there and its behavior is unchanged, so that part stays true.\n  - The `tax` citation is now false. It lives at `salesTax` in `src/salestax.ts`.\n  - Tests `price > taxes the subtotal after discounts` and `tax > rounds half up to the cent` in `src/pricing.test.ts` pass.\n- **R-TAX-EXEMPT** (refines N-FAIR-PRICE): cites `tax` in `src/pricing.ts`. That citation is now false for the same reason. Test `tax > is zero for a tax-exempt customer` passes.\n- **D-RATES-PPM** (refines R-MONEY-CENTS): cites `Region` in `src/pricing.ts`. `Region` did not move, and the integer-arithmetic rule still holds, so it stays true.\n\n**Action for you:** update the two R-TAX citations to `salesTax` in `src/salestax.ts`. I left them alone because the rule is to flag a false entry, not rewrite it. Let me know if you want me to make that edit.\n\n**Choices I made that you can redirect**\n- The tax tests stayed in `pricing.test.ts` rather than moving to a new `salestax.test.ts`. Moving them would change the test IDs the requirements cite.\n- No new REQUIREMENTS entry was added, since this is a refactor with no new behavior.",
+ "date": "2026-10-25"
+}

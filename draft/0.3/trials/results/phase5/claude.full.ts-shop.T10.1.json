@@ -1,0 +1,98 @@
+{
+ "run": "claude.full.ts-shop.T10.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff calculates `serviceFee` on the subtotal after discounts at 2.5 percent. Tax is still worked out on the post-discount amount alone, so the fee is not taxed. The fee is added to `Quote.total`, and checkout charges that total, so the fee is part of the order total. Tax-exempt orders pay it too, which fits \"every order\". New tests cover the fee rounding, the untaxed fee on a tax-exempt quote, and the total charged at checkout with a discount. The expected values check out by hand: 9,000 gives a 225 fee, 1,348 tax and a 10,573 total; 1,800 gives a 45 fee, 270 tax and a 2,115 total. q2: The fee rate is the integer `SERVICE_FEE_PPM = 25_000`. It is applied to integer cents with integer multiplication, then rounded half up to the cent once by `roundHalfUp(amount * SERVICE_FEE_PPM, 1_000_000)`. No floating-point number is used, and the discount codes keep their whole percent.",
+  "cost": 0.0520206
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 3,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 10958,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 91.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 48480,
+  "cache_read_input_tokens": 550238,
+  "output_tokens": 18552,
+  "cost": 0.02447718
+ },
+ "cost": 0.024477,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "changedSymbols": 12,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now charges a 2.5% service fee on the subtotal after discounts. The fee is added after tax, so it isn't taxed, and it's part of the charged total. All 39 tests pass (36 before, plus 3 new), and `ostf check --base main` exits 0 with no warnings. Nothing is committed.\n\nExample: a 10,000 subtotal with the 10% discount now gives a 225 fee, 1,348 tax, and a 10,573 total (it was 10,348).\n\n**Changes**\n- `src/pricing.ts`: new `SERVICE_FEE_PPM = 25_000` and `serviceFee()`, rounded half up once. `price()` adds `fee` to `Quote` and to the total, with tax still on the post-discount amount. The fee is also charged to tax-exempt customers.\n- `src/checkout.ts` is unchanged, since it already charges `quote.total`.\n- `trace/requirements.yaml`: new item `R-SERVICE-FEE`, `status: draft`, refines `N-FAIR-PRICE`, linked to `serviceFee` and `price` and to three tests.\n- Tests: new tests for the fee rounding, the untaxed fee on a tax-exempt order, and the charged total with a discount. Two existing expectations changed because the total now includes the fee.\n- `README.md`: the pricing row mentions the fee.\n\n**Items in the trace**\n- `R-SERVICE-FEE` (new): kept true by the change. Tests: `serviceFee > takes 2.5 percent, rounded half up to the cent`, `price > adds the service fee to the total without taxing it`, `Checkout > charges the service fee in the order total`.\n- `R-TAX-RATE`: still true, since tax is still on the post-discount subtotal. Test `price > taxes the subtotal after discounts` now expects the fee and total 10,573. `tax > rounds half up to the cent` is unchanged.\n- `R-CHECKOUT-ORDER`: still true. Test `places an order` now expects 2,350 (was 2,300), since the fee is included.\n- `D-RATES-PPM`: still true. The fee rate is an integer parts-per-million value with a single half-up rounding at the end.\n- `R-CHARGE-AMOUNT` (risk-relevant, controls `RISK-WRONG-CHARGE`): I did not touch its code or item, and it still holds. But the 10,000.00 cap now applies to a total that includes the fee. For Quebec tax, the largest subtotal that still passes drops from about 8,698 to about 8,511. Its rationale (\"no order in the catalog can cost more than 10,000.00\") was already untrue once tax was added, and I did not rewrite it.\n- `N-FAIR-PRICE`: the need says customers pay the advertised price. The fee is an extra charge on top of that, so you may want to show it in the advertised price or update the need. That is a product decision, so I left the wording alone.\n\n**Policy and notes**\n- I didn't change any item marked risk-relevant and didn't touch `payments.ts`, so I didn't need to stop and ask. A reviewer should still look at the `R-CHARGE-AMOUNT` effect above.\n- The `ostf` check reports two unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. They were there before my change and don't cause a failure.\n- I didn't regenerate `trace.derived`, because the `ostf` CLI has no command for it here.",
+ "date": "2026-10-26"
+}

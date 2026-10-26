@@ -1,0 +1,81 @@
+{
+ "run": "codex.full.go-shop.T4.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 11,
+  "contextCalls": 1,
+  "checkCalls": 2,
+  "traceOutputTokens": 4235,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 57.9
+ },
+ "usage": {
+  "input_tokens": 279322,
+  "cached_input_tokens": 256256,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2854,
+  "reasoning_output_tokens": 401
+ },
+ "cost": 0.129933,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 5,
+ "changedSymbols": 5,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to [pricing/salestax.go](/tmp/ostf-trials/phase5/codex.full.go-shop.T4.1/repo/pricing/salestax.go). Updated the pricing caller, tests, and trace links.\n\n`go test ./...`, `git diff --check`, and `ostf check --base main` pass. The change preserves `R-TAX-RATE`, `R-TAX-EXEMPT`, and their parent need `N-FAIR-PRICE`. The trace check lists `TestPrice`, `TestTax`, and `TestTaxExempt`; all pass.",
+ "date": "2026-10-25"
+}

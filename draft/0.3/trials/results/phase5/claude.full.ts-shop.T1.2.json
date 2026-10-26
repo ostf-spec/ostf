@@ -1,0 +1,89 @@
+{
+ "run": "claude.full.ts-shop.T1.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "explain",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-LIMIT (Refund limit), which states: \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-AUDIT-MONEY": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-ORIGINAL (Refund to the original payment), which states: \"A refund goes back to the payment method of the charge it refunds, never to another one.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer gives all three requirements and says what each one asks of the method. For R-REFUND-LIMIT, a refund can't exceed what is left of the charge, and refunds over 500.00 per account per UTC day need a second approval, which the method enforces through checkRefundLimit. For R-REFUND-ORIGINAL, the money goes back to receipt.txn and never to another payment method. For R-AUDIT-MONEY, every refund appends an audit entry with the account, action, amount and receipt. It leaves out the time field, but it still says what the requirement asks of the function. Under tests, it names all three: 'refunds to the original transaction', 'totals refunds per account and UTC day' and 'checkRefundLimit'.",
+  "cost": 0.026735799999999997
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 4,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "contextCalls": 1,
+  "checkCalls": 0,
+  "traceOutputTokens": 2174,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 18.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 14991,
+  "cache_read_input_tokens": 76835,
+  "output_tokens": 3164,
+  "cost": 0.005349350000000001
+ },
+ "cost": 0.005349,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Refunder.refund` (`src/refunds.ts:68`) is the one place that pays money back to a customer. It refunds part or all of an earlier charge to the original payment transaction, enforces the refund limits, and records the refund in the audit log. It serves three requirements in `trace/requirements.yaml`:\n\n- **R-REFUND-LIMIT** (\"Refund limit\"): the method is listed in its `code` field, alongside `checkRefundLimit`. The rule is that a refund must not exceed what is left of the original charge, and refunds above 500.00 per account per UTC day need a second approval. The method enforces this by calling `checkRefundLimit` with the remaining balance and the day's total. This item refines N-REFUNDS and controls RISK-REFUND-ABUSE. It is marked **risk-relevant: ask before changing**.\n- **R-REFUND-ORIGINAL** (\"Refund to the original payment\"): the method carries `// @req R-REFUND-ORIGINAL` (line 67). It sends the money to `receipt.txn`, the original transaction, and never to another payment method.\n- **R-AUDIT-MONEY** (\"Audit money movements\"): every refund appends an audit entry with the account, action, amount and receipt (line 87). The item is listed as satisfied by the audit entry in `Processor.charge` and by the refund test.\n\nThe method also keeps two running totals, per receipt and per account per day. If the gateway call fails, it subtracts the amount back out before rethrowing, so a failed refund does not count against the limits.\n\n**Tests that cover it** (`src/refunds.test.ts`):\n\n- `Refunder > refunds to the original transaction` covers the refund going to the original transaction, the audit entry, and rejection of a refund larger than what is left on the charge. The trace links it to R-REFUND-ORIGINAL and R-AUDIT-MONEY.\n- `Refunder > totals refunds per account and UTC day` covers the daily limit: a second account-day refund above 500.00 needs approval, and the same refund succeeds the next UTC day. The trace links it to R-REFUND-LIMIT.\n- `checkRefundLimit` (three cases) tests the limit check directly, which the method delegates to. The trace links it to R-REFUND-LIMIT.\n\n**Gap I noticed:** no test covers the gateway-failure path, where the counters are rolled back. That behaviour is not tested.\n\nI did not change any files and did not run `ostf check`, since nothing was edited.",
+ "date": "2026-10-26"
+}

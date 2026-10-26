@@ -1,0 +1,73 @@
+{
+ "run": "claude.none.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3718,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 24207,
+  "cache_read_input_tokens": 147735,
+  "output_tokens": 6574,
+  "cost": 0.009606950000000001
+ },
+ "cost": 0.009607,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.ts",
+  "src/discount.test.ts",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 23,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I moved `applyDiscount` out of `src/pricing.ts` into a new `src/discount.ts`, renamed it to `discountAmount`, and the full suite still passes: 36 of 36, same as before the change. I did not commit.\n\n- **`src/discount.ts`** (new): `discountAmount`, plus the things it depends on: the `Discount` type, `DiscountExpiredError` and `MAX_DISCOUNT_PERCENT`. The body and its `@req R-DISCOUNT-EXPIRY` comment are unchanged.\n- **`src/pricing.ts`**: imports `discountAmount` and `Discount` from `./discount.ts`. `price()` calls the new name. `tax`, `price`, `Region` and `Quote` stay here.\n- **`src/checkout.ts`**: imports `Discount` from `./discount.ts` instead of `./pricing.ts`.\n- **Tests**: the four `applyDiscount` tests moved to a new `src/discount.test.ts` under a `discountAmount` describe block. `src/pricing.test.ts` keeps the `tax` and `price` tests.\n- **`REQUIREMENTS.md`**: the code and test references for R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY now point at `src/discount.ts` and `src/discount.test.ts` with the new name.\n- **`README.md`**: added a `src/discount.ts` row to the module table and reworded the `src/pricing.ts` row to match.\n\nA grep finds no remaining `applyDiscount` references outside `.git`.\n\nDecision for you: I also moved the tests and updated the requirement references, since the module layout pairs each source file with a test file. If you'd rather keep the tests in `pricing.test.ts`, that is a small change.",
+ "date": "2026-10-26"
+}

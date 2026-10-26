@@ -1,0 +1,83 @@
+{
+ "run": "claude.full.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 4,
+  "contextCalls": 3,
+  "checkCalls": 3,
+  "traceOutputTokens": 7311,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 33845,
+  "cache_read_input_tokens": 366120,
+  "output_tokens": 10733,
+  "cost": 0.0157991
+ },
+ "cost": 0.015799,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 12,
+ "changedSymbols": 12,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "The `tax` function is now `salesTax` in a new `src/salestax.ts`, and everything still works: all 36 tests pass and `ostf check --base main` exits 0. Nothing is committed.\n\n**What changed**\n- **`src/salestax.ts`** (new): `salesTax` and its private `roundHalfUp` helper, moved unchanged.\n- **`src/pricing.ts`**: `price` now imports `salesTax`. The `tax` and `roundHalfUp` definitions are gone. `Region` stays here, so `design.yaml`'s link to `src/pricing.ts#Region` still holds. The import from `salestax.ts` back to `Region` is type-only, so there is no runtime cycle.\n- **`src/salestax.test.ts`** (new): the two `tax` tests moved here, renamed to `salesTax`, with the `@req R-TAX-EXEMPT` comment.\n- **`src/pricing.test.ts`**: the `tax` tests are removed. The `price` test is unchanged.\n- **`trace/requirements.yaml`**: I updated the code and test links for `R-TAX-RATE` and `R-TAX-EXEMPT` to the new paths. I did not change any item text.\n- **`README.md`**: the module table has a row for `src/salestax.ts`, and the `pricing.ts` description no longer mentions sales tax.\n\n**Trace items**\n- **R-TAX-RATE**: still true. It now links `src/salestax.ts#salesTax` and `src/pricing.ts#price`. Tests: `src/salestax.test.ts#salesTax > rounds half up to the cent` and `src/pricing.test.ts#price > taxes the subtotal after discounts`.\n- **R-TAX-EXEMPT**: still true. It now links `src/salestax.ts#salesTax`. Test: `src/salestax.test.ts#salesTax > is zero for a tax-exempt customer`.\n- **D-RATES-PPM**: still true. Its link to `src/pricing.ts#Region` is unchanged because `Region` did not move.\n- **Risk-relevant items**: none touched. The `RISK-*` items link only to payments and refunds code.\n\n**Not fixed**\n- `trace.derived` is a tracked coverage export, and it still lists `src/pricing.ts#tax`. I could not regenerate it: the repo has no generator, and `ostf` only offers `check` and `context`. Whoever produces that file should regenerate it.\n- `ostf check` still reports two info-level notes that were there before my change: `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no links.",
+ "date": "2026-10-25"
+}

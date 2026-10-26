@@ -1,0 +1,84 @@
+{
+ "run": "codex.full.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": false,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 24,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "contextCalls": 2,
+  "checkCalls": 2,
+  "traceOutputTokens": 11927,
+  "derivedHandEdits": [
+   "/tmp/ostf-trials/phase5/codex.full.ts-shop.T4.3/repo/trace.derived"
+  ]
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 109.7
+ },
+ "usage": {
+  "input_tokens": 344081,
+  "cached_input_tokens": 309632,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 4208,
+  "reasoning_output_tokens": 854
+ },
+ "cost": 0.181444,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.derived",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 21,
+ "changedSymbols": 21,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `applyDiscount` to `discountAmount` and moved it to [src/discount.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T4.3/repo/src/discount.ts:27). Order pricing now calls it from [src/pricing.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T4.3/repo/src/pricing.ts:3). I updated the tests, README, and trace links.\n\nAll 36 tests pass. `ostf check --base main` passes. Its impacted items remain true: **R-DISCOUNT-CAP**, **R-DISCOUNT-EXPIRY**, **R-DISCOUNT-PERCENT**, and **R-TAX-RATE**. It lists these tests: `discountAmount` (including percentage, rounding, cap, and expiry), `price > taxes the subtotal after discounts`, and `tax > rounds half up to the cent`. No risk-relevant item was touched.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.ts-shop.T9.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "Yes. The diff adds MAX_PRODUCTS = 50 and a new TooManyProductsError. In Cart.add, the new check runs before anything is changed and throws only when the sku is new and the cart already has 50 lines. So a 51st distinct product is rejected and the cart stays the same. The new test fills the cart with 50 products and asserts that adding a 51st throws TooManyProductsError. It also asserts that the lines are deep-equal to the snapshot taken before the attempt, and that adding units to an existing product still works. The diff therefore implements the requested mitigation and tests it.",
+  "cost": 0.030004799999999998
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3578,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 41.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 20747,
+  "cache_read_input_tokens": 167541,
+  "output_tokens": 8119,
+  "cost": 0.00988571
+ },
+ "cost": 0.009886,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/cart.test.ts",
+  "src/cart.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "The 50-product cap is in place. A 51st distinct product now throws `TooManyProductsError` and leaves the cart unchanged. The full suite passes: 37 tests, up from 36, with the new test included.\n\n**Changes**\n- `src/cart.ts`: added `MAX_PRODUCTS = 50` and `TooManyProductsError`. `Cart.add` throws it only when the sku is new and the cart already has 50 lines. The quantity check still runs first, and adding units to an existing product is never blocked.\n- `src/cart.test.ts`: new test \"rejects a 51st product and leaves the cart unchanged\". It fills 50 products, checks that a 51st throws and the lines are unchanged, then checks that adding to an existing product still works.\n- `trace/requirements.yaml`: new item `R-CART-PRODUCT-LIMIT`, `status: draft`, refines `N-BUY`, linked to `src/cart.ts#Cart.add` and the new test. It has `controls: [THREAT-OVERSIZED-CART]`.\n\n**Trace review**\n- `R-CART-ADD` (linked to `Cart.add`): still true. Adding to an existing product still merges into its line.\n- `R-CART-QTY` (linked to `Cart.add`, test \"rejects a quantity outside 1 to 99\"): still true. The quantity check is unchanged and runs before the new check. Its test passes.\n- `R-CART-REMOVE`, `R-CART-SUBTOTAL`: not touched.\n- **Touched item that controls a threat:** `R-CART-PRODUCT-LIMIT` (new, draft) controls `THREAT-OVERSIZED-CART`. It refines only `N-BUY`, a need, not a risk.\n- `THREAT-OVERSIZED-CART` had no control before this change. I did not edit the threat itself.\n\n**Points for review**\n- The `controls:` field on a requirement is my choice. The existing `controls` links are on `type: control` items in `threats.yaml`. A reviewer may prefer a separate `C-CART-PRODUCT-LIMIT` control item. The `ostf` tool is not installed here, so I could not validate the trace files.\n- The cap bounds distinct products, not units. A cart can still hold 50 lines of up to 99 units each. `checkout.ts` is unchanged, so checkout-time pricing and reservation work is still bounded only by that cart size.\n- Nothing is committed.",
+ "date": "2026-10-26"
+}

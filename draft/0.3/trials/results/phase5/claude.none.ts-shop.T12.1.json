@@ -1,0 +1,495 @@
+{
+ "run": "claude.none.ts-shop.T12.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noConflict": true,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 25.5
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 17385,
+    "cache_read_input_tokens": 82896,
+    "output_tokens": 2097,
+    "cost": 0.005355260000000001
+   },
+   "cost": 0.005355,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4075,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "finalMessage": "I added `Cart.clear()` to `src/cart.ts`. It empties the cart, and clearing an empty cart is a no-op. The new test passes and the full suite is green at 37 tests (up from 36).\n\nChanges:\n- **`src/cart.ts`**: `clear()` sets `this.items.length = 0`, tagged `// @req R-CART-CLEAR` like the other Cart methods.\n- **`src/cart.test.ts`**: `Cart > clears every line` covers clearing a non-empty cart, the resulting empty subtotal, and clearing twice.\n- **`REQUIREMENTS.md`**: The requirements had nothing for clearing a cart, so I added `R-CART-CLEAR` (refines N-BUY) with its code and test links. This is an addition you didn't ask for. Drop it if you'd rather not have a requirement for this."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 73.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 20,
+    "cache_creation_input_tokens": 23529,
+    "cache_read_input_tokens": 279629,
+    "output_tokens": 6259,
+    "cost": 0.010633590000000002
+   },
+   "cost": 0.010634,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4056,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts"
+   ],
+   "finalMessage": "`Checkout.preview` is added in `src/checkout.ts`. It takes the same session token, cart and discount as `placeOrder` and returns the quote `placeOrder` would charge. It does not reserve stock, charge, or write to the audit log. The full suite passes: 39 tests, up from 36, with the three new ones passing.\n\n- **Shared logic:** session check, empty-cart check and pricing now live in one private helper, `priceCart`, used by both `preview` and `placeOrder`. The two cannot drift apart. `placeOrder` behaves as before.\n- **Async:** `preview` returns a Promise, like `placeOrder`, so callers can swap one for the other. Errors reject rather than throw.\n- **Side effect:** `preview` still calls `sessions.validate`, which refreshes the session's idle timer. A preview therefore keeps a session alive, the same as any other authenticated call. If previews should not extend sessions, that needs a non-refreshing check in `accounts.ts`.\n- **Tests:** added to `src/checkout.test.ts`. They cover:\n  - the exact quote for a 10% discount (subtotal 2000, discount 200, tax 270, total 2070), with stock and audit log unchanged;\n  - equality with the quote `placeOrder` charges;\n  - rejection of a forged token and an empty cart.\n- **Requirements:** I tagged `preview` with `R-CHECKOUT-SESSION`, since it reuses that session rule. `REQUIREMENTS.md` has no entry for preview itself. I did not add one; say if you want a new requirement ID.\n\nI did not commit anything."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 37.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 19772,
+    "cache_read_input_tokens": 142659,
+    "output_tokens": 3692,
+    "cost": 0.007228190000000001
+   },
+   "cost": 0.007228,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4487,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "finalMessage": "I added `Stock.held(sku)` to `src/inventory.ts`. It returns the units of a SKU held by reservations that have not yet expired. The full suite passes (37 tests, including the new one).\n\n- **`held(sku)`** sums the SKU's quantities across holds whose expiry is still in the future. It is marked `@req D-RESERVATION-HOLD`, like the existing `available`.\n- **`available(sku)`** now returns stock on hand minus `held(sku)`. Its behaviour is unchanged, and the existing tests still pass.\n- **Test:** `Stock > counts the units held by unexpired reservations` in `src/inventory.test.ts`. It covers overlapping holds, a SKU with no holds, and holds dropping out as they expire. It also checks that releasing one hold leaves the others counted.\n- **`REQUIREMENTS.md`:** I added `Stock.held` and the new test to the `D-RESERVATION-HOLD` entry, since the file lists code and tests per requirement. Revert that line if you'd rather not touch the requirements doc.\n\nI did not commit anything."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 40.4
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 18033,
+    "cache_read_input_tokens": 135432,
+    "output_tokens": 3063,
+    "cost": 0.00649362
+   },
+   "cost": 0.006494,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4364,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/accounts.test.ts",
+    "src/accounts.ts"
+   ],
+   "finalMessage": "I added `Sessions.logout(token)` in `src/accounts.ts`. After it runs, `validate` with that token throws `SessionError`. The full suite passes: 38 tests, up from 36 with the two new ones.\n\n- **Behaviour:** `logout` deletes the session. Logging out an unknown or already-ended token does nothing, so repeated logouts don't throw. A validate after logout throws `SessionError` with `expired` set to false, the same \"no such session\" error as a token that was never issued.\n- **Tests:** two new cases in `src/accounts.test.ts`. One checks that a valid session is ended by logout. The other checks that logging out twice, or logging out an unknown token, doesn't throw.\n- **Requirements:** the spec had no logout entry, so I added `R-LOGOUT` to `REQUIREMENTS.md` under the session rules, and tagged the method and tests with `// @req R-LOGOUT` to match the existing convention. This wasn't requested, so drop it if you'd rather not track logout as a requirement.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 113.0
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 17233,
+    "cache_read_input_tokens": 81578,
+    "output_tokens": 2853,
+    "cost": 0.00568968
+   },
+   "cost": 0.00569,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3813,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts"
+   ],
+   "finalMessage": "I added `AuditLog.total(account, action)` to `src/audit.ts`. It returns the sum of the stored amounts for that account and action, or 0 when nothing matches. The full suite passes: 39 tests, up from 36.\n\nThe three new tests in `src/audit.test.ts` cover:\n- **Summing:** a charge total for one account, ignoring other accounts and the other action.\n- **No matches:** a total of 0 when there are no matching entries.\n- **Read-only:** calling `total` leaves the log unchanged.\n\nNotes:\n- `REQUIREMENTS.md` has no requirement for this method, so I didn't change it. The append-only guarantee in R-AUDIT-APPEND-ONLY is untouched, since the method only reads the log.\n- I did not run a TypeScript type check. `tsc` isn't installed in the repo, and the tests run the `.ts` source directly.\n- I haven't committed anything."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 37.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 18979,
+    "cache_read_input_tokens": 140436,
+    "output_tokens": 3052,
+    "cost": 0.006727360000000001
+   },
+   "cost": 0.006727,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4129,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "finalMessage": "I added `isExpired(d: Discount, now: Date): boolean` to `src/pricing.ts`, with tests. The full suite passes: 39 tests, up from 36.\n\n- **Function:** It returns `true` from the expiry instant onward, the same boundary `applyDiscount` already used. `applyDiscount` now calls it, so the expiry rule lives in one place.\n- **Tests:** Three in `src/pricing.test.ts` cover before expiry, exactly at expiry, and after expiry.\n- **REQUIREMENTS.md:** I updated the R-DISCOUNT-EXPIRY entry to list `isExpired` as code and its tests as verification. That was a small edit beyond the code change, so revert it if you'd rather keep requirements untouched.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 31.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 16987,
+    "cache_read_input_tokens": 108162,
+    "output_tokens": 3246,
+    "cost": 0.006103019999999999
+   },
+   "cost": 0.006103,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3737,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/money.test.ts",
+    "src/money.ts"
+   ],
+   "finalMessage": "I added `parseCents` to `src/money.ts`, with tests in `src/money.test.ts`. The full suite passes: 40 tests, up from 36.\n\n```ts\nparseCents(\"12.05\")   // 1205\nparseCents(\"12.5\")    // 1250\nparseCents(\"-3.10\")   // -310\nparseCents(\"12.345\")  // throws RangeError\n```\n\n- **Parsing:** it matches the text against a regex and does the arithmetic on integers, so no floating-point value is involved. This follows D-RATES-PPM's no-floats rule for pricing.\n- **Rejections:** anything with more than two decimal places throws a `RangeError`, including `\"12.050\"`, which has three places even though its value is whole cents. Other malformed input also throws `RangeError`, matching `cents()`: empty strings, `\"12.\"`, `\".5\"`, `\"1e3\"`, whitespace, a leading `+`, and thousands separators. Values beyond safe integer cents are rejected too.\n- **Sign:** a leading `-` is accepted so it can round-trip with `formatCents`. Amounts are not checked against R-CHARGE-AMOUNT's range here; that check stays in `validateAmount`.\n\nI didn't commit, and I didn't change `REQUIREMENTS.md`. The new tests sit under the existing `// @req R-MONEY-CENTS` block."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function formatQuote in a new file src/quote-format.ts that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 114.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 18509,
+    "cache_read_input_tokens": 110856,
+    "output_tokens": 2316,
+    "cost": 0.005969360000000001
+   },
+   "cost": 0.005969,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3666,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/quote-format.test.ts",
+    "src/quote-format.ts"
+   ],
+   "finalMessage": "I added `formatQuote` in `src/quote-format.ts` with tests in `src/quote-format.test.ts`. The full suite passes: 38 tests, up from 36, with no failures.\n\n`formatQuote(q: Quote)` takes the existing `Quote` type from `src/pricing.ts` and formats each amount with the existing `formatCents` from `src/money.ts`. For a quote of 1000 / 100 / 135 / 1035 cents it returns `subtotal 10.00, discount 1.00, tax 1.35, total 10.35`.\n\nThe tests cover that example and a zero-discount, zero-tax quote. I tagged the test `// @req R-MONEY-CENTS`, as `money.test.ts` does, since formatting is part of integer-cents money handling. I didn't change `REQUIREMENTS.md`. The project has no build step, so there was no type-check to run."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 28.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 19406,
+    "cache_read_input_tokens": 111524,
+    "output_tokens": 3332,
+    "cost": 0.0066634400000000005
+   },
+   "cost": 0.006663,
+   "metrics": {
+    "calls": 6,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3666,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/rates.test.ts",
+    "src/rates.ts"
+   ],
+   "finalMessage": "I added `ratePercent` in `src/rates.ts` with tests in `src/rates.test.ts`. The full suite passes: 41 tests, up from 36, with no failures.\n\n`ratePercent(r: Region)` takes the region and formats `r.ratePpm` as a percentage. `149_750` gives `\"14.975%\"`. Whole rates drop the decimal point (`\"10%\"`), and zero gives `\"0%\"`. The formatting is integer-only, which follows D-RATES-PPM in `REQUIREMENTS.md`. A rate that is negative, fractional, or NaN throws a `RangeError`, the same way `cents()` rejects bad amounts.\n\nChoices I made that you may want to change:\n- **Signature:** I took the whole `Region` because you said \"a region's rate\". If you want a plain number, the change is small.\n- **Requirement tag:** Both files carry `// @req D-RATES-PPM`. I did not edit `REQUIREMENTS.md`, whose D-RATES-PPM entry has no Tests line yet. Adding `src/rates.test.ts` there would close that gap if you want it.\n\nNothing is committed."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 23.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 8,
+    "cache_creation_input_tokens": 18150,
+    "cache_read_input_tokens": 82749,
+    "output_tokens": 2252,
+    "cost": 0.00558429
+   },
+   "cost": 0.005584,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 2,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3666,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/regions.test.ts",
+    "src/regions.ts"
+   ],
+   "finalMessage": "I added `regionByCode` in `src/regions.ts`, with tests in `src/regions.test.ts`. The full suite passes: 40 tests, 0 failures.\n\n- **Rates:** QC is 149,750 ppm (14.975%), ON is 130,000 ppm (13%), and AB is 50,000 ppm (5%). This follows the parts-per-million rule in D-RATES-PPM and the `Region` type in `src/pricing.ts`.\n- **Unknown codes:** any other code throws an `Error` with the message `unknown region code <code>`.\n- **Choices I made:**\n  - Matching is exact and case-sensitive, so `\"qc\"` throws.\n  - Inherited property names such as `\"toString\"` also throw. I used `Object.hasOwn` for this.\n  - The function is annotated `// @req R-TAX-RATE`, matching the existing annotations in the codebase.\n\nI did not commit the change."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  }
+ ],
+ "conflicts": 0,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 39659,
+  "edited": true,
+  "calls": 67,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 525.4
+ },
+ "usage": {
+  "input_tokens": 110,
+  "cache_creation_input_tokens": 187983,
+  "cache_read_input_tokens": 1275921,
+  "output_tokens": 32162
+ },
+ "cost": 0.066447,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

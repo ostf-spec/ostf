@@ -1,0 +1,80 @@
+{
+ "run": "claude.intent.go-shop.T4.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4716,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 28.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 20931,
+  "cache_read_input_tokens": 193549,
+  "output_tokens": 5050,
+  "cost": 0.008648290000000001
+ },
+ "cost": 0.008648,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`, and everything builds and passes. I haven't committed anything.\n\n**What changed**\n- `pricing/salestax.go` (new): `SalesTax`, same body and doc comment, with the name updated.\n- `pricing/tax.go`: `Tax` removed. `Region` stays here, since it's a separate type.\n- `pricing/quote.go`: the call in `Price` now calls `SalesTax`.\n- `pricing/tax_test.go`: the calls and the error messages now use `SalesTax`. The test names (`TestTax`, `TestTaxExempt`) are unchanged so the trace test links still resolve.\n- `trace/requirements.yaml`: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. I changed only the link targets, not the item text.\n\n**Verification**\n- `go vet ./...` and `gofmt -l` are clean.\n- `go test -count=1 ./...` passes in all five packages.\n- No stale `Tax(` references remain.\n\n**Trace items**\n- **R-TAX-RATE** (refines N-FAIR-PRICE): still true. The rule is unchanged and the link now points to the new location.\n- **R-TAX-EXEMPT** (refines N-FAIR-PRICE): still true, same reasoning.\n- **D-RATES-PPM** links `pricing/tax.go#Region`. `Region` didn't move, so that link is still valid.\n- None of the touched items controls or refines a RISK or THREAT item, so no review gate applies. The change is a pure rename and move.",
+ "date": "2026-10-26"
+}

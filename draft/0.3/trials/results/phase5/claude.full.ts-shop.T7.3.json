@@ -1,0 +1,91 @@
+{
+ "run": "claude.full.ts-shop.T7.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-TAX-EXEMPT": true,
+   "item:R-TAX-RATE": true,
+   "test:taxes the subtotal after discounts": true,
+   "test:is zero for a tax-exempt customer": true,
+   "test:rounds half up to the cent": true
+  },
+  "questions": {
+   "item:R-TAX-EXEMPT": "Does the final answer name R-TAX-EXEMPT (Tax exemption) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-TAX-RATE": "Does the final answer name R-TAX-RATE (Sales tax) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:taxes the subtotal after discounts": "Does the final answer name the test `taxes the subtotal after discounts` as one that matters for the change, run or to be run?",
+   "test:is zero for a tax-exempt customer": "Does the final answer name the test `is zero for a tax-exempt customer` as one that matters for the change, run or to be run?",
+   "test:rounds half up to the cent": "Does the final answer name the test `rounds half up to the cent` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The final answer says src/pricing.ts#tax implements both R-TAX-RATE and R-TAX-EXEMPT, the two items linked to the changed code, and says that \"Both stay true.\" That covers q1 and q2. Under linked tests it lists all three named tests as passing and ties each one to its item: 'taxes the subtotal after discounts' (R-TAX-RATE), 'is zero for a tax-exempt customer' (R-TAX-EXEMPT) and 'rounds half up to the cent' (R-TAX-RATE). That covers q3, q4 and q5.",
+  "cost": 0.020648
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 1,
+  "contextCalls": 3,
+  "checkCalls": 1,
+  "traceOutputTokens": 4196,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 25.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 17076,
+  "cache_read_input_tokens": 118799,
+  "output_tokens": 3519,
+  "cost": 0.0063638900000000005
+ },
+ "cost": 0.006364,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The change has no behavioral effect. It reorders the two guard conditions in `tax()` and pulls `amount * r.ratePpm` into a local `ppm` before rounding. Both guards are pure comparisons that return `0`, so the result is the same for every input. The tests and the trace check both pass.\n\n**What changed** (`src/pricing.ts`, `tax()`)\n- `exempt || amount <= 0` became `amount <= 0 || exempt`.\n- `roundHalfUp(amount * r.ratePpm, 1_000_000)` now goes through a `const ppm` intermediate.\n\n**Trace items** (`ostf check --base main`: exit 0, no errors)\n- `src/pricing.ts#tax` implements **R-TAX-RATE** (sales tax, rounded half up) and **R-TAX-EXEMPT** (exempt customers pay no tax). Both stay true. Both refine N-FAIR-PRICE.\n- Neither item is marked with a RISK control, so the policy's \"ask before changing risk-relevant code\" step does not apply. No risk-relevant item was touched.\n- Tests linked to these items, all passing:\n  - `src/pricing.test.ts#tax > rounds half up to the cent` (R-TAX-RATE)\n  - `src/pricing.test.ts#tax > is zero for a tax-exempt customer` (R-TAX-EXEMPT)\n  - `src/pricing.test.ts#price > taxes the subtotal after discounts` (R-TAX-RATE)\n- `ostf check` also printed two unlinked-statement warnings, for R-ORDER-NOTE and R-VOLUME-DISCOUNT. These are not from this change: those items have no code or test links, and the diff doesn't touch them. They are not errors.\n\n**Tests**\n- `node --test src/pricing.test.ts`: 7 of 7 pass.\n- `npm test` (full suite): 36 of 36 pass.",
+ "date": "2026-10-26"
+}

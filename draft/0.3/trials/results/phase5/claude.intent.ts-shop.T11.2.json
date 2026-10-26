@@ -1,0 +1,84 @@
+{
+ "run": "claude.intent.ts-shop.T11.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says plainly that \"no test covers it\" and that \"The repo has no test that runs against `deploy/`\". It quotes the README line saying no test runs deploy/, and it notes that none of the 36 npm tests exercise deploy/. So it tells the user that no automated test covers or runs the file. q2: The answer says \"The only item that verifies the control is the manual review V-INFRA-REVIEW\". It also describes V-INFRA-REVIEW as verifying C-DB-ENCRYPTION through a manual review of deploy/. That names it by ID as how the control is verified.",
+  "cost": 0.0188806
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5322,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 10,
+  "cache_creation_input_tokens": 19517,
+  "cache_read_input_tokens": 110153,
+  "output_tokens": 3710,
+  "cost": 0.00686093
+ },
+ "cost": 0.006861,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/database.tf` to C-DB-ENCRYPTION, but no test covers it. The repo has no test that runs against `deploy/`. The only item that verifies the control is the manual review V-INFRA-REVIEW.\n\n**The change:** I added one line to the C-DB-ENCRYPTION item in `trace/threats.yaml`:\n\n```yaml\n    controls: [THREAT-DB-SNAPSHOT]\n    code: [deploy/database.tf]\n```\n\nI did not commit it. The `code:` field is used on requirement and design items, but not on controls. I could not check the change with the ostf validator because it is not installed here, so the spec may not accept `code:` on a control.\n\n**Tests covering the file:** none. `README.md` says `deploy/` is \"Terraform for the database and the load balancer, which no test runs.\" I did not add a `tests:` field, because there is no test to point it at. `npm test` passes all 36 tests, but none of them exercise `deploy/`.\n\n**What the file does for the control:** by reading, `deploy/database.tf` sets `storage_encrypted = true` with a customer-managed KMS key that has `enable_key_rotation = true` and a 365-day period. That matches the control text. I did not run `terraform validate` or `plan`, because Terraform is not installed here. RDS snapshots of an encrypted instance are encrypted too, but I did not check that against the provider.\n\n**Items for the pull request reviewer:**\n- **C-DB-ENCRYPTION** (touched): your link is new, and the item text is unchanged. It controls THREAT-DB-SNAPSHOT, so it needs review.\n- **V-INFRA-REVIEW** (not touched): it verifies C-DB-ENCRYPTION and C-TLS-ONLY through a manual review of `deploy/`. It is the only check on this file.\n- **THREAT-DB-SNAPSHOT** (not touched): this is the threat the control addresses.\n\nIf you want an automated check, a `terraform validate` or plan-based test would be new behavior. Per AGENTS.md, it would need a new item with `status: draft`, linked to its code and tests in the same change. I can draft that if you want it.",
+ "date": "2026-10-26"
+}

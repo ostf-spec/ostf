@@ -1,0 +1,80 @@
+{
+ "run": "claude.intent.go-shop.T4.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4990,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 37.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 25473,
+  "cache_read_input_tokens": 173025,
+  "output_tokens": 7558,
+  "cost": 0.01060525
+ },
+ "cost": 0.010605,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go",
+  "pricing/discount_test.go",
+  "pricing/discountamount.go",
+  "pricing/quote.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "`ApplyDiscount` is now `DiscountAmount`, and its code lives in the new `pricing/discountamount.go`. `go vet` and `gofmt` are clean, and `go test ./...` passes in all five packages, the same as before the change. I haven't committed.\n\n**What changed**\n- `pricing/discountamount.go` (new): `DiscountAmount`, with its doc comment and the `@req R-DISCOUNT-EXPIRY` tag moved along with it.\n- `pricing/discount.go`: the function is removed. `Discount`, `MaxDiscountPercent` and `ErrDiscountExpired` stay here, and the unused `fmt` import is dropped.\n- `pricing/quote.go`: `Price` calls `DiscountAmount`.\n- `pricing/discount_test.go`: the calls and failure messages use the new name.\n- `trace/requirements.yaml`: the `code:` links for R-DISCOUNT-PERCENT and R-DISCOUNT-CAP now point to `pricing/discountamount.go#DiscountAmount`. This only updates the pointer. The item text is untouched.\n\n**Trace items**\n- R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY refine N-FAIR-PRICE. None of them controls a risk, and none refines an item that does, so the ask-first rule did not apply.\n- Your change keeps all three true. Their tests pass: `TestApplyDiscount`, including the `caps_at_fifty_percent` and `rejects_expired` subtests.\n- R-TAX-RATE is also affected, because `Price` calls the function. Its tests (`TestTax`, `TestPrice`) pass. It does not control or refine a risk item.\n- No item your change touched controls a risk or a threat, or refines one that does, so there is nothing extra for a reviewer to look at.\n\n**Choices and gaps to check**\n- I kept the test name `TestApplyDiscount`. Renaming it to `TestDiscountAmount` would also mean changing the three test links in the trace. Say if you want that done.\n- R-DISCOUNT-EXPIRY has no `code:` field in the trace. Its only link to the code is the `@req` comment, and that was already the case before my change.",
+ "date": "2026-10-26"
+}

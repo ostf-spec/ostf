@@ -1,0 +1,82 @@
+{
+ "run": "codex.full.go-shop.T4.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 32,
+  "callsBeforeFirstEdit": 15,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 9,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 8281,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 86.9
+ },
+ "usage": {
+  "input_tokens": 489373,
+  "cached_input_tokens": 449024,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3727,
+  "reasoning_output_tokens": 567
+ },
+ "cost": 0.213443,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace.derived",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 7,
+ "changedSymbols": 7,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to [pricing/salestax.go](/tmp/ostf-trials/phase5/codex.full.go-shop.T4.2/repo/pricing/salestax.go). Updated the caller, tests, and trace links. The calculation is unchanged.\n\n`go test ./...` and `ostf check --base main` pass. The check lists R-TAX-RATE and R-TAX-EXEMPT, which remain true, and their parent need N-FAIR-PRICE, which remains true. It lists `TestPrice`, `TestSalesTax`, and `TestSalesTaxExempt`. It also reports the existing unlinked items R-ORDER-NOTE and R-VOLUME-DISCOUNT; this change leaves them unchanged. No risk-relevant item was touched.",
+ "date": "2026-10-26"
+}

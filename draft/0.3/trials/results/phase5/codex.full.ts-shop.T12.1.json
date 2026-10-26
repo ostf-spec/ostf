@@ -1,0 +1,490 @@
+{
+ "run": "codex.full.ts-shop.T12.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true,
+  "checkGreenAfterEachMerge": true,
+  "noDerivedHandEdit": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 90.8
+   },
+   "usage": {
+    "input_tokens": 232425,
+    "cached_input_tokens": 199168,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2032,
+    "reasoning_output_tokens": 401
+   },
+   "cost": 0.130678,
+   "metrics": {
+    "calls": 18,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 7,
+    "contextCalls": 1,
+    "checkCalls": 2,
+    "traceOutputTokens": 5041,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `Cart.clear()` in [src/cart.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-01/repo/src/cart.ts). It removes every line. The new test in [src/cart.test.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-01/repo/src/cart.test.ts) checks that the cart is empty, its subtotal is zero, and it can be reused.\n\nAdded draft trace item **R-CART-CLEAR** in [trace/requirements.yaml](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-01/repo/trace/requirements.yaml). The change keeps its parent item **N-BUY** true. The trace check lists the **Cart** suite and **“clears every line and can be reused”** test; it found no errors. All 37 tests pass. No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-02",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 134.1
+   },
+   "usage": {
+    "input_tokens": 316900,
+    "cached_input_tokens": 288640,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3770,
+    "reasoning_output_tokens": 1023
+   },
+   "cost": 0.162178,
+   "metrics": {
+    "calls": 19,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 7,
+    "contextCalls": 1,
+    "checkCalls": 3,
+    "traceOutputTokens": 7200,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `Checkout.preview(token, cart, discount)` in [checkout.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-02/repo/src/checkout.ts). It returns the same quote calculation used by `placeOrder`, without reserving stock or charging. The new draft item, R-CHECKOUT-PREVIEW, is linked in [trace/requirements.yaml](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-02/repo/trace/requirements.yaml).\n\nAll 38 tests pass, including “previews the order quote without reserving stock or charging” and “rejects invalid previews before any stock or payment action.” `ostf check --base origin/main` passes. It also lists the existing checkout tests “places an order” and “needs a valid session”; those pass. R-CHECKOUT-PREVIEW, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION and their parent needs N-FAIR-PRICE, N-BUY and N-ACCOUNT-SAFE remain true. No risk-relevant item was touched. The check reports two pre-existing unlinked items, R-ORDER-NOTE and R-VOLUME-DISCOUNT; this change does not affect either."
+  },
+  {
+   "branch": "change-03",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 120.4
+   },
+   "usage": {
+    "input_tokens": 314391,
+    "cached_input_tokens": 273536,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3247,
+    "reasoning_output_tokens": 617
+   },
+   "cost": 0.175057,
+   "metrics": {
+    "calls": 29,
+    "callsBeforeFirstEdit": 18,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 14,
+    "contextCalls": 2,
+    "checkCalls": 2,
+    "traceOutputTokens": 4954,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/inventory.test.ts",
+    "src/inventory.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `Stock.held(sku)` to sum units held by unexpired reservations. The new test covers multiple reservations, SKU filtering, and the expiry boundary. I also added draft trace item **R-STOCK-HELD**.\n\nAll 37 tests pass, and `ostf check --base origin/main` passes. OSTF lists **R-STOCK-HELD**, which the change implements, and **N-NO-OVERSELL**, which remains true. It lists the `Stock` suite and `Stock > counts only unexpired reservations for the requested SKU` test."
+  },
+  {
+   "branch": "change-04",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 115.0
+   },
+   "usage": {
+    "input_tokens": 297685,
+    "cached_input_tokens": 257024,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2304,
+    "reasoning_output_tokens": 497
+   },
+   "cost": 0.160737,
+   "metrics": {
+    "calls": 29,
+    "callsBeforeFirstEdit": 18,
+    "edited": true,
+    "ostfCalls": 6,
+    "ostfCallsBeforeFirstEdit": 4,
+    "firstOstfCall": 11,
+    "contextCalls": 4,
+    "checkCalls": 2,
+    "traceOutputTokens": 4993,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/accounts.test.ts",
+    "src/accounts.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `Sessions.logout(token)` in [accounts.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-04/repo/src/accounts.ts). It ends the selected session; validating that token afterward throws `SessionError`, while another session remains valid.\n\nThe new [test](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-04/repo/src/accounts.test.ts) passes, as does the full suite (37 tests). `ostf check --base origin/main` passes. It lists the `Sessions` suite and “rejects a logged-out session without ending other sessions” test. The new draft item `R-SESSION-LOGOUT` holds true and refines `N-ACCOUNT-SAFE`, which remains true. No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-05",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 86.9
+   },
+   "usage": {
+    "input_tokens": 279635,
+    "cached_input_tokens": 238848,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2407,
+    "reasoning_output_tokens": 388
+   },
+   "cost": 0.157294,
+   "metrics": {
+    "calls": 20,
+    "callsBeforeFirstEdit": 10,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 7,
+    "contextCalls": 1,
+    "checkCalls": 2,
+    "traceOutputTokens": 8956,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `AuditLog.total(account, action)` in [src/audit.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-05/repo/src/audit.ts). It sums matching amounts in cents and returns `0` when none match.\n\nAdded a test in [src/audit.test.ts](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-05/repo/src/audit.test.ts) and a draft trace item in [trace/requirements.yaml](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-05/repo/trace/requirements.yaml). The trace check lists **R-AUDIT-TOTAL** as satisfied by the new method and test; **R-AUDIT-APPEND-ONLY** and **N-ACCOUNT-SAFE** remain true. Its listed tests are `src/audit.test.ts`, `AuditLog`, and `AuditLog > totals amounts for one account and action`. No risk-relevant item was touched.\n\n`npm test`: 37 passed. `ostf check --base origin/main`: passed."
+  },
+  {
+   "branch": "change-06",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 101.6
+   },
+   "usage": {
+    "input_tokens": 345871,
+    "cached_input_tokens": 307200,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2995,
+    "reasoning_output_tokens": 981
+   },
+   "cost": 0.178542,
+   "metrics": {
+    "calls": 32,
+    "callsBeforeFirstEdit": 17,
+    "edited": true,
+    "ostfCalls": 5,
+    "ostfCallsBeforeFirstEdit": 2,
+    "firstOstfCall": 11,
+    "contextCalls": 2,
+    "checkCalls": 3,
+    "traceOutputTokens": 6471,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added [isExpired](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-06/repo/src/pricing.ts:37). It returns `true` at the discount’s expiry time and afterward. The [test](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-06/repo/src/pricing.test.ts:10) checks before, at, and after that boundary.\n\n`npm test` passes (37 tests), and `ostf check --base main` reports no errors. The trace check lists draft item **R-DISCOUNT-EXPIRY-CHECK**, **R-DISCOUNT-EXPIRY**, and **N-FAIR-PRICE**; this change keeps each true. It lists the `isExpired` suite and its “is false before expiry and true at or after expiry” test. No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-07",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 102.1
+   },
+   "usage": {
+    "input_tokens": 304318,
+    "cached_input_tokens": 277888,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3924,
+    "reasoning_output_tokens": 1067
+   },
+   "cost": 0.158348,
+   "metrics": {
+    "calls": 22,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 4,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 6,
+    "contextCalls": 1,
+    "checkCalls": 3,
+    "traceOutputTokens": 6869,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/money.test.ts",
+    "src/money.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `parseCents` to [src/money.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-07/repo/src/money.ts). It accepts decimal strings or numbers, converts them to integer cents, and rejects more than two decimal places or amounts outside the safe integer range.\n\nAll 39 tests pass. The new [parseCents tests](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-07/repo/src/money.test.ts) cover exact parsing, invalid amounts, and range limits. `ostf check --base main` passes.\n\nThe check lists **R-MONEY-PARSE** (added as draft), **R-MONEY-CENTS**, and **N-FAIR-PRICE**; the change keeps each true. It also reports two existing unlinked items, **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT**, which this change does not affect. No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-08",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function formatQuote in a new file src/quote-format.ts that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 82.9
+   },
+   "usage": {
+    "input_tokens": 301954,
+    "cached_input_tokens": 277120,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2787,
+    "reasoning_output_tokens": 582
+   },
+   "cost": 0.138782,
+   "metrics": {
+    "calls": 23,
+    "callsBeforeFirstEdit": 12,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 11,
+    "contextCalls": 0,
+    "checkCalls": 3,
+    "traceOutputTokens": 5396,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/quote-format.test.ts",
+    "src/quote-format.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added `formatQuote` in [src/quote-format.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-08/repo/src/quote-format.ts). It produces the requested string from a `Quote`. The new test, `formatQuote > formats each quote amount with two decimal places`, passes; the full suite passes (37 tests).\n\n`ostf check --base origin/main` passed. Its impact report lists the new draft item **R-QUOTE-FORMAT** and **N-FAIR-PRICE**; the change keeps both true. It also reports the existing unlinked items **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT**, which this change does not affect. No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-09",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 82.8
+   },
+   "usage": {
+    "input_tokens": 283558,
+    "cached_input_tokens": 257024,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 3445,
+    "reasoning_output_tokens": 949
+   },
+   "cost": 0.148413,
+   "metrics": {
+    "calls": 20,
+    "callsBeforeFirstEdit": 10,
+    "edited": true,
+    "ostfCalls": 3,
+    "ostfCallsBeforeFirstEdit": 1,
+    "firstOstfCall": 9,
+    "contextCalls": 1,
+    "checkCalls": 3,
+    "traceOutputTokens": 5168,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/rates.test.ts",
+    "src/rates.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added [ratePercent](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-09/repo/src/rates.ts) and [tests](/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-09/repo/src/rates.test.ts). It formats parts-per-million rates exactly, including `14.975%`, and omits trailing decimal zeros.\n\nAll 39 tests pass. `ostf check --base origin/main` passes. Its listed item, **R-RATE-PERCENT**, is linked to the new code and tests as a draft; **N-FAIR-PRICE** remains true. The check also reports pre-existing unlinked items **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT**; this change leaves both unaffected. The listed tests are `ratePercent` and its cases “formats a fractional percentage exactly,” “omits unnecessary decimal zeros,” and “rejects a noninteger rate.” No risk-relevant item was touched."
+  },
+  {
+   "branch": "change-10",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 80.5
+   },
+   "usage": {
+    "input_tokens": 316379,
+    "cached_input_tokens": 287104,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2633,
+    "reasoning_output_tokens": 777
+   },
+   "cost": 0.150071,
+   "metrics": {
+    "calls": 17,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 2,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": 11,
+    "contextCalls": 0,
+    "checkCalls": 2,
+    "traceOutputTokens": 6039,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/regions.test.ts",
+    "src/regions.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added [regionByCode](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-10/repo/src/regions.ts) and [tests](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T12.1/run-10/repo/src/regions.test.ts). It returns `Region` values for QC (14.975%), ON (13%), and AB (5%), and throws for every other code.\n\nAll 38 tests pass. `ostf check --base origin/main` passes. Its listed items remain true: the new draft `R-REGION-BY-CODE`, `R-TAX-RATE`, and `N-FAIR-PRICE`. The check lists the `regionByCode` suite and its supported-code and unsupported-code tests. No risk-relevant item was changed."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  }
+ ],
+ "conflicts": 2,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 61087,
+  "edited": true,
+  "calls": 229,
+  "ostfCalls": 36
+ },
+ "timing": {
+  "seconds": 997.1
+ },
+ "usage": {
+  "input_tokens": 2993116,
+  "cached_input_tokens": 2663552,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 29544,
+  "reasoning_output_tokens": 7282
+ },
+ "cost": 1.5601,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

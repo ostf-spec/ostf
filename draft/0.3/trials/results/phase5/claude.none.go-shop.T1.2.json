@@ -1,0 +1,85 @@
+{
+ "run": "claude.none.go-shop.T1.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "explain",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:TestCheckRefundLimit": true,
+   "test:TestRefundDailyLimit": true,
+   "test:TestRefund": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer explain that payments/refund.go#Refunder.Refund exists because of R-REFUND-LIMIT (Refund limit), which states: \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-AUDIT-MONEY": "Does the final answer explain that payments/refund.go#Refunder.Refund exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer explain that payments/refund.go#Refunder.Refund exists because of R-REFUND-ORIGINAL (Refund to the original payment), which states: \"A refund goes back to the payment method of the charge it refunds, never to another one.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:TestCheckRefundLimit": "Does the final answer name the test `TestCheckRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefundDailyLimit": "Does the final answer name the test `TestRefundDailyLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefund": "Does the final answer name the test `TestRefund` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer names R-REFUND-LIMIT and spells out what it requires of the function. A refund can't be more than what is left of the charge, and going over 500.00 in one UTC day needs a second approver. Refund supplies the remaining amount per receipt and the daily total per account. The answer also covers R-REFUND-ORIGINAL: the money goes back to the original transaction (rcpt.Txn), never to another payment method. For R-AUDIT-MONEY it says the function records each refund in the audit log and adds the audit entry after the gateway call succeeds. That is short and doesn't list the entry's fields, but it does say what the requirement asks of the function, so it counts. All three tests are named as coverage: TestCheckRefundLimit, TestRefund and TestRefundDailyLimit.",
+  "cost": 0.031203799999999997
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6869,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 15.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 19646,
+  "cache_read_input_tokens": 55771,
+  "output_tokens": 1904,
+  "cost": 0.00543951
+ },
+ "cost": 0.00544,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Refunder.Refund` is the code path that sends money back to a customer for an earlier charge. It exists to satisfy two requirements, both tied to the refund risks in `REQUIREMENTS.md`:\n\n- **R-REFUND-LIMIT** (refines N-REFUNDS, controls RISK-REFUND-ABUSE): a refund may not exceed what is left of the original charge, and refunds that push an account's daily total above 500.00 (`DailyRefundLimit`, 50,000 cents, UTC day) need a second approver. `CheckRefundLimit` holds the pure rule. `Refund` supplies the state it needs: the remaining amount per receipt and the daily total per account.\n- **R-REFUND-ORIGINAL**: the money goes back to the transaction of the charge being refunded (`rcpt.Txn`), never to another payment method.\n\nIt also records each refund in the audit log (R-AUDIT-MONEY), and its per-charge and per-day totals are the design in D-REFUND-LEDGER.\n\nThe order inside `Refund` is: look up the receipt, check the limit, call the gateway, then update the totals and append the audit entry. The totals only change after the gateway succeeds.\n\n**Tests that cover it** (from `payments/refund_test.go` and the requirement entries):\n\n- `TestCheckRefundLimit`: table tests of `CheckRefundLimit` for within limits, more than is left, zero amount, over the daily limit, and over the daily limit with approval. Covers R-REFUND-LIMIT.\n- `TestRefund`: a refund reaches the original transaction, the audit entry is written, and a refund beyond the charge returns `ErrRefundTooLarge`. Covers R-REFUND-ORIGINAL and R-AUDIT-MONEY. The test is annotated `@req R-AUDIT-MONEY`, and `REQUIREMENTS.md` lists it under R-REFUND-ORIGINAL too.\n- `TestRefundDailyLimit`: a second same-day refund over the limit returns `ErrNeedsApproval`, and the same refund succeeds on the next UTC day. Covers the daily ledger (D-REFUND-LEDGER).\n\nNothing else in the Go code calls `Refund`. The only other references are the `Refund` method on test fakes (`payments/charge_test.go`, `cart/checkout_test.go`) and the gateway interface in `payments/charge.go`. So no test exercises refunds through checkout.\n\n**Things I noticed while reading:**\n\n- `ApprovedBy` is only checked for being non-empty. Any string counts as a second approval, so nothing verifies that the approver is a different, authorized person. R-REFUND-LIMIT says \"needs a second approval\", so this may be a gap.\n- The requirement for \"refunds above 500.00\" is applied as \"refunded today + this refund > 500.00\". That matches the code and the tests, which is the intended behaviour.\n- Only `TestRefundDailyLimit` covers the daily-limit path through `Refund`. `TestCheckRefundLimit` covers the rule in isolation.\n\nI only read the code and requirements. I did not run `go test`, and I did not change any files.",
+ "date": "2026-10-26"
+}

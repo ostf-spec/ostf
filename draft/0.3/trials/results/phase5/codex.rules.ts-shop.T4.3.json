@@ -1,0 +1,68 @@
+{
+ "run": "codex.rules.ts-shop.T4.3",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3164,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 84.6
+ },
+ "usage": {
+  "input_tokens": 167150,
+  "cached_input_tokens": 135424,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3557,
+  "reasoning_output_tokens": 1146
+ },
+ "cost": 0.137567,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 21,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Moved `applyDiscount` to [src/discount.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T4.3/repo/src/discount.ts) as `discountAmount`, updated pricing and the tests, and kept existing discount types available through `pricing.ts`. All 36 tests pass.\n\n**Requirement review:** R-DISCOUNT-PERCENT, R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY, and R-TAX-RATE still hold. The percentage, cap, expiry, and tax-after-discount tests passed. The first three entries now have stale code and test names in `REQUIREMENTS.md`; I left those entries unchanged as the project instructions require. No risk or threat control entry was touched.",
+ "date": "2026-10-26"
+}

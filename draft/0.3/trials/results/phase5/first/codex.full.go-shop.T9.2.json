@@ -1,0 +1,82 @@
+{
+ "run": "codex.full.go-shop.T9.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "codeChanged": false,
+  "testChanged": false,
+  "testsPass": true,
+  "implementsRequest": false,
+  "noInventedIds": true,
+  "controlAdded": false,
+  "implementedAndVerified": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": false
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff is empty, so the agent changed no code or tests. Checkout has no rate limit that refuses a fourth order from the same account within ten minutes before charging. No new error type was added, and no test checks the limit. The final answer only describes what the agent planned to do. It doesn't show any finished work.",
+  "cost": 0.0111008
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 2584,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 1,
+  "seconds": 16.4
+ },
+ "usage": {},
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 0,
+  "onTestedCode": 0,
+  "corroborated": 0
+ },
+ "firstMessage": null,
+ "finalMessage": "I’ll inspect the checkout flow and the THREAT-CARD-TESTING trace item, then add the limit at the point before payment and test that boundary.",
+ "date": "2026-10-26"
+}

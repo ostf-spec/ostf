@@ -1,0 +1,84 @@
+{
+ "run": "codex.none.ts-shop.T5.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff matches R-VOLUME-DISCOUNT. `volumeDiscount` takes floor(5%) off each line with 10 or more units, rounding each line separately. `price` applies the discount code to the subtotal after the volume discount is taken off. It then limits the total discount to floor(50% of subtotal), so the volume discount counts toward the cap. Checkout now passes the volume discount into `price`. The new tests check the 10-unit threshold (9 units get nothing, 10 do) and rounding per line rather than on the sum (two lines worth 0.5 cent each give 0). They also check that the code applies after the volume discount (99 + 189 = 288) and that a 100% code is held to the combined 995 cap. One checkout test confirms the order is charged the discounted total. I worked through the expected numbers and they agree with the code. I couldn't run the tests myself, so I can't confirm the agent's \"39 passing\" claim.",
+  "cost": 0.04828880000000001
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 8299,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 77.4
+ },
+ "usage": {
+  "input_tokens": 290251,
+  "cached_input_tokens": 260096,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3625,
+  "reasoning_output_tokens": 882
+ },
+ "cost": 0.157399,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Cart lines with at least 10 units now receive a 5% discount rounded down per line. Discount codes apply afterward, and the combined discount stays within the 50% cap. Checkout charges the resulting total.\n\nUpdated the requirement trace and added pricing and checkout tests. `npm test` passes: 39 tests.",
+ "date": "2026-10-26"
+}

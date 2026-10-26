@@ -1,0 +1,95 @@
+{
+ "run": "codex.full.ts-shop.T10.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.remainingMs(id)`. It returns the milliseconds left before a reservation's expiry, never goes below zero, and returns zero for unknown or released reservations. A new test checks the full hold duration, the value one millisecond before expiry, the exact expiry boundary, the time after expiry, a missing id, and a released hold. q2: The method gets the time from `this.now()`, which the test setup controls through the injected clock (`clock.t`). It does not call `Date.now()` or `new Date()` directly. The test moves the fake clock forward instead of sleeping, which is what D-CLOCK requires.",
+  "cost": 0.0241006
+ },
+ "metrics": {
+  "calls": 34,
+  "callsBeforeFirstEdit": 19,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 4,
+  "firstOstfCall": 10,
+  "contextCalls": 3,
+  "checkCalls": 3,
+  "traceOutputTokens": 6011,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 105.1
+ },
+ "usage": {
+  "input_tokens": 396989,
+  "cached_input_tokens": 369664,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3573,
+  "reasoning_output_tokens": 710
+ },
+ "cost": 0.171413,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/inventory.test.ts",
+  "src/inventory.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 4,
+ "changedSymbols": 4,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Added [`Stock.remainingMs(id)`](/tmp/ostf-trials/phase5/codex.full.ts-shop.T10.3/repo/src/inventory.ts:77). It returns the milliseconds left, or zero for an expired, released, or unknown reservation. The [new test](/tmp/ostf-trials/phase5/codex.full.ts-shop.T10.3/repo/src/inventory.test.ts:40) covers those cases and the expiry boundary.\n\nAll 37 tests pass, and `ostf check --base main` passes. Its impact report lists the `Stock` test suite and “reports the milliseconds left on a reservation.” The new draft item `R-STOCK-REMAINING` is satisfied; the existing `R-STOCK-EXPIRY` and `N-NO-OVERSELL` items remain true. No risk-relevant item was touched.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,93 @@
+{
+ "run": "claude.full.ts-shop.T9.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `OrderRateError` and a private `admitOrder` check in `placeOrder`. The check runs after the session lookup and the empty-cart check, but before pricing, reserving stock or charging. It keeps each account's attempt times and refuses the next attempt once the account already has 3 attempts in the last 10 minutes. That means a fourth order within ten minutes is refused before anything is charged, using a new error, as the user asked. The new test \"refuses a fourth order within ten minutes\" places three orders. It then checks that a fourth attempt at 9m59.999s is rejected with `OrderRateError`, and that no audit entry or stock change happens for it. Finally it checks that an order at exactly ten minutes goes through. So the code implements the mitigation, and a test checks it.",
+  "cost": 0.042824799999999996
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "contextCalls": 3,
+  "checkCalls": 4,
+  "traceOutputTokens": 9122,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 106.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 47918,
+  "cache_read_input_tokens": 538437,
+  "output_tokens": 20818,
+  "cost": 0.02537977
+ },
+ "cost": 0.02538,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "changedSymbols": 10,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added the card-testing limit to checkout: a fourth order attempt from the same account within ten minutes is refused with a new `OrderRateError`, before any stock is reserved or any card is charged. The full suite passes (37 tests, including the new one), and `ostf check --base main` exits 0 with no errors. Nothing is committed.\n\n**What changed**\n- `src/checkout.ts`: `placeOrder` now calls a private `admitOrder` after the empty-cart check and before pricing, reserving stock, or charging. It keeps per-account attempt timestamps and refuses the fourth attempt inside a rolling ten-minute window. `OrderRateError` is exported, along with the `MAX_ORDERS_PER_WINDOW` (3) and `ORDER_WINDOW_MS` constants.\n- `src/checkout.test.ts`: new test \"refuses a fourth order within ten minutes\". It checks the refusal at 9m59.999s, that no audit entry or stock change happens for the refused order, and that the order is accepted at exactly ten minutes. `newShop` now takes an optional clock.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-RATE`, status `draft`, refines `N-ACCOUNT-SAFE`, controls `THREAT-CARD-TESTING`, code `src/checkout.ts#Checkout.admitOrder`. Its test is linked by the `// @req R-CHECKOUT-RATE` comment, as with the other checkout tests.\n\n**Items in your summary**\n- **Risk-relevant, touched:** `R-CHECKOUT-RATE` is new and controls `THREAT-CARD-TESTING`, so `ostf` marks it \"risk-relevant: ask before changing\". You asked for this change, so I made it, but it needs review by another principal in the PR. I did not edit `THREAT-CARD-TESTING` or any other `RISK-*` item.\n- **Kept true:** `R-CHECKOUT-ORDER` (verified by \"places an order\") still holds. The new check runs before the price/reserve/charge/confirm sequence and doesn't change that order. `R-CHECKOUT-SESSION` (verified by \"needs a valid session\") still holds, because the session is validated before the rate check.\n- **Tests listed:** the new `R-CHECKOUT-RATE` test, plus the existing \"places an order\" and \"needs a valid session\" tests, all pass.\n- **Pre-existing `ostf` notes, not from this change:** `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no links. I left them alone.\n\n**Choices and limits to review**\n- I count attempts, not successful charges, so declined card tests count against the limit. Empty-cart attempts don't count, because they never reach a charge.\n- The counter is in memory, per `Checkout` instance. It is not shared across processes or restarts, so a multi-instance deployment or a restart resets it.\n- The limit is per account. An attacker who registers many accounts isn't limited by it. The threat is scoped to one account, so this matches the threat as written, but it is not a full card-testing defense.",
+ "date": "2026-10-25"
+}

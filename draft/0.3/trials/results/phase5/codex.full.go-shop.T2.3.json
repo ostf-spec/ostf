@@ -1,0 +1,97 @@
+{
+ "run": "codex.full.go-shop.T2.3",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "implement",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "listsAddedItem": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the item it added (R-GIFT-WRAP) by its ID?"
+  },
+  "reason": "q1: The diff does what the user asked. It adds a 450 GiftWrappingFee that is charged once per order. The fee is applied only when the new giftWrap flag on PlaceOrder and Price is set. It is added after tax is worked out on the discounted subtotal, so it is not taxed, and it is included in Total. Two new tests check this. TestPriceGiftWrap expects tax of 1348 on 9000, with the fee left out of the taxable amount, and a total of 10798. TestPlaceOrderGiftWrap expects a gift wrap line of 450 and a total of 2750, and checks that the amount charged equals that total. The existing calls were updated to pass false. q2: The final answer names R-GIFT-WRAP by its ID as the new draft requirement.",
+  "cost": 0.0464566
+ },
+ "metrics": {
+  "calls": 25,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 7,
+  "contextCalls": 1,
+  "checkCalls": 4,
+  "traceOutputTokens": 9256,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 139.7
+ },
+ "usage": {
+  "input_tokens": 542069,
+  "cached_input_tokens": 480256,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 6169,
+  "reasoning_output_tokens": 1298
+ },
+ "cost": 0.294347,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 10,
+ "changedSymbols": 10,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Gift wrapping is now a checkout option. When requested, it adds **4.50 once per order** to the quote and charge, after discounts and tax. The quote shows the fee separately.\n\n`go test ./...` and `ostf check --base main` pass. The new draft requirement is [R-GIFT-WRAP](/tmp/ostf-trials/phase5/codex.full.go-shop.T2.3/repo/trace/requirements.yaml). The trace check found no errors; it still reports the existing unlinked R-ORDER-NOTE and R-VOLUME-DISCOUNT items.\n\nThe change keeps R-CHECKOUT-ORDER, R-CHECKOUT-SESSION, R-STOCK-RELEASE, R-TAX-RATE, N-BUY, N-ACCOUNT-SAFE, N-NO-OVERSELL, and N-FAIR-PRICE true. R-GIFT-WRAP is covered by `TestPlaceOrderGiftWrap` and `TestPriceGiftWrap`. The check also listed `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderReleasesStockOnDecline`, `TestRelease`, `TestPrice`, and `TestTax`. No risk-relevant item was touched.",
+ "date": "2026-10-26"
+}

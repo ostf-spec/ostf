@@ -1,0 +1,80 @@
+{
+ "run": "claude.intent.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5782,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 53.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 29064,
+  "cache_read_input_tokens": 220983,
+  "output_tokens": 11525,
+  "cost": 0.013786729999999999
+ },
+ "cost": 0.013787,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 21,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "I moved `applyDiscount` into `src/discount.ts` and renamed it `discountAmount`. All 36 tests pass, and nothing in the repo still refers to `applyDiscount`. I haven't committed.\n\n**What changed**\n- **`src/discount.ts` (new):** holds `discountAmount`, plus `Discount`, `MAX_DISCOUNT_PERCENT`, and `DiscountExpiredError`. The function can't move alone: it uses those three, and keeping them in `pricing.ts` would make the two files import each other.\n- **`src/pricing.ts`:** imports `discountAmount` for `price()` and re-exports the moved names, so `checkout.ts` needed no changes.\n- **`src/pricing.test.ts`:** the `applyDiscount` suite is now `discountAmount`, importing from `./discount.ts`. The tests stay in this file.\n- **`trace/requirements.yaml`:** I updated the `code` and `tests` pointers of R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY to the new file and name. Item text and status are unchanged.\n- **`README.md`:** added a row for `src/discount.ts` to the module table.\n\n**Trace items linked to the changed code**\n- **R-DISCOUNT-PERCENT** (refines N-FAIR-PRICE): still true. Test: `src/pricing.test.ts` › `discountAmount`.\n- **R-DISCOUNT-CAP** (refines N-FAIR-PRICE): still true. Test: `src/pricing.test.ts` › `discountAmount > caps at fifty percent`.\n- **R-DISCOUNT-EXPIRY** (refines N-FAIR-PRICE): still true. Test: `src/pricing.test.ts` › `discountAmount > rejects an expired code`. Its `@req` comment moved with the function.\n- **R-TAX-RATE** (refines N-FAIR-PRICE): still true. Only the call inside `price()` changed. Test: `src/pricing.test.ts` › `price > taxes the subtotal after discounts`.\n\n**Risk and threat items touched:** none. None of the items above has a `controls` link to a risk, and none refines an item that does, so I didn't need to ask first. One note for the reviewer: R-DISCOUNT-CAP's rationale describes a mistyped code giving away orders, which is the RISK-WRONG-CHARGE scenario. It isn't formally linked to that risk, so I left it alone. The R-CHARGE-AMOUNT item does control that risk, but it sits in `payments.ts` and I didn't change it.",
+ "date": "2026-10-26"
+}

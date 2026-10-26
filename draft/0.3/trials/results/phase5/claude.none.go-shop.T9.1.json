@@ -1,0 +1,81 @@
+{
+ "run": "claude.none.go-shop.T9.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new error, ErrTooManyOrders, and a per-account sliding-window limiter guarded by a mutex (MaxOrdersPerWindow = 3, OrderWindow = 10 minutes). PlaceOrder checks the limit right after session validation and the empty-cart check, so a refused order never reaches pricing, stock reservation or the charge. That refuses a fourth order from the same account within ten minutes, before anything is charged. The window logic is correct: an attempt drops out of the count only once it is more than ten minutes old, so 9m59s is refused and 10m01s is allowed. The new tests check the fourth order is refused with the new error, never reaches the gateway, and reserves no stock. They also cover the window edges, per-account isolation and concurrent attempts. The REQUIREMENTS.md entry described in the answer does not appear in the diff, but this question only asks about the mitigation and its tests.",
+  "cost": 0.0559168
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5106,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 76.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 28,
+  "cache_creation_input_tokens": 35410,
+  "cache_read_input_tokens": 501995,
+  "output_tokens": 13206,
+  "cost": 0.018707749999999995
+ },
+ "cost": 0.018708,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now refuses a fourth order from the same account within ten minutes. The refusal happens before pricing, stock reservation, or any charge, and it returns a new error, `ErrTooManyOrders`. The full suite passes, and the new tests also pass under `-race`. I didn't commit anything.\n\n**What changed**\n- `cart/checkout.go`: `Checkout` keeps per-account attempt times under a mutex. `PlaceOrder` checks the count after session validation and the empty-cart check, and returns `ErrTooManyOrders` once the account has three attempts in the last ten minutes. The limit is `MaxOrdersPerWindow = 3` and `OrderWindow = 10 * time.Minute`.\n- `cart/checkout_test.go`: four new tests cover the limit with no gateway call and no stock reserved, the window edges (9m59s refused, 10m01s allowed), per-account isolation, and ten concurrent attempts that yield exactly three charges.\n- `REQUIREMENTS.md`: new `R-CHECKOUT-VELOCITY` entry, refining `N-ACCOUNT-SAFE` and controlling `THREAT-CARD-TESTING`, with its code and tests listed.\n\n**Choices I made that you may want to change**\n- **Declined attempts count.** Card testing is mostly declines, so counting only successful orders would miss the threat.\n- **Refused attempts are not recorded.** The window therefore clears ten minutes after the third attempt, not after the last refused one.\n- **A retry with the same idempotency key counts as another attempt.** A customer who hits a network error and retries will use up a slot.\n- **Attempts that fail later (stock shortfall, bad discount code) also count.**\n- **State is in memory, per process.** With several server instances, each keeps its own count, so the real limit is looser. A shared store such as Redis or the database would fix that, and I didn't add one.",
+ "date": "2026-10-25"
+}

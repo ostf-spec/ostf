@@ -1,0 +1,133 @@
+{
+ "reason": "Codex answered 'Selected model is at capacity' and ended these runs before the agent finished; the harness scored them as the agent's work. Each cell, T12 cell and replay listed ran again under the corrected harness, and its first record is kept in first/.",
+ "providerErrors": {
+  "codex.full.go-shop.T12.2": [
+   {
+    "transcript": "run-07/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   },
+   {
+    "transcript": "run-08/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.full.go-shop.T12.3": [
+   {
+    "transcript": "run-02/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   },
+   {
+    "transcript": "run-09/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.full.go-shop.T9.2": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.full.ts-shop.T12.2": [
+   {
+    "transcript": "run-06/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.full.ts-shop.T9.2": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.go-shop.T12.3": [
+   {
+    "transcript": "run-10/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.go-shop.T14.3": [
+   {
+    "transcript": "transcript2.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.go-shop.T3.3": [
+   {
+    "transcript": "transcript2.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.go-shop.T6.3": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.go-shop.T9.3": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.ts-shop.T12.2": [
+   {
+    "transcript": "run-03/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.ts-shop.T12.3": [
+   {
+    "transcript": "run-01/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   },
+   {
+    "transcript": "run-07/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.intent.ts-shop.T13.3": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.none.go-shop.T10.3": [
+   {
+    "transcript": "transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.none.go-shop.T12.2": [
+   {
+    "transcript": "run-04/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.none.ts-shop.T12.3": [
+   {
+    "transcript": "run-03/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "codex.rules.go-shop.T12.3": [
+   {
+    "transcript": "run-07/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ],
+  "longitudinal-go-shop-full": [
+   {
+    "transcript": "M1.2/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   },
+   {
+    "transcript": "M1.4/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   },
+   {
+    "transcript": "M4.4/transcript.jsonl",
+    "error": "Selected model is at capacity. Please try a different model."
+   }
+  ]
+ }
+}

@@ -1,0 +1,83 @@
+{
+ "run": "claude.rules.go-shop.T5.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff covers all three parts of R-ORDER-NOTE. PlaceOrder takes a note and rejects it with ErrNoteTooLong if it has more than 200 characters (utf8.RuneCountInString > MaxNoteLength). This check runs before pricing, reservation and charge, so a rejected order is never placed. The order also keeps its note: Order gets a Note field, and the note is returned on the placed order. The new TestPlaceOrderNote is tagged @req R-ORDER-NOTE. It checks that a 200-character note is accepted and kept on the order. It also checks that a 201-character note returns ErrNoteTooLong, with no new charge in the audit log and no stock reserved. The existing tests were updated only for the new signature.",
+  "cost": 0.045400800000000005
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6671,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 50.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 28472,
+  "cache_read_input_tokens": 264937,
+  "output_tokens": 9554,
+  "cost": 0.01312257
+ },
+ "cost": 0.013123,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "SHOP-62 is implemented: a customer note of up to 200 characters is kept on the order, and a longer one is rejected before any stock is reserved or any charge is made. `go test ./...` and `go vet ./...` pass.\n\nI could not open the Jira issue itself. The only SHOP-62 text available is the `R-ORDER-NOTE` entry in `REQUIREMENTS.md`, which I treated as the spec.\n\n**Changes**\n- `cart/checkout.go`: `PlaceOrder` takes a new `note string` argument. It returns the new `ErrNoteTooLong` if the note is longer than `MaxNoteLength` (200), checked after the session and empty-cart checks and before pricing, reservation and charge. `Order` gains a `Note` field.\n- `cart/checkout_test.go`: the three existing `PlaceOrder` calls now pass `\"\"`. The new `TestPlaceOrderNote` checks that a 200-character note is kept and that a 201-character note is rejected with no charge and no stock reserved.\n- `REQUIREMENTS.md`: `R-ORDER-NOTE` now lists its code and test. Its text is unchanged.\n\n**Choices I made**\n- Length counts Unicode characters (runes), not bytes, so a 200-character note with accented letters is accepted. The test covers this.\n- The note is a parameter to `PlaceOrder` rather than cart state. This breaks the signature for any external caller; there are none in this repo.\n\n**Requirements review**\n- `R-ORDER-NOTE` (touched, implemented): its code and test are now listed. It refines or controls no risk or threat, so no approval was needed. It has no status line, and I left that as is because the other entries have none either.\n- `R-CHECKOUT-ORDER` (code `Checkout.PlaceOrder`, test `TestPlaceOrder`): still true. Pricing, reservation, charge and confirmation keep their order, and an empty cart is still refused. Neither the entry nor its code controls a risk or threat, or refines one that does.\n- `R-CHECKOUT-SESSION` (code `Checkout.PlaceOrder`, test `TestPlaceOrderNeedsSession`): still true. The session is still checked first. The change does not control or refine a risk or threat.\n- `R-STOCK-RELEASE` (test `TestPlaceOrderReleasesStockOnDecline`): still true. Only the call signature in the test changed; the code is untouched. It does not control or refine a risk or threat.\n\n**Tests run for these entries:** `TestPlaceOrder`, `TestPlaceOrderNote`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderReleasesStockOnDecline`, all passing. The full suite also passes.\n\nNothing was committed.",
+ "date": "2026-10-26"
+}

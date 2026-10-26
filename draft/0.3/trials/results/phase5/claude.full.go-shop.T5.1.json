@@ -1,0 +1,100 @@
+{
+ "run": "claude.full.go-shop.T5.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what R-VOLUME-DISCOUNT asks. `Cart.VolumeDiscount` gives 5% off each line with 10 or more units. It uses integer division on positive amounts, so each line's discount rounds down to the cent. `Price` takes the volume discount off first and then applies the discount code to `subtotal-volume`, which matches \"before any discount code applies.\" The code's share is limited to `subtotal*50/100 - volume`, so the volume discount counts toward the 50% cap. Without a code, the volume discount alone (at most 5%) can never reach the cap. `PlaceOrder` passes the volume discount into `Price`, so checkout uses it. The new tests check each part: the threshold and per-line rounding (500.5 down to 500), the end-to-end charge, the code applying after the volume discount, the volume discount counting toward the cap, and an expired code still being rejected. I worked out the expected values by hand and they are right: 9500 plus 1423 tax gives 10923, and 8550 plus 1280 tax gives 9830.",
+  "cost": 0.0618608
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 4,
+  "contextCalls": 4,
+  "checkCalls": 4,
+  "traceOutputTokens": 11007,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 84.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 49684,
+  "cache_read_input_tokens": 459937,
+  "output_tokens": 18237,
+  "cost": 0.02365727
+ },
+ "cost": 0.023657,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "SHOP-57 is implemented and tested, and `ostf check --base main` exits 0. I had no Jira access, so I took the requirement from its mirror in `trace.yaml`: `R-VOLUME-DISCOUNT`, revision 2, `external: jira:SHOP-57`. Nothing is committed.\n\n**What changed**\n- `cart/cart.go`: `Cart.VolumeDiscount()` gives 5% off each line with 10 or more units, rounded down to the cent. The constants are `VolumeMinQuantity` and `VolumeDiscountPercent`.\n- `pricing/quote.go`: `Price` takes a new `volume` argument. It subtracts the volume discount first, then applies the discount code to what remains. Volume plus code is capped at 50% of the original subtotal. `ApplyDiscount` is unchanged.\n- `cart/checkout.go`: `PlaceOrder` passes `c.VolumeDiscount()` into `Price`.\n- `pricing/tax_test.go`: `TestPrice` gets the new argument, passing `0`.\n- New tests: `TestVolumeDiscount` (rounding and threshold), `TestPlaceOrderVolumeDiscount` (end-to-end charge of 109.23), and `pricing/quote_test.go` with three tests (code applies after volume, cap counts volume, expired code still rejected).\n\n**Interpretation choices to confirm**\n- The code takes its percent off the post-volume amount, not the original subtotal. \"Before any discount code applies\" reads that way. Under the other reading, the total would differ by a few cents on code-bearing orders.\n- The cap applies to the combined discount against the original subtotal.\n\n**Verification**\n- `gofmt` clean, `go vet` clean, `go test ./...` passes, including the new tests.\n- `ostf check --base main`: exit 0. The only notice left is that `R-ORDER-NOTE` (SHOP-62) is unlinked. That is outside this change, and I didn't touch it.\n\n**Items in the trace**\n- `R-VOLUME-DISCOUNT`: now implemented by `cart/cart.go#Cart.VolumeDiscount` and `pricing/quote.go#Price`. Verified by `cart/cart_test.go#TestVolumeDiscount`, `cart/checkout_test.go#TestPlaceOrderVolumeDiscount`, `pricing/quote_test.go#TestPriceVolumeBeforeCode`, `pricing/quote_test.go#TestPriceVolumeCountsTowardCap`, and `pricing/quote_test.go#TestPriceExpiredCodeWithVolume`. I did not edit the item in `trace.yaml`.\n- `R-CART-SUBTOTAL`: still true. `Subtotal()` is unchanged.\n- `R-TAX-RATE`: still true. Tax is still charged on the amount after discounts. The `TestPrice` change is only the new argument.\n- `R-DISCOUNT-CAP`: still true, and `ApplyDiscount` is unchanged. The total cap is now enforced in `Price`, which is worth a look in review. The item is not marked risk-relevant.\n- `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`: still true. `PlaceOrder`'s call changed, but its order and session behavior did not.\n- `R-TAX-EXEMPT`, `R-CHARGE-AMOUNT`, `R-REFUND-LIMIT`, `R-LOGIN-LOCKOUT`: not touched. None of the code I changed carries a RISK control.",
+ "date": "2026-10-25"
+}

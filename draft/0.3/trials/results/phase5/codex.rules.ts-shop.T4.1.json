@@ -1,0 +1,69 @@
+{
+ "run": "codex.rules.ts-shop.T4.1",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5762,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.8
+ },
+ "usage": {
+  "input_tokens": 171548,
+  "cached_input_tokens": 149376,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2616,
+  "reasoning_output_tokens": 424
+ },
+ "cost": 0.104619,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T4.1/repo/src/salestax.ts). Updated `price`, the tests, and the code pointers in `REQUIREMENTS.md`.\n\nR-TAX-RATE and R-TAX-EXEMPT remain true. Their listed tests—`price > taxes the subtotal after discounts`, `salesTax > rounds half up to the cent`, and `salesTax > is zero for a tax-exempt customer`—pass. No risk or threat control entry was touched. The full suite passes: 36 tests.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,93 @@
+{
+ "run": "claude.full.go-shop.T9.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `ErrTooManyOrders` error. It also adds a mutex-guarded per-account sliding window that allows 3 attempts per 10 minutes, in `allowAttempt`. `PlaceOrder` calls that check right after the session and empty-cart checks, before pricing, stock reservation and charging. So a fourth order from the same account within ten minutes is refused before anything is charged. The diff also adds `TestPlaceOrderRateLimit`, which checks four things. The fourth attempt returns `ErrTooManyOrders`. No fourth audit or charge entry is made and no stock is reserved. Another account is unaffected. The window boundary holds: still refused at 9m59s, allowed at 10m. The test's clock pointer works because `newShop`'s `now` closure captures `at`, so moving `*s.clock` changes the time every part of the shop reads. Two of the agent's choices are defensible readings of the request: it counts attempts rather than only successful orders, and the 10-minute boundary is exclusive. The `requirements.yaml` change the answer describes does not appear in the diff, but this question only asks about the code and the test.",
+  "cost": 0.054336800000000005
+ },
+ "metrics": {
+  "calls": 27,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 4798,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 129.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 42,
+  "cache_creation_input_tokens": 61336,
+  "cache_read_input_tokens": 1023782,
+  "output_tokens": 26062,
+  "cost": 0.03554021999999999
+ },
+ "cost": 0.03554,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "changedSymbols": 9,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added the card-testing limit to checkout. An account's fourth order attempt within ten minutes is refused with `ErrTooManyOrders` before pricing, stock reservation or charging. The new test passes, and so does the full suite. I haven't committed anything.\n\n**What changed**\n- `cart/checkout.go`: `PlaceOrder` calls a new `allowAttempt` gate right after the empty-cart check. The gate is a per-account sliding window of 3 attempts per 10 minutes, guarded by a mutex so concurrent checkouts can't both slip past a count of three.\n- `cart/checkout_test.go`: `TestPlaceOrderRateLimit` checks that the fourth attempt is refused with no audit entry and no stock reserved. It also checks that another account is unaffected, that an attempt 9m59s after the first is still refused, and that one at 10 minutes is allowed.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-RATE`, status `draft`, with `controls: [THREAT-CARD-TESTING]`, `refines: [N-ACCOUNT-SAFE]`, code `cart/checkout.go#Checkout.allowAttempt` and test `cart/checkout_test.go#TestPlaceOrderRateLimit`.\n\n**Checks**\n- `go test ./...` passes and gofmt is clean.\n- `ostf check --base main` exits 0: 50 items, 119 links, no new warnings. The only info line (`R-ORDER-NOTE`, `R-VOLUME-DISCOUNT` unlinked) was there before my change.\n- I disabled the gate temporarily and the test failed. It failed at attempt 6 because stock ran out, not at the fourth-attempt assertion, so the test catches the regression but not for the reason its assertion names.\n\n**Trace items**\n- Kept true: `R-CHECKOUT-ORDER` (the gate runs before pricing, so the reserve-charge-confirm order still holds) and `R-CHECKOUT-SESSION`.\n- Tests listed: `TestPlaceOrder` and `TestPlaceOrderNeedsSession` still pass unchanged; the new one is `TestPlaceOrderRateLimit`.\n- Risk-relevant: `R-CHECKOUT-RATE` is new, and `ostf` marks it risk-relevant because it carries a `controls` link. Please have another principal review it in the PR. I did not touch any existing risk-relevant code (`payments/charge.go`, `R-CHARGE-AMOUNT`, `R-REFUND-LIMIT`, `R-LOGIN-LOCKOUT`).\n- `THREAT-CARD-TESTING` is not edited in `trace/threats.yaml`. The link runs from the requirement to the threat.\n\n**Choices you may want to change**\n- **Counts attempts, not only successes.** Card testing mostly produces declined charges, so counting only successful orders would not limit the attack. Attempts are counted once they pass the session and non-empty-cart checks.\n- **Window is sliding and the boundary is exclusive:** an attempt exactly ten minutes after the first is allowed.\n- **Counter is in memory, per process.** It resets on restart and is not shared across replicas, so with several instances the effective limit is per instance. If the shop runs more than one, this needs a shared store.",
+ "date": "2026-10-26"
+}

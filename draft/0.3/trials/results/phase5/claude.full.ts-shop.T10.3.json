@@ -1,0 +1,96 @@
+{
+ "run": "claude.full.ts-shop.T10.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.remainingMs(id)` to src/inventory.ts. It returns the milliseconds left before a reservation expires and clamps the result to 0 once the reservation has expired. A new test advances a controlled clock and checks the remaining time, the 0 after expiry, and the error for an unknown id. That is what the user asked for, plus a test that checks it. q2: The method reads the time through `this.now()`, which looks like the injected clock function the constructor receives. The test uses the `clock` that `newStock()` returns and moves time forward with `clock.t += ...`, so it never sleeps or calls `Date.now()`. That follows D-CLOCK.",
+  "cost": 0.0249206
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 2,
+  "contextCalls": 2,
+  "checkCalls": 3,
+  "traceOutputTokens": 7066,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 48.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 28006,
+  "cache_read_input_tokens": 283867,
+  "output_tokens": 8682,
+  "cost": 0.012782870000000002
+ },
+ "cost": 0.012783,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/inventory.test.ts",
+  "src/inventory.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 4,
+ "changedSymbols": 4,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added `Stock.remainingMs(id)` to `src/inventory.ts`. It returns the milliseconds until a reservation expires, or 0 once it has. Tests pass (37/37, including a new one) and `ostf check --base main` exits 0 with no errors or warnings. Nothing is committed.\n\n**Behavior choices you may want to change:**\n- An expired reservation returns `0`, since it is still in the map until confirmed or released.\n- An unknown reservation id throws `NoReservationError`, the same as `confirm`.\n\n**Trace changes (per AGENTS.md):**\n- **New item `R-STOCK-REMAINING`** in `trace/requirements.yaml`, `status: draft`, refining `R-STOCK-EXPIRY`. It links to `src/inventory.ts#Stock.remainingMs` and to the test `src/inventory.test.ts#Stock > reports the time left on a reservation`. I picked this ID myself because the change needs a new item; please confirm it or rename it.\n- **Existing items:** `R-STOCK-EXPIRY` stays true, because expiry behavior is unchanged. Its test and code entries are untouched. No other item is affected.\n- **Risk-relevant items:** none touched. `R-STOCK-EXPIRY` controls no RISK item, so nothing needs separate review.\n\nI did not add `// @req` comments in the source. Those duplicated the yaml links and triggered `LINK_DUPLICATE` warnings, so I removed them.\n\n`ostf check` still reports two existing unlinked statements, `R-VOLUME-DISCOUNT` and `R-ORDER-NOTE`. My change didn't touch them.",
+ "date": "2026-10-26"
+}

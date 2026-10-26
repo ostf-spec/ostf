@@ -1,0 +1,94 @@
+{
+ "run": "claude.full.go-shop.T9.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. `PlaceOrder` now calls a per-account limiter right after the session and empty-cart checks. That call comes before `pricing.Price`, the stock reservation and the charge, so a refused order is never charged. The refusal returns a new error, `ErrTooManyOrders`. The limiter in `cart/order_limit.go` keeps the last ten minutes of attempts for each account. It refuses an order when the account already has three in that window, which means the fourth order is refused. It holds a mutex, works from its zero value, and does not record refused attempts. A new test, `TestPlaceOrderLimitsOrderRate`, places three orders, then checks that the fourth returns `ErrTooManyOrders` with no new charge (still 3 audit entries) and no stock change (2 mugs left). It also checks that an order at the ten-minute mark goes through again.",
+  "cost": 0.0447688
+ },
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 8699,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 115.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 30,
+  "cache_creation_input_tokens": 55080,
+  "cache_read_input_tokens": 653170,
+  "output_tokens": 22624,
+  "cost": 0.0288627
+ },
+ "cost": 0.028863,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "cart/order_limit.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now refuses a fourth order from the same account within ten minutes. The refusal happens before pricing, stock reservation or charging, and it has a new error, `ErrTooManyOrders`. Nothing is committed.\n\n**What changed**\n- `cart/order_limit.go` (new): a per-account sliding-window limiter. It is mutex-protected and records an attempt only when the attempt is allowed.\n- `cart/checkout.go`: `PlaceOrder` runs the limiter after the session and empty-cart checks and before pricing, reserving or charging. It also gets the new `ErrTooManyOrders`.\n- `cart/checkout_test.go`: `TestPlaceOrderLimitsOrderRate` checks that three orders pass, that the fourth is refused with no charge and no stock change, and that the refused attempt does not extend the wait, so order four passes at ten minutes.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-ORDER-RATE`, `status: draft`, refines `N-ACCOUNT-SAFE`, controls `THREAT-CARD-TESTING`, linked to the code and the test.\n\n**Choices I made**\n- \"Fourth order within ten minutes\" is implemented as at most three orders in any span shorter than ten minutes. Attempts count once they pass the session and non-empty-cart checks, so declined charges count. Refused attempts don't count.\n- The limit is held in process memory. It resets on restart and is not shared across instances, so it is weak against an attacker who spreads requests over several instances. A shared store would be needed for that.\n\n**Verification**\n- `go test -count=1 -race ./...` passes.\n- Breaking the limit makes the new test fail, and restoring it makes it pass.\n- `ostf check --base main` exits 0. The one info line about unlinked `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` was already there.\n\n**Trace items**\n- Kept true: `R-CHECKOUT-ORDER` (the refusal comes before the steps it describes, which still run in order) and `R-CHECKOUT-SESSION` (the session is still checked first).\n- Tests named: `TestPlaceOrder` and `TestPlaceOrderNeedsSession` are unchanged and pass. `TestPlaceOrderLimitsOrderRate` is new.\n- Not touched: `trace/threats.yaml`. `THREAT-CARD-TESTING` has no control item of its own, so the link is directly from the new requirement.\n\n**For PR review (risk-relevant)**\n- `R-CHECKOUT-ORDER-RATE` is marked risk-relevant by `ostf`, because it controls a threat. It is linked to `cart/checkout.go#Checkout.PlaceOrder` and `cart/order_limit.go#orderLimiter.allow`.\n- I did not change the existing risk-relevant code in `payments/charge.go` (`R-CHARGE-AMOUNT`).",
+ "date": "2026-10-25"
+}

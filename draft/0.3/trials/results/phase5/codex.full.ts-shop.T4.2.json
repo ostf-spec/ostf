@@ -1,0 +1,81 @@
+{
+ "run": "codex.full.ts-shop.T4.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 6,
+  "contextCalls": 1,
+  "checkCalls": 1,
+  "traceOutputTokens": 6855,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 67.6
+ },
+ "usage": {
+  "input_tokens": 203432,
+  "cached_input_tokens": 162432,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2771,
+  "reasoning_output_tokens": 390
+ },
+ "cost": 0.146096,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Moved `tax` from `src/pricing.ts` to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T4.2/repo/src/salestax.ts) as `salesTax`. Updated the order quote, tests, README, and trace links.\n\nAll 36 tests pass, and `ostf check --base main` reports no errors. The affected items remain true: **R-TAX-RATE** is covered by “rounds half up to the cent” and “taxes the subtotal after discounts”; **R-TAX-EXEMPT** is covered by “is zero for a tax-exempt customer.”",
+ "date": "2026-10-26"
+}

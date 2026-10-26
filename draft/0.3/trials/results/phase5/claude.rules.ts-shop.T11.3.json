@@ -1,0 +1,77 @@
+{
+ "run": "claude.rules.ts-shop.T11.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/network.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-TLS-ONLY is verified?"
+  },
+  "reason": "q1: Yes. The answer says \"Tests covering C-TLS-ONLY: none.\" It notes that `node --test` only runs over src/, quotes the README saying deploy/ is Terraform \"which no test runs,\" and ends with \"Nothing in the repo tests it.\" So it plainly tells the user that no automated test covers or runs deploy/network.tf. q2: Yes. It names V-INFRA-REVIEW by its ID and calls it \"the only verification.\" It also describes it: a manual review before each release that applies the change to the staging account and records the outcome in the release checklist.",
+  "cost": 0.0178686
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 22.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 16109,
+  "cache_read_input_tokens": 55824,
+  "output_tokens": 3804,
+  "cost": 0.005682639999999999
+ },
+ "cost": 0.005683,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I haven't changed anything yet. The link would edit the C-TLS-ONLY entry, which controls THREAT-EAVESDROP, and AGENTS.md says to check with you before changing controlled code or entries. Tell me to go ahead and I'll make the edit.\n\n**Tests covering C-TLS-ONLY: none.** The entry has no `Code:` or `Tests:` lines. Nothing in `src/` mentions TLS, HTTPS, or `deploy/`. `package.json` runs `node --test` over `src/`, and the README says `deploy/` is Terraform \"which no test runs.\" The only verification is V-INFRA-REVIEW, a manual review before each release that applies the change to the staging account and records the outcome in the release checklist.\n\n**What `deploy/network.tf` does:** it matches the entry's text.\n- The HTTPS listener on port 443 uses `ELBSecurityPolicy-TLS13-1-2-2021-06`, which as I recall allows TLS 1.2 and 1.3 only. I did not check this against AWS docs.\n- The HTTP listener on port 80 redirects with a 301 to HTTPS on 443.\n\n**Proposed change, pending your OK:**\n1. In `REQUIREMENTS.md`, under C-TLS-ONLY, add:\n   - `Code: deploy/network.tf (aws_lb_listener.https, aws_lb_listener.http)`\n   - `Tests: none; verified by V-INFRA-REVIEW`\n2. Add a comment at the top of `deploy/network.tf`: `# Carries C-TLS-ONLY (REQUIREMENTS.md).`\n\nThis would be reviewed under V-INFRA-REVIEW. Because the file carries a control, that reviewer should also see the new Code line. The entry stays true; it just gains a link. Nothing in the repo tests it.",
+ "date": "2026-10-26"
+}

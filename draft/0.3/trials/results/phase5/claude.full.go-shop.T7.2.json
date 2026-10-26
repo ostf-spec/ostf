@@ -1,0 +1,93 @@
+{
+ "run": "claude.full.go-shop.T7.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All six are true. Under \"Trace impact\", the final answer lists R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY as the items linked to the changed function, and it says \"My change keeps all three true.\" It names TestApplyDiscount, TestApplyDiscount/caps_at_fifty_percent and TestApplyDiscount/rejects_expired as the tests tied to those items and says all of them passed. The two subtests also appear under \"Tests run\".",
+  "cost": 0.022779800000000003
+ },
+ "metrics": {
+  "calls": 9,
+  "callsBeforeFirstEdit": 9,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 5,
+  "contextCalls": 1,
+  "checkCalls": 2,
+  "traceOutputTokens": 4392,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 19809,
+  "cache_read_input_tokens": 185878,
+  "output_tokens": 5672,
+  "cost": 0.00865818
+ },
+ "cost": 0.008658,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The uncommitted change is a behavior-neutral refactor. It does not change what the shop charges, and all tests pass.\n\n**What changed** (`pricing/discount.go`, `ApplyDiscount`): the cap `percent := min(d.Percent, MaxDiscountPercent)` became an explicit `if percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. For `int64` percentages the two forms give identical results, including negative inputs and the 50% cap. Nothing else in the repo changed.\n\n**Tests run**\n- `go test ./pricing/ -run 'TestApplyDiscount|TestTax|TestPrice' -v`: all pass, including the `caps_at_fifty_percent` and `rejects_expired` subtests. `TestPrice` covers the caller in `pricing/quote.go`.\n- `go test ./...`: all packages pass (accounts, cart, inventory, payments, pricing).\n- `go vet ./pricing/`: clean.\n\n**Trace impact** (`ostf check --base main`: exit 0, no errors)\n- Items linked to the changed function: `R-DISCOUNT-PERCENT`, `R-DISCOUNT-CAP`, `R-DISCOUNT-EXPIRY`. My change keeps all three true.\n- Tests tied to them: `TestApplyDiscount`, `TestApplyDiscount/caps_at_fifty_percent`, `TestApplyDiscount/rejects_expired`. All pass.\n- `R-DISCOUNT-CAP` is the item that most needs review. Its rationale is the wrong-charge risk (`RISK-WRONG-CHARGE`), but it is not directly linked to that risk item. Under the OSTF policy, changes to risk-relevant code need your approval, so please confirm before this goes further. I did not edit anything.\n- `ostf check` also reports `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` as having no code, test or verification links. That predates this change.\n\n**Things I noticed but did not change**\n- The refactor isn't needed. `min` is available in this Go version (1.27), so the original line was fine. It's harmless, but a reviewer may question why it was touched.\n- A negative `Percent` is not clamped. It produces a negative discount that raises the price. That is the kind of \"negative amount\" `RISK-WRONG-CHARGE` describes, and no test covers it. This is pre-existing, and I'd raise it as a separate change if you want it fixed.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,85 @@
+{
+ "run": "codex.rules.ts-shop.T10.2",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "The diff computes the service fee as roundHalfUp(discountedSubtotal * 25_000, 1_000_000), which is 2.5% of the subtotal after discounts. Tax is still computed on the discounted subtotal only, so the fee is untaxed, and the fee is added to the total and exposed on the quote. Two existing tests are updated and a new one checks the fee after a discount, half-up rounding (22.5 -> 23), and that the fee is excluded from tax. The expected values add up (9000+1348+225=10573; 900+135+23=1058; 50 on 2000 in checkout). For D-RATES-PPM, the fee rate is the integer 25,000 ppm, applied to integer cents with integer arithmetic, rounded half up once at the end with the same helper tax uses, and no floating point is involved.",
+  "cost": 0.045308600000000004
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5797,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.8
+ },
+ "usage": {
+  "input_tokens": 173121,
+  "cached_input_tokens": 148864,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2875,
+  "reasoning_output_tokens": 770
+ },
+ "cost": 0.114737,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now adds a **2.5% service fee** to the subtotal after discounts, rounded to the nearest cent. The fee appears in the quote and order total, is charged to the customer, and is excluded from sales tax.\n\nAll 37 tests pass. The changed code and tests keep **R-TAX-RATE**, **R-CHECKOUT-ORDER**, and **D-RATES-PPM** true. The new behavior is recorded as draft entry **R-SERVICE-FEE**. I ran their listed tests: `price > taxes the subtotal after discounts`, `price > charges a rounded service fee after discounts without taxing it`, `tax > rounds half up to the cent`, and `Checkout > places an order`. No risk or threat control entry was touched.",
+ "date": "2026-10-26"
+}

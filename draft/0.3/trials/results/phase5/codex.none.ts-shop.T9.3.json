@@ -1,0 +1,80 @@
+{
+ "run": "codex.none.ts-shop.T9.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `MAX_CART_LINES = 50` and a new `CartLimitError`. In `Cart.add`, a new SKU (i < 0) is rejected when the cart already has 50 lines. The check runs before any change, so a failed add leaves the cart as it was. Adding more of a product already in the cart is still allowed. The new test fills the cart with 50 products and checks that a 51st throws `CartLimitError`. It also checks that `lines()` is the same before and after the failed add. It then confirms that adding to an existing line still works, and that a new product fits once a line is removed. So the diff makes the change the user asked for and tests it directly.",
+  "cost": 0.0276648
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3914,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 50.8
+ },
+ "usage": {
+  "input_tokens": 158552,
+  "cached_input_tokens": 139648,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1845,
+  "reasoning_output_tokens": 153
+ },
+ "cost": 0.085718,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/cart.test.ts",
+  "src/cart.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The cart now holds at most **50 different products**. Adding a 51st throws the new `CartLimitError` and leaves the cart unchanged. Adding more units of an existing product still works within the quantity limit.\n\nI added boundary tests and linked the control to `THREAT-OVERSIZED-CART` in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.none.ts-shop.T9.3/repo/REQUIREMENTS.md). All 37 tests pass.",
+ "date": "2026-10-26"
+}

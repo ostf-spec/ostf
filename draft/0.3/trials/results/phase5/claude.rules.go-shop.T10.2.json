@@ -1,0 +1,89 @@
+{
+ "run": "claude.rules.go-shop.T10.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff does what was asked. `Price` computes `base = subtotal - discount` and sets `Fee = ServiceFee(base)`, which is 2.5%. Tax is still `Tax(base, ...)`, so the fee is not taxed, and `Total = base + Fee + Tax`. There is a new `TestServiceFee`, and `TestPrice` and `TestPlaceOrder` were updated to check the fee and the new totals. The expected values are arithmetically correct: 9,000 cents → 225 fee, 1,348 tax, 10,573 total; 2,000 cents → 50 fee, 300 tax, 2,350 total. q2: The diff follows D-RATES-PPM. The fee rate is the integer constant `ServiceFeePPM = 25_000`. It is applied to integer cents with integer arithmetic and rounded half up once at the end, through the existing `roundHalfUp(amount*ppm, 1_000_000)` helper. No floating-point number is used, and the discount handling is unchanged. One aside, which does not affect either verdict: the agent's answer gives the cap figures in the wrong units (\"85.11\" instead of roughly 8,511.00), but the questions judge the code, not the answer.",
+  "cost": 0.054424600000000004
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3746,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 59.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 32303,
+  "cache_read_input_tokens": 319626,
+  "output_tokens": 12506,
+  "cost": 0.01591186
+ },
+ "cost": 0.015912,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/fee.go",
+  "pricing/fee_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Every order now pays a 2.5% service fee on its subtotal after discounts. The fee is not taxed and is included in the total. `go test ./...` passes, and `go vet` and `gofmt` are clean. I haven't committed anything.\n\n**What changed**\n- `pricing/fee.go` (new): `ServiceFee` computes 25,000 ppm of the amount, rounded half up to the cent, as D-RATES-PPM requires.\n- `pricing/quote.go`: `Price` takes the fee on the subtotal after the discount. Tax is still computed on that same base, so the fee is not taxed. `Quote` has a new `Fee` field, and `Total = base + Fee + Tax`.\n- Tests:\n  - `TestServiceFee` (new, `pricing/fee_test.go`) covers the rounding edges, zero, and negative amounts.\n  - `TestPrice` now expects a 2.25 fee and a total of 105.73 on a 100.00 subtotal with a 10% code, with tax still 13.48.\n  - `TestPlaceOrder` now expects a 0.50 fee and a total of 23.50, and checks the fee.\n- `REQUIREMENTS.md`: new entry `R-SERVICE-FEE`, status draft, refines N-FAIR-PRICE. It lists `ServiceFee`, `Price`, and the three tests.\n- `README.md`: the `pricing` row mentions the fee.\n\n**Entries I touched, and whether they still hold**\n- **R-TAX-RATE** (`Price`, `TestPrice`): still true. Tax stays on the subtotal after discounts and does not include the fee. I changed `TestPrice`'s expected totals, not the entry.\n- **R-CHECKOUT-ORDER** (`TestPlaceOrder`): still true. `PlaceOrder` is unchanged; it charges the new total.\n- **D-RATES-PPM**: still true. The fee rate is in ppm, with integer arithmetic and one rounding step.\n- **R-MONEY-CENTS**: still true. Everything stays integer cents.\n- **R-CHARGE-AMOUNT** (controls RISK-WRONG-CHARGE): I did not change `Processor.Charge` or `ValidateAmount`, so I did not need your approval for it. The fee does make its cap bind sooner (see below), so please review it.\n- No entry in the list controls or refines a risk or threat through the code I changed, so no change needed your approval first.\n\n**Needs your decision**\n- **The 10,000.00 charge cap now binds earlier.** R-CHARGE-AMOUNT rejects charges over 10,000.00, and its rationale says no catalog order can cost more than that. With the fee in Quebec (14.975% tax), the cap now rejects subtotals above about 85.11 instead of about 86.98 before the fee. The rationale may also be false for larger catalog orders. Changing the cap or the rationale touches a risk control, so I left it alone.\n- **The fee is not in the advertised price.** N-FAIR-PRICE says customers pay the advertised price. The fee is on top of it, so the need may need a wording change, or the fee should be shown on the product page. I did not edit N-FAIR-PRICE.\n- **Rounding:** you specified only the rate. I chose half up to the cent, to match the tax rule.",
+ "date": "2026-10-26"
+}

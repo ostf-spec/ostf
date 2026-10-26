@@ -1,0 +1,486 @@
+{
+ "run": "codex.none.ts-shop.T12.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noConflict": true,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 76.2
+   },
+   "usage": {
+    "input_tokens": 135565,
+    "cached_input_tokens": 117376,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1363,
+    "reasoning_output_tokens": 144
+   },
+   "cost": 0.074923,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "finalMessage": "Added `Cart.clear()` in [src/cart.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-01/repo/src/cart.ts) to remove every line. The new test covers an empty subtotal, repeated calls, and adding items afterward.\n\n`npm test` passed: 37 tests."
+  },
+  {
+   "branch": "change-02",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 105.0
+   },
+   "usage": {
+    "input_tokens": 248367,
+    "cached_input_tokens": 224640,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2686,
+    "reasoning_output_tokens": 449
+   },
+   "cost": 0.123732,
+   "metrics": {
+    "calls": 15,
+    "callsBeforeFirstEdit": 9,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts"
+   ],
+   "finalMessage": "Added `Checkout.preview(token, cart, discount)` in [checkout.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-02/repo/src/checkout.ts). It shares session validation and pricing with `placeOrder`, and returns the quote without reserving stock or charging.\n\nTests cover quote parity, the absence of stock and payment side effects, and invalid input. The full suite passes: 38 tests."
+  },
+  {
+   "branch": "change-03",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 98.1
+   },
+   "usage": {
+    "input_tokens": 259684,
+    "cached_input_tokens": 238592,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2347,
+    "reasoning_output_tokens": 391
+   },
+   "cost": 0.117282,
+   "metrics": {
+    "calls": 15,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "finalMessage": "Added `Stock.held(sku)` in [inventory.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-03/repo/src/inventory.ts). It sums units held by unexpired reservations, and `available` now uses that sum. Added a test for multiple holds, SKU filtering, and the exact expiry boundary, and updated [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-03/repo/REQUIREMENTS.md).\n\nAll 37 tests pass."
+  },
+  {
+   "branch": "change-04",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 79.4
+   },
+   "usage": {
+    "input_tokens": 174444,
+    "cached_input_tokens": 131584,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1639,
+    "reasoning_output_tokens": 188
+   },
+   "cost": 0.130307,
+   "metrics": {
+    "calls": 14,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/accounts.test.ts",
+    "src/accounts.ts"
+   ],
+   "finalMessage": "Added `Sessions.logout(token)` in [accounts.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-04/repo/src/accounts.ts). It ends that session, so validating its token afterward throws `SessionError`. The new test confirms another active session remains valid, and [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-04/repo/REQUIREMENTS.md) records the behavior.\n\n`npm test` passes: 37 tests."
+  },
+  {
+   "branch": "change-05",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 77.4
+   },
+   "usage": {
+    "input_tokens": 169645,
+    "cached_input_tokens": 150144,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1315,
+    "reasoning_output_tokens": 117
+   },
+   "cost": 0.083351,
+   "metrics": {
+    "calls": 16,
+    "callsBeforeFirstEdit": 10,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts"
+   ],
+   "finalMessage": "Added `AuditLog.total(account, action)` in [src/audit.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-05/repo/src/audit.ts). It sums matching entries in cents and returns `0` when none match. Added tests for account and action filtering in [src/audit.test.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-05/repo/src/audit.test.ts).\n\n`npm test` passes: 37 tests."
+  },
+  {
+   "branch": "change-06",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 68.8
+   },
+   "usage": {
+    "input_tokens": 164927,
+    "cached_input_tokens": 146304,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1522,
+    "reasoning_output_tokens": 158
+   },
+   "cost": 0.083307,
+   "metrics": {
+    "calls": 13,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "finalMessage": "Added `isExpired(discount, now)` to [pricing.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-06/repo/src/pricing.ts). It returns `true` at or after the code’s expiry time, and `applyDiscount` now uses it. Added boundary tests and updated the requirement reference.\n\n`npm test` passes: 38 tests."
+  },
+  {
+   "branch": "change-07",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 69.0
+   },
+   "usage": {
+    "input_tokens": 195231,
+    "cached_input_tokens": 176000,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1944,
+    "reasoning_output_tokens": 372
+   },
+   "cost": 0.096822,
+   "metrics": {
+    "calls": 14,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/money.test.ts",
+    "src/money.ts"
+   ],
+   "finalMessage": "Added `parseCents` to [src/money.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-07/repo/src/money.ts). It converts amounts such as `12.05` to `1205` cents and rejects more than two decimal places. Added coverage in [src/money.test.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-07/repo/src/money.test.ts).\n\n`npm test` passes: 38 tests."
+  },
+  {
+   "branch": "change-08",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function formatQuote in a new file src/quote-format.ts that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 61.0
+   },
+   "usage": {
+    "input_tokens": 162206,
+    "cached_input_tokens": 127744,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1242,
+    "reasoning_output_tokens": 110
+   },
+   "cost": 0.107993,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3588,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/quote-format.test.ts",
+    "src/quote-format.ts"
+   ],
+   "finalMessage": "Added [formatQuote](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-08/repo/src/quote-format.ts) and a [test](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-08/repo/src/quote-format.test.ts) for the requested output. It uses the existing `Quote` type and cents formatter.\n\n`npm test` passes: 37 tests."
+  },
+  {
+   "branch": "change-09",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 64.5
+   },
+   "usage": {
+    "input_tokens": 126674,
+    "cached_input_tokens": 110336,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1499,
+    "reasoning_output_tokens": 322
+   },
+   "cost": 0.072953,
+   "metrics": {
+    "calls": 8,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 1622,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/rates.test.ts",
+    "src/rates.ts"
+   ],
+   "finalMessage": "Added `ratePercent` in [src/rates.ts](/private/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-09/repo/src/rates.ts). It formats a region’s integer rate at full precision, so `149_750` becomes `14.975%`, and removes trailing zeros.\n\nAdded tests in [src/rates.test.ts](/private/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-09/repo/src/rates.test.ts). `npm test` passes: 38 tests."
+  },
+  {
+   "branch": "change-10",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 58.6
+   },
+   "usage": {
+    "input_tokens": 184551,
+    "cached_input_tokens": 166144,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1677,
+    "reasoning_output_tokens": 160
+   },
+   "cost": 0.088413,
+   "metrics": {
+    "calls": 15,
+    "callsBeforeFirstEdit": 9,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3588,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/regions.test.ts",
+    "src/regions.ts"
+   ],
+   "finalMessage": "Added [`regionByCode`](/tmp/ostf-trials/phase5/codex.none.ts-shop.T12.2/run-10/repo/src/regions.ts) for QC (14.975%), ON (13%), and AB (5%). It throws for unsupported codes. Added tests and updated the requirement reference.\n\nThe region and pricing tests pass: 9 passed, 0 failed."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  }
+ ],
+ "conflicts": 0,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 33298,
+  "edited": true,
+  "calls": 133,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 758.0
+ },
+ "usage": {
+  "input_tokens": 1821294,
+  "cached_input_tokens": 1588864,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 17234,
+  "reasoning_output_tokens": 2411
+ },
+ "cost": 0.979083,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

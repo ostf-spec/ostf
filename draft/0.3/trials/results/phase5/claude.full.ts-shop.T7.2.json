@@ -1,0 +1,93 @@
+{
+ "run": "claude.full.ts-shop.T7.2",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": true,
+   "test:caps at fifty percent": true,
+   "test:rejects an expired code": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer has a section headed \"Trace items ostf lists for this change.\" It names R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY and R-DISCOUNT-PERCENT, and says each one is \"still true,\" so the change keeps all three true. In the same section it lists src/pricing.test.ts#applyDiscount, \"#applyDiscount > caps at fifty percent\" and \"#applyDiscount > rejects an expired code\" as the tests for these items, and reports that all of them pass. The Tests section also says the applyDiscount suite ran. So the answer names each item and each test as relevant to the change, and q1 through q6 are all true.",
+  "cost": 0.0227718
+ },
+ "metrics": {
+  "calls": 7,
+  "callsBeforeFirstEdit": 7,
+  "edited": false,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 3,
+  "firstOstfCall": 3,
+  "contextCalls": 2,
+  "checkCalls": 2,
+  "traceOutputTokens": 3741,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 17099,
+  "cache_read_input_tokens": 129756,
+  "output_tokens": 4289,
+  "cost": 0.006863060000000001
+ },
+ "cost": 0.006863,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Summary: the change is a behavior-preserving refactor of the discount cap in `src/pricing.ts`. It replaces `Math.min(d.percent, MAX_DISCOUNT_PERCENT)` with an explicit `if`. I made no edits.**\n\n**Impact against main**\n- Only `applyDiscount` changed. Callers see the same results: `Math.min` and the `if` agree on every input I checked, including `NaN`, `-0`, `±Infinity`, negatives, and values above 50. `NaN` stays `NaN` in both forms.\n- Nothing else in the diff touches pricing, tax, or the checkout path.\n\n**Trace items `ostf` lists for this change** (`ostf check --base main` exits 0; no errors)\n- `R-DISCOUNT-CAP` (Discount cap): still true. The cap still holds at 50%.\n- `R-DISCOUNT-EXPIRY` (Expired discount): still true. The expiry check is untouched.\n- `R-DISCOUNT-PERCENT` (Percentage discount): still true. Rounding and percent handling are unchanged.\n- Tests listed for these items, all passing: `src/pricing.test.ts#applyDiscount`, `#applyDiscount > caps at fifty percent`, and `#applyDiscount > rejects an expired code`.\n- `ostf check` also reported two pre-existing unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. My change does not affect them.\n\n**Risk-relevant items**\n- None are tagged `risk-relevant` in the trace, and none of the three items above is linked to a `RISK-*` item through `controls`. The `R-DISCOUNT-CAP` rationale (\"a code mistyped as 100 percent... gave orders away for free\") does tie it to `RISK-WRONG-CHARGE` in spirit, though. Please have a reviewer treat this change as touching a guard for that risk.\n\n**Tests**\n- `node --test`: 36 pass, 0 fail, 0 skipped. This includes the `applyDiscount` suite (4 tests) and the `price` suite that calls `applyDiscount`.",
+ "date": "2026-10-26"
+}

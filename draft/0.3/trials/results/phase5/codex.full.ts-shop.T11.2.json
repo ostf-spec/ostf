@@ -1,0 +1,85 @@
+{
+ "run": "codex.full.ts-shop.T11.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T11",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "review",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says \"Tests: None are linked to C-DB-ENCRYPTION\" and that the control is checked only by a manual infrastructure review. The user said deploy/database.tf carries that control, so this tells the user that no automated test covers the file. It never says outright that no test can run the file, but saying that no test is linked and that the only check is manual is enough here. q2: The answer names V-INFRA-REVIEW by its ID and calls it a manual infrastructure review. It gives it as the control's listed verification.",
+  "cost": 0.018260599999999995
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 7,
+  "contextCalls": 2,
+  "checkCalls": 2,
+  "traceOutputTokens": 1569,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.8
+ },
+ "usage": {
+  "input_tokens": 153222,
+  "cached_input_tokens": 136832,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1532,
+  "reasoning_output_tokens": 271
+ },
+ "cost": 0.078176,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Linked [deploy/database.tf](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T11.2/repo/deploy/database.tf) to the risk-relevant control `C-DB-ENCRYPTION` in [trace/threats.yaml](/private/tmp/ostf-trials/phase5/codex.full.ts-shop.T11.2/repo/trace/threats.yaml:28). The change only adds the trace link; it keeps the control’s stated behavior true.\n\n**Tests:** None are linked to `C-DB-ENCRYPTION`. Its listed verification is `V-INFRA-REVIEW`, a manual infrastructure review.\n\n`ostf check --base main` passed. It also reported existing unlinked items `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`; this change leaves both as they were, and the check lists no tests for them.",
+ "date": "2026-10-26"
+}

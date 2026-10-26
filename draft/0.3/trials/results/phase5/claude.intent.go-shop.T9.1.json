@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.go-shop.T9.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `ErrTooManyOrders` and an `admit` method that `PlaceOrder` calls after the session and empty-cart checks but before pricing, stock reservation or charging. `admit` keeps a per-account record of order times, protected by a mutex, using the injected `Now` clock. It drops entries that are ten minutes old or older and refuses the request when three are still inside the window. That means a fourth order within ten minutes is refused before anything is charged, which is what the user asked for. The tests make the clock settable. `TestPlaceOrderRateLimit` checks three things: the fourth order returns `ErrTooManyOrders`, the refusal adds no audit or charge entry and reserves no stock, and an order is accepted again once the window has passed. `TestPlaceOrderRateLimitCountsDeclines` checks that declined orders count toward the limit. So the diff both implements the mitigation and adds tests that check it.",
+  "cost": 0.0476568
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4637,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 102.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 38,
+  "cache_creation_input_tokens": 49534,
+  "cache_read_input_tokens": 851952,
+  "output_tokens": 19665,
+  "cost": 0.028262620000000002
+ },
+ "cost": 0.028263,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "I added the fourth-order refusal to checkout and tested it. All packages pass, including with `-race` on `cart` and `payments`, and `gofmt` and `go vet` are clean. I did not commit.\n\n**What changed**\n- `cart/checkout.go`: `PlaceOrder` calls a new `admit` method right after the session and empty-cart checks, before pricing, stock reservation, or charging. An account with three orders in the last ten minutes gets the new `ErrTooManyOrders`, and nothing is reserved or charged. The window uses the injected `Now` clock.\n- `cart/checkout_test.go`: `TestPlaceOrderRateLimit` covers the fourth order being refused, no audit entry or stock change, and the order being allowed again once the window passes. `TestPlaceOrderRateLimitCountsDeclines` checks that declined orders count toward the limit.\n- `trace/requirements.yaml`: new draft item `R-ORDER-RATE`, `refines: [N-ACCOUNT-SAFE]`, `controls: [THREAT-CARD-TESTING]`, linked to the code and both tests.\n\n**Items linked to the code I changed**\n- `R-CHECKOUT-ORDER` (`PlaceOrder`, `TestPlaceOrder`): still true. Accepted orders still price, reserve, charge, and confirm in that order. The new check only adds a rejection before pricing.\n- `R-CHECKOUT-SESSION` (`@req` on `PlaceOrder`, `TestPlaceOrderNeedsSession`): still true. The session check still runs first.\n- `R-STOCK-RELEASE` (`TestPlaceOrderReleasesStockOnDecline`): unchanged behavior, and that test still passes.\n\n**Items that control a risk or threat, or refine one, that this change touched**\n- `R-ORDER-RATE` is new and controls `THREAT-CARD-TESTING`. It needs review in the pull request.\n- No existing risk-controlling item is linked to the code I changed, so I did not need to ask before editing checkout.\n\n**Limits to review**\n- The count is in memory and per process. It resets on restart and is not shared across instances.\n- It is keyed by account. An attacker who registers many accounts is not stopped by it.\n- Refused attempts are not counted. A customer who retries with the same key counts each retry as an order.\n\nI could not run an `ostf` validator because it is not installed here, and I could not parse the YAML because PyYAML is not available. I checked the YAML indentation by reading it.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,83 @@
+{
+ "run": "claude.rules.ts-shop.T2.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what the user asked. In `src/pricing.ts`, the new `shippingFee()` takes the subtotal after discounts and returns 0 when it is at least 10,000 cents (100.00) and 599 cents (5.99) otherwise. `price()` works out shipping from that same post-discount amount, returns it as a `shipping` field and adds it to `total`. Checkout charges the quoted total, so the customer pays the fee. The new tests cover the boundary in `shippingFee` (9,999 pays 599; 10,000 and 10,001 ship free). They also cover a discount pushing an order below the threshold (10,000 with 10% off pays shipping, total 10,947), a free order at exactly 10,000 in `price`, and an end-to-end checkout test where the receipt amount includes shipping. The updated expected values add up correctly.",
+  "cost": 0.0503688
+ },
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4163,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 67.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 37344,
+  "cache_read_input_tokens": 302240,
+  "output_tokens": 14599,
+  "cost": 0.017792499999999996
+ },
+ "cost": 0.017792,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 14,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Shipping is in checkout: an order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. The fee is part of the total that gets charged. All 40 tests pass (36 before, plus 4 new).\n\n**Changes**\n- `src/pricing.ts`: added `shippingFee()` and the `FREE_SHIPPING_FROM` / `FLAT_SHIPPING` constants. `price()` now returns a `shipping` field and adds it to `total`.\n- `src/pricing.test.ts`: boundary tests at 9,999 and 10,000, plus a `price` test that now includes shipping in the total.\n- `src/checkout.test.ts`: the `places an order` total moves from 2,300 to 2,899. A new test checks that the receipt matches the quoted total, with shipping charged below 100.00 and free at 100.00.\n- `REQUIREMENTS.md`: new entry `R-SHIPPING`, status draft, refining `N-FAIR-PRICE`, with its code and tests listed.\n- `README.md`: the `pricing.ts` row mentions shipping.\n\n**Choices I made, so you can redirect them**\n- The 100.00 threshold is checked on the subtotal after discounts, as you specified.\n- Shipping is not taxed. Sales tax stays on the subtotal after discounts only.\n- Shipping is a flat per-order fee, not per line or per region.\n\n**AGENTS.md review**\n- `R-TAX-RATE` (code `price`, test `price > taxes the subtotal after discounts`): still true. Tax is unchanged and still applies to the subtotal after discounts. I updated that test's expected quote to include shipping.\n- `R-CHECKOUT-ORDER` (code `Checkout.placeOrder`, test `Checkout > places an order`): still true. I did not change `placeOrder`; I updated its expected total.\n- `R-SHIPPING`: new, draft. Tests: `shippingFee`, `price > adds shipping to the total…`, and `Checkout > charges the total with shipping…`.\n- No entry I touched controls a risk or threat, or refines one that does. I did not change `Processor.charge` or `validateAmount`, which `R-CHARGE-AMOUNT` (controls `RISK-WRONG-CHARGE`) lists.\n\n**Worth checking**\n- `R-CHARGE-AMOUNT` caps a charge at 10,000.00 on the total, and the total now includes shipping. An order that was exactly 10,000.00 with tax but no shipping would now be 10,599.00 and rejected by the cap. The entry's rationale says no catalog order exceeds 10,000.00, which may no longer hold for orders near the top of the range. I left that entry alone; please decide whether to raise the cap or change the rationale.\n\nNothing is committed. I ran `node --test` (and `npm test`, which runs the same command) and both pass.",
+ "date": "2026-10-25"
+}

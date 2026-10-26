@@ -1,0 +1,79 @@
+{
+ "run": "claude.rules.go-shop.T11.2",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says plainly that \"no test covers it\" and lists \"Tests covering it: none.\" It quotes the README line saying no test runs the Terraform, and it says the Go tests don't touch this entry. That tells the user no automated test covers or runs deploy/database.tf. q2: In the Verification bullet, the answer names V-INFRA-REVIEW by its ID. It calls it the only check on this control and describes it as a manual review of changes under deploy/ before each release.",
+  "cost": 0.0163646
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4241,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17092,
+  "cache_read_input_tokens": 83351,
+  "output_tokens": 2980,
+  "cost": 0.005742710000000001
+ },
+ "cost": 0.005743,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/database.tf` to C-DB-ENCRYPTION, and no test covers it.\n\n**The change:** `REQUIREMENTS.md`, under `C-DB-ENCRYPTION`, I added `- Code: \\`deploy/database.tf\\``. Nothing else changed, and I haven't committed.\n\n**Tests covering it:** none. `deploy/` has no test files, and the README says \"Terraform for the database and the load balancer, which no test runs.\" I searched the Go tests for encryption or KMS references and found none. The go tests (`go test ./...`) pass, but none of them touch this entry. I didn't add a `Tests:` line because there are no tests to name.\n\n**Review for the PR:**\n- **Entry touched:** C-DB-ENCRYPTION. It controls THREAT-DB-SNAPSHOT, so this entry is one a reviewer should look at. I only added a reference. I did not change the Terraform, so the \"ask before changing code under a control\" rule isn't triggered.\n- **Still true?** The config matches the entry as far as I can read it. `storage_encrypted = true` and a `kms_key_id` pointing at a KMS key with `enable_key_rotation = true` and a 365-day period cover the volume and the snapshots, which inherit the instance's encryption. I couldn't run Terraform here, so that reading is unverified.\n- **Verification:** the only check on this control is V-INFRA-REVIEW, a manual review of changes under `deploy/` before each release. It isn't a test.",
+ "date": "2026-10-26"
+}

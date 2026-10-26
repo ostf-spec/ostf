@@ -1,0 +1,95 @@
+{
+ "run": "claude.intent.ts-shop.T10.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.timeLeft(id)` to src/inventory.ts. It returns the milliseconds left before a reservation expires, clamped at 0, and throws NoReservationError for an unknown id. The diff also adds two tests: one steps the clock forward and checks the countdown from HOLD_MS to 1000, then 0, then 0 again after expiry, and one checks the unknown-id error. So the request is implemented and tested. q2: The method gets the time from `this.now()`, which appears to be the clock injected through the constructor, the same one the other methods use. It does not call Date.now() or new Date() directly. The test controls time by changing `clock.t` instead of sleeping, so the code follows D-CLOCK.",
+  "cost": 0.0282366
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5779,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 26568,
+  "cache_read_input_tokens": 138690,
+  "output_tokens": 7641,
+  "cost": 0.010522199999999999
+ },
+ "cost": 0.010522,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/inventory.test.ts",
+  "src/inventory.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added `Stock.timeLeft(id)` to `src/inventory.ts`. It returns the milliseconds left on a reservation, and I added tests for it. The full suite passes: 38 tests, up from 36.\n\n**Behavior I chose:**\n- A live reservation returns `expires - now`.\n- An expired reservation returns `0`. It does not throw, unlike `confirm`, because \"0 left\" is the honest answer.\n- An unknown id throws `NoReservationError`, since there is no number to return.\n\n**Changes:**\n- `src/inventory.ts`: the new method, tagged `// @req R-HOLD-TIME-LEFT`.\n- `src/inventory.test.ts`: two tests. One checks the countdown from the full 15 minutes down to 0, and one checks the unknown-id error.\n- `trace/requirements.yaml`: new item `R-HOLD-TIME-LEFT`, `status: draft`, refining `R-STOCK-EXPIRY`, linked to `src/inventory.ts#Stock.timeLeft` and both new tests. I did not parse the YAML with a tool, so it is checked by reading only.\n\n**Items linked to code in the file I changed, for review:**\n- `R-HOLD-TIME-LEFT` (new, draft): nothing to keep true yet. Tests: `reports the time left on a reservation` and `throws for an unknown reservation in timeLeft`.\n- `R-STOCK-EXPIRY` (linked to `HOLD_MS`, `Stock.available`, `Stock.confirm`): the change keeps it true, since none of those functions changed. Its test is `expires a reservation after 15 minutes`. It refines `N-NO-OVERSELL`, not a risk.\n- `D-CLOCK` (linked to `Stock.constructor`): the change keeps it true. The new method reads time only through the injected clock.\n- `D-RESERVATION-HOLD` (linked to `Stock.confirm`, and its `@req` sits on `Stock.available`): the change keeps it true, since neither function changed. Its test is `confirms a reservation as a sale`.\n\n**Risk or threat items touched:** none. No changed code is linked to a `RISK-` or `THREAT-` item, and nothing I touched refines an item that controls one. So I did not need to ask before editing.\n\nI did not commit. The changes are in the working tree.",
+ "date": "2026-10-26"
+}

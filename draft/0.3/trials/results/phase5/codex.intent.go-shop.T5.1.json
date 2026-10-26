@@ -1,0 +1,98 @@
+{
+ "run": "codex.intent.go-shop.T5.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff implements R-VOLUME-DISCOUNT, and new tests check it. `VolumeDiscount` returns 0 for fewer than 10 units. Otherwise it returns unitPrice*quantity*5/100, and integer division rounds down to the cent for positive amounts. `PlaceOrder` adds up the discount line by line. `PriceWithVolumeDiscount` takes it off before the discount code, because `ApplyDiscount` gets subtotal-volumeDiscount. It then limits the combined discount to 50% of the original subtotal, so the volume discount counts toward the cap. New tests tagged @req R-VOLUME-DISCOUNT cover the threshold, rounding down, use with a discount code, tax, and the 50% cap, both in pricing and through `PlaceOrder` in cart. The expected values work out: 500 + 10% of 9,500 = 1,450, and the cap case is held to 5,000.",
+  "cost": 0.05038480000000001
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3949,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 90.2
+ },
+ "usage": {
+  "input_tokens": 349435,
+  "cached_input_tokens": 320640,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 6279,
+  "reasoning_output_tokens": 2489
+ },
+ "cost": 0.209398,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/volume_test.go",
+  "pricing/discount.go",
+  "pricing/quote.go",
+  "pricing/volume_test.go",
+  "trace.yaml",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 5,
+  "onTestedCode": 5,
+  "corroborated": 5
+ },
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Cart checkout now applies a 5% discount to each line with at least 10 units, rounded down per line. It applies any discount code afterward and caps the combined discount at 50% of the original subtotal. The quote shows the volume discount separately.\n\n**Trace review:** R-VOLUME-DISCOUNT, R-CHECKOUT-ORDER, R-CHECKOUT-SESSION, R-DISCOUNT-CAP, and R-TAX-RATE remain true. No changed item controls a risk or threat, or refines one that does. The code treats the post-volume amount as the subtotal used by a discount code; if R-DISCOUNT-PERCENT means the *original* subtotal, that wording needs a decision.\n\n**Verification:** `go test ./...` passed, including `TestVolumeDiscount`, `TestPriceWithVolumeDiscount`, `TestPlaceOrderVolumeDiscount`, `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestApplyDiscount/caps_at_fifty_percent`, `TestTax`, and `TestPrice`.",
+ "date": "2026-10-25"
+}

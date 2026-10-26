@@ -1,0 +1,69 @@
+{
+ "run": "codex.none.ts-shop.T4.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 56.9
+ },
+ "usage": {
+  "input_tokens": 140806,
+  "cached_input_tokens": 120832,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2251,
+  "reasoning_output_tokens": 238
+ },
+ "cost": 0.089004,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.none.ts-shop.T4.2/repo/src/salestax.ts). Updated pricing, the tests, and the requirement references. All 36 tests pass.",
+ "date": "2026-10-26"
+}

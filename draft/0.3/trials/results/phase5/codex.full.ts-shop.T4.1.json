@@ -1,0 +1,80 @@
+{
+ "run": "codex.full.ts-shop.T4.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 8,
+  "contextCalls": 1,
+  "checkCalls": 1,
+  "traceOutputTokens": 8070,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 40.4
+ },
+ "usage": {
+  "input_tokens": 201238,
+  "cached_input_tokens": 175232,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2594,
+  "reasoning_output_tokens": 433
+ },
+ "cost": 0.117328,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `tax` to `salesTax` and moved it to [src/salestax.ts](/tmp/ostf-trials/phase5/codex.full.ts-shop.T4.1/repo/src/salestax.ts). Pricing and the tests now call the new function; the calculation is unchanged.\n\nAll 36 tests pass, and `ostf check --base main` reports no errors. The traced items **R-TAX-RATE** and **R-TAX-EXEMPT** remain true, supporting **N-FAIR-PRICE**. Their listed tests are `salesTax > rounds half up to the cent`, `salesTax > is zero for a tax-exempt customer`, and `price > taxes the subtotal after discounts`. No risk-relevant item was touched.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,87 @@
+{
+ "run": "claude.rules.go-shop.T10.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: Yes. In the diff, `Price` works out the post-discount amount (`net`), sets `q.Fee = ServiceFee(net)`, and adds the fee to the total. Tax is still worked out on `net` only, so the fee is not taxed. 25_000 parts per million is 2.5 percent. The new `TestServiceFee` checks the fee directly, including rounding at the half cent, zero and negative amounts. `TestPrice` and `TestPlaceOrder` now expect the fee in the total, and the numbers add up: 9,000 + 1,348 + 225 = 10,573, and 2.5 percent of 2,000 is 50, which gives 2,350. q2: Yes. The rate is the integer constant `ServiceFeePPM = 25_000`. It is applied to integer cents with int64 arithmetic, and the existing `roundHalfUp` helper rounds once, to the cent, at the end. No floating-point number is used, and discount codes are untouched.",
+  "cost": 0.045716599999999996
+ },
+ "metrics": {
+  "calls": 11,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4077,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 62.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 32592,
+  "cache_read_input_tokens": 275250,
+  "output_tokens": 12847,
+  "cost": 0.0156962
+ },
+ "cost": 0.015696,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The 2.5% service fee is in checkout. It's charged on the subtotal after discounts, not taxed, and included in the order total. The full suite passes, and `go vet` and `gofmt` are clean.\n\n**What changed**\n- `pricing/quote.go`: `Quote` has a `Fee` field. `Price` computes tax and fee on the same post-discount amount, and the fee is excluded from the tax base. `ServiceFee` rounds half up to the cent, once, with integer arithmetic; the rate is `ServiceFeePPM = 25_000`, following D-RATES-PPM.\n- `pricing/quote_test.go` (new): `TestServiceFee` covers rounding at the half-cent, zero, and negative input.\n- `pricing/tax_test.go`: `TestPrice` now expects fee 225 and total 10,573 (was 10,348).\n- `cart/checkout_test.go`: `TestPlaceOrder` now expects 23.50 charged (was 23.00).\n- `REQUIREMENTS.md`: new entry **R-SERVICE-FEE** (status draft, refines N-FAIR-PRICE) listing the new code and tests.\n\n**Entries checked under AGENTS.md**\n- **R-TAX-RATE** (code: `Price`; tests: `TestPrice`, `TestTax`): changed `Price` and `TestPrice`. It stays true, since tax is still on the post-discount subtotal. It doesn't control a risk or threat.\n- **R-CHECKOUT-ORDER** (test: `TestPlaceOrder`): changed the expected total. Code unchanged, still true. Doesn't control a risk or threat.\n- **D-RATES-PPM**: the fee rate follows its rule. I didn't edit it, but its code list names only `Region`, so it doesn't list `ServiceFeePPM`.\n- **Risk/threat controls**: none of the entries I touched controls a risk or threat, or refines one that does, so I didn't need to ask first. I did not change `Charge`, `ValidateAmount`, or any refund code.\n\n**Things to review**\n- **R-CHARGE-AMOUNT (controls RISK-WRONG-CHARGE) is now hit sooner.** I didn't change it, but the 10,000.00 cap applies to the total, which now includes the fee. Before, with the 14.975% rate, a pre-discount subtotal above about 8,697.60 was rejected. Now it's about 8,511.40. Its rationale (\"no order can cost more than 10,000.00\") was already false near that point because of tax. Raising or reworking the cap would change a risk control, so I'd need your approval.\n- **N-FAIR-PRICE** still holds, but totals no longer equal subtotal plus tax. Please check that \"advertised price\" covers the fee.\n- **Tax-exempt customers still pay the fee.** I read \"every order\" literally. Say if you want exempt orders waived.\n- The README doesn't mention the fee. I left it alone.",
+ "date": "2026-10-26"
+}

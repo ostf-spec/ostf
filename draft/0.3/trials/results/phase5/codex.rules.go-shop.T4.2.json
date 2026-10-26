@@ -1,0 +1,69 @@
+{
+ "run": "codex.rules.go-shop.T4.2",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3866,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 51.1
+ },
+ "usage": {
+  "input_tokens": 139208,
+  "cached_input_tokens": 110720,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2190,
+  "reasoning_output_tokens": 495
+ },
+ "cost": 0.10597,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` in [pricing/salestax.go](/private/tmp/ostf-trials/phase5/codex.rules.go-shop.T4.2/repo/pricing/salestax.go) and updated `Price` and the tests to call it. The tax calculation is unchanged. The three listed tests (`TestPrice`, `TestTax`, `TestTaxExempt`) and `go test ./...` pass.\n\nR-TAX-RATE and R-TAX-EXEMPT remain behaviorally true, but their code references in `REQUIREMENTS.md` now point to the old function and file. D-RATES-PPM remains true with `Region` in `tax.go`. No entry controlling or refining a risk or threat was touched. Per the project instructions, I left the stale references unchanged.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,77 @@
+{
+ "run": "codex.none.go-shop.T10.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.Remaining(id) (time.Duration, error)`, which returns the time left before a reservation expires. It returns ErrNoReservation when the reservation is unknown or has already expired. The new TestRemaining checks a fresh reservation (the full HoldDuration), the value after five minutes (10m), the result exactly at expiry (an error), and an unknown ID (an error). So the request is implemented and tested. q2: Remaining reads the current time through s.now(), the clock injected into Stock, and never calls time.Now directly. The test moves the fake clock forward (c.t) instead of sleeping, which is what D-CLOCK requires.",
+  "cost": 0.0253246
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3384,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 1,
+  "seconds": 57.0
+ },
+ "usage": {},
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "inventory/inventory.go",
+  "inventory/inventory_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 2,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "`Stock` already uses an injected clock and returns `ErrNoReservation` for expired or missing holds. I’ll follow that convention with `Remaining(id) (time.Duration, error)` and test the time boundary without sleeping.",
+ "date": "2026-10-26"
+}

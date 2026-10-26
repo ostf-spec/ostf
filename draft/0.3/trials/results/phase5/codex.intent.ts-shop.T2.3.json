@@ -1,0 +1,96 @@
+{
+ "run": "codex.intent.ts-shop.T2.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T2",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "implement",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "listsAddedItem": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the item it added (R-GIFT-WRAP) by its ID?"
+  },
+  "reason": "q1: The diff adds an optional `giftWrap` flag to `Checkout.placeOrder` and passes it through to `price`. When the flag is set, `price` adds a flat GIFT_WRAP_FEE of 450 cents (4.50) once per order. The fee is added after tax is worked out on the discounted subtotal, so it is not taxed, and it is included in the total. The diff also adds new tests in both files. The checkout test checks that tax stays at 300 while the gift wrap fee and the total, receipt and audit amounts reflect the fee. The pricing test checks that the fee is added after discounts and is not taxed. Both match what the user asked for. q2: The final answer says \"I added **R-GIFT-WRAP** as a draft requirement\", so it names the item by its ID.",
+  "cost": 0.0364286
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 7535,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 74.7
+ },
+ "usage": {
+  "input_tokens": 210887,
+  "cached_input_tokens": 183808,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2944,
+  "reasoning_output_tokens": 596
+ },
+ "cost": 0.12632,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Gift wrapping is available through the optional `giftWrap` argument to `Checkout.placeOrder`. When requested, the quote shows a 4.50 fee once per order, adds it to the charged total, and excludes it from sales tax.\n\nThe change keeps **R-CHECKOUT-ORDER**, **R-CHECKOUT-SESSION**, and **R-TAX-RATE** true. I added **R-GIFT-WRAP** as a draft requirement, and the implementation satisfies it. No risk or threat control item was touched.\n\nThe linked tests, `Checkout > charges gift wrapping once per order` and `price > adds untaxed gift wrapping after discounts`, pass. The existing `Checkout > places an order` and `price > taxes the subtotal after discounts` tests also pass. Full suite: **38 passed**.",
+ "date": "2026-10-26"
+}

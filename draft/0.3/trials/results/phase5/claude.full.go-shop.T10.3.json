@@ -1,0 +1,96 @@
+{
+ "run": "claude.full.go-shop.T10.3",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.TimeLeft(id)` to inventory/inventory.go. It returns the time left until the reservation's `Expires`, and it returns ErrNoReservation for an unknown or expired reservation. The diff also adds `TestTimeLeft`, which checks three cases: the time left after the fake clock moves forward, an unknown ID, and the moment of expiry. So the diff does what was asked and tests it. q2: `TimeLeft` gets the current time from `s.now()`, the clock passed in when the Stock is built, and never calls `time.Now()` directly. The test moves the fake clock forward (`c.t = c.t.Add(...)`) instead of sleeping. This follows D-CLOCK.",
+  "cost": 0.029436599999999997
+ },
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 10,
+  "edited": true,
+  "ostfCalls": 7,
+  "ostfCallsBeforeFirstEdit": 5,
+  "firstOstfCall": 1,
+  "contextCalls": 5,
+  "checkCalls": 5,
+  "traceOutputTokens": 7193,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 63.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 30739,
+  "cache_read_input_tokens": 379649,
+  "output_tokens": 10210,
+  "cost": 0.015051890000000004
+ },
+ "cost": 0.015052,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "inventory/inventory.go",
+  "inventory/inventory_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 2,
+ "changedSymbols": 2,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added `Stock.TimeLeft(id)` to `inventory/inventory.go` and a test for it. Tests pass across all packages with `-race`, and `gofmt` and `go vet` are clean.\n\n**Behavior:** `TimeLeft(id)` returns how long reservation `id` has until `Expires`. An unknown or expired reservation returns `ErrNoReservation`, the same rule `Confirm` uses. It takes the same lock and reads the injected clock, so it is safe for concurrent use.\n\n**Trace changes:** AGENTS.md asks for new behavior as a new `status: draft` item, so I added `R-STOCK-TIME-LEFT` to `trace/requirements.yaml`. It refines `R-STOCK-EXPIRY`, lists `inventory/inventory.go#Stock.TimeLeft` as code and `inventory/inventory_test.go#TestTimeLeft` as its test. I picked that ID and title myself, so please confirm them in review. `ostf check --base main` exits 0 and reports the new item as `[draft]`. Its only message is an info line about two existing items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`, that nothing links to. That was already true before my change.\n\n**Items in the summary:**\n- `R-STOCK-TIME-LEFT` (new, draft): the new method and test implement it.\n- `R-STOCK-EXPIRY`: my change keeps it true. It is read-only, and its code and test lists are unchanged.\n- Test listed: `TestTimeLeft`, which covers the live count, an unknown ID, and the expiry boundary.\n\n**Risk-relevant items:** none touched. The stock items do not control any `RISK-*` item. The controls are `R-CHARGE-AMOUNT`, `R-REFUND-LIMIT` and `R-LOGIN-LOCKOUT`, and I did not change them.\n\nI did not commit anything.",
+ "date": "2026-10-26"
+}

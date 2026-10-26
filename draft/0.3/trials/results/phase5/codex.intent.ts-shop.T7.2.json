@@ -1,0 +1,90 @@
+{
+ "run": "codex.intent.ts-shop.T7.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": false,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:applyDiscount": false,
+   "test:caps at fifty percent": false,
+   "test:rejects an expired code": false
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:applyDiscount": "Does the final answer name the test `applyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps at fifty percent": "Does the final answer name the test `caps at fifty percent` as one that matters for the change, run or to be run?",
+   "test:rejects an expired code": "Does the final answer name the test `rejects an expired code` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The answer names R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY as linked to the changed function. It also says the change keeps all three true, so q1–q3 are true. For tests, it only names the two test files and says generally that they include \"percentage, cap, and expiry checks\". It never names a test called `caps at fifty percent` or `rejects an expired code`. It mentions `applyDiscount` only as the changed function, never as a test that matters. So q4–q6 are false.",
+  "cost": 0.0225198
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 16,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3655,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 58.5
+ },
+ "usage": {
+  "input_tokens": 165525,
+  "cached_input_tokens": 143360,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1973,
+  "reasoning_output_tokens": 562
+ },
+ "cost": 0.098352,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Compared with `main`, the only uncommitted change is in [applyDiscount](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T7.2/repo/src/pricing.ts:41): it replaces `Math.min` with an explicit check before applying the 50% cap. For numeric discount percentages, the result is unchanged, including the amount passed through to checkout.\n\nThe changed function is linked to **R-DISCOUNT-PERCENT**, **R-DISCOUNT-CAP**, and **R-DISCOUNT-EXPIRY**. The change keeps all three true. None of those items controls a traced risk or threat, or refines an item that does.\n\nI ran [pricing tests](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T7.2/repo/src/pricing.test.ts) and [checkout tests](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T7.2/repo/src/checkout.test.ts): **10 passed, 0 failed**. The pricing tests include the percentage, cap, and expiry checks linked to the changed function.",
+ "date": "2026-10-26"
+}

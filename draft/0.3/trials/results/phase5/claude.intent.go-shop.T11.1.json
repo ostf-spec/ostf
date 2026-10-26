@@ -1,0 +1,84 @@
+{
+ "run": "claude.intent.go-shop.T11.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true,
+  "fileLinked": true,
+  "noTestLinked": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/database.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-DB-ENCRYPTION is verified?"
+  },
+  "reason": "q1: The answer says \"no automated tests cover it.\" It also notes that the README says the Terraform under deploy/ isn't run by any test, and that go test doesn't exercise the control. q2: It says the only item that verifies C-DB-ENCRYPTION is V-INFRA-REVIEW, a manual pre-release review by a second engineer against staging.",
+  "cost": 0.0159286
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4710,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 27.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 19627,
+  "cache_read_input_tokens": 139664,
+  "output_tokens": 4435,
+  "cost": 0.00754074
+ },
+ "cost": 0.007541,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/database.tf` to C-DB-ENCRYPTION, and no automated tests cover it.\n\n**The link:** C-DB-ENCRYPTION is defined in `trace/threats.yaml`, not `trace.yaml`. I added one line to that item:\n\n```yaml\n    code: [deploy/database.tf]\n```\n\nThe change is uncommitted. I did not touch `database.tf` itself. C-DB-ENCRYPTION controls THREAT-DB-SNAPSHOT, so AGENTS.md asks me to check with you before changing code linked to it. If you also want an `# @req C-DB-ENCRYPTION` comment in the Terraform file, tell me and I'll add it.\n\n**Does the file keep the control true?** Yes, as far as I can read it. The database and its snapshots are encrypted (`storage_encrypted = true`), the key is a customer-managed KMS key (`aws_kms_key.database`), and key rotation is on at 365 days. RDS snapshots of an encrypted instance are encrypted too. I did not change the item's text.\n\n**Tests:** None. No test file references C-DB-ENCRYPTION or `deploy/`, and the README says the Terraform under `deploy/` is not run by any test. The only item that verifies C-DB-ENCRYPTION is V-INFRA-REVIEW, which is a manual pre-release review by a second engineer against staging. `go test ./...` passes, but it does not exercise this control. I can't run `terraform validate` here because it isn't installed, and I didn't check that the `code:` field is accepted by the ostf 0.3 schema, since no validator is in the repo.",
+ "date": "2026-10-26"
+}

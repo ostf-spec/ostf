@@ -1,0 +1,84 @@
+{
+ "run": "claude.none.go-shop.T2.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what was asked. The new `pricing/shipping.go` returns 0 when the subtotal after discounts is at least 10,000 cents (100.00) and 599 (5.99) otherwise. `Price` computes shipping from the post-discount amount and adds it to `Total`. There are new tests: `TestShipping` covers the boundaries (9,999, 10,000 and 0). `TestPriceShippingUsesSubtotalAfterDiscount` covers a discount that drops an order under the threshold, a discount that keeps it above, and the capped discount. `TestPlaceOrderChargesShipping` checks the end-to-end charge. The existing `TestPlaceOrder` and `TestPrice` expectations were updated to include shipping. The expected tax values match a 14.975% rate. A few test comments are sloppy, and the `REQUIREMENTS.md` edit the answer mentions isn't in the diff. Neither changes the fact that the feature is implemented and tested.",
+  "cost": 0.0537088
+ },
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3519,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 26,
+  "cache_creation_input_tokens": 34624,
+  "cache_read_input_tokens": 434437,
+  "output_tokens": 13390,
+  "cost": 0.01796677
+ },
+ "cost": 0.017967,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/shipping.go",
+  "pricing/shipping_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now adds shipping to the order total: an order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. `go test ./...` passes, along with `go vet` and `gofmt`. I didn't commit.\n\n**What changed**\n- **`pricing/shipping.go`** (new): `Shipping(afterDiscount)` returns 0 at or above 10,000 cents and 599 below it. The threshold and fee are named constants.\n- **`pricing/quote.go`**: `Quote` has a `Shipping` field, and `Price` sets it from the post-discount subtotal. `Total` is the post-discount subtotal, plus tax, plus shipping.\n- **Tax**: sales tax is still charged on the post-discount subtotal only, not on shipping. R-TAX-RATE covers that base, so I kept it unchanged.\n- **`REQUIREMENTS.md`**: new entry `R-SHIPPING`, refining N-FAIR-PRICE, with its code and tests listed.\n\n**Tests**\n- `pricing/shipping_test.go` (new): boundaries at 9.99, 100.00 and 0; a discount that drops an order under the threshold, which pays 5.99; a discount that keeps it at or above the threshold, which ships free; and the 50% cap leaving an order under the threshold.\n- `cart/checkout_test.go`: `TestPlaceOrder` now expects 28.99 (20.00 + 3.00 tax + 5.99), since its subtotal is under the threshold. The new `TestPlaceOrderChargesShipping` checks a free-shipping order (114.98 charged) and a flat-shipping order (17.49 charged), and asserts the receipt amount.\n- `pricing/tax_test.go`: `TestPrice` now expects shipping of 5.99 and a total of 109.47.\n\n**Choices I made**\n- The threshold is compared against the subtotal after discounts, as you asked, so a discount can push an order below 100.00 and trigger the fee.\n- Shipping is not taxed. The spec only says tax applies to the subtotal after discounts, so this follows R-TAX-RATE as written. Say if shipping should be taxed.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,83 @@
+{
+ "run": "claude.none.ts-shop.T5.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff covers all three parts of R-ORDER-NOTE. placeOrder takes an optional note. It counts the note's length in code points and throws NoteTooLongError when that is over 200. This check runs before pricing, stock reservation and charging, so a rejected note means no order is placed. The returned Order now has a note field, so the order keeps its note. Two tests tagged R-ORDER-NOTE were added. One checks that a 200-character note is kept on the order. The other checks that a 201-character note is rejected, that stock is unchanged and that no audit entry is written. The code changes match the requirement, and the tests check both the limit and the rejection.",
+  "cost": 0.033368800000000004
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3650,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 30.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 24033,
+  "cache_read_input_tokens": 149729,
+  "output_tokens": 5466,
+  "cost": 0.009038089999999999
+ },
+ "cost": 0.009038,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "SHOP-62 is implemented as requirement R-ORDER-NOTE, and all 38 tests pass (36 existing plus 2 new).\n\nI couldn't read the Jira issue itself because there is no Jira tool here. I took the requirement from the `R-ORDER-NOTE` entry in REQUIREMENTS.md, which cites SHOP-62: a customer note of at most 200 characters at checkout, a longer note is rejected and no order is placed, and the order keeps its note.\n\n**Changes**\n- **`src/checkout.ts`**: `placeOrder` takes an optional fifth argument, `note` (defaults to `\"\"`). It is checked right after the empty-cart check and before pricing, stock reservation, or charging. A longer note throws the new `NoteTooLongError`, a `RangeError` like `QuantityError` in `cart.ts`. The note is stored on the returned `Order`. The limit is exported as `MAX_NOTE_LENGTH = 200`.\n- **`src/checkout.test.ts`**: two tests tagged `// @req R-ORDER-NOTE`. One checks that a 200-character note is kept. The other checks that a 201-character note is rejected, with stock still available and no audit entry written.\n- **`REQUIREMENTS.md`**: added the Code and Tests lines to R-ORDER-NOTE, which the other requirements already have.\n\n**Choices I made that you may want to change**\n- \"Characters\" means Unicode code points, so an emoji counts as one. If the requirement means UTF-16 units, it is a one-line change.\n- The note is not trimmed, so leading or trailing spaces count toward the limit.\n- The repo has no order store, so \"the order keeps its note\" is satisfied only by the returned `Order` object.\n\nI have not committed anything, since you didn't ask for a commit.",
+ "date": "2026-10-26"
+}

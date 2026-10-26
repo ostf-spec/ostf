@@ -1,0 +1,93 @@
+{
+ "run": "codex.full.go-shop.T9.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new ErrTooManyOrders error and keeps a list of recent attempt times for each account, guarded by a mutex. Before the payment gateway is called, it drops attempts older than ten minutes and refuses the order if three remain. Each attempt is recorded just before Charge, so declined attempts also count. Three new tests cover it: TestPlaceOrderRateLimit checks that the fourth order is refused with no gateway call, charge or audit entry, that stock is unchanged, that a second account has its own allowance, and that orders resume once the first attempt is ten minutes old. TestPlaceOrderDeclineCountsTowardLimit checks that a declined attempt counts. TestPlaceOrderRateLimitConcurrent checks that four simultaneous orders give exactly three successes and one refusal. Minor issues, such as holding the lock during the charge and never removing old accounts' entries, don't change the answer.",
+  "cost": 0.06233280000000001
+ },
+ "metrics": {
+  "calls": 40,
+  "callsBeforeFirstEdit": 13,
+  "edited": true,
+  "ostfCalls": 6,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 9,
+  "contextCalls": 2,
+  "checkCalls": 6,
+  "traceOutputTokens": 10816,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 391.7
+ },
+ "usage": {
+  "input_tokens": 1184218,
+  "cached_input_tokens": 1140480,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 10581,
+  "reasoning_output_tokens": 3378
+ },
+ "cost": 0.455162,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": 11,
+ "changedSymbols": 11,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now returns the new `ErrTooManyOrders` before calling the payment gateway on a fourth attempt from the same account within ten minutes. Declined attempts count too, so rejected cards cannot be tested without limit. The counter is held on the `Checkout` instance; deployments with multiple instances would need shared state to enforce the limit across them.\n\nThe new draft, risk-relevant control **C-CHECKOUT-ORDER-LIMIT** links this change to **THREAT-CARD-TESTING**. The trace check also lists **R-CHECKOUT-ORDER** and **R-CHECKOUT-SESSION**; both remain true. Its listed tests are `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderRateLimit`, `TestPlaceOrderDeclineCountsTowardLimit`, and `TestPlaceOrderRateLimitConcurrent`.\n\n`go test -race ./...` and `ostf check --base main` pass.",
+ "providerAttempts": [],
+ "date": "2026-10-26"
+}

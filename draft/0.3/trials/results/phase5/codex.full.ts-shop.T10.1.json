@@ -1,0 +1,96 @@
+{
+ "run": "codex.full.ts-shop.T10.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff adds `serviceFee` to the Quote. It computes the fee as 2.5% of the subtotal after the discount, and it figures tax on that discounted subtotal only, so the fee is not taxed. The fee is added to the total, and the receipt amount follows the total. I checked the test numbers by hand and they are right: 9,000 → fee 225 and total 10,573; 1,800 → fee 45, tax 270 and total 2,115; 101 → fee 3 (2.525 rounded up), tax 15 and total 119; tax-exempt 100 → fee 3 and total 103. The new tests check the fee's rounding, that it is not taxed, that it is applied after the discount, and that it is in the amount charged. The existing checkout test was updated to match. q2: The fee rate is the integer `SERVICE_FEE_RATE_PPM = 25_000`. It is applied to integer cents with integer multiplication and rounded once, half up, by `roundHalfUp(..., 1_000_000)`. No floating-point number is used, and discounts still use their whole percent.",
+  "cost": 0.042136599999999996
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 8,
+  "contextCalls": 1,
+  "checkCalls": 4,
+  "traceOutputTokens": 7300,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 68.0
+ },
+ "usage": {
+  "input_tokens": 306099,
+  "cached_input_tokens": 273664,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3498,
+  "reasoning_output_tokens": 1044
+ },
+ "cost": 0.165023,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 9,
+ "changedSymbols": 9,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Added a 2.5% service fee to each order’s subtotal after discounts. The fee is rounded to the cent, shown in the quote, excluded from sales tax, and included in the amount charged.\n\n**Verification:** All 38 tests pass, and `ostf check --base main` reports no errors. Its listed items remain true: the new draft **R-SERVICE-FEE**, plus **R-TAX-RATE**, **R-CHECKOUT-ORDER**, **N-FAIR-PRICE**, and **N-BUY**. **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT** are unchanged; the check still reports them as unlinked. No risk relevant item was touched.\n\nThe check listed the Checkout and price suites, including “charges the total including the fee after discounts,” “places an order,” “rounds the service fee to the cent and does not tax it,” and “taxes the subtotal after discounts,” plus “tax > rounds half up to the cent.”",
+ "date": "2026-10-26"
+}

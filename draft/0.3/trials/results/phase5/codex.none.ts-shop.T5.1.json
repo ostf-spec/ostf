@@ -1,0 +1,84 @@
+{
+ "run": "codex.none.ts-shop.T5.1",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does what R-VOLUME-DISCOUNT asks. The new `volumeDiscount` takes 5% off each line with 10 or more units, rounding down separately for each line. `price` takes the volume discount off first and works out the code discount on what is left (`subtotal - volume`). It then caps the combined discount at 50% of the subtotal, so the volume discount counts toward the cap. `Checkout` now passes the cart lines into `price`, so real orders get the discount. The new tests check each rule. One checks that the discount starts at 10 units and rounds down per line (9 units gets nothing, two 10-unit lines at 11 cents give 5 cents each, for 10 in total). One checks that a code applies after the volume discount (500 + 950 = 1450). One checks the combined 50% cap (500 + 4750 is capped to 5000). A checkout test covers a 10-unit order end to end. I checked the tax and total figures in these tests by hand against the existing Quebec rate, and they agree.",
+  "cost": 0.0474288
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5734,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 53.8
+ },
+ "usage": {
+  "input_tokens": 297955,
+  "cached_input_tokens": 269184,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3026,
+  "reasoning_output_tokens": 761
+ },
+ "cost": 0.149249,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 14,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Checkout now applies a 5% discount to each line with 10 or more units, rounds each line’s discount down to the cent, applies any discount code afterward, and caps the combined discount at 50% of the order subtotal. I added pricing and checkout tests and linked the implementation in `REQUIREMENTS.md`.\n\nVerification: all 40 tests pass, and `git diff --check` is clean.",
+ "date": "2026-10-25"
+}

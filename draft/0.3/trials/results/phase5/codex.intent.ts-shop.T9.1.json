@@ -1,0 +1,91 @@
+{
+ "run": "codex.intent.ts-shop.T9.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `OrderRateLimitError` to `placeOrder`. It counts each account's orders from the last ten minutes, and if there are already three, it throws before reserving stock or calling `payments.charge`. It claims the slot before the first await, so concurrent checkouts share the limit, and it gives the slot back if the order fails. The new test \"limits orders per account before charging\" places three orders and checks that a fourth is rejected with `OrderRateLimitError`. It then confirms the gateway was charged only three times and the audit log has three entries, that another account is not blocked, and that the limit clears after ten minutes. A second test checks that a declined order does not count. That covers the mitigation the user asked for, and the tests check it.",
+  "cost": 0.0443528
+ },
+ "metrics": {
+  "calls": 26,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4623,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 101.0
+ },
+ "usage": {
+  "input_tokens": 453855,
+  "cached_input_tokens": 423168,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 5915,
+  "reasoning_output_tokens": 1834
+ },
+ "cost": 0.223498,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 11,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now throws `OrderRateLimitError` for a fourth order from the same account within ten minutes, before calling the payment processor. Failed orders do not count. The new draft requirement, **R-CHECKOUT-RATE-LIMIT**, controls **THREAT-CARD-TESTING**.\n\n**R-CHECKOUT-ORDER** and **R-CHECKOUT-SESSION** remain true. The linked checkout tests, “places an order,” “needs a valid session,” “limits orders per account before charging,” and “does not count failed orders,” pass. The full suite passes: 38 tests.\n\nThe limit is held in each `Checkout` instance’s memory. Deployments with multiple instances need a shared store for an account-wide limit. Review **R-CHECKOUT-RATE-LIMIT** and **THREAT-CARD-TESTING** in the pull request.",
+ "date": "2026-10-25"
+}

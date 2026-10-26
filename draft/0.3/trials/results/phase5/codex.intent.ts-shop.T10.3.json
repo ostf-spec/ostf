@@ -1,0 +1,94 @@
+{
+ "run": "codex.intent.ts-shop.T10.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.remainingMs(id)`. It returns the milliseconds left before a hold expires, never goes below zero, and returns 0 for unknown or released holds. A new test covers these cases: the full time at the start, partial elapsed time, the expiry point, a missing id, and a released hold. q2: The method reads the time from `this.now()`, which appears to be the clock injected into Stock (the test drives it with `clock.t` from `newStock()`). It does not use `Date.now()`, and the test moves the fake clock forward instead of sleeping. The `this.now` wiring itself is not in the diff, so this rests on the existing pattern and the test's use of the fake clock.",
+  "cost": 0.0230046
+ },
+ "metrics": {
+  "calls": 17,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4202,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 64.8
+ },
+ "usage": {
+  "input_tokens": 240680,
+  "cached_input_tokens": 207616,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2165,
+  "reasoning_output_tokens": 552
+ },
+ "cost": 0.134821,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/inventory.test.ts",
+  "src/inventory.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Added `Stock.remainingMs(id)` in [inventory.ts](/tmp/ostf-trials/phase5/codex.intent.ts-shop.T10.3/repo/src/inventory.ts). It returns the milliseconds left using Stock’s clock, or `0` for an unknown, released, or expired reservation.\n\nAdded the draft trace item **R-STOCK-REMAINING** and its test, “Stock > reports milliseconds remaining on a reservation.” The change keeps **R-STOCK-REMAINING** and the expiry item it refines, **R-STOCK-EXPIRY**, true. The expiry test, “Stock > expires a reservation after 15 minutes,” also passes. No touched item controls a risk or threat.\n\n`npm test`: 37 passed.",
+ "date": "2026-10-26"
+}

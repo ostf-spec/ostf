@@ -1,0 +1,498 @@
+{
+ "run": "claude.intent.go-shop.T12.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true,
+  "checkGreenAfterEachMerge": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Has to Cart in cart/cart.go that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 34.1
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 19780,
+    "cache_read_input_tokens": 140509,
+    "output_tokens": 3668,
+    "cost": 0.007196289999999999
+   },
+   "cost": 0.007196,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5124,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/cart.go",
+    "cart/cart_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Cart.Has(sku string) bool` to `cart/cart.go` and a `TestHas` test in `cart/cart_test.go`. The new test and the `cart` and `pricing` package tests pass, and `gofmt` and `go vet` are clean. I did not commit.\n\nThe method returns whether the cart has a line for the SKU. It's the same lookup `Add`, `Remove` and `Subtotal` use. `TestHas` checks an empty cart, a SKU that was added, a SKU that was never added, and a SKU after it's removed.\n\n**Trace items**\n- **New item `R-CART-HAS`** in `trace/requirements.yaml`, with `status: draft`. It refines `N-BUY`, links to `cart/cart.go#Cart.Has` and `cart/cart_test.go#TestHas`, and carries `@req R-CART-HAS` comments on both. This ID is new, and I created it to follow the existing `R-CART-*` scheme. The existing items don't use a `status` field, so that field is new to the file.\n- **Existing items linked to `cart.go`**, which I did not change: R-CART-ADD, R-CART-QTY, R-CART-REMOVE and R-CART-SUBTOTAL. Their code is unchanged, so they remain true. None of them controls or refines a risk or threat.\n- **Risk or threat items touched:** none. The new item refines only N-BUY, which is a need."
+  },
+  {
+   "branch": "change-02",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Units to Order in cart/checkout.go that returns the number of units over its lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 32.9
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 10,
+    "cache_creation_input_tokens": 23251,
+    "cache_read_input_tokens": 115392,
+    "output_tokens": 4986,
+    "cost": 0.00829812
+   },
+   "cost": 0.008298,
+   "metrics": {
+    "calls": 7,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 6399,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "cart/checkout.go",
+    "cart/checkout_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Order.Units` in `cart/checkout.go`, with a test and a new draft trace item. The full suite passes (`go test ./...`), and `gofmt` and `go vet` are clean.\n\n**The change**\n- `cart/checkout.go`: `func (o Order) Units() int` sums `Quantity` over `o.Lines`. It has a value receiver because `Order` is a plain value type.\n- `cart/checkout_test.go`: `TestOrderUnits` covers an empty order (0) and an order with two lines, 2 and 3 units (5).\n- `trace/requirements.yaml`: new item `R-ORDER-UNITS`, `status: draft`, refines `N-BUY`, linked to `cart/checkout.go#Order.Units` and `cart/checkout_test.go#TestOrderUnits`. The `@req R-ORDER-UNITS` comments are on the method and the test. I chose this ID myself because AGENTS.md asks for a new item for new behavior. Please check that it fits your numbering.\n\n**Items for the PR review**\n- **Linked to the changed code:** `R-ORDER-UNITS` is the only item linked to `Order.Units`. It is new and draft.\n- **Other items in `cart/checkout.go`:** `R-CHECKOUT-ORDER` (`PlaceOrder`) and `R-CHECKOUT-SESSION` (`PlaceOrder`). I did not change `PlaceOrder`, and they remain true. `TestPlaceOrder` and `TestPlaceOrderNeedsSession` pass.\n- **Risk or threat items touched:** none. `R-ORDER-UNITS` refines `N-BUY`, which doesn't refine a risk, and no risk-controlling item is linked to the code I changed. So I did not need to ask before this change.\n- **Tests run:** `go test ./...` for the whole module, including `TestOrderUnits` and the existing `cart` tests.\n\n**Not done**\n- `R-VOLUME-DISCOUNT` (SHOP-57) applies to lines with 10 or more units. It is not linked to `Units`, and the discount code doesn't use `Units` yet. Linking them would be a separate change.\n- `ostf` is not installed here, so I did not validate the trace files with it."
+  },
+  {
+   "branch": "change-03",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Holds to Stock in inventory/inventory.go that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 61.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 18,
+    "cache_creation_input_tokens": 26877,
+    "cache_read_input_tokens": 252526,
+    "output_tokens": 9475,
+    "cost": 0.012639960000000002
+   },
+   "cost": 0.01264,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 6116,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "inventory/inventory.go",
+    "inventory/inventory_test.go",
+    "trace/design.yaml"
+   ],
+   "finalMessage": "I added `Stock.Holds()` to `inventory/inventory.go`, with a test, and a new draft trace item. All tests pass (`go test ./...`), and gofmt and go vet are clean. I haven't committed.\n\n**What I read:** `AGENTS.md` and `trace/`. The new function has no linked items yet. The closest are D-RESERVATION-HOLD and R-STOCK-EXPIRY, which the existing `available` and `Confirm` functions link to. I didn't change either function.\n\n**Changes:**\n- **`inventory/inventory.go`**: `Holds() int` locks the stock, counts reservations whose expiry is still after the current time, and returns the count. It takes no SKU, because I read \"the number of reservations that have not expired\" as all reservations. Say if you wanted a per-SKU count.\n- **`inventory/inventory_test.go`**: `TestHolds` covers an empty stock, two live holds, a release, and an expiry.\n- **`trace/design.yaml`**: new item **D-HOLD-COUNT**, `type: design`, `status: draft`, `refines: [R-STOCK-EXPIRY]`, `code: inventory/inventory.go#Stock.Holds`, `tests: inventory/inventory_test.go#TestHolds`. The `@req D-HOLD-COUNT` comments are on the method and the test. The existing items don't use a `status` field, so this one is the first; the field follows the AGENTS.md instruction.\n\n**For review:**\n- **Linked items kept true:** D-RESERVATION-HOLD, R-STOCK-EXPIRY and R-STOCK-RESERVE still hold. Their code is unchanged, and their tests (`TestConfirm`, `TestReservationExpires`, `TestReserveAllOrNothing`) pass.\n- **Risk or threat items touched:** none. R-STOCK-EXPIRY refines N-NO-OVERSELL, which is a need, not a risk, so I didn't need to ask before changing this code.\n- **Tests run:** `go test ./...`, which includes the inventory tests above and the cart tests that check out through inventory."
+  },
+  {
+   "branch": "change-04",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Accounts to Sessions in accounts/session.go that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 38.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 22934,
+    "cache_read_input_tokens": 147084,
+    "output_tokens": 5214,
+    "cost": 0.008665840000000001
+   },
+   "cost": 0.008666,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 6104,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "accounts/session.go",
+    "accounts/session_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Sessions.Accounts()` to `accounts/session.go`. It returns the number of registered accounts and holds the store's mutex like the other methods. The full test suite passes (`go test ./...`), and `TestAccounts` covers a fresh store, a duplicate-email rejection, a second registration, and a login. I haven't committed anything.\n\n**Trace (per AGENTS.md)**\n- **New item `R-ACCOUNT-COUNT`** in `trace/requirements.yaml`, `status: draft`, linked to `accounts/session.go#Sessions.Accounts` and `accounts/session_test.go#TestAccounts`. The method and test carry matching `@req R-ACCOUNT-COUNT` comments.\n- **No `refines` on the new item.** I couldn't find a need it clearly serves, and I didn't want to guess. Tell me which need (if any) it should refine and I'll add it.\n- **Items linked to `session.go` that I did not change:**\n  - R-PASSWORD-HASH (`Register`), still true.\n  - R-LOGIN-LOCKOUT (`Login`, controls RISK-ACCOUNT-TAKEOVER), still true. Its tests (`TestLoginLockout`) pass.\n  - R-SESSION-EXPIRY (`Validate`), still true. Its test (`TestSessionExpiry`) passes.\n  - D-CLOCK (`NewSessions`), still true.\n- **Risk or threat items touched:** none. I didn't modify any function linked to a risk item, so no approval was needed. The new item doesn't refine or control a risk.\n\n**Tests run:** `TestLogin`, `TestLoginLockout`, `TestSessionExpiry`, `TestAccounts`, and `go test ./...` across all packages. `gofmt` and `go vet` are clean on `accounts/`."
+  },
+  {
+   "branch": "change-05",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Len to AuditLog in payments/audit.go that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 42.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 21741,
+    "cache_read_input_tokens": 172929,
+    "output_tokens": 4848,
+    "cost": 0.00850289
+   },
+   "cost": 0.008503,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5224,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "payments/audit.go",
+    "payments/audit_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `AuditLog.Len()` in `payments/audit.go`, with a test `TestAuditLen` in `payments/audit_test.go`. The new test passes, the full suite passes (`go test ./...`), and `gofmt` and `go vet` are clean.\n\nFollowing AGENTS.md:\n\n- **Linked item, kept true:** `R-AUDIT-APPEND-ONLY` is linked to `payments/audit.go` and `payments/audit_test.go`. `Len` only reads the log, so the item stays true. I did not change its text. Its tests are `TestAuditEntriesAreCopies` and `TestAuditStampsTime`, and both still pass.\n- **New item:** I added `R-AUDIT-LEN` to `trace/requirements.yaml` with `status: draft`. It refines `N-ACCOUNT-SAFE` and is linked to `payments/audit.go#AuditLog.Len` and `payments/audit_test.go#TestAuditLen`. I also put a `// @req R-AUDIT-LEN` comment on both functions, following the pattern used elsewhere in the repo.\n- **Risk or threat items touched:** none. `N-ACCOUNT-SAFE` is a need, and nothing linked to `Len` controls a risk or refines one, so I did not need to ask before changing code.\n\nThe method takes the same mutex as `Append` and `Entries`, so the count is safe under concurrent use."
+  },
+  {
+   "branch": "change-06",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a String method to Discount in pricing/discount.go that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 49.2
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 25222,
+    "cache_read_input_tokens": 151342,
+    "output_tokens": 6900,
+    "cost": 0.01000902
+   },
+   "cost": 0.010009,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5664,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/discount.go",
+    "pricing/discount_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Discount.String`, which formats a code as `SAVE10 (10% until 2026-12-31)`, along with a test. The full suite passes, and `gofmt` and `go vet` are clean. I didn't commit.\n\n**Changes**\n- `pricing/discount.go`: new `String()` method on `Discount`, with a value receiver so both `Discount` and `*Discount` get it. It formats the date from `Expires` in that value's own location.\n- `pricing/discount_test.go`: `TestDiscountString` checks the value and pointer forms against the example string.\n- `trace/requirements.yaml`: new item `R-DISCOUNT-LABEL` with `status: draft`, linked to `pricing/discount.go#Discount.String` and `TestDiscountString`. I put it under `refines: [N-FAIR-PRICE]`, since it displays the discount terms. That link is my choice, so please check it.\n\n**Trace review for the PR**\n- Items linked to `ApplyDiscount` (which I did not change): `R-DISCOUNT-PERCENT`, `R-DISCOUNT-CAP`, and `R-DISCOUNT-EXPIRY`. My change keeps all three true. Tests that verify them: `TestApplyDiscount` and its four subtests. All pass.\n- Risk or threat items touched: none. No item I changed controls a risk or refines one that does, so no changes needed your approval.\n- New item `R-DISCOUNT-LABEL` is draft and verified by `TestDiscountString`.\n\n**Things to look at**\n- The label's date is the expiry instant's date. `ApplyDiscount` rejects a code once `now` reaches `Expires`. A code expiring at midnight on 2026-12-31 therefore stops working at the start of that day, so \"until 2026-12-31\" reads one day late. Decide whether the label should show the last valid day instead.\n- `ApplyDiscount` carries `// @req R-DISCOUNT-EXPIRY`, but that item lists only the test as its link, not the function. I left it alone because it's outside this change."
+  },
+  {
+   "branch": "change-07",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Split to Money in pricing/money.go that returns its dollars and its cents as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 40.7
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 12,
+    "cache_creation_input_tokens": 23728,
+    "cache_read_input_tokens": 148952,
+    "output_tokens": 5538,
+    "cost": 0.00900532
+   },
+   "cost": 0.009005,
+   "metrics": {
+    "calls": 10,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5255,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/money.go",
+    "pricing/money_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Money.Split` to `pricing/money.go` with a table test, and `go test ./...` passes. Nothing is committed.\n\n**The method:** `Split() (dollars, cents int64)` uses truncating division, so `dollars*100 + cents == m` always holds. Both parts take the sign of `m`: `Split(1205)` gives `12, 5`, `Split(-310)` gives `-3, -10`, and `Split(-7)` gives `0, -7`. Note that `String` formats negatives differently (`-3.10`, with the sign applied once), so the two methods don't match for negatives. If you'd rather `Split` return a non-negative cents value with the sign only on dollars, that's a small change.\n\n**Traceability (per AGENTS.md):**\n- **Linked to the changed file:** R-MONEY-CENTS (`code: pricing/money.go#Money`). The change doesn't alter `Money` or `String`, so it stays true. Its test, `TestMoneyString`, passes. D-RATES-PPM refines R-MONEY-CENTS but links to `pricing/tax.go`, which I didn't touch.\n- **New item:** I added R-MONEY-SPLIT to `trace/requirements.yaml` with `status: draft`. It refines R-MONEY-CENTS, links to `pricing/money.go#Money.Split` and `pricing/money_test.go#TestMoneySplit`, and carries an `@req R-MONEY-SPLIT` comment on the test. I picked that ID myself; you didn't name one.\n- **Risk or threat items touched:** none. R-MONEY-CENTS refines N-FAIR-PRICE, which controls no risk, so I didn't need to ask before editing.\n\n**Tests run:** `TestMoneySplit` and `TestMoneyString` pass, and `go test ./...` passes across all packages. `gofmt` and `go vet` are clean, and the trace YAML parses."
+  },
+  {
+   "branch": "change-08",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a method Savings to Quote in pricing/quote.go that returns the discount as a whole percent of the subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 47.8
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 25439,
+    "cache_read_input_tokens": 182122,
+    "output_tokens": 7067,
+    "cost": 0.01044392
+   },
+   "cost": 0.010444,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 4,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 6218,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/quote.go",
+    "pricing/quote_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `Quote.Savings()` to `pricing/quote.go`, with tests in a new `pricing/quote_test.go`. The full suite passes, and `gofmt` and `go vet` are clean. Nothing is committed.\n\n```go\n// Savings returns the discount as a whole percent of the subtotal, rounded\n// down. A quote with no positive subtotal saves 0 percent.\n// @req R-QUOTE-SAVINGS\nfunc (q Quote) Savings() int64 {\n\tif q.Subtotal <= 0 {\n\t\treturn 0\n\t}\n\treturn int64(q.Discount) * 100 / int64(q.Subtotal)\n}\n```\n\nChoices I made:\n- **Return type is `int64`**, to match `Discount.Percent`.\n- **Zero or negative subtotal returns 0** rather than dividing by zero. You didn't specify this case.\n- **Rounding down** is plain integer division, so the result is floored.\n\n**Trace.** Per AGENTS.md, the new behavior needs its own item. I created `R-QUOTE-SAVINGS` in `trace/requirements.yaml` with `status: draft`, `refines: [R-DISCOUNT-PERCENT]`, and links to `pricing/quote.go#Quote.Savings` and `pricing/quote_test.go#TestQuoteSavings`. You didn't name an ID, so this is a new one, not an existing item. The YAML parses.\n\n**Items linked to what I changed:**\n- `R-TAX-RATE` is linked to `pricing/quote.go#Price`. My change doesn't touch `Price`, so the item remains true. I ran `TestPrice` and `TestTax`, and both pass.\n- `R-DISCOUNT-PERCENT` is the parent of the new item. Its code (`discount.go`) and tests are unchanged, so it remains true. I ran `TestApplyDiscount`, and it passes.\n- `R-QUOTE-SAVINGS` is new, with `TestQuoteSavings` covering whole-percent results, round-down cases, the 50% cap, no discount, and zero subtotal. All pass.\n\n**Risk review:** none of the items I touched controls a risk or refines one that does. `R-DISCOUNT-PERCENT` refines `N-FAIR-PRICE`, and the new item refines `R-DISCOUNT-PERCENT`, so no change needs your approval under AGENTS.md.\n\n**Test runs:** `go test ./...` passes in all five packages. `go test ./pricing/ -run 'TestQuoteSavings|TestPrice|TestApplyDiscount|TestTax' -v` shows each test passing."
+  },
+  {
+   "branch": "change-09",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function WithTax to pricing/tax.go that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 52.0
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 14,
+    "cache_creation_input_tokens": 24603,
+    "cache_read_input_tokens": 183233,
+    "output_tokens": 6803,
+    "cost": 0.010155830000000003
+   },
+   "cost": 0.010156,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5547,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/tax.go",
+    "pricing/tax_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `WithTax` to `pricing/tax.go` with a test, and a new draft trace item for it. `go test ./...` passes and gofmt is clean.\n\n**The function**\n\n```go\nfunc WithTax(amount Money, r Region, exempt bool) Money {\n\treturn amount + Tax(amount, r, exempt)\n}\n```\n\nI included the `exempt` parameter so it matches `Tax`. Without it, `WithTax` would add tax for tax-exempt customers, which breaks R-TAX-EXEMPT. If you want a version without the flag, say so.\n\n**The test** (`TestWithTax` in `pricing/tax_test.go`, tagged `@req R-TAX-ADD`) covers 10,000 → 11,498, 100 → 115, 0 → 0, and an exempt 10,000 → 10,000.\n\n**Trace**\n\n- Added `R-TAX-ADD` to `trace/requirements.yaml` with `status: draft`. It refines N-FAIR-PRICE and links to `pricing/tax.go#WithTax` and `pricing/tax_test.go#TestWithTax`. This is a new ID I created for the new behavior; it is not one you named.\n- Items linked to the code I changed:\n  - **R-TAX-RATE** (`tax.go#Tax`): still true. I did not change `Tax`.\n  - **R-TAX-EXEMPT** (`tax.go#Tax`): still true. Verified by `TestTaxExempt`.\n  - **D-RATES-PPM** (`tax.go#Region`): still true. I did not touch `Region`.\n- Tests run for these: `TestTax`, `TestTaxExempt`, `TestPrice`, and `TestWithTax`, all passing.\n- No item I touched controls or refines a risk item, so I did not need to ask first. No existing item was rewritten.\n\nI did not commit the change."
+  },
+  {
+   "branch": "change-10",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "prompt": "Add a function FreeShippingGap in a new file pricing/shipping.go that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 47.6
+   },
+   "usage": {
+    "model": "claude-haiku-5-5",
+    "input_tokens": 16,
+    "cache_creation_input_tokens": 22244,
+    "cache_read_input_tokens": 206372,
+    "output_tokens": 4636,
+    "cost": 0.00883212
+   },
+   "cost": 0.008832,
+   "metrics": {
+    "calls": 9,
+    "callsBeforeFirstEdit": 3,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5432,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "pricing/shipping.go",
+    "pricing/shipping_test.go",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "I added `FreeShippingGap` in `pricing/shipping.go` with a table test, and the full `go test ./...` suite passes. I did not commit.\n\n```go\nfunc FreeShippingGap(subtotal Money) Money\n```\n\nIt returns `10_000 - subtotal` when the subtotal is under 100.00 and zero otherwise. Amounts are integer cents, matching the rest of the package.\n\n**Trace changes (per `AGENTS.md`):**\n- No existing item covered shipping, so I added a new item, `R-FREE-SHIPPING-GAP`, to `trace/requirements.yaml` with `status: draft`. It is linked to `pricing/shipping.go#FreeShippingGap` and `pricing/shipping_test.go#TestFreeShippingGap`, and carries `@req R-FREE-SHIPPING-GAP` comments on both.\n- I chose `refines: [N-FAIR-PRICE]` as the parent need. That is my judgment, so change it if the threshold belongs under a different need.\n\n**Items linked to the code I changed:**\n- `R-FREE-SHIPPING-GAP` is the only item linked to the new code, and the change keeps it true.\n- No existing item is linked to the new code, so no existing item is affected.\n- No risk or threat items were touched. `N-FAIR-PRICE` is a need, not a risk control, so the change needed no sign-off.\n\n**Tests run:** `go test ./pricing/ -run TestFreeShippingGap -v` passes, and `go test ./...` passes across all packages. `gofmt` and `go vet` are clean. The new requirement item parses as valid YAML."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  }
+ ],
+ "conflicts": 2,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 57083,
+  "edited": true,
+  "calls": 90,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 446.9
+ },
+ "usage": {
+  "input_tokens": 134,
+  "cache_creation_input_tokens": 235819,
+  "cache_read_input_tokens": 1700461,
+  "output_tokens": 59135
+ },
+ "cost": 0.093749,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

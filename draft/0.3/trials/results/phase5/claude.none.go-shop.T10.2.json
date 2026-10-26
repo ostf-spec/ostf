@@ -1,0 +1,88 @@
+{
+ "run": "claude.none.go-shop.T10.2",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff does what was asked. `Price` now works out the fee on `net = subtotal - discount` and works out tax on `net` alone, so the fee is not taxed. It then sets `Total = net + Fee + Tax`. Checkout charges the quote total, which `TestPlaceOrder` confirms. Tests were both added and updated: `TestServiceFee` covers rounding, and two new tests cover the fee after a discount and the fee for a tax-exempt customer. `TestPrice` and `TestPlaceOrder` were updated. Their expected values add up: 9000 × 2.5% = 225, and 9000 + 225 + 1348 = 10573. Also, 5000 + 125 + 749 = 5874. One thing doesn't match: the answer says `REQUIREMENTS.md` was changed, but that change is not in the diff. This doesn't affect the code question. q2: The fee rate is the integer constant `ServiceFeePPM = 25_000`, in parts per million. It is applied to integer cents as `int64(amount)*ServiceFeePPM`, then rounded half up exactly once through the existing `roundHalfUp(..., 1_000_000)`. No floating-point number is used. Discount percents are unchanged.",
+  "cost": 0.0537206
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 5,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3506,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 36.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 26250,
+  "cache_read_input_tokens": 280322,
+  "output_tokens": 6989,
+  "cost": 0.011549720000000001
+ },
+ "cost": 0.01155,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The service fee is in place: every order now pays 2.5% of its subtotal after discounts. The fee is not taxed and is included in `Quote.Total`, and it is what gets charged. `go test ./...` passes across all packages, and `gofmt` and `go vet` are clean.\n\n**What changed**\n- **`pricing/quote.go`**: added `ServiceFeePPM = 25_000` (2.5%) and a `Fee` field on `Quote`. `Price` computes the fee on the amount left after the discount, then tax on that same amount, and sets `Total = net + fee + tax`. The fee uses integer arithmetic and rounds half up once, as D-RATES-PPM requires.\n- **`REQUIREMENTS.md`**: added `R-SERVICE-FEE`, with its code and tests, so the new behavior is traceable like the other requirements. The `Price` function carries the matching `@req` tag.\n- **`README.md`**: the pricing row now mentions the fee.\n\n**Tests**\n- New `pricing/quote_test.go`:\n  - `TestServiceFee` covers rounding: 0.50 rounds up to 0.01, and 0.475 rounds down to 0.00.\n  - `TestPriceServiceFeeAfterDiscount` checks the fee is based on the post-discount amount, with a 50% discount.\n  - `TestPriceServiceFeeOnExemptCustomer` checks that tax-exempt customers still pay the fee.\n- `TestPrice` now expects a fee of 2.25 and a total of 105.73 for a 100.00 subtotal with 10% off.\n- `TestPlaceOrder` now expects a fee of 0.50 and a charge of 23.50, where it previously expected 23.00.\n\n**Choices I made**\n- The fee applies to every order, including tax-exempt customers, since the request said \"every order\".\n- I added a requirement entry instead of only changing code, to match how the repo traces code to requirements.",
+ "date": "2026-10-26"
+}

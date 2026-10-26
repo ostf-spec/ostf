@@ -1,0 +1,488 @@
+{
+ "run": "codex.rules.ts-shop.T12.3",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 118.4
+   },
+   "usage": {
+    "input_tokens": 179590,
+    "cached_input_tokens": 162432,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1986,
+    "reasoning_output_tokens": 549
+   },
+   "cost": 0.092152,
+   "metrics": {
+    "calls": 14,
+    "callsBeforeFirstEdit": 9,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 2159,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "finalMessage": "Added `Cart.has(sku)` and a test covering an empty cart, a present SKU, an absent SKU, and removal.\n\nThe new **Cart SKU presence** entry is marked draft in `REQUIREMENTS.md` without an invented ID. The change keeps the existing cart entries true and touches no risk or threat controls. All five tests in `src/cart.test.ts` passed, including the new test."
+  },
+  {
+   "branch": "change-02",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 105.7
+   },
+   "usage": {
+    "input_tokens": 198291,
+    "cached_input_tokens": 164096,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2149,
+    "reasoning_output_tokens": 916
+   },
+   "cost": 0.131859,
+   "metrics": {
+    "calls": 15,
+    "callsBeforeFirstEdit": 9,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4345,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/checkout.test.ts",
+    "src/checkout.ts"
+   ],
+   "finalMessage": "Added `orderUnits(order)` in [src/checkout.ts](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-02/repo/src/checkout.ts). It sums the quantities across the order’s lines and returns `0` for an empty lines array.\n\nAdded the test `orderUnits > sums quantities across an order's lines` and a draft [R-ORDER-UNITS entry](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-02/repo/REQUIREMENTS.md). The change keeps that entry true. No risk or threat control entries were touched. The named test passes, and `npm test` passes all 37 tests."
+  },
+  {
+   "branch": "change-03",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a holdCount method to Stock in src/inventory.ts that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 131.5
+   },
+   "usage": {
+    "input_tokens": 178404,
+    "cached_input_tokens": 138624,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2521,
+    "reasoning_output_tokens": 964
+   },
+   "cost": 0.142135,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 7,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4226,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "finalMessage": "Added `Stock.holdCount()` in [inventory.ts](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-03/repo/src/inventory.ts). It counts reservations whose expiry time has not been reached.\n\nThe new `Stock > counts only unexpired reservations` test passes, and the behavior is recorded under the draft entry `R-STOCK-HOLD-COUNT` in [REQUIREMENTS.md](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-03/repo/REQUIREMENTS.md). The change keeps that entry true. No risk or threat control entry was touched. All 37 tests pass."
+  },
+  {
+   "branch": "change-04",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add an accountCount method to Sessions in src/accounts.ts that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 103.2
+   },
+   "usage": {
+    "input_tokens": 171007,
+    "cached_input_tokens": 144512,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2101,
+    "reasoning_output_tokens": 475
+   },
+   "cost": 0.107652,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4655,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/accounts.test.ts",
+    "src/accounts.ts"
+   ],
+   "finalMessage": "Added `Sessions.accountCount()` in [src/accounts.ts](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-04/repo/src/accounts.ts). The [test](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-04/repo/src/accounts.test.ts) checks empty and populated stores and confirms a rejected duplicate does not increase the count.\n\nAdded draft requirement **R-ACCOUNT-COUNT** in [REQUIREMENTS.md](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-04/repo/REQUIREMENTS.md); the change keeps it true. Its listed test, `Sessions > counts registered accounts`, passed. `npm test` passed all 37 tests. No risk or threat control entry was touched."
+  },
+  {
+   "branch": "change-05",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 98.3
+   },
+   "usage": {
+    "input_tokens": 153139,
+    "cached_input_tokens": 136576,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1836,
+    "reasoning_output_tokens": 368
+   },
+   "cost": 0.082481,
+   "metrics": {
+    "calls": 14,
+    "callsBeforeFirstEdit": 8,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 2756,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/audit.test.ts",
+    "src/audit.ts"
+   ],
+   "finalMessage": "Added `AuditLog.size()` to return the number of entries and tested it on empty and populated logs. The new behavior is recorded as draft requirement `R-AUDIT-SIZE`.\n\n`R-AUDIT-APPEND-ONLY` remains true. Neither entry controls a risk or threat. The listed test file, `src/audit.test.ts`, passed all 3 tests."
+  },
+  {
+   "branch": "change-06",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function describeDiscount to src/pricing.ts that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 70.8
+   },
+   "usage": {
+    "input_tokens": 184720,
+    "cached_input_tokens": 165504,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1796,
+    "reasoning_output_tokens": 410
+   },
+   "cost": 0.093593,
+   "metrics": {
+    "calls": 17,
+    "callsBeforeFirstEdit": 11,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3380,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "finalMessage": "Added `describeDiscount(d: Discount)` in [src/pricing.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-06/repo/src/pricing.ts). It produces `SAVE10 (10% until 2026-12-31)` using the UTC expiry date.\n\nAdded the example test in [src/pricing.test.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-06/repo/src/pricing.test.ts) and documented the behavior as draft entry **R-DISCOUNT-DESCRIPTION**. The entry remains true; no risk or threat control entry was touched.\n\n`node --test src/pricing.test.ts` passed all 8 tests, including `describeDiscount > formats the code, percentage, and expiry date`."
+  },
+  {
+   "branch": "change-07",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function splitCents to src/money.ts that returns the dollars and the cents of an amount as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 107.3
+   },
+   "usage": {
+    "input_tokens": 227252,
+    "cached_input_tokens": 206080,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2751,
+    "reasoning_output_tokens": 809
+   },
+   "cost": 0.11916,
+   "metrics": {
+    "calls": 17,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4115,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/money.test.ts",
+    "src/money.ts"
+   ],
+   "finalMessage": "Added `splitCents` to [src/money.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-07/repo/src/money.ts). It returns whole dollars and signed remaining cents, so negative amounts reconstruct correctly. Tests cover positive, negative, zero, and fractional inputs.\n\nThe new draft entry `R-MONEY-SPLIT` is in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-07/repo/REQUIREMENTS.md). The change keeps the existing `R-MONEY-CENTS` entry true. Its listed `money` test and the new `money > splits amounts into dollars and signed cents` test pass; the full suite passes (37 tests). No risk or threat control entry was touched."
+  },
+  {
+   "branch": "change-08",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function savingsPercent in a new file src/savings.ts that returns a quote's discount as a whole percent of its subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 88.7
+   },
+   "usage": {
+    "input_tokens": 170861,
+    "cached_input_tokens": 150272,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1844,
+    "reasoning_output_tokens": 521
+   },
+   "cost": 0.094882,
+   "metrics": {
+    "calls": 13,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 4729,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/savings.test.ts",
+    "src/savings.ts"
+   ],
+   "finalMessage": "Added `savingsPercent` in [src/savings.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-08/repo/src/savings.ts). It returns the quote’s discount as a whole percentage of its subtotal, rounded down; a zero subtotal returns 0.\n\nAdded the draft entry **R-SAVINGS-PERCENT** in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-08/repo/REQUIREMENTS.md). The change keeps that entry true. Its listed `savingsPercent` tests in [src/savings.test.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-08/repo/src/savings.test.ts) pass. The full suite passes: 38 tests. No risk or threat control entry was touched."
+  },
+  {
+   "branch": "change-09",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function withTax in a new file src/with-tax.ts that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 88.3
+   },
+   "usage": {
+    "input_tokens": 206615,
+    "cached_input_tokens": 174336,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 1893,
+    "reasoning_output_tokens": 625
+   },
+   "cost": 0.124605,
+   "metrics": {
+    "calls": 12,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5417,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/with-tax.test.ts",
+    "src/with-tax.ts"
+   ],
+   "finalMessage": "Added [withTax](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-09/repo/src/with-tax.ts) and its [tests](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-09/repo/src/with-tax.test.ts). It returns the amount plus the region’s sales tax, using the shop’s existing rounding.\n\nThe new draft entry, **R-WITH-TAX**, remains true. Its listed `withTax` test passes, and the full suite passes (38 tests). No risk or threat control entry was changed."
+  },
+  {
+   "branch": "change-10",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "prompt": "Add a function freeShippingGap in a new file src/shipping.ts that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 71.6
+   },
+   "usage": {
+    "input_tokens": 169174,
+    "cached_input_tokens": 147328,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2029,
+    "reasoning_output_tokens": 473
+   },
+   "cost": 0.098178,
+   "metrics": {
+    "calls": 11,
+    "callsBeforeFirstEdit": 6,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 5384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/shipping.test.ts",
+    "src/shipping.ts"
+   ],
+   "finalMessage": "Added `freeShippingGap` in [src/shipping.ts](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-10/repo/src/shipping.ts). It returns the remaining cents below 100.00, or zero at and above the threshold.\n\nAdded the draft entry **R-FREE-SHIPPING-GAP** in [REQUIREMENTS.md](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-10/repo/REQUIREMENTS.md). The change keeps that entry true. Its listed `freeShippingGap` tests in [src/shipping.test.ts](/private/tmp/ostf-trials/phase5/codex.rules.ts-shop.T12.3/run-10/repo/src/shipping.test.ts) pass; the full suite passes **38/38**. No risk or threat control entry was touched."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-03",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-04",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-05",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-06",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-07",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 2,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 41166,
+  "edited": true,
+  "calls": 137,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 983.8
+ },
+ "usage": {
+  "input_tokens": 1839053,
+  "cached_input_tokens": 1589760,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 20906,
+  "reasoning_output_tokens": 6110
+ },
+ "cost": 1.086697,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-26"
+}

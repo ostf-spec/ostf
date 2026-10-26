@@ -1,0 +1,96 @@
+{
+ "run": "codex.intent.ts-shop.T5.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T5",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "jira",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff implements the recorded rule. `volumeDiscount` takes 5% off each line with 10 or more units and rounds each line down with `Math.floor`. `price` applies the discount code to `subtotal - volume`, so the volume discount comes before any code. It then caps volume plus code at 50% of the subtotal, so the volume discount counts toward the cap. `checkout.ts` passes the volume discount into `price`. The new tests check all of this. The pricing test confirms per-line rounding down (each 50.5-cent line discount becomes 50, for 100 total), that 9 units get no discount, that the 10% code applies after the volume discount (282 on 2,820, for 382 total), and that a 100% code is capped at 1,460. The checkout test confirms that 10 units get the 500-cent discount end to end.",
+  "cost": 0.043336799999999995
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5555,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 92.5
+ },
+ "usage": {
+  "input_tokens": 337317,
+  "cached_input_tokens": 310784,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3780,
+  "reasoning_output_tokens": 1564
+ },
+ "cost": 0.168663,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 3
+ },
+ "firstMessage": null,
+ "finalMessage": "Implemented SHOP-57. Cart lines with 10 or more units now receive 5% off, rounded down per line. Checkout applies that discount before any code and keeps the combined discount within the 50% cap. I added code and test links to `R-VOLUME-DISCOUNT` in [trace.yaml](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T5.2/repo/trace.yaml).\n\nThe change keeps the linked items `R-VOLUME-DISCOUNT`, `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, and `R-TAX-RATE` true. No risk or threat control item was touched.\n\nThe linked pricing and checkout tests pass, including the new volume discount tests. The full suite passes: **38 tests**.",
+ "date": "2026-10-26"
+}

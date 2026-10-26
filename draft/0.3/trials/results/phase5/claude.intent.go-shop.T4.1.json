@@ -1,0 +1,80 @@
+{
+ "run": "claude.intent.go-shop.T4.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5214,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 38.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 22,
+  "cache_creation_input_tokens": 26466,
+  "cache_read_input_tokens": 310979,
+  "output_tokens": 6942,
+  "cost": 0.01187619
+ },
+ "cost": 0.011876,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "`Tax` is now `SalesTax` in `pricing/salestax.go`. `pricing/tax.go` keeps only the `Region` type. `go vet` and `go test ./...` pass, including `TestTax`, `TestTaxExempt`, and `TestPrice`.\n\n**Changes**\n- `pricing/salestax.go` (new): `SalesTax`, same body and doc comment.\n- `pricing/tax.go`: `Tax` removed, `Region` unchanged.\n- `pricing/quote.go`: `Price` calls `SalesTax`.\n- `pricing/tax_test.go`: calls and the error message now use `SalesTax`. I left the test names (`TestTax`, `TestTaxExempt`) alone because the trace links and the `@req R-TAX-EXEMPT` tag point at them.\n- `trace/requirements.yaml`: the `code:` links for R-TAX-RATE and R-TAX-EXEMPT now point to `pricing/salestax.go#SalesTax`. I changed only the link paths, not the item text.\n\n**Trace items linked to the code I changed**\n- **R-TAX-RATE** (sales tax on the post-discount subtotal, rounded half up): still true. Its tests are `TestTax` and `TestPrice`, and both pass.\n- **R-TAX-EXEMPT** (exempt customers pay no tax): still true. Its test is `TestTaxExempt`, which passes.\n- Neither item controls or threatens a risk, and neither refines one. Both refine N-FAIR-PRICE, a need. So no approval was needed before editing.\n- **D-RATES-PPM** links `pricing/tax.go#Region`, which I did not change. It is still true.\n\nI did not validate `trace/requirements.yaml` as YAML because PyYAML isn't installed here. The trace edits were two one-line path swaps.\n\nNothing is committed.",
+ "date": "2026-10-25"
+}

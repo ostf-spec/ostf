@@ -1,0 +1,72 @@
+{
+ "run": "claude.none.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3770,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 31.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 25392,
+  "cache_read_input_tokens": 247279,
+  "output_tokens": 5991,
+  "cost": 0.01054849
+ },
+ "cost": 0.010548,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "REQUIREMENTS.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` out of `src/pricing.ts` and renamed it to `salesTax` in the new `src/salestax.ts`. All 36 tests pass, the same count as before the change.\n\n- **`src/salestax.ts`** (new): exports `salesTax`, with its private `roundHalfUp` helper moved alongside it.\n- **`src/pricing.ts`**: imports `salesTax` and uses it in `price`. The `Quote` field is still called `tax`, since only the function was renamed. `Region` stays in `pricing.ts`, so `salestax.ts` imports it as a type-only import.\n- **Tests**: the two `tax` tests moved to a new `src/salestax.test.ts` as `salesTax` tests. The `price` test stays in `pricing.test.ts`.\n- **Docs**: I updated the R-TAX-RATE and R-TAX-EXEMPT entries in `REQUIREMENTS.md` to point at the new file and test names, and added a `src/salestax.ts` row to the README module table.\n\nNothing outside `src/` called `tax`, so no other imports needed changing. I haven't committed anything.",
+ "date": "2026-10-25"
+}

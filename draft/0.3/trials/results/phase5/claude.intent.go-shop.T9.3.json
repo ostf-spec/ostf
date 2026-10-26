@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.go-shop.T9.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `MaxProducts = 50` and a new `ErrTooManyProducts` in cart/cart.go. In `Cart.Add`, the guard `len(c.lines) >= MaxProducts` runs only on the new-SKU path, after the merge into an existing line. It returns before the append, so a rejected 51st product leaves the cart unchanged. The new test `TestAddRejectsTooManyProducts` fills the cart with 50 distinct products. It then checks three things: the 51st is rejected with `ErrTooManyProducts`, the lines are the same as before, and more units of a product already in the cart are still accepted. So the diff implements the requested mitigation and includes a test that checks it. The trace YAML change described in the answer is not part of this code diff, but the question doesn't depend on it.",
+  "cost": 0.0323448
+ },
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5398,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 51.7
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 31671,
+  "cache_read_input_tokens": 260220,
+  "output_tokens": 9939,
+  "cost": 0.013907700000000002
+ },
+ "cost": 0.013908,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "The cart now holds at most 50 different products. A 51st new product returns `ErrTooManyProducts` and leaves the cart unchanged. Adding more units of a product already in the cart still works. I did not commit.\n\n**Changes**\n- `cart/cart.go`: added `MaxProducts = 50` and `ErrTooManyProducts`. `Cart.Add` checks the product count only for a new SKU, after the existing merge path and the quantity check.\n- `cart/cart_test.go`: added `TestAddRejectsTooManyProducts`. It fills 50 products, checks that the 51st is rejected with the lines unchanged, and checks that more units of an existing product are still accepted. I also confirmed the test fails when the guard is removed.\n- `trace/requirements.yaml`: added `R-CART-MAX-PRODUCTS` with `status: draft`. It refines `N-BUY`, controls `THREAT-OVERSIZED-CART`, and links to `Cart.Add` and the new test.\n\n**Trace impact on the changed code**\n- `R-CART-ADD` (refines `N-BUY`, code `Cart.Add`): still true. Merging into an existing line runs before the new check.\n- `R-CART-QTY` (refines `N-BUY`, code `Cart.Add`, test `TestAddRejectsBadQuantity`): still true. The quantity check is unchanged, and the test passes.\n- No existing item was edited.\n\n**Items that control a threat**\n- `R-CART-MAX-PRODUCTS` is new and controls `THREAT-OVERSIZED-CART`. Please review it in the pull request. It is a draft, so `THREAT-OVERSIZED-CART` has no approved control until it is promoted.\n- No existing item linked to `Cart.Add` controls or refines a risk or threat, so I did not need to ask before changing it.\n\n**Verification**\n- `go vet ./...` is clean, and `gofmt` reports nothing for `cart/`.\n- `go test ./...` passes in all five packages.\n- The new `trace/requirements.yaml` item parses as YAML (checked with Ruby; PyYAML isn't installed here).\n\n**Choices I made**\n- The error text is `cart: a cart holds at most 50 different products`.\n- The check runs after the quantity check, so a new product with a bad quantity still gets `ErrQuantity`.",
+ "date": "2026-10-26"
+}

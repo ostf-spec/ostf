@@ -1,0 +1,69 @@
+{
+ "run": "codex.rules.go-shop.T4.1",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4420,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 43.4
+ },
+ "usage": {
+  "input_tokens": 162121,
+  "cached_input_tokens": 143232,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2247,
+  "reasoning_output_tokens": 557
+ },
+ "cost": 0.094464,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` in [pricing/salestax.go](/tmp/ostf-trials/phase5/codex.rules.go-shop.T4.1/repo/pricing/salestax.go) and updated `Price` and the tests to use it. `Region` remains in `tax.go`.\n\n`go test ./...` passes, including the required `TestPrice`, `TestTax`, and `TestTaxExempt` tests. The sales tax and exemption behavior specified by `R-TAX-RATE` and `R-TAX-EXEMPT` remains true, but both entries now have stale code pointers to `Tax` in `pricing/tax.go`. Per the project instructions, I left those entries unchanged. No risk or threat control entry was touched.",
+ "date": "2026-10-25"
+}

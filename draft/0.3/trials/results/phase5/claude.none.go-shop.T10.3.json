@@ -1,0 +1,84 @@
+{
+ "run": "claude.none.go-shop.T10.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds Stock.Remaining to inventory/inventory.go. It returns the time left before a hold expires, and returns an error for unknown or expired holds. TestRemaining checks it on a fresh hold, after 5 minutes, at expiry, and for an unknown ID. That covers what the user asked for. q2: Remaining reads the time through s.now(), the clock injected into the Stock, and never calls time.Now directly. The test moves the fake clock forward (c.t) instead of sleeping, which is what D-CLOCK requires.",
+  "cost": 0.0241806
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 1,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4662,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 17.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 18064,
+  "cache_read_input_tokens": 56901,
+  "output_tokens": 2670,
+  "cost": 0.00551741
+ },
+ "cost": 0.005517,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "inventory/inventory.go",
+  "inventory/inventory_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 2,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added `Stock.Remaining(id string) (time.Duration, error)` to `inventory/inventory.go` with a test, `TestRemaining`, in `inventory/inventory_test.go`. The full test suite passes, and `gofmt` and `go vet` are clean.\n\nThe method returns the time left until the hold expires. For an unknown or expired reservation it returns `0` and `ErrNoReservation`, the same rule `Confirm` uses. It takes the same lock and reads the injected clock, so it fits D-CLOCK and R-STOCK-EXPIRY.\n\nI did not commit anything. I also did not add `Stock.Remaining` to the code list for R-STOCK-EXPIRY in REQUIREMENTS.md, since you didn't ask for that; say if you want the traceability entry added.",
+ "date": "2026-10-26"
+}

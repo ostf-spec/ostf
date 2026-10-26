@@ -1,0 +1,70 @@
+{
+ "run": "codex.none.go-shop.T4.1",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 16,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3384,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 38.0
+ },
+ "usage": {
+  "input_tokens": 164519,
+  "cached_input_tokens": 146688,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1840,
+  "reasoning_output_tokens": 164
+ },
+ "cost": 0.08504,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to [pricing/salestax.go](/tmp/ostf-trials/phase5/codex.none.go-shop.T4.1/repo/pricing/salestax.go). Updated `Price`, the pricing tests, and the requirement references. `Region` remains in `tax.go`.\n\nVerification: `go test ./...` passes.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,87 @@
+{
+ "run": "codex.rules.go-shop.T10.2",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff adds a service fee to the price quote. `Price` computes the subtotal after the discount, takes `ServiceFee` from that amount and adds the fee to the total. Tax is still calculated on the discounted subtotal only, so the fee is not taxed. The fee is 2.5 percent. The new tests check this. `TestServiceFee` covers exact cents, rounding below and at half a cent, and zero. `TestPlaceOrderServiceFeeAfterDiscount` checks a discounted order: 1800 discounted, fee 45, tax 270, total 2115. That total is consistent and also checks the amount charged. The updated expectations in `TestPrice` (fee 225, total 10573) and `TestPlaceOrder` (2350) add up correctly. q2: The fee rate is the integer constant `serviceFeeRatePPM` = 25,000, which is 2.5 percent in parts per million. It multiplies integer cents and is rounded half up once with `roundHalfUp(x, 1_000_000)`. No floating-point number is used, and the discount code keeps its whole percent.",
+  "cost": 0.0446246
+ },
+ "metrics": {
+  "calls": 23,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4400,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 104.4
+ },
+ "usage": {
+  "input_tokens": 283265,
+  "cached_input_tokens": 258432,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3885,
+  "reasoning_output_tokens": 1026
+ },
+ "cost": 0.150462,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout_test.go",
+  "pricing/fee.go",
+  "pricing/fee_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Added a 2.5% service fee to checkout, calculated on the subtotal after discounts and rounded half up to the cent. The fee appears in the quote and charge total; sales tax remains calculated without it.\n\nThe new draft entry **R-SERVICE-FEE** records the behavior. The changed code and tests keep **R-TAX-RATE**, **R-CHECKOUT-ORDER**, and **D-RATES-PPM** true. Verification covered `TestServiceFee`, `TestPrice`, `TestTax`, `TestPlaceOrder`, and `TestPlaceOrderServiceFeeAfterDiscount`; `go test ./...` passed. No entry controlling a risk or threat was touched.",
+ "date": "2026-10-26"
+}

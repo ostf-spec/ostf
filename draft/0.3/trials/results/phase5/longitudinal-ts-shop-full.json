@@ -1,0 +1,1516 @@
+{
+ "fixture": "ts-shop",
+ "arm": "full",
+ "agents": [
+  "claude",
+  "codex"
+ ],
+ "months": 6,
+ "date": "2026-10-26",
+ "changes": [
+  {
+   "id": "M1.1",
+   "month": 1,
+   "kind": "rename",
+   "prompt": "Rename the remove method of Cart in src/cart.ts to discard, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.007736,
+   "timing": {
+    "exit": 0,
+    "seconds": 39.2
+   },
+   "derivedHandEdits": [],
+   "summary": "I renamed `Cart.remove` to `Cart.discard` in `src/cart.ts` and updated its two call sites in `src/cart.test.ts`. The changes are uncommitted.\n\n- **Tests:** all 36 pass with `node --test`.\n- **Callers:** no other `.remove(` callers exist in `src/`, `deploy/` or `README.md`.\n- **`ostf check --base main`:** passes (rc=0). It reports two unlinked-statement notices, R-ORDER-NOTE and R-VOLUME-DISCOUNT, which were already there before my change.\n\n**Trace items**\n- **R-CART-REMOVE:** still true. Its text (\"Removing a product deletes its line…\") doesn't name the method, and the `@req` comment moved with the method. Its test link is unchanged. `ostf` now shows `discard` as the implementer, but as \"uncorroborated\" rather than \"corroborated\". That's because `trace.derived` still records `Cart.remove`. I didn't hand-edit that generated file; it should update when the coverage data is regenerated.\n- **N-BUY:** R-CART-REMOVE refines it, and it remains true.\n- **Test listed:** `src/cart.test.ts#Cart > removes a line`. I kept the title so the trace link still resolves, even though the test body now calls `discard`.\n- **Risk-relevant items touched:** none. R-CART-REMOVE isn't `type: risk` and controls no RISK item.\n\nI didn't commit, since you didn't ask for one.",
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CART-REMOVE"
+   ],
+   "listedTests": [
+    "src/cart.test.ts#Cart",
+    "src/cart.test.ts#Cart > removes a line"
+   ],
+   "labels": {
+    "claim:R-CART-REMOVE": true,
+    "holds:R-CART-REMOVE": true
+   },
+   "judgeCost": 0.0212606
+  },
+  {
+   "id": "M1.2",
+   "month": 1,
+   "kind": "refactor",
+   "prompt": "Refactor the available method of Stock in src/inventory.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.122295,
+   "timing": {
+    "exit": 0,
+    "seconds": 71.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed two local variables in [Stock.available](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M1.2/repo/src/inventory.ts:48) to make the calculation easier to read. Its logic is unchanged.\n\nAll 36 tests pass, and `ostf check --base main` reports no errors. The change keeps D-RESERVATION-HOLD, R-STOCK-EXPIRY, R-STOCK-RESERVE, N-NO-OVERSELL, and D-CLOCK true. The check lists “confirms a reservation as a sale” and “expires a reservation after 15 minutes”; both pass.",
+   "changedFiles": [
+    "src/inventory.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "D-RESERVATION-HOLD",
+    "R-STOCK-EXPIRY"
+   ],
+   "listedTests": [
+    "src/inventory.test.ts#Stock > confirms a reservation as a sale",
+    "src/inventory.test.ts#Stock > expires a reservation after 15 minutes"
+   ],
+   "labels": {
+    "claim:D-RESERVATION-HOLD": true,
+    "holds:D-RESERVATION-HOLD": true,
+    "claim:R-STOCK-EXPIRY": true,
+    "holds:R-STOCK-EXPIRY": true
+   },
+   "judgeCost": 0.0223202
+  },
+  {
+   "id": "M1.3",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.010781,
+   "timing": {
+    "exit": 0,
+    "seconds": 46.9
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Sessions.logout(token)` to `src/accounts.ts`. After it runs, `validate` on that token throws `SessionError`. The test suite passes (37 tests, including the new one), and `ostf check --base main` exits 0.\n\n**Change**\n- `src/accounts.ts`: `logout` deletes the session. An unknown token is ignored, so logging out twice does not throw. Validating a logged-out token throws `SessionError` with `expired: false` (\"no such session\"), the same as any unknown token.\n- `src/accounts.test.ts`: new test `Sessions > logout ends a session`. It logs in, logs out, checks that `validate` throws `SessionError`, and checks that a second logout does not throw.\n- `trace/requirements.yaml`: new item `R-LOGOUT` with `status: draft`. It refines `N-ACCOUNT-SAFE` and links to `src/accounts.ts#Sessions.logout` and the new test. I did not add a `controls` link to `RISK-ACCOUNT-TAKEOVER`, because that would be a security claim for review to decide.\n\nNothing is committed.\n\n**Items in the trace**\n- `R-LOGOUT`: new, draft. This change adds it and it is true of the code.\n- `R-SESSION-EXPIRY`: still true. `validate` is unchanged. Its test, `expires a session after 30 idle minutes`, still passes.\n- `R-LOGIN-LOCKOUT` (controls `RISK-ACCOUNT-TAKEOVER`): still true. `login` is unchanged, and so are its tests.\n- `R-PASSWORD-HASH`, `D-CLOCK`, and `N-ACCOUNT-SAFE`: unchanged and still true.\n\n**Risk-relevant items**\n- I did not change the code of any risk-relevant item (`R-CHARGE-AMOUNT`, `R-REFUND-LIMIT`, `R-LOGIN-LOCKOUT`), so I did not need to ask first.\n- `accounts.ts` holds `Sessions.login`, which carries `R-LOGIN-LOCKOUT`. The new method sits in the same class, so please include this file in review.\n\n**Notes**\n- Nothing calls `logout` yet. There is no HTTP layer or checkout wiring in the repo, so the method is only reachable from code and tests.\n- `ostf check` reports two existing notices about `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` having no links. They were there before my change and are not errors.",
+   "changedFiles": [
+    "src/accounts.test.ts",
+    "src/accounts.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-LOGOUT"
+   ],
+   "listedTests": [
+    "src/accounts.test.ts#Sessions",
+    "src/accounts.test.ts#Sessions > logout ends a session"
+   ],
+   "labels": {
+    "claim:R-LOGOUT": true,
+    "holds:R-LOGOUT": false
+   },
+   "judgeCost": 0.033220599999999996
+  },
+  {
+   "id": "M1.4",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.133576,
+   "timing": {
+    "exit": 0,
+    "seconds": 81.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `AuditLog.total(account, action)` in [src/audit.ts](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M1.4/repo/src/audit.ts). It sums matching amounts in cents and returns `0` when none match. The new test in [src/audit.test.ts](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M1.4/repo/src/audit.test.ts) covers both actions, multiple accounts, and no matches.\n\nThe draft trace item **R-AUDIT-TOTAL** links the method and test. The change keeps **R-AUDIT-APPEND-ONLY** and **N-ACCOUNT-SAFE** true. `ostf check --base origin/main` passed and listed `src/audit.test.ts`, `AuditLog`, and `AuditLog > totals amounts for one account and action` as affected tests. It also reported pre-existing unlinked items **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT**; both are unchanged. All 37 tests pass.",
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-AUDIT-APPEND-ONLY",
+    "R-AUDIT-TOTAL"
+   ],
+   "listedTests": [
+    "src/audit.test.ts",
+    "src/audit.test.ts#AuditLog",
+    "src/audit.test.ts#AuditLog > totals amounts for one account and action"
+   ],
+   "labels": {
+    "claim:R-AUDIT-APPEND-ONLY": true,
+    "holds:R-AUDIT-APPEND-ONLY": true,
+    "claim:R-AUDIT-TOTAL": false,
+    "holds:R-AUDIT-TOTAL": true
+   },
+   "judgeCost": 0.0348682
+  },
+  {
+   "id": "M1.5",
+   "month": 1,
+   "kind": "behavior",
+   "prompt": "Make applyDiscount in src/pricing.ts reject a discount code with a negative percent, with a new error class. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.014505,
+   "timing": {
+    "exit": 0,
+    "seconds": 71.8
+   },
+   "derivedHandEdits": [],
+   "summary": "I added the negative-percent check to `applyDiscount`. It throws a new `NegativeDiscountError`, and a test covers it. The suite passes (37 tests, up from 36) and `ostf check --base main` exits 0.\n\n**Changes**\n- `src/pricing.ts`: new `NegativeDiscountError` class, with the message `discount code X has a negative percent`. `applyDiscount` throws it when `d.percent < 0`, before the expiry check. `price()` calls `applyDiscount`, so it rejects too.\n- `src/pricing.test.ts`: new test `applyDiscount > rejects a negative percent`.\n- `trace/requirements.yaml`: new item `R-DISCOUNT-NEGATIVE`, `status: draft`, refines `N-FAIR-PRICE`, verified by that test. Its link to `applyDiscount` comes from an `@req` comment, the same way R-DISCOUNT-EXPIRY is linked.\n\n**Trace items**\n- Touched and still true: R-DISCOUNT-PERCENT, R-DISCOUNT-CAP, R-DISCOUNT-EXPIRY. Their behavior for non-negative percents is unchanged, and their tests still pass: `applyDiscount > caps at fifty percent`, `rejects an expired code`, and the `applyDiscount` suite that verifies R-DISCOUNT-PERCENT.\n- New: R-DISCOUNT-NEGATIVE, draft, verified by `src/pricing.test.ts#applyDiscount > rejects a negative percent`.\n- I did not change any existing item.\n\n**Risk-relevant items**\n- None of the items I touched is linked to a RISK item through `controls`, so I went ahead without asking first.\n- A negative percent would raise a customer's charge above the subtotal. That is close to RISK-WRONG-CHARGE, which R-CHARGE-AMOUNT controls in payments. My change does not touch that control. I did not add a `controls` link to RISK-WRONG-CHARGE, because that is a judgment for the reviewer. Please confirm it in review.\n\n**Checks**\n- `ostf check --base main` exits 0. Its only remaining output is an existing info note that R-ORDER-NOTE and R-VOLUME-DISCOUNT have no links. My first draft declared the links twice and produced `LINK_DUPLICATE` warnings. I removed the duplicates.\n- Nothing is committed.",
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-DISCOUNT-CAP",
+    "R-DISCOUNT-EXPIRY",
+    "R-DISCOUNT-NEGATIVE",
+    "R-DISCOUNT-PERCENT"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#applyDiscount",
+    "src/pricing.test.ts#applyDiscount > caps at fifty percent",
+    "src/pricing.test.ts#applyDiscount > rejects a negative percent",
+    "src/pricing.test.ts#applyDiscount > rejects an expired code"
+   ],
+   "labels": {
+    "claim:R-DISCOUNT-CAP": true,
+    "holds:R-DISCOUNT-CAP": true,
+    "claim:R-DISCOUNT-EXPIRY": true,
+    "holds:R-DISCOUNT-EXPIRY": true,
+    "claim:R-DISCOUNT-NEGATIVE": true,
+    "holds:R-DISCOUNT-NEGATIVE": true,
+    "claim:R-DISCOUNT-PERCENT": true,
+    "holds:R-DISCOUNT-PERCENT": true
+   },
+   "judgeCost": 0.0468634
+  },
+  {
+   "id": "M1.6",
+   "month": 1,
+   "kind": "test",
+   "prompt": "Add a test that the sales tax on an amount of zero is zero.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.119602,
+   "timing": {
+    "exit": 0,
+    "seconds": 70.2
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a dedicated test that sales tax on an amount of zero is zero in [pricing.test.ts](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M1.6/repo/src/pricing.test.ts), and linked it to the existing requirement in [requirements.yaml](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M1.6/repo/trace/requirements.yaml).\n\n`npm test` passed all 37 tests, and `ostf check --base origin/main` passed. The check lists **R-TAX-RATE** and its parent **N-FAIR-PRICE**; this change keeps both true. It lists the `tax` suite, its zero amount and rounding tests, and `price > taxes the subtotal after discounts`.",
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-TAX-RATE"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#price > taxes the subtotal after discounts",
+    "src/pricing.test.ts#tax",
+    "src/pricing.test.ts#tax > is zero for an amount of zero",
+    "src/pricing.test.ts#tax > rounds half up to the cent"
+   ],
+   "labels": {
+    "claim:R-TAX-RATE": true,
+    "holds:R-TAX-RATE": true
+   },
+   "judgeCost": 0.0202366
+  },
+  {
+   "id": "M2.1",
+   "month": 2,
+   "kind": "rename",
+   "prompt": "Rename the release method of Stock in src/inventory.ts to cancel, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.009921,
+   "timing": {
+    "exit": 0,
+    "seconds": 38.9
+   },
+   "derivedHandEdits": [],
+   "summary": "I renamed `Stock.release` to `Stock.cancel` in `src/inventory.ts`, updated its caller in `src/checkout.ts` and its call in `src/inventory.test.ts`, and fixed the trace link. The test suite passes (40/40) and `ostf check --base main` exits 0.\n\n**Changes**\n- `src/inventory.ts`: method renamed to `cancel`. Body and doc comment unchanged.\n- `src/checkout.ts`: the failed-charge path now calls `stock.cancel(hold.id)`.\n- `src/inventory.test.ts`: the \"releases a reservation\" test now calls `stock.cancel`. I kept the test's title, because the trace item names it and the behavior it describes still holds.\n- `trace/requirements.yaml`: the `code:` link on `R-STOCK-RELEASE` changed from `src/inventory.ts#Stock.release` to `src/inventory.ts#Stock.cancel`. Without this, the link would point at a symbol that no longer exists. This is a link update only; the item's text and status are untouched.\n\n**Trace items**\n- `R-STOCK-RELEASE` (the only item touched): its text still holds, since reserved stock still returns to the available count when the charge fails. Its code link now points at `Stock.cancel`. Its listed test is `src/inventory.test.ts#Stock > releases a reservation`, which still exists under the same name and now calls `cancel`.\n- `N-NO-OVERSELL` is refined by `R-STOCK-RELEASE`. Its text is unaffected and the change keeps it true.\n- Other items linked to the checkout code, `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, are unchanged in substance, because `placeOrder` still releases the hold on failure.\n- Risk-relevant items touched: none. No RISK or threat item links to `Stock.release`, so I did not need to ask before changing it. Nothing in the trace marks this code as risk-relevant, so it needs no separate review flag.\n\n**Not changed**\n- `trace.derived` still has two lines naming `Stock.release` (lines 100 and 125). It is a committed file, and I found no regeneration command, so I left it alone. Regenerate it if your workflow requires it.\n- `ostf check` still reports two unlinked statements, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. That was already true before my change.\n\nNothing is committed.",
+   "changedFiles": [
+    "src/checkout.ts",
+    "src/inventory.test.ts",
+    "src/inventory.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CHECKOUT-ORDER",
+    "R-CHECKOUT-SESSION",
+    "R-STOCK-RELEASE"
+   ],
+   "listedTests": [
+    "src/checkout.test.ts#Checkout > needs a valid session",
+    "src/checkout.test.ts#Checkout > places an order",
+    "src/checkout.test.ts#Checkout > releases stock when the charge is declined",
+    "src/inventory.test.ts#Stock",
+    "src/inventory.test.ts#Stock > releases a reservation"
+   ],
+   "labels": {
+    "claim:R-CHECKOUT-ORDER": true,
+    "holds:R-CHECKOUT-ORDER": true,
+    "claim:R-CHECKOUT-SESSION": true,
+    "holds:R-CHECKOUT-SESSION": true,
+    "claim:R-STOCK-RELEASE": true,
+    "holds:R-STOCK-RELEASE": true
+   },
+   "judgeCost": 0.0350358
+  },
+  {
+   "id": "M2.2",
+   "month": 2,
+   "kind": "refactor",
+   "prompt": "Refactor the register method of Sessions in src/accounts.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.09613,
+   "timing": {
+    "exit": 0,
+    "seconds": 66.2
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Sessions.register](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M2.2/repo/src/accounts.ts:78) to name the password hash and lay out the stored credentials clearly. The operation order and behavior are unchanged.\n\nAll 40 tests pass, and `ostf check --base origin/main` passes. It lists `R-PASSWORD-HASH` and its parent `N-ACCOUNT-SAFE`; both remain true. Its listed test, “Sessions > logs in with the right password only,” passes.",
+   "changedFiles": [
+    "src/accounts.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-PASSWORD-HASH"
+   ],
+   "listedTests": [
+    "src/accounts.test.ts#Sessions > logs in with the right password only"
+   ],
+   "labels": {
+    "claim:R-PASSWORD-HASH": true,
+    "holds:R-PASSWORD-HASH": true
+   },
+   "judgeCost": 0.0174606
+  },
+  {
+   "id": "M2.3",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.013482,
+   "timing": {
+    "exit": 0,
+    "seconds": 56.6
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `regionByCode` in `src/regions.ts`. It returns the region for QC (149,750 ppm, i.e. 14.975%), ON (130,000 ppm, 13%) or AB (50,000 ppm, 5%), and throws a `RangeError` for any other code. All 42 tests pass, including the new ones in `src/regions.test.ts`, and `ostf check --base main` exits 0 with no errors. Nothing is committed.\n\nThe lookup is case-sensitive (`\"qc\"` throws), and it uses a `Map` so codes like `\"toString\"` throw instead of hitting object prototype properties.\n\nPer the repo's OSTF rules, the change also adds a new trace item, since it is new behavior:\n\n- **`R-REGION-RATES`** (new, `status: draft`, refines `N-FAIR-PRICE`) in `trace/requirements.yaml`. It is linked to `src/regions.ts#regionByCode` through an `@req` comment, and to the two tests in `src/regions.test.ts` that list it. I chose the ID myself because you didn't name one.\n- **Risk-relevant items:** none touched. The new code is not linked to any `RISK-*` control, so nothing needs a separate reviewer under that policy.\n- **Existing items:** no existing item's code or tests changed, so none became false. `R-TAX-RATE`, `R-TAX-EXEMPT` and `D-RATES-PPM` concern the same tax-rate area, and the new code follows the ppm convention, but none of them link to the new code.\n- **Pre-existing `ostf` note:** `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no links. That was already true before my change and I left them alone.",
+   "changedFiles": [
+    "src/regions.test.ts",
+    "src/regions.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-REGION-RATES"
+   ],
+   "listedTests": [
+    "src/regions.test.ts#regionByCode",
+    "src/regions.test.ts#regionByCode > returns the rate of each region",
+    "src/regions.test.ts#regionByCode > throws for an unknown code"
+   ],
+   "labels": {
+    "claim:R-REGION-RATES": true,
+    "holds:R-REGION-RATES": true
+   },
+   "judgeCost": 0.034240599999999996
+  },
+  {
+   "id": "M2.4",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.107899,
+   "timing": {
+    "exit": 0,
+    "seconds": 86.2
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `Cart.has(sku)` and a test covering empty, present, absent, and removed SKUs. All 41 tests pass, and `ostf check --base main` passes.\n\nThe check lists R-ORDER-NOTE and R-VOLUME-DISCOUNT as unlinked; this change leaves both true. It lists `Cart` and `Cart > reports whether a SKU is in the cart` as tests to run. No risk-relevant item was touched. There is no existing trace ID for `has`, so I did not create a draft item under the repository’s “never invent an ID” instruction.",
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [],
+   "listedTests": [
+    "src/cart.test.ts#Cart",
+    "src/cart.test.ts#Cart > reports whether a SKU is in the cart"
+   ]
+  },
+  {
+   "id": "M2.5",
+   "month": 2,
+   "kind": "behavior",
+   "prompt": "Raise the largest quantity that a cart line may hold from 99 to 199.",
+   "makesFalse": "R-CART-QTY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.009636,
+   "timing": {
+    "exit": 0,
+    "seconds": 36.1
+   },
+   "derivedHandEdits": [],
+   "summary": "I raised the cart line limit from 99 to 199. The test suite passes (40/40) and `ostf check --base main` exits 0. Nothing is committed.\n\n**Changes**\n- `src/cart.ts`: `MAX_QUANTITY` is now `199`. The `QuantityError` message follows it automatically.\n- `src/cart.test.ts`: the test \"rejects a quantity outside 1 to 99\" now adds 198 units, then checks that 2 more is rejected and the line stays at 198. Its name still says 99 because the trace links to that name.\n\n**Trace items**\n- **R-CART-QTY (Line quantity) is now false.** Its text says \"between 1 and 99 units\", and the code now allows 199. I did not edit the item, per the OSTF policy. Someone needs to update its text (and possibly its title) to 199, and rename the linked test to match, or the trace will stay out of date. The `ostf check` still passes because it checks links, not wording.\n- **R-CART-ADD** (`Cart.add` implements it): still true. Merging into an existing line works the same way.\n- **N-BUY** (refined by R-CART-QTY and others): still true.\n- **Tests listed:** \"src/cart.test.ts#Cart > rejects a quantity outside 1 to 99\" still passes, but its name is now wrong. The other tests on R-CART-ADD, R-CART-REMOVE and R-CART-SUBTOTAL are untouched.\n- **Risk-relevant items:** none touched. `Cart.add` is not linked to any RISK-* item, so I did not need to stop and ask first. THREAT-OVERSIZED-CART is about the number of distinct products, not the quantity per line, so it is not affected either.\n\n**Open points**\n- The 199 limit also changes the quantity a single checkout can reserve and charge. Stock and pricing code do not hard-code 99, so I did not change them, but the limit now allows larger orders.\n- `trace.derived` is unchanged. I didn't regenerate it, and `ostf check` did not ask for that.",
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CART-QTY"
+   ],
+   "listedTests": [
+    "src/cart.test.ts#Cart",
+    "src/cart.test.ts#Cart > rejects a quantity outside 1 to 99"
+   ],
+   "labels": {
+    "claim:R-CART-QTY": false,
+    "holds:R-CART-QTY": false
+   },
+   "judgeCost": 0.0225326
+  },
+  {
+   "id": "M2.6",
+   "month": 2,
+   "kind": "test",
+   "prompt": "Add a test that a customer whose session has expired cannot place an order.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.131098,
+   "timing": {
+    "exit": 0,
+    "seconds": 78.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added [a checkout test](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M2.6/repo/src/checkout.test.ts:71) that advances the clock to session expiry and confirms the customer cannot place an order. It also checks that stock stays available and no charge is recorded.\n\nThe test keeps **R-CHECKOUT-SESSION** and **R-SESSION-EXPIRY** true. `npm test` passed (41 tests), and `ostf check --base main` passed. The trace check listed `Sessions > expires a session after 30 idle minutes`, `Checkout`, `Checkout > needs a valid session`, and the new expired-session test.",
+   "changedFiles": [
+    "src/checkout.test.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CHECKOUT-SESSION",
+    "R-SESSION-EXPIRY"
+   ],
+   "listedTests": [
+    "src/accounts.test.ts#Sessions > expires a session after 30 idle minutes",
+    "src/checkout.test.ts#Checkout",
+    "src/checkout.test.ts#Checkout > needs a valid session",
+    "src/checkout.test.ts#Checkout > rejects an order after the customer's session expires"
+   ],
+   "labels": {
+    "claim:R-CHECKOUT-SESSION": true,
+    "holds:R-CHECKOUT-SESSION": true,
+    "claim:R-SESSION-EXPIRY": true,
+    "holds:R-SESSION-EXPIRY": true
+   },
+   "judgeCost": 0.029900200000000002
+  },
+  {
+   "id": "M3.1",
+   "month": 3,
+   "kind": "move",
+   "prompt": "Move the function price from src/pricing.ts into a new file src/price.ts, keeping its name, and update its imports.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.010927,
+   "timing": {
+    "exit": 0,
+    "seconds": 50.8
+   },
+   "derivedHandEdits": [],
+   "summary": "`price` now lives in `src/price.ts` with its name and body unchanged. All 44 tests pass, and `ostf check --base main` exits 0.\n\n**Changes**\n- **`src/price.ts`** (new): contains `price`, with the same SPDX header as `pricing.ts`. It imports `applyDiscount`, `tax` and the types from `./pricing.ts`.\n- **`src/pricing.ts`**: `price` removed. `Quote`, `Discount`, `Region`, `tax`, `applyDiscount` and `roundHalfUp` stay where they are, so there is no import cycle.\n- **`src/checkout.ts`**: `price` is now imported from `./price.ts`, and the types still come from `./pricing.ts`.\n- **`src/pricing.test.ts`**: `price` is imported from `./price.ts`. The test stays in this file, so its `pricing.test.ts#price > ...` name still resolves.\n- **`trace/requirements.yaml`**: the `code` link on `R-TAX-RATE` changed from `src/pricing.ts#price` to `src/price.ts#price`. The item text is unchanged.\n\n**Trace summary**\n- **`R-TAX-RATE`** (Sales tax, refines N-FAIR-PRICE): still true. The code link now points at `src/price.ts#price`. Its tests are `src/pricing.test.ts#price > taxes the subtotal after discounts`, `#tax > is zero for an amount of zero` and `#tax > rounds half up to the cent`. All three are unchanged and pass. The check reports the new link as uncorroborated only because it is new in this working tree.\n- **Risk-relevant items:** none touched. `price` links only to `R-TAX-RATE`, which is a non-risk requirement, so I did not need to stop and ask.\n- **Pre-existing:** `ostf check` prints an info note that `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no linked code or tests. That was already true before my change, and I did not touch those items.\n\nI did not update the module table in `README.md`, which has no row for `price.ts`. Say if you want one added.",
+   "changedFiles": [
+    "src/checkout.ts",
+    "src/price.ts",
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-TAX-RATE"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#price > taxes the subtotal after discounts",
+    "src/pricing.test.ts#tax > is zero for an amount of zero",
+    "src/pricing.test.ts#tax > rounds half up to the cent"
+   ],
+   "labels": {
+    "claim:R-TAX-RATE": true,
+    "holds:R-TAX-RATE": true
+   },
+   "judgeCost": 0.0332806
+  },
+  {
+   "id": "M3.2",
+   "month": 3,
+   "kind": "refactor",
+   "prompt": "Refactor the add method of Cart in src/cart.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.096947,
+   "timing": {
+    "exit": 0,
+    "seconds": 68.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Cart.add](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M3.2/repo/src/cart.ts:30) to name the existing and new quantities clearly. Its behavior is unchanged.\n\nAll 44 tests pass, and `ostf check --base origin/main` passes. The check lists `R-CART-ADD` and `R-CART-QTY`; this change preserves their existing behavior. Their listed tests are `Cart > adds an item` and `Cart > rejects a quantity outside 1 to 99`. The existing mismatch remains: `R-CART-QTY` says 99, while the code allows 199.",
+   "changedFiles": [
+    "src/cart.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CART-ADD",
+    "R-CART-QTY"
+   ],
+   "listedTests": [
+    "src/cart.test.ts#Cart > adds an item",
+    "src/cart.test.ts#Cart > rejects a quantity outside 1 to 99"
+   ],
+   "labels": {
+    "claim:R-CART-ADD": false,
+    "holds:R-CART-ADD": true,
+    "claim:R-CART-QTY": false,
+    "holds:R-CART-QTY": false
+   },
+   "judgeCost": 0.0339562
+  },
+  {
+   "id": "M3.3",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.016934,
+   "timing": {
+    "exit": 0,
+    "seconds": 74.7
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Stock.held(sku)` to `src/inventory.ts` and a test for it. The suite passes (45 tests, up from 44), and `ostf check --base main` exits 0.\n\n**What changed**\n- **`src/inventory.ts`**: `held(sku)` returns the units of `sku` in reservations that have not yet expired. `available(sku)` now returns on-hand minus `held(sku)`, so the hold arithmetic lives in one place. Its behavior is unchanged.\n- **`src/inventory.test.ts`**: a new test, \"reports the units of a SKU that unexpired reservations hold\". It checks two SKUs, a hold expiring while a later one is still live, and a cancel.\n- **`trace/design.yaml`**: a new item, `D-HELD-UNITS`, with `status: draft`. It refines `R-STOCK-EXPIRY` and is linked to `Stock.held` and the new test. I chose the ID and the `refines` link; you didn't name either.\n\n**Trace summary (`ostf check --base main`)**\n- **`D-HELD-UNITS`** (new, draft): added with its code and test. Not risk-relevant.\n- **`D-RESERVATION-HOLD`**: still true. `available` now computes it through `held`, and its test \"confirms a reservation as a sale\" passes.\n- **`R-STOCK-EXPIRY`**: still true. `Stock.available` (listed in its code) keeps its behavior, and \"expires a reservation after 15 minutes\" passes. The new item refines it.\n- **Risk-relevant items**: none touched. No `RISK-*` item is controlled by anything in `src/inventory.ts`.\n- **Tests listed**: the new test, plus the two existing tests above. All pass.\n\n**Notes**\n- I first put `@req` comments on the new code and test, which duplicated the trace links and produced `LINK_DUPLICATE` warnings. I removed the comments and kept the `code`/`tests` fields, so the check is clean.\n- The one remaining `info` diagnostic, that `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no links, was already there and is unrelated to this change.\n- I did not commit. The changes are in the working tree: `src/inventory.ts`, `src/inventory.test.ts`, and `trace/design.yaml`.",
+   "changedFiles": [
+    "src/inventory.test.ts",
+    "src/inventory.ts",
+    "trace/design.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "D-HELD-UNITS",
+    "D-RESERVATION-HOLD",
+    "R-STOCK-EXPIRY"
+   ],
+   "listedTests": [
+    "src/inventory.test.ts#Stock",
+    "src/inventory.test.ts#Stock > confirms a reservation as a sale",
+    "src/inventory.test.ts#Stock > expires a reservation after 15 minutes",
+    "src/inventory.test.ts#Stock > reports the units of a SKU that unexpired reservations hold"
+   ],
+   "labels": {
+    "claim:D-HELD-UNITS": false,
+    "holds:D-HELD-UNITS": true,
+    "claim:D-RESERVATION-HOLD": true,
+    "holds:D-RESERVATION-HOLD": true,
+    "claim:R-STOCK-EXPIRY": true,
+    "holds:R-STOCK-EXPIRY": true
+   },
+   "judgeCost": 0.0450318
+  },
+  {
+   "id": "M3.4",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.249216,
+   "timing": {
+    "exit": 0,
+    "seconds": 129.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `parseCents` in [money.ts](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M3.4/repo/src/money.ts). It converts decimal amounts such as `\"12.05\"` or `12.05` to integer cents and rejects more than two decimal places. Added tests and a draft trace item, **R-PARSE-CENTS**.\n\nAll 46 tests pass, and `ostf check --base origin/main` passes. Its listed money tests are `money`, `parses decimal amounts into cents`, and `rejects more than two decimal places and invalid amounts`. The change keeps **R-PARSE-CENTS**, **R-MONEY-CENTS**, and their parent **N-FAIR-PRICE** true; the listed **D-RATES-PPM** remains unchanged. No risk-relevant item was touched.",
+   "changedFiles": [
+    "src/money.test.ts",
+    "src/money.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-MONEY-CENTS",
+    "R-PARSE-CENTS"
+   ],
+   "listedTests": [
+    "src/money.test.ts#money",
+    "src/money.test.ts#money > parses decimal amounts into cents",
+    "src/money.test.ts#money > rejects more than two decimal places and invalid amounts"
+   ],
+   "labels": {
+    "claim:R-MONEY-CENTS": true,
+    "holds:R-MONEY-CENTS": true,
+    "claim:R-PARSE-CENTS": true,
+    "holds:R-PARSE-CENTS": true
+   },
+   "judgeCost": 0.0397042
+  },
+  {
+   "id": "M3.5",
+   "month": 3,
+   "kind": "behavior",
+   "prompt": "Make a session last 60 minutes without use instead of 30.",
+   "makesFalse": "R-SESSION-EXPIRY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005808,
+   "timing": {
+    "exit": 0,
+    "seconds": 32.9
+   },
+   "derivedHandEdits": [],
+   "summary": "I haven't changed anything yet. The 30-minute session timeout is a stated requirement, so changing it to 60 would make that requirement false, and the repo's OSTF policy needs your decision first.\n\n**What I found**\n\n- The timeout is `SESSION_IDLE_MS = 30 * 60 * 1000` in `src/accounts.ts:9`, enforced in `Sessions.validate` (`src/accounts.ts:131`).\n- The requirement `R-SESSION-EXPIRY` in `trace/requirements.yaml:182` says \"A session expires after 30 minutes without use.\" It refines `N-ACCOUNT-SAFE`.\n- Its tests check the 30-minute boundary: `src/accounts.test.ts` (\"expires a session after 30 idle minutes\") and `src/checkout.test.ts` (\"rejects an order after the customer's session expires\"). Both use the constant, so they would still pass, but the test names would be wrong.\n- `RISK-ACCOUNT-TAKEOVER` covers an attacker \"reusing an old session,\" so this timeout is plausibly risk-relevant. I haven't confirmed it is marked as such in the trace.\n- `ostf check --base main` reports no errors on the current tree. It notes two unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`, which are unrelated to this change.\n\n**Options**\n\n1. **Change to 60 minutes and update the requirement text.** I'd change the constant, the `accounts.ts` doc comment, and the test names, then ask you to confirm that `R-SESSION-EXPIRY` should say 60 minutes. Per policy I won't rewrite the requirement without your sign-off, and I'd flag the change for review because it touches a risk-relevant control.\n2. **Change to 60 minutes but leave the requirement as is.** This makes `R-SESSION-EXPIRY` false, which the policy allows only if I tell you, so I'd report it as a known conflict.\n3. **Make the change as a new draft item** that supersedes `R-SESSION-EXPIRY`, linked to the code and tests in the same change.\n\nWhich option do you want? If it's option 1, please confirm the new value is 60 minutes and that updating the requirement text is acceptable.",
+   "changedFiles": [],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [],
+   "listedTests": []
+  },
+  {
+   "id": "M3.6",
+   "month": 3,
+   "kind": "test",
+   "prompt": "Add a test that a cart with one line of three units at 12.00 has a subtotal of 36.00.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.136291,
+   "timing": {
+    "exit": 0,
+    "seconds": 69.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a test that one cart line with three units at 12.00 has a subtotal of 36.00, and linked it in [trace/requirements.yaml](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M3.6/repo/trace/requirements.yaml) to R-CART-SUBTOTAL. The change keeps R-CART-SUBTOTAL and its parent need N-BUY true; it touches no risk-relevant item.\n\nAll 45 tests pass. `ostf check --base origin/main` passes and lists `Cart`, `Cart > sums the subtotal`, and the new `Cart > totals three units at 12.00` test.",
+   "changedFiles": [
+    "src/cart.test.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CART-SUBTOTAL"
+   ],
+   "listedTests": [
+    "src/cart.test.ts#Cart",
+    "src/cart.test.ts#Cart > sums the subtotal",
+    "src/cart.test.ts#Cart > totals three units at 12.00"
+   ],
+   "labels": {
+    "claim:R-CART-SUBTOTAL": true,
+    "holds:R-CART-SUBTOTAL": true
+   },
+   "judgeCost": 0.017928600000000003
+  },
+  {
+   "id": "M4.1",
+   "month": 4,
+   "kind": "rename",
+   "prompt": "Rename the confirm method of Stock in src/inventory.ts to commit, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.012087,
+   "timing": {
+    "exit": 0,
+    "seconds": 49.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed `Stock.confirm` to `Stock.commit` in `src/inventory.ts`, and updated its caller and tests. All 48 tests pass and `ostf check --base main` reports no errors.\n\n**Changes**\n- `src/inventory.ts`: the method is now `commit`. The `NoReservationError` doc comment now says \"committing\" instead of \"confirming\".\n- `src/checkout.ts`: `placeOrder` calls `stock.commit(hold.id)`.\n- `src/inventory.test.ts`: the three `confirm` calls now call `commit`. I kept the test title \"confirms a reservation as a sale\" because `trace/design.yaml` links to it by name.\n- `trace/design.yaml` and `trace/requirements.yaml`: the code link for `D-RESERVATION-HOLD` and `R-STOCK-EXPIRY` changed from `Stock.confirm` to `Stock.commit`. Without this, the trace would point at a symbol that no longer exists. No item text was changed.\n\n**Trace items**\n- **Items linked to the method:** `D-RESERVATION-HOLD` and `R-STOCK-EXPIRY`. Both stay true: committing a hold is the same operation as the old confirm. Their linked tests are `src/inventory.test.ts > confirms a reservation as a sale` (D-RESERVATION-HOLD) and `src/inventory.test.ts > expires a reservation after 15 minutes` (R-STOCK-EXPIRY). Both pass.\n- **Items whose text still says \"confirm\" but whose code is unchanged:** `R-CHECKOUT-ORDER` and `D-HELD-UNITS` (draft). Their meaning is unchanged, and I left their prose as written.\n- **Risk-relevant items:** none touched. `Stock.confirm` was not linked to any `RISK-*` item or to any `controls:` entry, so I didn't need to ask first.\n\n**Things to know**\n- `ostf check` reports six \"uncorroborated\" marks for `Stock.commit`, `D-RESERVATION-HOLD` and `R-STOCK-EXPIRY`, where the base branch had corroborated marks. These come from `trace.derived`, a generated coverage snapshot that still lists `Stock.confirm`. I did not hand-edit it, because it's generated and this environment has no tool to regenerate it. Regenerating it should clear the marks.\n- `ostf check` also reports two `UNLINKED` notes for `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`. Those were already present before my change and are not related to it.\n- I did not commit. The changes are in the working tree on `main`.",
+   "changedFiles": [
+    "src/checkout.ts",
+    "src/inventory.test.ts",
+    "src/inventory.ts",
+    "trace/design.yaml",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "D-RESERVATION-HOLD",
+    "R-CHECKOUT-ORDER",
+    "R-CHECKOUT-SESSION",
+    "R-STOCK-EXPIRY"
+   ],
+   "listedTests": [
+    "src/checkout.test.ts#Checkout > needs a valid session",
+    "src/checkout.test.ts#Checkout > places an order",
+    "src/checkout.test.ts#Checkout > rejects an order after the customer's session expires",
+    "src/inventory.test.ts#Stock",
+    "src/inventory.test.ts#Stock > confirms a reservation as a sale",
+    "src/inventory.test.ts#Stock > expires a reservation after 15 minutes"
+   ],
+   "labels": {
+    "claim:D-RESERVATION-HOLD": true,
+    "holds:D-RESERVATION-HOLD": true,
+    "claim:R-CHECKOUT-ORDER": true,
+    "holds:R-CHECKOUT-ORDER": true,
+    "claim:R-CHECKOUT-SESSION": false,
+    "holds:R-CHECKOUT-SESSION": true,
+    "claim:R-STOCK-EXPIRY": true,
+    "holds:R-STOCK-EXPIRY": true
+   },
+   "judgeCost": 0.0447554
+  },
+  {
+   "id": "M4.2",
+   "month": 4,
+   "kind": "refactor",
+   "prompt": "Refactor the placeOrder method of Checkout in src/checkout.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.098214,
+   "timing": {
+    "exit": 0,
+    "seconds": 78.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Checkout.placeOrder](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M4.2/repo/src/checkout.ts:49) to make the stock quantities and reservation steps easier to follow. The call order and error handling are unchanged.\n\nAll four checkout tests pass. `ostf check --base origin/main` passes and lists R-CHECKOUT-ORDER and R-CHECKOUT-SESSION, which remain true, along with their parent needs N-BUY and N-ACCOUNT-SAFE. It lists these tests: “places an order,” “needs a valid session,” and “rejects an order after the customer's session expires.” No risk-relevant item was touched. The check also reports existing unlinked items R-ORDER-NOTE and R-VOLUME-DISCOUNT; this change leaves them unchanged.",
+   "changedFiles": [
+    "src/checkout.ts"
+   ],
+   "conflict": [
+    "src/checkout.ts"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.3",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.014748,
+   "timing": {
+    "exit": 0,
+    "seconds": 63.5
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `isExpired` to `src/pricing.ts` with three tests, and linked it to a new draft requirement. All 51 tests pass (48 before), and `ostf check --base main` exits 0.\n\n**The function**\n\n`isExpired(d: Discount, now: Date): boolean` returns `true` from the instant `d.expires` is reached, the same rule `applyDiscount` uses. I did not change `applyDiscount`, which still has its own inline check.\n\n**The trace**\n\n- **New item `R-DISCOUNT-IS-EXPIRED`** (draft, refines `N-FAIR-PRICE`), in `trace/requirements.yaml`, linked to `src/pricing.ts#isExpired` and three tests in `src/pricing.test.ts#isExpired`. I chose this ID myself, so please confirm it.\n- **Items I touched:** none of the existing items. Nothing in the repo's trace data marks `applyDiscount` or the discount items as risk-relevant, so I made no changes to risk-relevant items.\n- **Existing items in the root `trace.yaml`** (`R-IDEMPOTENT-CHARGE`, `R-VOLUME-DISCOUNT`, `R-ORDER-NOTE`) are unchanged, and my change keeps them true. The check reports two statements, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`, with no link targets; that was already true before my change.\n- **Tests I added:** `isExpired > is false before the expiry time`, `is true at the expiry time`, `is true after the expiry time`.\n\nI initially declared the links both in the yaml and as `@req` comments, which produced `LINK_DUPLICATE` warnings. I removed the comments so each link is declared once. Nothing is committed.",
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-DISCOUNT-IS-EXPIRED"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#isExpired",
+    "src/pricing.test.ts#isExpired > is false before the expiry time",
+    "src/pricing.test.ts#isExpired > is true after the expiry time",
+    "src/pricing.test.ts#isExpired > is true at the expiry time"
+   ],
+   "labels": {
+    "claim:R-DISCOUNT-IS-EXPIRED": false,
+    "holds:R-DISCOUNT-IS-EXPIRED": true
+   },
+   "judgeCost": 0.0332926
+  },
+  {
+   "id": "M4.4",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.123834,
+   "timing": {
+    "exit": 0,
+    "seconds": 87.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `AuditLog.size()` to return the number of entries and tested it on an empty log and after two appends. All 49 tests pass, and `ostf check --base main` reports no errors.\n\nThe change keeps **R-AUDIT-APPEND-ONLY** and **R-AUDIT-TOTAL** true. The new **R-AUDIT-SIZE** item is draft and is linked to the method and the test `AuditLog > counts entries as they are appended`. OSTF also lists `src/audit.test.ts` and its `AuditLog` suite for the existing append-only item. No risk item was touched.",
+   "changedFiles": [
+    "src/audit.test.ts",
+    "src/audit.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-AUDIT-APPEND-ONLY",
+    "R-AUDIT-SIZE"
+   ],
+   "listedTests": [
+    "src/audit.test.ts",
+    "src/audit.test.ts#AuditLog",
+    "src/audit.test.ts#AuditLog > counts entries as they are appended"
+   ],
+   "labels": {
+    "claim:R-AUDIT-APPEND-ONLY": true,
+    "holds:R-AUDIT-APPEND-ONLY": true,
+    "claim:R-AUDIT-SIZE": false,
+    "holds:R-AUDIT-SIZE": true
+   },
+   "judgeCost": 0.0281242
+  },
+  {
+   "id": "M4.5",
+   "month": 4,
+   "kind": "behavior",
+   "prompt": "Make the cap on discounts 40 percent of the subtotal instead of 50.",
+   "makesFalse": "R-DISCOUNT-CAP",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.009132,
+   "timing": {
+    "exit": 0,
+    "seconds": 44.4
+   },
+   "derivedHandEdits": [],
+   "summary": "The discount cap is now 40 percent. The tests pass (48/48) and `ostf check --base main` exits 0 with the same info-level note as before.\n\n**Changes**\n- `src/pricing.ts`: `MAX_DISCOUNT_PERCENT` changed from 50 to 40.\n- `src/pricing.test.ts`: the \"caps at fifty percent\" test now expects 4,000 instead of 5,000 for a 100% code on a 10,000 subtotal. I kept the test name so the trace link to it still resolves.\n- `README.md`: \"fifty percent cap\" now reads \"forty percent cap\".\n\nNothing is committed.\n\n**Trace items**\n- **R-DISCOUNT-CAP** (`trace/requirements.yaml`): the change makes this item false. Its text says \"No discount takes more than fifty percent\", and its rationale still describes the old bound. I did not edit the item. Someone needs to decide whether to update its text, and the test name it links to.\n- **R-DISCOUNT-PERCENT**, **R-DISCOUNT-EXPIRY**, **R-DISCOUNT-NEGATIVE**, **R-TAX-RATE**: still true. Their tests are `applyDiscount > ...` and `price > taxes the subtotal after discounts`, all passing.\n- **R-VOLUME-DISCOUNT** (external, `jira:SHOP-57`): its text says the volume discount \"counts toward the fifty percent cap\", so it is now false too. It is an external item, so I left it alone.\n- **R-ORDER-NOTE** and **R-VOLUME-DISCOUNT** are not linked to any code or tests. That was already the case before my change.\n\n**Risk review**\n- R-DISCOUNT-CAP is not linked to any RISK item through `controls`, and the code has no risk marker. So I did not treat it as risk-relevant and went ahead without asking first.\n- Its rationale is explicitly about bounding loss from configuration errors, which is close to RISK-WRONG-CHARGE. Please have another reviewer look at this change in the pull request.",
+   "changedFiles": [
+    "README.md",
+    "src/pricing.test.ts",
+    "src/pricing.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-DISCOUNT-CAP",
+    "R-DISCOUNT-PERCENT"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#applyDiscount",
+    "src/pricing.test.ts#applyDiscount > caps at fifty percent"
+   ],
+   "labels": {
+    "claim:R-DISCOUNT-CAP": false,
+    "holds:R-DISCOUNT-CAP": true,
+    "claim:R-DISCOUNT-PERCENT": true,
+    "holds:R-DISCOUNT-PERCENT": true
+   },
+   "judgeCost": 0.0348242
+  },
+  {
+   "id": "M4.6",
+   "month": 4,
+   "kind": "test",
+   "prompt": "Add a test that registering the same email twice throws EmailTakenError.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.100623,
+   "timing": {
+    "exit": 0,
+    "seconds": 92.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a test in [accounts.test.ts](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M4.6/repo/src/accounts.test.ts:14) that registers an email twice and asserts the second call throws `EmailTakenError`.\n\nAll five account tests pass. `ostf check --base main` passes and lists `Sessions` and `Sessions > rejects registering the same email twice` as impacted tests. It also reports two existing unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`; this test change leaves both unchanged.",
+   "changedFiles": [
+    "src/accounts.test.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [],
+   "listedTests": [
+    "src/accounts.test.ts#Sessions",
+    "src/accounts.test.ts#Sessions > rejects registering the same email twice"
+   ]
+  },
+  {
+   "id": "M5.1",
+   "month": 5,
+   "kind": "rename",
+   "prompt": "Rename the validate method of Sessions in src/accounts.ts to check, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.009063,
+   "timing": {
+    "exit": 0,
+    "seconds": 40.8
+   },
+   "derivedHandEdits": [],
+   "summary": "I renamed `Sessions.validate` to `check` in `src/accounts.ts` and updated its two callers. The tests pass (53/53) and `ostf check --base main` exits 0 with no errors.\n\n**Changes**\n- `src/accounts.ts`: the method definition is now `check`. Its `// @req R-SESSION-EXPIRY` comment is unchanged.\n- `src/checkout.ts`: `placeOrder` calls `sessions.check(token)`.\n- `src/accounts.test.ts`: the two `validate` calls in the session-expiry and logout tests now call `check`.\n\nNo other references existed in `src/`, `README.md`, or `deploy/`. `validateAmount` in `payments.ts` was not touched.\n\n**Trace items**\n- **R-SESSION-EXPIRY** (implemented by `Sessions.check`): still true. The behaviour is unchanged. `ostf check` now shows the code link as uncorroborated instead of corroborated, because the symbol name changed. It is an information change, not an error.\n- **R-CHECKOUT-SESSION** and **R-CHECKOUT-ORDER** (both implemented by `Checkout.placeOrder`, whose body changed only in the caller line): still true.\n- **R-LOGOUT** (draft, implemented by `Sessions.logout`): its code is unchanged. It is listed in the impact output only because its test was edited. Still true.\n- **Tests listed:**\n  - `src/accounts.test.ts > Sessions > expires a session after 30 idle minutes` (verifies R-SESSION-EXPIRY)\n  - `src/accounts.test.ts > Sessions > logout ends a session` (verifies R-LOGOUT)\n  - `src/checkout.test.ts > Checkout > needs a valid session` (verifies R-CHECKOUT-SESSION)\n  - `src/checkout.test.ts > Checkout > places an order` (verifies R-CHECKOUT-ORDER)\n  - `src/checkout.test.ts > Checkout > rejects an order after the customer's session expires` (verifies R-SESSION-EXPIRY)\n\n**Risk-relevant items**\nNone of the items touched is marked risk-relevant. R-SESSION-EXPIRY refines N-ACCOUNT-SAFE and is not marked. The one marked item in this area is R-LOGIN-LOCKOUT, and I did not touch its code.\n\n**Notes**\n- `trace.derived` at the repo root still names `Sessions.validate`. I did not regenerate it, since I don't know how it is produced and `ostf check` did not flag it. It will need regenerating if the repo tracks it.\n- Two pre-existing info messages from `ostf check` are unrelated to this change: R-ORDER-NOTE and R-VOLUME-DISCOUNT have no linked code or tests.\n- I did not commit. The changes are in the working tree.",
+   "changedFiles": [
+    "src/accounts.test.ts",
+    "src/accounts.ts",
+    "src/checkout.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CHECKOUT-ORDER",
+    "R-CHECKOUT-SESSION",
+    "R-LOGOUT",
+    "R-SESSION-EXPIRY"
+   ],
+   "listedTests": [
+    "src/accounts.test.ts#Sessions",
+    "src/accounts.test.ts#Sessions > expires a session after 30 idle minutes",
+    "src/accounts.test.ts#Sessions > logout ends a session",
+    "src/checkout.test.ts#Checkout > needs a valid session",
+    "src/checkout.test.ts#Checkout > places an order",
+    "src/checkout.test.ts#Checkout > rejects an order after the customer's session expires"
+   ],
+   "labels": {
+    "claim:R-CHECKOUT-ORDER": true,
+    "holds:R-CHECKOUT-ORDER": true,
+    "claim:R-CHECKOUT-SESSION": true,
+    "holds:R-CHECKOUT-SESSION": true,
+    "claim:R-LOGOUT": true,
+    "holds:R-LOGOUT": true,
+    "claim:R-SESSION-EXPIRY": true,
+    "holds:R-SESSION-EXPIRY": true
+   },
+   "judgeCost": 0.0402234
+  },
+  {
+   "id": "M5.2",
+   "month": 5,
+   "kind": "refactor",
+   "prompt": "Refactor the function formatCents in src/money.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.122003,
+   "timing": {
+    "exit": 0,
+    "seconds": 50.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [formatCents](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M5.2/repo/src/money.ts:31) to name the dollar and cent calculations. It uses the same operations and produces the same output.\n\nAll 53 tests pass, including `money > formats dollars and cents`. `ostf check --base main` passes. It reports two existing unlinked items, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT`; this change leaves both unaffected. The check lists no tests for either item.",
+   "changedFiles": [
+    "src/money.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [],
+   "listedTests": []
+  },
+  {
+   "id": "M5.3",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.018962,
+   "timing": {
+    "exit": 0,
+    "seconds": 71.9
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Checkout.preview` to `src/checkout.ts`. It takes the same session token, cart and discount as `placeOrder`, returns the `Quote` that `placeOrder` would charge, and neither reserves stock nor charges. All 55 tests pass, including two new ones for it.\n\n**What the method does**\n- Validates the session, then rejects an empty cart with `EmptyCartError`. Both checks match `placeOrder`.\n- Returns `price(...)` with the same region and clock as `placeOrder`.\n- It is synchronous, since pricing is synchronous and nothing is awaited. `placeOrder` is unchanged.\n\n**Tests** (`src/checkout.test.ts`)\n- `previews the quote placeOrder would charge`: uses a 10% discount, checks that stock and the audit log are untouched, then calls `placeOrder` and asserts the quotes are deep-equal.\n- `preview rejects an invalid session and an empty cart`.\n\n**Trace** (`trace/requirements.yaml`)\n- Added `R-CHECKOUT-PREVIEW` as `status: draft`, refining `N-BUY`. It is linked to `Checkout.preview` and its two tests through `@req` comments. I first also listed the code and tests in the item fields, but `ostf check` reported them as duplicate links, so I dropped the fields to match how `R-CHECKOUT-SESSION` is linked.\n- `ostf check --base main` exits 0 with no errors. It reports the new item and its links. It also prints two existing info notices, `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no links. Both were already there before my change, and I left them alone.\n\n**Items this change touches or keeps true**\n- Kept true: `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION`, since `placeOrder` is unchanged.\n- Kept true: `N-BUY` and `N-ACCOUNT-SAFE`, the needs the items refine.\n- Risk-relevant items touched: none. The new method calls `sessions.validate`, but no item marked with `controls:` or `RISK-*` is changed or linked to it.\n\n**Decisions for you to check**\n- `Sessions.validate` refreshes the session's idle timer. A preview therefore keeps a session alive, just as `placeOrder` does. The brief did not ask me to avoid this, so I left it, but tell me if previews should not extend sessions.\n- I did not commit. The changes are in the working tree.",
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CHECKOUT-PREVIEW"
+   ],
+   "listedTests": [
+    "src/checkout.test.ts#Checkout",
+    "src/checkout.test.ts#Checkout > preview rejects an invalid session and an empty cart",
+    "src/checkout.test.ts#Checkout > previews the quote placeOrder would charge"
+   ],
+   "labels": {
+    "claim:R-CHECKOUT-PREVIEW": true,
+    "holds:R-CHECKOUT-PREVIEW": true
+   },
+   "judgeCost": 0.0427126
+  },
+  {
+   "id": "M5.4",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.119133,
+   "timing": {
+    "exit": 0,
+    "seconds": 78.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `Cart.clear()` to remove every line, with a test covering a populated cart, an empty cart, and adding an item afterward. The new draft trace item **R-CART-CLEAR** refines **N-BUY**; this change keeps both true. Its listed test is `Cart > clears every line`.\n\nAll 54 tests pass, and `ostf check --base origin/main` reports no errors. No risk-relevant item was touched.",
+   "changedFiles": [
+    "src/cart.test.ts",
+    "src/cart.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-CART-CLEAR"
+   ],
+   "listedTests": [
+    "src/cart.test.ts#Cart",
+    "src/cart.test.ts#Cart > clears every line"
+   ],
+   "labels": {
+    "claim:R-CART-CLEAR": true,
+    "holds:R-CART-CLEAR": true
+   },
+   "judgeCost": 0.023540600000000002
+  },
+  {
+   "id": "M5.5",
+   "month": 5,
+   "kind": "behavior",
+   "prompt": "Make tax in src/pricing.ts round half to even instead of half up.",
+   "makesFalse": "R-TAX-RATE",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.016075,
+   "timing": {
+    "exit": 0,
+    "seconds": 73.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Tax now rounds half to even. All 54 tests pass and `ostf check --base main` exits 0. Nothing is committed.\n\n**Changes**\n- `src/pricing.ts`: `tax` now calls `roundHalfEven` in place of `roundHalfUp`. Exact halves go to the even cent. Other fractions still round to the nearest cent.\n- `src/pricing.test.ts`: new test \"rounds exact halves to the even cent\". It covers 0.5→0, 1.5→2, 2.5→2, and 3.5→4.\n- `trace/requirements.yaml`: new item R-TAX-HALF-EVEN, `status: draft`, refining N-FAIR-PRICE, linked to `src/pricing.ts#tax` and the new test. I added it because the change is new behavior, and the policy says to add new behavior as a draft item.\n\n**Items the change makes false (not rewritten, per policy)**\n- **R-TAX-RATE** says tax is \"rounded half up to the cent.\" That is no longer true. Its test \"rounds half up to the cent\" still passes because its values do not fall on a tie, but its name is now misleading.\n- **D-RATES-PPM** in `trace/design.yaml` says tax is \"rounded half up to the cent once.\" That is also no longer true. Its rationale is matching the payment gateway's total, so if the gateway rounds half up, a half-even tax could be a cent off.\n\n**Items kept true**\n- R-TAX-EXEMPT: the exempt path still returns 0.\n- N-FAIR-PRICE: still holds; I'd say it is still satisfied, but it is a broad need.\n\n**Risk-relevance**\n- No RISK item controls the tax path, and no item in my change is marked risk-relevant. I did not need to stop and ask under the policy. I made the change because you asked for it directly.\n\n**Open decision for you**\n- Confirm that half-to-even is the rule your jurisdiction and payment gateway use. If the gateway rounds half up, the change will create a one-cent mismatch. If you confirm it, R-TAX-RATE and D-RATES-PPM need an owner to update them, and that is a separate review.\n\n**Other notes**\n- `ostf check` reports two unlinked items, R-ORDER-NOTE and R-VOLUME-DISCOUNT. This was already true before my change.\n- I did not regenerate `trace.derived`.",
+   "changedFiles": [
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-TAX-EXEMPT",
+    "R-TAX-HALF-EVEN",
+    "R-TAX-RATE"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#price > taxes the subtotal after discounts",
+    "src/pricing.test.ts#tax",
+    "src/pricing.test.ts#tax > is zero for a tax-exempt customer",
+    "src/pricing.test.ts#tax > is zero for an amount of zero",
+    "src/pricing.test.ts#tax > rounds exact halves to the even cent",
+    "src/pricing.test.ts#tax > rounds half up to the cent"
+   ],
+   "labels": {
+    "claim:R-TAX-EXEMPT": true,
+    "holds:R-TAX-EXEMPT": true,
+    "claim:R-TAX-HALF-EVEN": true,
+    "holds:R-TAX-HALF-EVEN": true,
+    "claim:R-TAX-RATE": false,
+    "holds:R-TAX-RATE": false
+   },
+   "judgeCost": 0.0442518
+  },
+  {
+   "id": "M5.6",
+   "month": 5,
+   "kind": "test",
+   "prompt": "Add a test that a refund of a receipt that does not exist fails.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.140906,
+   "timing": {
+    "exit": 0,
+    "seconds": 80.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a test that confirms a refund for a nonexistent receipt fails with `UnknownReceiptError` and creates no gateway refund or audit entry. Linked it to **R-REFUND-ORIGINAL**, which remains true.\n\n`npm test` passed (54 tests). `ostf check --base origin/main` passed and listed the `Refunder` suite, “refunds to the original transaction,” and the new “rejects a refund for an unknown receipt” test.",
+   "changedFiles": [
+    "src/refunds.test.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-REFUND-ORIGINAL"
+   ],
+   "listedTests": [
+    "src/refunds.test.ts#Refunder",
+    "src/refunds.test.ts#Refunder > refunds to the original transaction",
+    "src/refunds.test.ts#Refunder > rejects a refund for an unknown receipt"
+   ],
+   "labels": {
+    "claim:R-REFUND-ORIGINAL": true,
+    "holds:R-REFUND-ORIGINAL": true
+   },
+   "judgeCost": 0.0216846
+  },
+  {
+   "id": "M6.1",
+   "month": 6,
+   "kind": "move",
+   "prompt": "Move the function tax from src/pricing.ts into a new file src/salestax.ts, keeping its name, and update its imports.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.016327,
+   "timing": {
+    "exit": 0,
+    "seconds": 76.5
+   },
+   "derivedHandEdits": [],
+   "summary": "The `tax` function now lives in `src/salestax.ts` under the same name, and `pricing.ts` no longer contains it. The test suite is unchanged from before the move: 56 of 58 pass, with the same two `checkout.test.ts` preview failures that were there on `main`. `ostf check --base main` exits 0 with no errors. I haven't committed.\n\n**What changed**\n- **`src/salestax.ts`** (new): `tax` plus its private helper `roundHalfEven`, which only `tax` used. Its only import is the `Region` type from `pricing.ts`, so there is no import cycle.\n- **`src/pricing.ts`**: removed `tax` and `roundHalfEven`. The rest of the file is untouched.\n- **`src/price.ts`**: imports `tax` from `./salestax.ts`.\n- **`src/pricing.test.ts`**: imports `tax` from `./salestax.ts`. I left the tests in this file so the verification links in the trace still resolve.\n- **`trace/requirements.yaml`**: the `code:` links for three items changed from `src/pricing.ts#tax` to `src/salestax.ts#tax`. The item text is unchanged. Without this the links would point at a symbol that no longer exists.\n\n**Trace items (per AGENTS.md)**\n- **R-TAX-RATE** (sales tax): still true. Same function, same behaviour. Tests: `pricing.test.ts` › `tax` › rounds half up to the cent, `tax` › is zero for an amount of zero, and `price` › taxes the subtotal after discounts.\n- **R-TAX-EXEMPT** (tax exemption): still true. Test: `pricing.test.ts` › `tax` › is zero for a tax-exempt customer.\n- **R-TAX-HALF-EVEN** (draft): still true. Test: `pricing.test.ts` › `tax` › rounds exact halves to the even cent.\n- No risk-relevant item was touched. These items refine `N-FAIR-PRICE`, and none of them is controlled by a `RISK-*` item. The wrong-charge control (R-CHARGE-AMOUNT) lives in `payments.ts`, which I didn't change.\n\n**Things to know**\n- The code comment and R-TAX-HALF-EVEN say sales tax rounds half to even, but R-TAX-RATE and D-RATES-PPM in `trace/design.yaml` say \"rounded half up\". This mismatch predates my change, and I didn't edit either item. Someone should reconcile them.\n- `ostf check` reports two requirements with no links, R-ORDER-NOTE and R-VOLUME-DISCOUNT. This also predates my change.\n- `tsc` isn't installed, so I couldn't type-check. The imports are correct by inspection, and the Node test run passes with the same results as before.",
+   "changedFiles": [
+    "src/price.ts",
+    "src/pricing.test.ts",
+    "src/pricing.ts",
+    "src/salestax.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-TAX-EXEMPT",
+    "R-TAX-HALF-EVEN",
+    "R-TAX-RATE"
+   ],
+   "listedTests": [
+    "src/pricing.test.ts#price > taxes the subtotal after discounts",
+    "src/pricing.test.ts#tax > is zero for a tax-exempt customer",
+    "src/pricing.test.ts#tax > is zero for an amount of zero",
+    "src/pricing.test.ts#tax > rounds exact halves to the even cent",
+    "src/pricing.test.ts#tax > rounds half up to the cent"
+   ],
+   "labels": {
+    "claim:R-TAX-EXEMPT": true,
+    "holds:R-TAX-EXEMPT": true,
+    "claim:R-TAX-HALF-EVEN": true,
+    "holds:R-TAX-HALF-EVEN": true,
+    "claim:R-TAX-RATE": true,
+    "holds:R-TAX-RATE": false
+   },
+   "judgeCost": 0.047147800000000004
+  },
+  {
+   "id": "M6.2",
+   "month": 6,
+   "kind": "refactor",
+   "prompt": "Refactor the receipt method of Processor in src/payments.ts so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.097457,
+   "timing": {
+    "exit": 0,
+    "seconds": 58.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed the parameter in `Processor.receipt` to `receiptId` and shortened its documentation. The lookup behavior is unchanged.\n\n`ostf check --base origin/main` passed. It lists **D-IDEMPOTENCY-STORE** and **R-REFUND-ORIGINAL**; both remain true. Their listed tests are “rejects a reused key with another amount,” “refunds to the original transaction,” and “rejects a refund for an unknown receipt.” All three passed.\n\nThe full test run had 56 passes and two checkout preview failures caused by `sessions.validate is not a function`, outside the changed method.",
+   "changedFiles": [
+    "src/payments.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "D-IDEMPOTENCY-STORE",
+    "R-REFUND-ORIGINAL"
+   ],
+   "listedTests": [
+    "src/payments.test.ts#Processor > rejects a reused key with another amount",
+    "src/refunds.test.ts#Refunder > refunds to the original transaction",
+    "src/refunds.test.ts#Refunder > rejects a refund for an unknown receipt"
+   ],
+   "labels": {
+    "claim:D-IDEMPOTENCY-STORE": true,
+    "holds:D-IDEMPOTENCY-STORE": true,
+    "claim:R-REFUND-ORIGINAL": true,
+    "holds:R-REFUND-ORIGINAL": true
+   },
+   "judgeCost": 0.0217242
+  },
+  {
+   "id": "M6.3",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.012838,
+   "timing": {
+    "exit": 0,
+    "seconds": 59.0
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `orderUnits` to `src/checkout.ts`, with a test and a new draft trace item. The new test passes. `npm test` still has 2 failures in the `preview` tests, and those were failing before my change.\n\n**What changed**\n- **`src/checkout.ts`**: `orderUnits(order: Order): number` sums `quantity` over `order.lines`. It is tagged `// @req R-ORDER-UNITS`.\n- **`src/checkout.test.ts`**: new test \"counts the units over an order's lines\". It places a real order with 2 mugs and 3 teas and asserts `orderUnits` returns 5.\n- **`trace/requirements.yaml`**: new item `R-ORDER-UNITS`, `status: draft`, refines `N-BUY`. I did not put `code`/`tests` fields on it, because that duplicated the `@req` links and made `ostf check` warn. The `@req` comments are the links.\n\nI read \"units over an order's lines\" as the sum of quantities across all lines. If you meant something else, such as units per line, say so and I'll adjust.\n\n**Trace check**\n`ostf check --base main` exits 0 with no warnings or errors. The only message is an existing info note that `R-ORDER-NOTE` and `R-VOLUME-DISCOUNT` have no link targets, which predates my change.\n\n**Items in your change**\n- `R-ORDER-UNITS` is new. Its code is `src/checkout.ts#orderUnits`, and its test is \"src/checkout.test.ts#Checkout > counts the units over an order's lines\".\n- No existing item was edited or made false.\n- No risk-relevant item was touched. `RISK-*` items and the `R-` items they control (R-CHARGE-AMOUNT, R-REFUND-LIMIT, R-LOGIN-LOCKOUT, R-AUDIT-MONEY) are unchanged.\n\n**Pre-existing failures**\n`npm test` has 2 failing tests, both in `preview` (`previews the quote placeOrder would charge` and `preview rejects an invalid session and an empty cart`). They failed on the untouched `main` too. I did not investigate or fix them.\n\n`trace.derived` is tracked in git and I did not regenerate it, so it may be stale. Nothing is committed.",
+   "changedFiles": [
+    "src/checkout.test.ts",
+    "src/checkout.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-ORDER-UNITS"
+   ],
+   "listedTests": [
+    "src/checkout.test.ts#Checkout",
+    "src/checkout.test.ts#Checkout > counts the units over an order's lines"
+   ],
+   "labels": {
+    "claim:R-ORDER-UNITS": true,
+    "holds:R-ORDER-UNITS": true
+   },
+   "judgeCost": 0.0349046
+  },
+  {
+   "id": "M6.4",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.148698,
+   "timing": {
+    "exit": 0,
+    "seconds": 90.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `ratePercent` in [src/rates.ts](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M6.4/repo/src/rates.ts). It formats a region’s rate exactly, including `14.975%`. The two tests in [src/rates.test.ts](/private/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M6.4/repo/src/rates.test.ts) pass.\n\n`ostf check --base origin/main` passes. It lists the new draft item **R-RATE-PERCENT**, which the change implements and tests, and **N-FAIR-PRICE**, which remains true. No risk-relevant item was touched.\n\nThe full test suite has two unrelated checkout preview failures: `sessions.validate` is missing.",
+   "changedFiles": [
+    "src/rates.test.ts",
+    "src/rates.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-RATE-PERCENT"
+   ],
+   "listedTests": [
+    "src/rates.test.ts#ratePercent",
+    "src/rates.test.ts#ratePercent > formats the region rates without losing fractional digits",
+    "src/rates.test.ts#ratePercent > keeps the smallest parts-per-million digit"
+   ],
+   "labels": {
+    "claim:R-RATE-PERCENT": true,
+    "holds:R-RATE-PERCENT": true
+   },
+   "judgeCost": 0.0300806
+  },
+  {
+   "id": "M6.5",
+   "month": 6,
+   "kind": "behavior",
+   "prompt": "Make a reservation hold stock for 20 minutes instead of 15.",
+   "makesFalse": "R-STOCK-EXPIRY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.010233,
+   "timing": {
+    "exit": 0,
+    "seconds": 39.4
+   },
+   "derivedHandEdits": [],
+   "summary": "The reservation hold is now 20 minutes instead of 15. The change is uncommitted in the working tree.\n\n**Changes**\n- `src/inventory.ts`: `HOLD_MS` is now `20 * 60 * 1000`, and its doc comment says 20 minutes.\n- `src/inventory.test.ts`: renamed the expiry test to \"expires a reservation after 20 minutes\". The test already uses `HOLD_MS`, so its assertions still hold.\n\n**Trace items**\n- **R-STOCK-EXPIRY is now false.** Its text still says \"within 15 minutes\", and the code now implements 20. I did not rewrite the requirement, per the OSTF policy. It needs a decision from you: update the requirement text to 20 minutes, or revert the change.\n- **D-RESERVATION-HOLD** stays true. Its text does not state a duration.\n- **R-STOCK-RESERVE** and **N-NO-OVERSELL** are unaffected.\n- **Tests:** `src/inventory.test.ts#Stock > expires a reservation after 20 minutes` now verifies R-STOCK-EXPIRY. The `confirms a reservation as a sale` test still backs D-RESERVATION-HOLD.\n- **Risk-relevant items:** none of the items I touched controls a RISK item, and none carries an explicit risk-relevant marker. I did not need to ask before editing. Longer holds do lock stock for longer when carts are abandoned, which may be worth a look in review.\n\n**Checks**\n- `ostf check --base main` exits 0 with no errors. It reports the same two pre-existing unlinked items (R-ORDER-NOTE, R-VOLUME-DISCOUNT) as before my change.\n- `npm test`: 56 pass, 2 fail. Both failures are in checkout preview tests (\"previews the quote placeOrder would charge\" and \"preview rejects an invalid session and an empty cart\"). They fail on the untouched baseline too, and the inventory tests pass.",
+   "changedFiles": [
+    "src/inventory.test.ts",
+    "src/inventory.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-STOCK-EXPIRY"
+   ],
+   "listedTests": [
+    "src/inventory.test.ts#Stock",
+    "src/inventory.test.ts#Stock > expires a reservation after 20 minutes"
+   ],
+   "labels": {
+    "claim:R-STOCK-EXPIRY": false,
+    "holds:R-STOCK-EXPIRY": false
+   },
+   "judgeCost": 0.0248446
+  },
+  {
+   "id": "M6.6",
+   "month": 6,
+   "kind": "test",
+   "prompt": "Add a test that reading the audit log returns a copy, so that changing the copy does not change the log.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.096096,
+   "timing": {
+    "exit": 0,
+    "seconds": 65.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added [a regression test](/tmp/ostf-trials/phase5/longitudinal-ts-shop-full/M6.6/repo/src/audit.test.ts:31) that changes a returned audit entry, its timestamp, and the returned array, then confirms the log still contains both original entries.\n\nThe audit tests pass, and `ostf check --base origin/main` passes. Its impact report lists **R-AUDIT-APPEND-ONLY**, **R-AUDIT-SIZE**, **R-AUDIT-TOTAL**, and **N-ACCOUNT-SAFE**; the test-only change keeps each true. It lists `src/audit.test.ts`, the `AuditLog` suite, and the new test, “keeps the log unchanged when a reader changes the returned copy.”",
+   "changedFiles": [
+    "src/audit.test.ts"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": false,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-AUDIT-APPEND-ONLY"
+   ],
+   "listedTests": [
+    "src/audit.test.ts",
+    "src/audit.test.ts#AuditLog",
+    "src/audit.test.ts#AuditLog > keeps the log unchanged when a reader changes the returned copy"
+   ],
+   "labels": {
+    "claim:R-AUDIT-APPEND-ONLY": true,
+    "holds:R-AUDIT-APPEND-ONLY": true
+   },
+   "judgeCost": 0.0199246
+  }
+ ],
+ "merged": 35,
+ "conflicts": 1,
+ "linksBroken": 0,
+ "brokenPer100": 0.0,
+ "byMonth": [
+  {
+   "month": 1,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 11
+  },
+  {
+   "month": 2,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 8
+  },
+  {
+   "month": 3,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 9
+  },
+  {
+   "month": 4,
+   "merged": 5,
+   "conflicts": 1,
+   "linksBroken": 0,
+   "itemsListed": 9
+  },
+  {
+   "month": 5,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 10
+  },
+  {
+   "month": 6,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 9
+  }
+ ],
+ "claimsHold": 43,
+ "claims": 45,
+ "inventedIds": 0,
+ "derivedHandEdits": 0,
+ "cost": 3.43909
+}

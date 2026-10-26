@@ -1,0 +1,91 @@
+{
+ "run": "claude.intent.go-shop.T7.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-DISCOUNT-CAP": true,
+   "item:R-DISCOUNT-EXPIRY": true,
+   "item:R-DISCOUNT-PERCENT": true,
+   "test:TestApplyDiscount": true,
+   "test:caps_at_fifty_percent": true,
+   "test:rejects_expired": true
+  },
+  "questions": {
+   "item:R-DISCOUNT-CAP": "Does the final answer name R-DISCOUNT-CAP (Discount cap) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-EXPIRY": "Does the final answer name R-DISCOUNT-EXPIRY (Expired discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-DISCOUNT-PERCENT": "Does the final answer name R-DISCOUNT-PERCENT (Percentage discount) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:TestApplyDiscount": "Does the final answer name the test `TestApplyDiscount` as one that matters for the change, run or to be run?",
+   "test:caps_at_fifty_percent": "Does the final answer name the test `caps_at_fifty_percent` as one that matters for the change, run or to be run?",
+   "test:rejects_expired": "Does the final answer name the test `rejects_expired` as one that matters for the change, run or to be run?"
+  },
+  "reason": "All six are true. Under \"Trace items linked to the changed code (ApplyDiscount)\", the answer lists R-DISCOUNT-CAP, R-DISCOUNT-PERCENT and R-DISCOUNT-EXPIRY, and says each one is \"still true\". That covers q1–q3. The tests the answer reports as run include TestApplyDiscount and its subtests caps_at_fifty_percent and rejects_expired. The answer also links each of these tests to a trace item that is relevant to the change, which covers q4–q6.",
+  "cost": 0.022487800000000002
+ },
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 5,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4976,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 24.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 20059,
+  "cache_read_input_tokens": 134534,
+  "output_tokens": 4100,
+  "cost": 0.007408339999999999
+ },
+ "cost": 0.007408,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/discount.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Impact: none on behavior.** The uncommitted change in `pricing/discount.go` replaces `percent := min(d.Percent, MaxDiscountPercent)` with an explicit `if d.Percent > MaxDiscountPercent { percent = MaxDiscountPercent }`. Both forms cap an `int64` at 50 and leave values at or below 50 unchanged, including negatives. The diff is a style change only. Go 1.27 supports the builtin `min`, so the change is probably unnecessary churn unless you had a reason for it.\n\n**Tests run** (all pass, Go 1.27.3):\n- `go test -v ./pricing/`: `TestApplyDiscount` and its four subtests (`takes_the_percentage`, `rounds_down`, `caps_at_fifty_percent`, `rejects_expired`), plus `TestTax`, `TestTaxExempt`, `TestPrice`, `TestMoneyString`. `TestPrice` covers the caller in `pricing/quote.go`.\n- `go test ./...`: accounts, cart, inventory, payments and pricing all pass.\n- `go vet ./pricing/`: clean.\n\n**Trace items linked to the changed code** (`ApplyDiscount`):\n- **R-DISCOUNT-CAP** (code link and test `caps_at_fifty_percent`): still true. Its rationale mentions configuration errors, which is close to RISK-WRONG-CHARGE, but the item has no `controls:` field and refines N-FAIR-PRICE, a need. So this change does not trigger the AGENTS.md ask-first rule. A reviewer may still want to look at it.\n- **R-DISCOUNT-PERCENT** (code link and `TestApplyDiscount`): still true.\n- **R-DISCOUNT-EXPIRY** (`@req` on `ApplyDiscount`, test `rejects_expired`): still true. The expiry branch is untouched.\n\nItems I touched: none. I did not edit any trace items or add new ones. No risk, threat, or control item is linked to this code, so there is nothing that needs a dedicated security review.\n\n**Not in this diff:** R-VOLUME-DISCOUNT (SHOP-57) says the volume discount counts toward the 50% cap. No volume-discount code exists in the repo, so that requirement is unimplemented and this change does not affect it.",
+ "date": "2026-10-25"
+}

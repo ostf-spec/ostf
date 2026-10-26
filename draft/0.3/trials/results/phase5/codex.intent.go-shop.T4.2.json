@@ -1,0 +1,79 @@
+{
+ "run": "codex.intent.go-shop.T4.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T4",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 19,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4191,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 61.8
+ },
+ "usage": {
+  "input_tokens": 248778,
+  "cached_input_tokens": 228224,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2099,
+  "reasoning_output_tokens": 409
+ },
+ "cost": 0.111833,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/quote.go",
+  "pricing/salestax.go",
+  "pricing/tax.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 5,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed `Tax` to `SalesTax` and moved it to [pricing/salestax.go](/tmp/ostf-trials/phase5/codex.intent.go-shop.T4.2/repo/pricing/salestax.go). I updated the caller, tests, and trace links.\n\nR-TAX-RATE and R-TAX-EXEMPT remain true. Their relevant tests, `TestTax`, `TestPrice`, and `TestTaxExempt`, passed; `go test ./...` also passed. No touched item controls or refines a risk or threat.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,104 @@
+{
+ "run": "codex.intent.go-shop.T9.3",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds `MaxProducts = 50` and a new `ErrTooManyProducts` error to `cart/cart.go`. In `Add`, the new check `len(c.lines) >= MaxProducts` runs after the branch that merges into an existing line and before the append. So adding a 51st distinct product returns the new error without changing the cart, and adding more of a product already in the cart still works. The new `TestAddProductLimit` adds 50 distinct products and checks that adding to an existing product at the limit still works. It then checks that a 51st product returns `ErrTooManyProducts` (using `errors.Is`) and that the cart's lines are unchanged after the rejected add. This covers exactly what the user asked for.",
+  "cost": 0.028504799999999997
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4719,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 114.1
+ },
+ "usage": {
+  "input_tokens": 245468,
+  "cached_input_tokens": 221184,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3039,
+  "reasoning_output_tokens": 846
+ },
+ "cost": 0.131655,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/cart.go",
+  "cart/cart_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 4,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "`Cart.Add` now allows at most 50 distinct products. Adding a 51st returns the new `ErrTooManyProducts` error and leaves the cart unchanged. Adding more units of a product already in the cart still works.\n\nTrace links: **R-CART-ADD** and **R-CART-QTY** remain true. The new draft item **R-CART-PRODUCT-LIMIT** is true and controls **THREAT-OVERSIZED-CART**; review that control in the pull request.\n\n`TestAddMergesLines`, `TestAddRejectsBadQuantity`, and the new `TestAddProductLimit` pass. The full `go test ./...` suite passes.",
+ "providerAttempts": [
+  {
+   "attempt": 1,
+   "providerError": "Selected model is at capacity. Please try a different model.",
+   "timing": {
+    "exit": 1,
+    "seconds": 14.1,
+    "providerError": "Selected model is at capacity. Please try a different model."
+   },
+   "cost": 0.0,
+   "kept": "/tmp/ostf-trials/phase5/codex.intent.go-shop.T9.3.attempt1"
+  }
+ ],
+ "date": "2026-10-26"
+}

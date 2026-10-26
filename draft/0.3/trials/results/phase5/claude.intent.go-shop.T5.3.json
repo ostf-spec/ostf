@@ -1,0 +1,95 @@
+{
+ "run": "claude.intent.go-shop.T5.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true,
+  "codeLinked": true,
+  "testLinked": true,
+  "noItemAdded": true,
+  "noItemRewritten": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff covers all three parts of R-ORDER-NOTE. `ValidateNote` rejects notes longer than 200 characters, counted as Unicode code points with `utf8.RuneCountInString`. `PlaceOrder` runs that check after the session and empty-cart checks but before pricing, reserving stock or charging, so a note that is too long stops the order. A valid note is stored in the new `Order.Note` field, so the order keeps its note. The diff also adds two tests. `TestPlaceOrderNote` checks that a 200-character note is kept on the order. It also checks that a 201-character note returns `ErrNoteTooLong`, with no extra audit entry (no charge) and no stock reserved. `TestValidateNote` checks the boundaries: an empty note, exactly 200 characters and 201 characters. The existing tests were updated for the new argument. The diff does not show `trace.yaml`, but this question asks only about the code and tests.",
+  "cost": 0.0502688
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4746,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 50.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 28972,
+  "cache_read_input_tokens": 260145,
+  "output_tokens": 9030,
+  "cost": 0.012912649999999998
+ },
+ "cost": 0.012913,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 10,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "SHOP-62 is implemented. Customers can add a note of up to 200 characters at checkout, and a longer note is rejected before any stock is reserved or any charge is made. All packages pass `go vet` and `go test ./...`.\n\n**Item:** `R-ORDER-NOTE` is in `trace.yaml`, linked to `jira:SHOP-62`, so the ID is real. It has no `refines`, `controls`, or `status` fields, so I did not add a status. I left its text unchanged and added `code` and `tests` links to it.\n\n**Changes:**\n- `cart/checkout.go`: `MaxNoteLength = 200`, `ErrNoteTooLong`, and `ValidateNote` (tagged `@req R-ORDER-NOTE`). `PlaceOrder` takes a new `note` argument, validates it after the session and empty-cart checks and before reserving or charging, and stores it in the new `Order.Note` field.\n- `cart/checkout_test.go`: `TestPlaceOrderNote` (a 200-character note is kept, a 201-character note is rejected with no charge and no stock held) and `TestValidateNote`. Existing calls now pass `\"\"` for the note.\n- `trace.yaml`: `R-ORDER-NOTE` now lists `cart/checkout.go#ValidateNote`, `cart/checkout.go#Checkout.PlaceOrder`, `TestPlaceOrderNote`, and `TestValidateNote`.\n\n**Choices I made:**\n- \"Characters\" means Unicode code points, so a 200-character note of two-byte letters is accepted. I did not count grapheme clusters or bytes.\n- The note is stored exactly as entered, with no trimming.\n- `PlaceOrder`'s signature changed. The only callers are in the tests, so nothing else breaks.\n\n**Items linked to the changed code:**\n- `R-ORDER-NOTE`: kept true by this change. Its tests are `TestPlaceOrderNote` and `TestValidateNote`. It controls no risk and refines nothing.\n- `R-CHECKOUT-SESSION` (`@req` on `PlaceOrder`, refines `N-ACCOUNT-SAFE`): still true. Its test `TestPlaceOrderNeedsSession` passes.\n- `R-CHECKOUT-ORDER` (refines `N-BUY`): still true. Its test `TestPlaceOrder` passes.\n- `R-STOCK-RELEASE` (refines `N-NO-OVERSELL`): still true. Its test `TestPlaceOrderReleasesStockOnDecline` passes.\n\n**Risk or threat items touched:** none. None of these items controls a risk or threat, and none refines one that does, so I did not need to ask before changing this code.\n\nNothing is committed. Say if you want a commit or a PR.",
+ "date": "2026-10-26"
+}

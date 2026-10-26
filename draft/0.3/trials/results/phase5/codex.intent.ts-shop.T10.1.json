@@ -1,0 +1,95 @@
+{
+ "run": "codex.intent.ts-shop.T10.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: In `price`, the fee is 2.5% of the subtotal after discounts. Tax is still computed on `discountedSubtotal` alone, so the fee is not taxed. The total is `discountedSubtotal + salesTax + serviceFee`, so the fee is part of the order total. The tests check the fee and total with a discount (9,000 → 225, total 10,573). They also check half-up rounding (100 → 2.5 → 3), that a tax-exempt order still pays the fee (1,000 → 25), and that checkout charges 2,350 including a 50 fee. q2: The rate is written as the integer 25_000 parts per million (2.5%). It is applied to integer cents with integer arithmetic and rounded half up once by `roundHalfUp(..., 1_000_000)`. No floating-point number is used, and discount handling is unchanged. The rate is a bare number inside `price` rather than a named constant, but that does not break the decision.",
+  "cost": 0.0376166
+ },
+ "metrics": {
+  "calls": 22,
+  "callsBeforeFirstEdit": 14,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4755,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 60.3
+ },
+ "usage": {
+  "input_tokens": 343466,
+  "cached_input_tokens": 316800,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 2720,
+  "reasoning_output_tokens": 590
+ },
+ "cost": 0.149792,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Added a 2.5% service fee to the discounted subtotal. The [quote](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T10.1/repo/src/pricing.ts) shows the fee separately, leaves it out of the tax calculation, and includes it in the amount charged. The fee rounds half up to the cent.\n\nTrace items **R-TAX-RATE** and **R-CHECKOUT-ORDER** remain true. The new behavior is linked as draft item **R-SERVICE-FEE** in [trace/requirements.yaml](/private/tmp/ostf-trials/phase5/codex.intent.ts-shop.T10.1/repo/trace/requirements.yaml). No risk or threat control item was touched.\n\nThe linked pricing tests and `Checkout > places an order` passed. `npm test`: **38 passed, 0 failed**.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,91 @@
+{
+ "run": "claude.none.go-shop.T11.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/network.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-TLS-ONLY is verified?"
+  },
+  "reason": "q1: Yes. The answer says \"no automated test covers it.\" It also quotes README.md as saying deploy is not run by any test, and adds that nothing in the repo checks the ssl_policy or the redirect. q2: Yes. It names V-INFRA-REVIEW by its ID as \"the only verification\" and describes it as a manual review of deploy/ changes by a second engineer before each release.",
+  "cost": 0.0163566
+ },
+ "metrics": {
+  "calls": 6,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5291,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 12,
+  "cache_creation_input_tokens": 20186,
+  "cache_read_input_tokens": 142330,
+  "output_tokens": 3274,
+  "cost": 0.0070987
+ },
+ "cost": 0.007099,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "deploy/network.tf"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "C-TLS-ONLY is now linked to `deploy/network.tf` in both directions, and no automated test covers it.\n\n**Tests covering C-TLS-ONLY: none.** The control has no test. `README.md` states that `deploy`, the Terraform for the database and load balancer, is not run by any test. The only verification is V-INFRA-REVIEW, a manual review of `deploy/` changes by a second engineer before each release, recorded in the release checklist. Nothing in the repo checks the `ssl_policy` or the HTTP redirect.\n\n**Changes:**\n- **`deploy/network.tf`**: added `# @req C-TLS-ONLY` above the `aws_lb_listener.https` resource. This follows the `// @req <ID>` convention the Go code uses.\n- **`REQUIREMENTS.md`**: under C-TLS-ONLY, added a `Code:` line pointing to `aws_lb_listener.https` and `aws_lb_listener.http` in `deploy/network.tf`, and a `Tests:` line that says none exist and points to V-INFRA-REVIEW.\n\n**Check against the control:** the HTTPS listener uses `ELBSecurityPolicy-TLS13-1-2-2021-06`, which permits TLS 1.2 and 1.3, so it meets \"TLS 1.2 or later\". The HTTP listener on port 80 redirects to HTTPS with a 301, so it meets the redirect requirement. I did not check these against the AWS documentation.\n\n**Verification:** `go test ./...` passes in all five packages. Those results were cached, and I changed no Go code. I could not validate the Terraform because `terraform` is not installed here.\n\nI haven't committed anything. The two files are modified in the working tree.",
+ "date": "2026-10-26",
+ "corrected": {
+  "pass": false,
+  "outcome": false,
+  "criteria": {
+   "noCodeChanged": false,
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "reason": "T11's no-code-changed criterion counted an added @req comment line, the link the arms' text describes, as a code change (harness correction after the scored run)",
+  "date": "2026-10-26"
+ }
+}

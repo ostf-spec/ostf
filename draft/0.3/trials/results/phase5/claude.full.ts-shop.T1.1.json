@@ -1,0 +1,91 @@
+{
+ "run": "claude.full.ts-shop.T1.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "explain",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": false,
+  "namesTests": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {
+  "namesItems": true
+ },
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": false,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-LIMIT (Refund limit), which states: \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-AUDIT-MONEY": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-ORIGINAL (Refund to the original payment), which states: \"A refund goes back to the payment method of the charge it refunds, never to another one.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "q1 is true. The answer says the method checks that the refund does not exceed what is left of the charge and that refunds above 500.00 per account per UTC day need an approver. It also links this to R-REFUND-LIMIT through checkRefundLimit, which the method calls. q2 is false. The answer does say the method adds a \"refund\" entry to the audit log. But it says R-AUDIT-MONEY is implemented by Processor.charge, \"not by this method\". It never says the requirement is a reason the method exists, and it does not list what an audit entry must contain. q3 is true. The answer says the refund goes to the original transaction, \"back to the card that was charged\", and cites the @req R-REFUND-ORIGINAL annotation. q4, q5 and q6 are true because the answer names all three tests: 'totals refunds per account and UTC day', the checkRefundLimit tests, and 'refunds to the original transaction'.",
+  "cost": 0.033451800000000004
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 1,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 1,
+  "contextCalls": 1,
+  "checkCalls": 0,
+  "traceOutputTokens": 650,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 11.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 6,
+  "cache_creation_input_tokens": 11162,
+  "cache_read_input_tokens": 51576,
+  "output_tokens": 1742,
+  "cost": 0.0036197600000000005
+ },
+ "cost": 0.00362,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Refunder.refund` (`src/refunds.ts:68`) is the single entry point for refunding an earlier charge. It does the following, in order:\n\n1. Looks up the receipt and throws `UnknownReceiptError` if it doesn't exist.\n2. Checks the refund against the limits in `checkRefundLimit`: the amount must be positive and no more than what is left on the charge, and refunds above the 500.00 per-account, per-UTC-day limit need an approver.\n3. Records the refund in the in-memory per-charge and per-day totals before awaiting the gateway, so a concurrent refund sees it.\n4. Sends the refund to the original transaction through `processor.gateway.refund(receipt.txn, amount)`. This is why it goes back to the card that was charged.\n5. If the gateway call fails, it reverses the two totals and rethrows.\n6. On success, it appends a `\"refund\"` entry to the audit log.\n\nThe code comments tie it to requirements. The method carries `// @req R-REFUND-ORIGINAL`, and `dayKey` carries `// @req D-REFUND-LEDGER`. `ostf context` shows that R-REFUND-LIMIT (risk-relevant) is implemented by `checkRefundLimit`, which the method calls, and that R-AUDIT-MONEY is implemented by `Processor.charge`, not by this method.\n\n**Tests that cover it** (`src/refunds.test.ts`):\n\n- `Refunder > refunds to the original transaction`. The test named for R-REFUND-ORIGINAL.\n- `Refunder > totals refunds per account and UTC day`. The test named for the daily-limit behaviour.\n- `checkRefundLimit`, with three cases: rejects more than is left on the charge, needs a second approval above the daily limit, and allows refunds within limits or with approval. These cover the helper the method calls, not the method itself.\n\nThe trace also lists the test `src/refunds.test.ts#Refunder > refunds to the original transaction` under R-AUDIT-MONEY, so it covers the audit requirement too.\n\n**Observations:**\n\n- `ostf context` lists the `@req R-REFUND-ORIGINAL` comment on `refund`, but the trace's `implemented_by` entries for R-REFUND-ORIGINAL are `src/payments.ts#Gateway` and `src/payments.ts#Processor.receipt`, not `refund`. The annotation and the trace disagree.\n- I did not run the test suite or `ostf check`, since you asked for a read-only answer.\n- I did not modify any files.",
+ "date": "2026-10-25"
+}

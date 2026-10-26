@@ -1,0 +1,81 @@
+{
+ "run": "claude.none.ts-shop.T9.1",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `OrderRateError` and a per-account counter of attempts (`countAttempt`). In `placeOrder`, the counter runs after the session and empty-cart checks but before pricing, `stock.reserve` and the payment charge. If an account already has three attempts within ten minutes, the fourth throws. This matches the request: a fourth order within ten minutes is refused before anything is charged, with a new error. The diff also adds three tests to `src/checkout.test.ts`. The first checks that a fourth attempt is rejected with `OrderRateError` and that the audit log and stock are unchanged. The second checks that the limit lifts once the oldest attempt leaves the window; the timing works out, since the fifth order comes 600,001 ms after the first, which is outside the window. The third checks that the limit is counted per account. The `REQUIREMENTS.md` change described in the answer does not appear in the diff, but the question only asks about the mitigation and its tests, and both are present.",
+  "cost": 0.0477968
+ },
+ "metrics": {
+  "calls": 18,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3767,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 54.0
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 30145,
+  "cache_read_input_tokens": 380224,
+  "output_tokens": 11497,
+  "cost": 0.01558214
+ },
+ "cost": 0.015582,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now refuses a fourth order from the same account within ten minutes. The refusal happens before anything is reserved or charged, with a new `OrderRateError`. The full suite passes (39 tests, up from 36).\n\n**What changed**\n- **`src/checkout.ts`:** `placeOrder` counts each order attempt that passes the session and empty-cart checks. If the account already has three attempts in the last ten minutes, it throws `OrderRateError` before pricing, reserving stock, or calling the gateway. The limit is exported as `MAX_ORDERS_PER_WINDOW` (3) and `ORDER_WINDOW_MS` (10 minutes).\n- **`src/checkout.test.ts`:** three new tests.\n  - A fourth attempt is refused, and the audit log and stock are unchanged.\n  - The limit lifts once the oldest attempt is more than ten minutes old.\n  - The count is per account.\n- **`REQUIREMENTS.md`:** new `R-ORDER-RATE` entry that controls `THREAT-CARD-TESTING`, with its code and tests listed. The threat previously had no control, so this closes that gap.\n\n**Choices I made**\n- Declined orders count toward the limit. Card testing is mostly declined charges, so counting only successes would miss the threat.\n- A refused attempt is not recorded, so the account is not locked out longer than the window requires.\n- The count lives in memory on the `Checkout` instance, the same as the other stores in this codebase. It resets on restart and is not shared across processes. If the shop runs more than one instance, this needs a shared store.\n\n**Verification:** I disabled the check briefly and two of the new tests failed, which confirms they exercise the limit. I then restored it, and all 39 pass.\n\nI have not committed anything.",
+ "date": "2026-10-25"
+}

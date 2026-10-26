@@ -1,0 +1,83 @@
+{
+ "run": "claude.none.go-shop.T5.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T5",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "jira",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "itemUnchanged": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "itemUnchanged",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the repository records for the Jira issue, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff does everything R-ORDER-NOTE asks for. `PlaceOrder` now takes a note. A note longer than `MaxNoteLength` (200, counted in characters) is rejected with `ErrNoteTooLong` before any pricing, stock reservation or charge, so a rejected order is never placed. An accepted note is stored in the new `Order.Note` field. Two new tests check this. `TestPlaceOrderNote` places an order with a 200-character note and checks that the order keeps it. `TestPlaceOrderRejectsLongNote` uses a 201-character note and checks that it is rejected, that stock is back at 5 and that the audit log is empty, so no order was placed. The existing tests were only updated for the new argument.",
+  "cost": 0.0425008
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3608,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 34.5
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 23565,
+  "cache_read_input_tokens": 241520,
+  "output_tokens": 5769,
+  "cost": 0.010014499999999999
+ },
+ "cost": 0.010014,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "cart/checkout.go",
+  "cart/checkout_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "SHOP-62 is implemented. I couldn't open the Jira issue itself, so I worked from its requirement entry, R-ORDER-NOTE in `REQUIREMENTS.md`: a checkout note of at most 200 characters, rejected with nothing placed if longer, and kept on the order. All packages pass `go test`, plus `go vet` and `gofmt`.\n\n**Changes**\n- **`cart/checkout.go`**: `PlaceOrder` takes a new `note string` argument. The note is checked right after the empty-cart check, before pricing, stock reservation, or the charge, so a rejected note leaves no reservation and no audit entry. The limit is counted in characters (runes), so accented text is not penalised for its byte length. The check returns a new exported `ErrNoteTooLong`, and `Order` gained a `Note` field.\n- **`cart/checkout_test.go`**: existing calls pass an empty note. Two new tests cover a 200-character note being kept, and a 201-character note being rejected with stock and audit untouched.\n- **`REQUIREMENTS.md`**: R-ORDER-NOTE now lists its code and tests, following the format of the other entries.\n\n**Decisions to check**\n- Changing the `PlaceOrder` signature is a breaking change for any caller outside this repo. I found no callers in the repo besides the tests.\n- The `ErrNoteTooLong` message hard-codes \"200\" rather than formatting `MaxNoteLength`, so the two could drift if the limit changes.\n\nI haven't committed anything; the changes are in the working tree.",
+ "date": "2026-10-26"
+}

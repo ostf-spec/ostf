@@ -1,0 +1,91 @@
+{
+ "run": "codex.intent.go-shop.T9.1",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `ErrOrderRateLimit` error and a per-account history of order times in `Checkout`. `PlaceOrder` checks that history after validating the session and before pricing, reserving stock or charging. If three orders already fall inside the last ten minutes, it refuses the fourth with the new error. A successful order adds its time to the history, and a mutex guards the map. `TestPlaceOrderRateLimit` is a new test. It places three orders and checks that the fourth fails with `ErrOrderRateLimit`. It then checks that charges and audit entries stay at 3 and stock is unchanged, so nothing was charged. It also checks that a second account is not affected and that the limit lifts once ten minutes have passed. The test helper now counts charges and exposes the session store. So the diff does what was asked and tests it. Two limits: the history lives in each `Checkout` instance, and only successful orders are counted, so declined charges don't use up the limit. The request asked to limit orders, so neither breaks it.",
+  "cost": 0.045292799999999994
+ },
+ "metrics": {
+  "calls": 14,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5186,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 83.2
+ },
+ "usage": {
+  "input_tokens": 297189,
+  "cached_input_tokens": 258048,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 4939,
+  "reasoning_output_tokens": 1980
+ },
+ "cost": 0.199082,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now returns the new `ErrOrderRateLimit` when an account attempts a fourth order within ten minutes. The check runs before pricing, stock reservation, or charging. A draft control, **C-CARD-TESTING-LIMIT**, links the change to **THREAT-CARD-TESTING** for pull request review.\n\nThe change keeps **R-CHECKOUT-ORDER** and **R-CHECKOUT-SESSION** true. `TestPlaceOrderRateLimit` verifies the rejection, unchanged charge and stock counts, account isolation, and expiry of the window. `TestPlaceOrder` and `TestPlaceOrderNeedsSession` also pass; `TestPlaceOrderReleasesStockOnDecline` passes for the test helper change. `go test ./...` passes.\n\nThe order history is held per `Checkout` instance, so separate running instances would need shared storage to enforce one account-wide limit.",
+ "date": "2026-10-25"
+}

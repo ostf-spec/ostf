@@ -1,0 +1,99 @@
+{
+ "run": "claude.full.go-shop.T10.1",
+ "agent": "claude",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.RatePPM is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: In the diff, `Price` sets base = subtotal − discount and computes `Fee = ServiceFee(base)` at 2.5%. Tax is still worked out on base alone, so the fee is not taxed, and `Total = base + Fee + Tax` puts the fee in the total. That is what the user asked for. New tests cover the fee's rounding (`TestServiceFee`) and confirm a tax-exempt order pays the fee but no tax (`TestPriceChargesFeeWithoutTax`). The updated expectations in `TestPrice` (fee 225, total 10,573) and `TestPlaceOrder` (2,350) are arithmetically consistent. q2: The rate is the integer constant `ServiceFeePPM = 25_000` in parts per million. It is applied to integer cents with int64 multiplication and a single `roundHalfUp(..., 1_000_000)` at the end. No floating-point number is involved and discount handling is unchanged, so the code follows D-RATES-PPM.",
+  "cost": 0.0484726
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 12,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "contextCalls": 2,
+  "checkCalls": 4,
+  "traceOutputTokens": 10328,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 80.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 49258,
+  "cache_read_input_tokens": 444179,
+  "output_tokens": 16056,
+  "cost": 0.02232379
+ },
+ "cost": 0.022324,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout_test.go",
+  "pricing/fee.go",
+  "pricing/fee_test.go",
+  "pricing/quote.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "The 2.5% service fee is in place: it is computed on the subtotal after discounts, excluded from the tax base, and included in the total that gets charged. Tests pass, and `ostf check --base main` exits 0 with no errors or warnings. I did not commit.\n\n**Behavior**\n- `pricing/fee.go` adds `ServiceFeePPM = 25_000` and `ServiceFee(amount)`. It rounds half up to the cent once, and returns 0 for non-positive amounts.\n- `pricing/quote.go`: `Quote` gets a `Fee` field. `Price` computes fee and tax on the same base (subtotal minus discount), and `Total = base + Fee + Tax`.\n- Choice I made: tax-exempt customers still pay the fee, since the exemption applies to sales tax only.\n\n**Tests**\n- `pricing/fee_test.go#TestServiceFee`: rounding cases, including exact half-cent and zero/negative inputs.\n- `pricing/fee_test.go#TestPriceChargesFeeWithoutTax`: a tax-exempt order pays the fee and no tax.\n- `pricing/tax_test.go#TestPrice`: expected quote updated to Fee 2.25, Total 105.73 (was 103.48).\n- `cart/checkout_test.go#TestPlaceOrder`: expected total and charge updated to 23.50 (was 23.00).\n\n**Trace**\n- New item `R-SERVICE-FEE` in `trace/requirements.yaml`, with `status: draft`, `refines: [N-FAIR-PRICE]`, code `pricing/fee.go#ServiceFee` and `pricing/quote.go#Price`, and the three tests above.\n- I left out `@req` comments on the new functions; they duplicated the trace links and produced LINK_DUPLICATE warnings.\n- `ostf check` reports two info lines that predate my change: R-ORDER-NOTE and R-VOLUME-DISCOUNT have no links.\n\n**Items my change touches**\n- **R-TAX-RATE** (`quote.go#Price`, tests `TestPrice`, `TestTax`): still true, since tax is still charged on the subtotal after discounts. Only the `TestPrice` expectation changed.\n- **R-CHECKOUT-ORDER** (`checkout.go#PlaceOrder`, `TestPlaceOrder`): still true; the order total now includes the fee.\n- **R-TAX-EXEMPT**, **R-MONEY-CENTS**, **D-RATES-PPM** (the fee uses integer PPM as the design requires), **N-FAIR-PRICE**: still true, and I did not change them.\n- **R-CHARGE-AMOUNT** is risk-relevant. I did not change its code or its text. The fee does change its behavior: the fee plus tax on an order lifts the total by about 17.5% of the after-discount subtotal. Orders above roughly $8,500 after discounts now exceed the $10,000.00 charge cap and are rejected, where before the cap was reached near $8,700. **Please decide whether to raise the cap or accept those rejections.** Either change needs your approval, because that item is risk-relevant and needs review.\n\nI did not regenerate `trace.derived`. This change is not yet reviewed by another principal, so please have R-CHARGE-AMOUNT's owner look at the cap question in the pull request.",
+ "date": "2026-10-26"
+}

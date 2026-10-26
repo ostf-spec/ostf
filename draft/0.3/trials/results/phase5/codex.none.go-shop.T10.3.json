@@ -1,0 +1,84 @@
+{
+ "run": "codex.none.go-shop.T10.3",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T10",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-CLOCK (Injected clock), which states: \"Code whose behavior depends on the time reads it from a clock function passed to its constructor, so that tests control expiry without sleeping.\"?"
+  },
+  "reason": "q1: The diff adds `Stock.Remaining(id)` to inventory/inventory.go. It returns the time left before a reservation expires, and returns ErrNoReservation for unknown or expired IDs. The new TestRemaining test checks a fresh hold, the remaining time after 5 minutes, exact expiry and an unknown ID. That covers what the user asked for. One caveat: the check that 10 minutes remain after 5 assumes HoldDuration is 15 minutes, which the diff doesn't show. q2: The new method reads the time through `s.now()`, the clock function the constructor already sets up. It does not call time.Now() directly. The test moves the fake clock forward (`c.t = c.t.Add(...)`) instead of sleeping, which is what D-CLOCK requires.",
+  "cost": 0.026164599999999996
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3384,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 93.5
+ },
+ "usage": {
+  "input_tokens": 140361,
+  "cached_input_tokens": 121344,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1984,
+  "reasoning_output_tokens": 517
+ },
+ "cost": 0.087313,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "inventory/inventory.go",
+  "inventory/inventory_test.go"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 2,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Added `Stock.Remaining(id)` to return the time left on an active reservation. Unknown or expired reservations return `ErrNoReservation`. The test covers a new hold, elapsed time, exact expiry, and an unknown ID.\n\n`go test ./inventory` passes.",
+ "providerAttempts": [],
+ "date": "2026-10-26"
+}

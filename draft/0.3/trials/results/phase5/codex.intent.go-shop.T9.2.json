@@ -1,0 +1,91 @@
+{
+ "run": "codex.intent.go-shop.T9.2",
+ "agent": "codex",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new error, `ErrOrderRateLimit`, and keeps a per-account list of attempt times inside `Checkout`. Inside a ten-minute window, `PlaceOrder` returns that error once an account already has three attempts, so the fourth is refused. The check runs before pricing, stock reservation and `Payments.Charge`, so nothing is charged. A new test, `TestPlaceOrderRateLimit`, confirms the fourth attempt gets the new error and that the payment gateway is called only three times. It also checks that declined charges count toward the limit, that the limit is per account, and that old attempts stop counting after ten minutes. One quirk: declined attempts count as well as successful orders. That is stricter than \"orders\", but it suits a card-testing defence. The lock is also held during the payment call, which makes checkouts run one at a time but doesn't break the result. So the requested mitigation and a test for it are both there.",
+  "cost": 0.045460799999999996
+ },
+ "metrics": {
+  "calls": 26,
+  "callsBeforeFirstEdit": 16,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5988,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 171.2
+ },
+ "usage": {
+  "input_tokens": 522099,
+  "cached_input_tokens": 488960,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 6402,
+  "reasoning_output_tokens": 2458
+ },
+ "cost": 0.25267,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/threats.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 7,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now returns `ErrOrderRateLimit` on a fourth payment attempt from the same account within ten minutes, before calling payment. Declined charges count toward the limit. The new draft control, `C-CARD-TESTING-LIMIT`, is linked to `THREAT-CARD-TESTING` in [trace/threats.yaml](/tmp/ostf-trials/phase5/codex.intent.go-shop.T9.2/repo/trace/threats.yaml).\n\n`R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` remain true. The new control is verified by `TestPlaceOrderRateLimit`; `TestPlaceOrder` and `TestPlaceOrderNeedsSession` also pass. `go test ./...` passes.\n\nThe attempt history lives in each `Checkout` instance, so it resets when that instance restarts. The pull request should review `C-CARD-TESTING-LIMIT` and the threat it controls, `THREAT-CARD-TESTING`.",
+ "date": "2026-10-26"
+}

@@ -1,0 +1,92 @@
+{
+ "run": "codex.full.go-shop.T9.1",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new error, `ErrOrderRateLimit`, and keeps a per-account record of attempt times on `Checkout`, protected by a mutex. When an account already has three attempts in the last ten minutes, `PlaceOrder` returns the new error. This check runs right after the session and empty-cart checks, before pricing, reserving stock or calling `Payments.Charge`, so nothing is charged on the fourth attempt. An attempt is recorded just before the charge, so declined charges also count toward the limit. Two new tests check this. `TestPlaceOrderRateLimit` confirms the fourth order fails with `ErrOrderRateLimit`, makes no extra gateway call or audit entry, leaves stock unchanged, still lets a different account order, and allows an order once the window has passed. `TestPlaceOrderRateLimitCountsDeclines` confirms declined attempts count toward the limit. One minor point: the mutex stays locked during the charge call, so checkouts are handled one at a time. That slows things down but doesn't make the mitigation wrong.",
+  "cost": 0.0432568
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 9,
+  "edited": true,
+  "ostfCalls": 4,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 6,
+  "contextCalls": 1,
+  "checkCalls": 4,
+  "traceOutputTokens": 8826,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 106.2
+ },
+ "usage": {
+  "input_tokens": 506683,
+  "cached_input_tokens": 473216,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 6108,
+  "reasoning_output_tokens": 2169
+ },
+ "cost": 0.244347,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "cart/checkout.go",
+  "cart/checkout_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "Checkout now returns the new `ErrOrderRateLimit` on a fourth payment attempt from the same account within ten minutes, before reserving stock or calling the gateway. Declined charges count, so they cannot be used to bypass the limit. The draft control is linked to `THREAT-CARD-TESTING` in [trace/requirements.yaml](/private/tmp/ostf-trials/phase5/codex.full.go-shop.T9.1/repo/trace/requirements.yaml).\n\n`go test ./...` and `ostf check --base main` pass. OSTF lists `R-CHECKOUT-RATE-LIMIT` as the risk-relevant item touched; it keeps `R-CHECKOUT-ORDER`, `R-CHECKOUT-SESSION`, and `N-ACCOUNT-SAFE` true while addressing `THREAT-CARD-TESTING`. Its listed tests are `TestPlaceOrder`, `TestPlaceOrderNeedsSession`, `TestPlaceOrderRateLimit`, and `TestPlaceOrderRateLimitCountsDeclines`.\n\nThe limit is held in memory on each `Checkout` instance, so deployments with multiple instances need shared state for a shop-wide limit.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,79 @@
+{
+ "run": "claude.rules.go-shop.T11.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T11",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "review",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noCodeChanged": true,
+  "saysNoTest": true,
+  "namesReview": true
+ },
+ "outcomeCriteria": [
+  "namesReview",
+  "noCodeChanged",
+  "saysNoTest"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "saysNoTest": true,
+   "namesReview": true
+  },
+  "questions": {
+   "saysNoTest": "Does the final answer tell the user that no automated test covers deploy/network.tf or can run it?",
+   "namesReview": "Does the final answer name V-INFRA-REVIEW (Infrastructure review), by its ID or unambiguously by its content, as how C-TLS-ONLY is verified?"
+  },
+  "reason": "For q1, the answer says \"no test covers it\" and \"Tests: None.\" It also quotes README saying no test runs the deploy directory, and notes that `go test ./...` never reads the file. That clearly tells the user that no automated test covers or runs deploy/network.tf. For q2, the answer names V-INFRA-REVIEW by its ID and describes it as a manual review before each release. It calls this the only verification the requirements list, which makes it how C-TLS-ONLY is verified.",
+  "cost": 0.0168286
+ },
+ "metrics": {
+  "calls": 4,
+  "callsBeforeFirstEdit": 2,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 4196,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 16.8
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 17019,
+  "cache_read_input_tokens": 83349,
+  "output_tokens": 2849,
+  "cost": 0.00566259
+ },
+ "cost": 0.005663,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3ccd66da43603e392abfd8fc7ffbf65a06e44293",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I linked `deploy/network.tf` to C-TLS-ONLY, but no test covers it.\n\n**Link:** I added `- Code: \\`deploy/network.tf\\`` under C-TLS-ONLY in `REQUIREMENTS.md`. That is the only change; no code changed.\n\n**Tests:** None. C-TLS-ONLY has no `Tests:` line, and `README.md` says the `deploy` directory is Terraform \"which no test runs\". `go test ./...` never reads the file. The only verification the requirements list is V-INFRA-REVIEW, a manual review before each release that applies the change to staging and records the outcome in the release checklist. Terraform and tflint are not installed here, so I could not validate the file.\n\n**What the file does:** the HTTPS listener on 443 uses `ELBSecurityPolicy-TLS13-1-2-2021-06`, which allows TLS 1.2 and 1.3 only. The HTTP listener on 80 redirects to HTTPS with a 301. That matches the entry's text. I checked this by reading the file, not by running it.\n\n**AGENTS.md items for review:**\n- **Entries listed with the changed code:** none. I changed only the requirements file.\n- **Entry touched that controls a threat:** C-TLS-ONLY controls THREAT-EAVESDROP. I edited the entry itself, which AGENTS.md says to flag for review. The entry stays true after the edit.\n- **Tests to run:** none are listed for C-TLS-ONLY, and I changed no code, so I ran no tests.\n\nI did not commit the change. Say if you want a commit, and whether you want a `Tests:` line added to C-TLS-ONLY stating that none exist.",
+ "date": "2026-10-26"
+}

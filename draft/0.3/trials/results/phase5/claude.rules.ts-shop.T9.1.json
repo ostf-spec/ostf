@@ -1,0 +1,81 @@
+{
+ "run": "claude.rules.ts-shop.T9.1",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `TooManyOrdersError`. In `Checkout.placeOrder` it adds a per-account, in-memory list of attempt times. Once an account has 3 attempts in the last 10 minutes, the next one throws that error. The check runs after the session and empty-cart checks and before `price`, `stock.reserve` and the charge, so a fourth order in ten minutes is refused before anything is charged. That matches the request. It also adds two tests tagged `@req R-ORDER-RATE`. The first places three orders and checks that the fourth is rejected with `TooManyOrdersError`. It also checks that there were only 3 gateway charges, 3 audit entries and that stock still shows 2 available, so nothing was charged or reserved for the refused attempt. The second test uses an injected clock. It checks that an attempt 1 ms before the ten minutes are up is refused and one at exactly ten minutes is allowed. The boundary logic (`time > at - window`) matches that. One thing I couldn't confirm from the diff alone: the second test assumes `newShop` passes its clock into the checkout as well as the sessions. The existing code appears to do this, but the diff doesn't show it. So the mitigation is in place and a test checks it.",
+  "cost": 0.048984799999999995
+ },
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3736,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 57.2
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 16,
+  "cache_creation_input_tokens": 29616,
+  "cache_read_input_tokens": 237303,
+  "output_tokens": 11600,
+  "cost": 0.014097830000000002
+ },
+ "cost": 0.014098,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I added the card-testing limit to checkout. An account's fourth order attempt within ten minutes is now refused with `TooManyOrdersError` before pricing, stock reservation, or any charge. The full suite passes (38 tests, up from 36).\n\n**How it works**\n- `Checkout.placeOrder` in `src/checkout.ts` counts each account's attempts in memory. It runs after the session and empty-cart checks and before anything is priced, reserved or charged.\n- I read \"order\" as an attempt, so declined charges and attempts that fail on stock both count. A refused attempt is not recorded, so retrying during the lockout doesn't extend it.\n- The window is exactly ten minutes. An attempt exactly ten minutes after the first one is allowed.\n\n**Requirements entries**\n- **New: `R-ORDER-RATE`** (status: draft, refines `N-ACCOUNT-SAFE`, controls `THREAT-CARD-TESTING`). It lists `Checkout.placeOrder` and `TooManyOrdersError` in `src/checkout.ts`, and the two new tests in `src/checkout.test.ts`. **This entry controls a threat, so please review it in the PR.**\n- **`R-CHECKOUT-ORDER`** (refines `N-BUY`): still true. Pricing, reservation, charge and confirmation still happen in that order, and an empty cart is still rejected. Test: `Checkout > places an order`.\n- **`R-CHECKOUT-SESSION`** (refines `N-ACCOUNT-SAFE`): still true. The session is still validated first. Test: `Checkout > needs a valid session`.\n- No entry I touched refines a risk or threat, so I didn't need to stop and ask first. `THREAT-CARD-TESTING` had no control entry before this change.\n\n**Tests run**\n- `node --test`: 38 pass, 0 fail. This includes the two new tests, `Checkout > refuses a fourth order within ten minutes before reserving or charging` and `Checkout > allows an order again once ten minutes have passed`, plus the existing checkout tests above.\n- I also updated the existing `newShop` test helper to take a clock and count gateway charges, so the new tests can check that no charge happens.\n\n**Limits to know about**\n- The counts live in process memory. They reset on restart and aren't shared between server instances, so a multi-instance deployment needs a shared store for this to hold.\n- Nothing is committed yet. I can commit with the attribution lines if you want.",
+ "date": "2026-10-25"
+}

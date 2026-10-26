@@ -1,0 +1,80 @@
+{
+ "run": "codex.none.ts-shop.T9.2",
+ "agent": "codex",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": false
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": false
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds OrderRateLimitError and a limit of three orders per account in a rolling ten-minute window, checked before stock is reserved or the card is charged, plus tests for the time boundary, separate accounts and concurrency. But the code frees an attempt's slot whenever the charge fails, declines included, so declined attempts never count. Card testing is mostly declined attempts, so one account can still try unlimited cards. One new test even asserts that declines don't count. The rate limit exists and is tested, but it does not mitigate THREAT-CARD-TESTING, the threat the user asked to mitigate.",
+  "cost": 0.0538528
+ },
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 6,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6642,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 93.9
+ },
+ "usage": {
+  "input_tokens": 264169,
+  "cached_input_tokens": 237568,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3724,
+  "reasoning_output_tokens": 950
+ },
+ "cost": 0.147456,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "REQUIREMENTS.md",
+  "src/checkout.test.ts",
+  "src/checkout.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "514589736d2cafbe6e3f97e4b7bb3e7cddc14f47",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "Checkout now throws `OrderRateLimitError` for a fourth order from the same account within ten minutes, before stock is reserved or payment is charged. In-flight orders count toward the limit; failed charges release their slot. I also linked the control to `THREAT-CARD-TESTING` in [REQUIREMENTS.md](/private/tmp/ostf-trials/phase5/codex.none.ts-shop.T9.2/repo/REQUIREMENTS.md).\n\nThe new tests cover the time boundary, separate accounts, declined charges, and concurrent requests. **All 39 tests pass.**",
+ "date": "2026-10-26"
+}

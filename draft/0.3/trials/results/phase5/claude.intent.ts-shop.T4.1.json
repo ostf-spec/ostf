@@ -1,0 +1,81 @@
+{
+ "run": "claude.intent.ts-shop.T4.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true,
+  "linkMoved": true,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 13,
+  "callsBeforeFirstEdit": 4,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5985,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 46.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 18,
+  "cache_creation_input_tokens": 27843,
+  "cache_read_input_tokens": 251158,
+  "output_tokens": 9378,
+  "cost": 0.012770980000000001
+ },
+ "cost": 0.012771,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "src/salestax.test.ts",
+  "src/salestax.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "I moved `tax` into `src/salestax.ts` and renamed it `salesTax`. The full suite passes: 36 tests, same as before the change. Nothing is committed.\n\n**What changed**\n- `src/salestax.ts` (new): `salesTax` and its private helper `roundHalfUp`, which only `tax` used. It imports `Region` as a type-only import from `pricing.ts`, so there is no runtime cycle.\n- `src/pricing.ts`: removed the old function and helper. `price()` now calls `salesTax`. Its local variable was also called `salesTax`, so I renamed it to `taxAmount` to avoid a name clash.\n- `src/salestax.test.ts` (new): the two `tax` tests, now under `salesTax`. The `@req R-TAX-EXEMPT` comment moved with its test.\n- `src/pricing.test.ts`: removed the moved tests and the `tax` import. The `price` test stays here.\n- `trace/requirements.yaml`: I updated the `code` and `tests` link fields for R-TAX-RATE and R-TAX-EXEMPT to the new names. I did not change any item text.\n- `README.md`: added a `src/salestax.ts` row to the module table and reworded the `pricing.ts` row.\n\n**AGENTS.md check**\n- Items linked to `tax` and `price`: R-TAX-RATE (refines N-FAIR-PRICE) and R-TAX-EXEMPT (refines N-FAIR-PRICE). Neither controls a risk or a threat, and neither refines one. I changed them without asking first.\n- Both items remain true. The behaviour is unchanged, and the code links now point at the new locations.\n- Tests run for those items: `src/pricing.test.ts` (the `price` test) and `src/salestax.test.ts` (`salesTax` rounding and exemption).\n- Risk or threat items touched: none.\n- D-RATES-PPM links `src/pricing.ts#Region`, which I did not change.\n\n**Decision for you:** I kept `Region` in `pricing.ts` rather than moving it. D-RATES-PPM links to it there, and moving it would mean changing that design item's link. If you'd rather have `Region` live with the tax code, that's a small follow-up.",
+ "date": "2026-10-25"
+}

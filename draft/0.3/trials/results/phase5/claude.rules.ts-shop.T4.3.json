@@ -1,0 +1,72 @@
+{
+ "run": "claude.rules.ts-shop.T4.3",
+ "agent": "claude",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "renamed": true,
+  "oldNameGone": true,
+  "testsPass": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 12,
+  "callsBeforeFirstEdit": 3,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3636,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 45.4
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 14,
+  "cache_creation_input_tokens": 25716,
+  "cache_read_input_tokens": 188087,
+  "output_tokens": 9450,
+  "cost": 0.01175047
+ },
+ "cost": 0.01175,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "src/checkout.ts",
+  "src/discount.test.ts",
+  "src/discount.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 23,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The rename and move are done. The full suite still passes, 36 of 36, the same count as before. The change is uncommitted.\n\n**What changed**\n- `src/discount.ts` (new) holds `discountAmount` (renamed from `applyDiscount`), plus `Discount`, `MAX_DISCOUNT_PERCENT` and `DiscountExpiredError`, which the function depends on.\n- `src/pricing.ts` imports `discountAmount` and no longer defines the moved items. `price()` calls the new name.\n- `src/checkout.ts` imports the `Discount` type from `./discount.ts`. Only the import line changed.\n- `src/discount.test.ts` (new) holds the four `discountAmount` tests. `src/pricing.test.ts` keeps the tax and price tests.\n- `README.md` gets a row for `src/discount.ts`.\n\n**REQUIREMENTS.md, per AGENTS.md**\n- **Entries that list `applyDiscount` and are now false:** R-DISCOUNT-PERCENT, R-DISCOUNT-CAP and R-DISCOUNT-EXPIRY. Their `Code` and `Tests` lines name `applyDiscount` in `src/pricing.ts`, and those no longer exist. The tests are now `discountAmount > …` in `src/discount.test.ts`. I did not edit these entries. Someone needs to decide whether to update the references in the same PR.\n- **Other entries touched:**\n  - R-TAX-RATE (lists `price`): the call inside `price` changed, and the code and tests it names still exist, so it stays true.\n  - R-CHECKOUT-ORDER and R-CHECKOUT-SESSION (list `Checkout.placeOrder` in `checkout.ts`): only the import line changed, so both stay true.\n- **Risk or threat controls:** none of the touched entries controls a risk or threat, or refines one that does. All of them refine N-FAIR-PRICE, a need. So I did not need your approval before changing this code.\n- **No new entry:** this is a rename and move, not new behavior.\n- **Tests run:** `node --test`, all 36 passing.",
+ "date": "2026-10-26"
+}

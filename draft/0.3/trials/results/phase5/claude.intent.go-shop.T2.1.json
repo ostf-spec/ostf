@@ -1,0 +1,98 @@
+{
+ "run": "claude.intent.go-shop.T2.1",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T2",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "implement",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "newDraftItem": true,
+  "implementedAndVerified": true,
+  "listsAddedItem": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "namesAdded": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "namesAdded": "Does the final answer name the item it added (R-SHIPPING-FEE) by its ID?"
+  },
+  "reason": "q1: The diff adds `ShippingFee` to `pricing/quote.go`. It charges nothing when the subtotal after discounts is at least 10,000 (100.00) and charges 599 (5.99) otherwise. `Price` adds that fee to `Quote.Total`, and `PlaceOrder` charges `Quote.Total`. Tests were added and changed. The new `TestPriceShipping` covers just under 100, exactly 100, discounts on both sides of the threshold, a capped discount, and a tax-exempt order. The new `TestPlaceOrderShipping` checks the end-to-end charge. The expected values in `TestPrice` and `TestPlaceOrder` were updated, and the numbers check out arithmetically. One thing is off: the answer says it changed `trace/requirements.yaml`, but that change is not in the diff. That gap doesn't affect q1, which is only about the shipping feature and its tests. q2: The final answer names R-SHIPPING-FEE by its ID several times.",
+  "cost": 0.0597086
+ },
+ "metrics": {
+  "calls": 20,
+  "callsBeforeFirstEdit": 11,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6909,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 76.3
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 24,
+  "cache_creation_input_tokens": 40484,
+  "cache_read_input_tokens": 433493,
+  "output_tokens": 16640,
+  "cost": 0.02075413
+ },
+ "cost": 0.020754,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "README.md",
+  "cart/checkout_test.go",
+  "pricing/quote.go",
+  "pricing/quote_test.go",
+  "pricing/tax_test.go",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 9,
+ "tree": "88bfd2dde4dd447347ae963ca3b6583d52217d47",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Shipping is now added to checkout. An order whose subtotal after discounts is at least 100.00 ships free, and any other order pays a flat 5.99. The shipping fee is part of `Quote.Total`, so the amount `PlaceOrder` charges includes it. `go vet` is clean and `go test ./...` passes in all five packages. I did not commit.\n\n**Changes**\n- `pricing/quote.go`: new `FlatShipping` (599) and `FreeShippingFrom` (10,000) constants, a `Shipping` field on `Quote`, and `ShippingFee()`. `Price` now computes shipping on the subtotal after discounts.\n- `pricing/quote_test.go` (new): `TestPriceShipping` covers just under 100, exactly 100, a discount that crosses the threshold, a cap-limited discount, and tax-exempt orders.\n- `cart/checkout_test.go`: `TestPlaceOrder` now expects 28.99 (it was 23.00), and the new `TestPlaceOrderShipping` checks that a 100.00 order ships free and is charged 114.98.\n- `pricing/tax_test.go`: `TestPrice` now expects shipping of 5.99 and a total of 10.947 (it was 10.348).\n- `trace/requirements.yaml`: new item `R-SHIPPING-FEE`, `status: draft`, refines `N-FAIR-PRICE`, linked to `pricing/quote.go#Price`, `pricing/quote.go#ShippingFee`, `pricing/quote_test.go#TestPriceShipping` and `cart/checkout_test.go#TestPlaceOrderShipping`.\n- `README.md`: the pricing row mentions shipping.\n\n**Choices I made that you should check**\n- Shipping is not taxed. Sales tax applies to the subtotal after discounts (R-TAX-RATE), and I kept that true rather than rewrite it.\n- The 100.00 threshold is measured after the discount and before tax, as the request says.\n- The 5.99 and 100.00 values are constants, not per-region config.\n\n**Trace items linked to the code I changed**\n- `R-TAX-RATE` (`pricing/tax.go#Tax`, `pricing/quote.go#Price`; tests `TestTax`, `TestPrice`): still true. Tax is still charged on the subtotal after discounts, and shipping is excluded. I updated `TestPrice`'s expected total to include shipping. It refines `N-FAIR-PRICE` and controls no risk.\n- `R-CHECKOUT-ORDER` (`cart/checkout.go#Checkout.PlaceOrder`; test `TestPlaceOrder`): still true. `PlaceOrder` itself is unchanged, but the total it charges now includes shipping. I updated `TestPlaceOrder`'s expected amount. It refines `N-BUY` and controls no risk.\n- `R-CHECKOUT-SESSION`: linked to `PlaceOrder`, which I did not change, so it still holds. Its tests passed unchanged.\n\n**Risk and threat items**\n- None of the code I changed is linked to an item that controls a risk or threat, and nothing I changed refines one. So I did not need to stop and ask.\n- `R-CHARGE-AMOUNT` controls `RISK-WRONG-CHARGE`, and I did not touch `ValidateAmount` or `Processor.Charge`. It still holds: shipping only applies below 100.00, so it adds at most 5.99 to an order's total, far below the 10,000.00 limit.\n- `R-SHIPPING-FEE` is a new draft item. It controls no risk and refines `N-FAIR-PRICE`, which is not a risk item.",
+ "date": "2026-10-25"
+}

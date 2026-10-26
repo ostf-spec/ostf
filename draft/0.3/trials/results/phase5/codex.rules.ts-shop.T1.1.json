@@ -1,0 +1,84 @@
+{
+ "run": "codex.rules.ts-shop.T1.1",
+ "agent": "codex",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T1",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "explain",
+ "model": "gpt-6-sol",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-REFUND-LIMIT": true,
+   "item:R-AUDIT-MONEY": true,
+   "item:R-REFUND-ORIGINAL": true,
+   "test:totals refunds per account and UTC day": true,
+   "test:checkRefundLimit": true,
+   "test:refunds to the original transaction": true
+  },
+  "questions": {
+   "item:R-REFUND-LIMIT": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-LIMIT (Refund limit), which states: \"A refund must not exceed what is left of the original charge, and refunds above 500.00 in one UTC day for an account need a second approval.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-AUDIT-MONEY": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-REFUND-ORIGINAL": "Does the final answer explain that src/refunds.ts#Refunder.refund exists because of R-REFUND-ORIGINAL (Refund to the original payment), which states: \"A refund goes back to the payment method of the charge it refunds, never to another one.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:totals refunds per account and UTC day": "Does the final answer name the test `totals refunds per account and UTC day` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:checkRefundLimit": "Does the final answer name the test `checkRefundLimit` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:refunds to the original transaction": "Does the final answer name the test `refunds to the original transaction` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer says what each of the three requirements asks of the function. For R-REFUND-ORIGINAL, it says the refund goes back through the original charge's gateway transaction. For R-REFUND-LIMIT, it says the function enforces the remaining-charge limit and the per-account daily limit, and the approval requirement comes up in the test description. For R-AUDIT-MONEY, it says the function appends an audit entry after a successful refund. It also gives all three IDs. It names all the tests asked about: 'refunds to the original transaction', 'totals refunds per account and UTC day', and the three checkRefundLimit tests, which it describes as testing the validation function that refund calls.",
+  "cost": 0.026075799999999996
+ },
+ "metrics": {
+  "calls": 10,
+  "callsBeforeFirstEdit": 10,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3194,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 29.6
+ },
+ "usage": {
+  "input_tokens": 158334,
+  "cached_input_tokens": 139264,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 1390,
+  "reasoning_output_tokens": 156
+ },
+ "cost": 0.081453,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "`Refunder.refund` exists to send money back through the **original charge’s gateway transaction**, enforce the remaining-charge and per-account daily refund limits, and append an audit entry after a successful refund. These purposes are recorded as **R-REFUND-ORIGINAL**, **R-REFUND-LIMIT**, **R-AUDIT-MONEY**, and **D-REFUND-LEDGER** in [REQUIREMENTS.md](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T1.1/repo/REQUIREMENTS.md:224). The limit controls **RISK-REFUND-ABUSE**.\n\nThe direct tests are in [refunds.test.ts](/tmp/ostf-trials/phase5/codex.rules.ts-shop.T1.1/repo/src/refunds.test.ts:48):\n\n- `Refunder > refunds to the original transaction` checks the gateway transaction, refund audit entry, and rejection of a refund larger than the remaining charge.\n- `Refunder > totals refunds per account and UTC day` checks the daily total, approval requirement, and reset on the next UTC day.\n- The three `checkRefundLimit` tests cover the validation function that `Refunder.refund` calls.\n\nREQUIREMENTS.md also lists `Processor > appends an audit entry` for **R-AUDIT-MONEY**, but that test checks a *charge* audit entry; the refund audit assertion is in `Refunder > refunds to the original transaction`.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,997 @@
+{
+ "fixture": "go-shop",
+ "arm": "none",
+ "agents": [
+  "claude",
+  "codex"
+ ],
+ "months": 6,
+ "date": "2026-10-26",
+ "changes": [
+  {
+   "id": "M1.1",
+   "month": 1,
+   "kind": "rename",
+   "prompt": "Rename Cart.Remove in cart/cart.go to Cart.Delete, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005943,
+   "timing": {
+    "exit": 0,
+    "seconds": 23.2
+   },
+   "derivedHandEdits": [],
+   "summary": "`Cart.Remove` is now `Cart.Delete` in `cart/cart.go`, and the rename is complete. `go vet` and `gofmt` are clean, and `go test ./...` passes in all five packages.\n\nChanges:\n- **`cart/cart.go`**: renamed the method and its doc comment. The `@req R-CART-REMOVE` tag is unchanged.\n- **`cart/cart_test.go`**: renamed `TestRemove` to `TestDelete` and updated the two calls. There were no other callers in the repo.\n- **`REQUIREMENTS.md`**: updated the R-CART-REMOVE entry to point at `Cart.Delete` and `TestDelete`.\n\nI left the requirement ID `R-CART-REMOVE` and its title \"Remove from cart\" as they are. IDs are meant to be stable, and the title describes the customer-facing behavior. If you want the requirement itself renamed to match, that's a separate change to the ID.\n\nI haven't committed anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M1.2",
+   "month": 1,
+   "kind": "refactor",
+   "prompt": "Refactor Stock.Available in inventory/inventory.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.075548,
+   "timing": {
+    "exit": 0,
+    "seconds": 70.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Clarified the variable names and lock requirement in the calculation used by `Stock.Available`, without changing its logic.\n\n`go test ./inventory` passes.",
+   "changedFiles": [
+    "inventory/inventory.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M1.3",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a method Logout to Sessions in accounts/session.go that ends a session, so that validating its token afterwards fails with ErrNoSession. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005251,
+   "timing": {
+    "exit": 0,
+    "seconds": 14.6
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Sessions.Logout(token string) error` to `accounts/session.go`, with a test. The full test suite passes, and `gofmt` and `go vet` are clean.\n\n- **Behaviour:** `Logout` deletes the session for the token. Validating that token afterwards returns `ErrNoSession`.\n- **Unknown token:** `Logout` returns `ErrNoSession` if there is no such session, including on a second logout. I chose this to match `Validate`. If you would rather logout be idempotent and always return nil, that is a one-line change.\n- **Test:** `TestLogout` in `accounts/session_test.go` logs in, logs out, checks that `Validate` returns `ErrNoSession`, and checks that a second logout returns `ErrNoSession`.\n\n`REQUIREMENTS.md` has no entry for logout, so I did not add a `@req` tag or invent a requirement ID. If logout should be a tracked requirement, it needs an entry there first.",
+   "changedFiles": [
+    "accounts/session.go",
+    "accounts/session_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M1.4",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a method Total to AuditLog in payments/audit.go that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.105273,
+   "timing": {
+    "exit": 0,
+    "seconds": 80.3
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `AuditLog.Total(account, action)` to sum matching entry amounts in integer cents under the log’s mutex. Added tests for multiple accounts and actions, plus an empty log.\n\n`go test ./payments` passes.",
+   "changedFiles": [
+    "payments/audit.go",
+    "payments/audit_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M1.5",
+   "month": 1,
+   "kind": "behavior",
+   "prompt": "Make ApplyDiscount in pricing/discount.go reject a discount code with a negative percent, with a new error. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006078,
+   "timing": {
+    "exit": 0,
+    "seconds": 22.4
+   },
+   "derivedHandEdits": [],
+   "summary": "`ApplyDiscount` now rejects a discount code with a negative percent, returning a new `ErrNegativeDiscount`. The full test suite passes, including a new subtest for this case.\n\nChanges, all in `pricing/`:\n- **`discount.go`**: added `ErrNegativeDiscount`, and a check in `ApplyDiscount` that returns it, wrapped with the code name, when `d.Percent < 0`. The check runs after the expiry check and before the calculation, so a negative code returns an error and no amount.\n- **`discount_test.go`**: added a `rejects_negative_percent` subtest under `TestApplyDiscount`. It checks `errors.Is(err, ErrNegativeDiscount)` and that the returned amount is 0.\n\nVerification: `gofmt` and `go vet` are clean, `TestApplyDiscount` passes with all five subtests, and `go test ./...` passes in every package.\n\n`Price` in `quote.go` already propagates errors from `ApplyDiscount`, so a negative code now fails the quote too. I didn't change `REQUIREMENTS.md`: R-DISCOUNT-PERCENT already points at `TestApplyDiscount`, which now covers this case. I haven't committed anything.",
+   "changedFiles": [
+    "pricing/discount.go",
+    "pricing/discount_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M1.6",
+   "month": 1,
+   "kind": "test",
+   "prompt": "Add a test that the sales tax on an amount of zero is zero.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.065566,
+   "timing": {
+    "exit": 0,
+    "seconds": 88.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a dedicated zero-amount sales tax test in [pricing/tax_test.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M1.6/repo/pricing/tax_test.go). `go test ./pricing` passes.",
+   "changedFiles": [
+    "pricing/tax_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.1",
+   "month": 2,
+   "kind": "rename",
+   "prompt": "Rename Stock.Release in inventory/inventory.go to Stock.Cancel, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006524,
+   "timing": {
+    "exit": 0,
+    "seconds": 30.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed `Stock.Release` to `Stock.Cancel` and updated everything that referred to it. `go vet` and `gofmt` are clean, and `go test ./...` passes for all five packages.\n\nChanges:\n- `inventory/inventory.go`: the method is now `Cancel`, and its doc comment says \"Cancel\" too.\n- `cart/checkout.go`: the one caller, in `PlaceOrder`, now calls `co.Stock.Cancel(hold.ID)`.\n- `inventory/inventory_test.go`: `TestRelease` is now `TestCancel` and calls `s.Cancel`.\n- `REQUIREMENTS.md`: the `R-STOCK-RELEASE` entry's code and test references now name `Stock.Cancel` and `TestCancel`, so the traceability doc still matches the code.\n\nDecisions I made beyond the literal request:\n- I also edited `REQUIREMENTS.md`, which you didn't mention. It names the method and test, so it would have gone stale otherwise.\n- I left the requirement ID `R-STOCK-RELEASE` and its title, \"Release stock\", unchanged, since IDs are meant to be stable. The requirement is about stock returning to availability, so the word \"release\" still describes it.\n- I kept the test `TestPlaceOrderReleasesStockOnDecline` as is. It describes checkout behaviour, and the requirement names it. Say if you want it renamed too.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "cart/checkout.go",
+    "inventory/inventory.go",
+    "inventory/inventory_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.2",
+   "month": 2,
+   "kind": "refactor",
+   "prompt": "Refactor Sessions.Register in accounts/session.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.088162,
+   "timing": {
+    "exit": 0,
+    "seconds": 68.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Sessions.Register](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M2.2/repo/accounts/session.go:69) to keep password salt and hash setup in a helper. The lock scope and error behavior remain the same.\n\nVerified with `go test ./accounts` and `git diff --check`.",
+   "changedFiles": [
+    "accounts/session.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.3",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a function RegionByCode in a new file pricing/regions.go that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and an error for any other code. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006856,
+   "timing": {
+    "exit": 0,
+    "seconds": 29.5
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `RegionByCode` in `pricing/regions.go` and tests for it in `pricing/regions_test.go`. The full test suite passes (`go test ./...`), and `gofmt` and `go vet` are clean.\n\n- **Function:** `RegionByCode(code string) (Region, error)` returns QC, ON or AB as the existing `Region` type, with rates in parts per million to match `D-RATES-PPM`: QC 149_750, ON 130_000, AB 50_000.\n- **Errors:** any other code returns a zero `Region` and an error wrapping a new `ErrUnknownRegion`, so callers can test with `errors.Is`.\n- **Tests:** one checks all three codes return the expected rates. The other checks that `\"\"`, `BC`, `NY`, `qc` and `\"QC \"` are rejected.\n- **Requirement tags:** both files carry `@req R-TAX-RATE`, following the existing convention in `pricing/tax.go`.\n\nLookup is case-sensitive and does not trim spaces, so `qc` is an error. Say if you want it to accept lowercase codes.\n\nNothing is committed.",
+   "changedFiles": [
+    "pricing/regions.go",
+    "pricing/regions_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.4",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a method Has to Cart in cart/cart.go that reports whether a SKU is in the cart, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.070752,
+   "timing": {
+    "exit": 0,
+    "seconds": 58.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `Cart.Has(sku string) bool` in [cart/cart.go](/private/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M2.4/repo/cart/cart.go) and tested empty, present, absent, and deleted SKUs in [cart/cart_test.go](/private/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M2.4/repo/cart/cart_test.go). `go test ./cart` passes.",
+   "changedFiles": [
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.5",
+   "month": 2,
+   "kind": "behavior",
+   "prompt": "Raise the largest quantity that a cart line may hold from 99 to 199.",
+   "makesFalse": "R-CART-QTY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.008534,
+   "timing": {
+    "exit": 0,
+    "seconds": 37.9
+   },
+   "derivedHandEdits": [],
+   "summary": "The per-line quantity limit is now 199 instead of 99. `go test ./...` passes in all five packages, and `gofmt` and `go vet` are clean on `cart/`.\n\nChanges:\n- **`cart/cart.go`**: `MaxQuantity` is 199, and the `ErrQuantity` message now says \"between 1 and 199\".\n- **`REQUIREMENTS.md`**: R-CART-QTY now reads \"between 1 and 199 units\". Its code and test references are unchanged.\n- **`cart/cart_test.go`**: `TestAddRejectsBadQuantity` moved its boundary with the limit. It adds 198 (accepted), then 2 more (rejected, total 200), and checks the line stays at 198.\n\nThe only remaining \"99\" in the repo is a price in a discount test (`9.99`), which is unrelated. I haven't committed anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M2.6",
+   "month": 2,
+   "kind": "test",
+   "prompt": "Add a test that a customer whose session has expired cannot place an order.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.100388,
+   "timing": {
+    "exit": 0,
+    "seconds": 69.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added [TestPlaceOrderRejectsExpiredSession](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M2.6/repo/cart/checkout_test.go:96). It checks that checkout rejects a session at the 30-minute expiry boundary, leaves stock available, and makes no charge.\n\n`go test ./cart ./accounts` passes.",
+   "changedFiles": [
+    "cart/checkout_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.1",
+   "month": 3,
+   "kind": "move",
+   "prompt": "Move the Quote type and the Price function from pricing/quote.go into a new file pricing/price.go, keeping their names, and delete pricing/quote.go.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.004697,
+   "timing": {
+    "exit": 0,
+    "seconds": 15.0
+   },
+   "derivedHandEdits": [],
+   "summary": "I moved `Quote` and `Price` into `pricing/price.go` with their names and code unchanged, and deleted `pricing/quote.go`. `go vet` and `go test ./...` pass across all packages, and gofmt reports nothing.\n\nI also updated the code reference for R-TAX-RATE in `REQUIREMENTS.md` from `pricing/quote.go` to `pricing/price.go`, since it would otherwise point at a file that no longer exists. The `cart/checkout.go` caller needed no change because it's in the same package path and uses the same names.\n\nNothing is committed. The deletion is staged from `git rm`; the new file and the requirements edit are unstaged.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/price.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.2",
+   "month": 3,
+   "kind": "refactor",
+   "prompt": "Refactor Cart.Add in cart/cart.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.085808,
+   "timing": {
+    "exit": 0,
+    "seconds": 69.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Cart.Add](/private/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M3.2/repo/cart/cart.go:35) so adding a new line and increasing an existing line follow separate, clearer paths. The validation and behavior are unchanged.\n\n`go test ./cart` passes.",
+   "changedFiles": [
+    "cart/cart.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.3",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a method Held to Stock in inventory/inventory.go that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005467,
+   "timing": {
+    "exit": 0,
+    "seconds": 18.9
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Stock.Held(sku string) int` to `inventory/inventory.go`. It returns the units of a SKU held by reservations that have not yet expired. I read \"Held to Stock\" as this name, since the request didn't spell it out; say if you meant a different name.\n\n- **Change:** `available` now computes `onHand - held(sku)`, so the hold arithmetic lives in one place. Behaviour is unchanged.\n- **Tests:** `TestHeld` covers no holds, several holds across SKUs, an unknown SKU, a cancel, and expiry. `TestHeldAfterConfirm` checks that a confirmed reservation no longer counts as held.\n- **Verification:** `gofmt` and `go vet` are clean on the package, and `go test ./...` passes for every package.\n\nNothing is committed.",
+   "changedFiles": [
+    "inventory/inventory.go",
+    "inventory/inventory_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.4",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a function ParseMoney to pricing/money.go that parses an amount such as 12.05 into Money and rejects more than two decimal places. Test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.130374,
+   "timing": {
+    "exit": 0,
+    "seconds": 80.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `ParseMoney(string) (Money, error)` in [pricing/money.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M3.4/repo/pricing/money.go). It parses decimal text directly into integer cents and rejects more than two decimal places, malformed amounts, and overflow.\n\nAdded tests in [pricing/money_test.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M3.4/repo/pricing/money_test.go). `go test ./...` passes.",
+   "changedFiles": [
+    "pricing/money.go",
+    "pricing/money_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.5",
+   "month": 3,
+   "kind": "behavior",
+   "prompt": "Make a session last 60 minutes without use instead of 30.",
+   "makesFalse": "R-SESSION-EXPIRY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005614,
+   "timing": {
+    "exit": 0,
+    "seconds": 19.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Sessions now expire after 60 minutes without use instead of 30. All tests pass.\n\nChanges:\n- `accounts/session.go`: `SessionIdle` changed from `30 * time.Minute` to `60 * time.Minute`. Everything else reads this constant, including `Sessions.Validate` and the expiry test in `accounts/session_test.go`, so they follow the new value.\n- `REQUIREMENTS.md`: R-SESSION-EXPIRY said \"30 minutes\", so I updated it to 60 to keep the requirements doc accurate. Revert this if the requirement should stay at 30.\n\nVerification: `gofmt -l` reported nothing, `go vet ./...` was clean, and `go test ./...` passes in all packages, including `TestSessionExpiry`.\n\nThis is a security-relevant change. R-SESSION-EXPIRY sits under N-ACCOUNT-SAFE and RISK-ACCOUNT-TAKEOVER, which is the reason the 30-minute limit exists. A session that stays valid for twice as long gives an attacker who reuses a stolen token twice the window. I made the change because you asked for it, but you may want the requirement owner to sign off on it.\n\nI haven't committed anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "accounts/session.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M3.6",
+   "month": 3,
+   "kind": "test",
+   "prompt": "Add a test that a cart with one line of three units at 12.00 has a subtotal of 36.00.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.066348,
+   "timing": {
+    "exit": 0,
+    "seconds": 58.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a test in [cart/cart_test.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M3.6/repo/cart/cart_test.go) that checks one line of three units at 12.00 has a subtotal of 36.00. `go test ./cart` passes.",
+   "changedFiles": [
+    "cart/cart_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M4.1",
+   "month": 4,
+   "kind": "rename",
+   "prompt": "Rename Stock.Confirm in inventory/inventory.go to Stock.Commit, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006391,
+   "timing": {
+    "exit": 0,
+    "seconds": 26.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed `Stock.Confirm` to `Stock.Commit` in `inventory/inventory.go`, and updated its caller and tests. `go vet` and `go test ./...` pass across all five packages, and no `Confirm` identifiers remain.\n\nWhat changed:\n- **`inventory/inventory.go`**: the method and its doc comment, plus the `ErrNoReservation` comment.\n- **`inventory/inventory_test.go`**: `TestConfirm` is now `TestCommit`, `TestHeldAfterConfirm` is now `TestHeldAfterCommit`, and the call sites and failure messages use \"commit\".\n- **`cart/checkout.go`**: `PlaceOrder` calls `co.Stock.Commit`, and its doc comment says \"commits the reservation\".\n- **`REQUIREMENTS.md`**: the code and test pointers for the stock-reservation requirement now name `Stock.Commit` and `TestCommit`, so the traceability entries still resolve.\n\nTwo edits went beyond the strict rename:\n- **`README.md`**: the `cart` row said \"confirms the reservation\", and I changed it to \"commits\" to match the code.\n- **`REQUIREMENTS.md` prose**: I left the requirement wording alone, so \"confirming a hold\" and similar phrases still read as ordinary English.\n\nNothing is committed.",
+   "changedFiles": [
+    "README.md",
+    "REQUIREMENTS.md",
+    "cart/checkout.go",
+    "inventory/inventory.go",
+    "inventory/inventory_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M4.2",
+   "month": 4,
+   "kind": "refactor",
+   "prompt": "Refactor Checkout.PlaceOrder in cart/checkout.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.09592,
+   "timing": {
+    "exit": 0,
+    "seconds": 66.2
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Checkout.PlaceOrder](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M4.2/repo/cart/checkout.go:40) with clearer names and a small helper for reservation quantities. The order of pricing, reserving, charging, and confirming is unchanged.\n\nVerification: `go test ./...` passes.",
+   "changedFiles": [
+    "cart/checkout.go"
+   ],
+   "conflict": [
+    "cart/checkout.go"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.3",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a method Expired to Discount in pricing/discount.go that reports whether the code has expired at a given time, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005701,
+   "timing": {
+    "exit": 0,
+    "seconds": 21.0
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Discount.Expired(now time.Time) bool` in `pricing/discount.go` and tested it. The full test suite passes, and `gofmt` and `go vet` are clean.\n\n- **Semantics:** A code is expired at its `Expires` instant and at every time after it, not just after it. That matches the rule `ApplyDiscount` already used.\n- **Refactor:** `ApplyDiscount` now calls `d.Expired(now)` instead of repeating the comparison, so the two can't drift apart. Its behaviour is unchanged.\n- **Test:** `TestDiscountExpired` in `pricing/discount_test.go` covers one nanosecond before expiry (not expired), exactly at expiry (expired) and an hour after (expired).\n- **Requirements:** I added `Discount.Expired` and `TestDiscountExpired` to the R-DISCOUNT-EXPIRY entry in `REQUIREMENTS.md`, since that entry traces requirements to code and tests. Revert that if you'd rather keep the file untouched.\n\nI didn't commit anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/discount.go",
+    "pricing/discount_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M4.4",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a method Len to AuditLog in payments/audit.go that returns the number of entries, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.09873,
+   "timing": {
+    "exit": 0,
+    "seconds": 43.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `AuditLog.Len()` to return the entry count under the log’s mutex, with a test for empty and populated logs. `go test ./payments` passes.",
+   "changedFiles": [
+    "payments/audit.go",
+    "payments/audit_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M4.5",
+   "month": 4,
+   "kind": "behavior",
+   "prompt": "Make the cap on discounts 40 percent of the subtotal instead of 50.",
+   "makesFalse": "R-DISCOUNT-CAP",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.009711,
+   "timing": {
+    "exit": 0,
+    "seconds": 32.9
+   },
+   "derivedHandEdits": [],
+   "summary": "The discount cap is now 40 percent instead of 50. All tests pass (`go vet` and `gofmt` are clean too).\n\nChanges:\n- **`pricing/discount.go`**: `MaxDiscountPercent` is now `40`. This is the value the code enforces.\n- **`pricing/discount_test.go`**: the cap test is renamed to `caps_at_forty_percent` and now expects 40.00 off a 100.00 subtotal.\n- **`REQUIREMENTS.md`**: updated R-DISCOUNT-CAP's text and its test reference to match. I also changed R-VOLUME-DISCOUNT, which says the volume discount counts toward \"the fifty percent cap\". That requirement is sourced from Jira SHOP-57 (rev 2), so if that ticket still says 50, you may want to revise it there too.\n- **`README.md`**: the pricing row now says \"forty percent cap\".\n\nThe changes are uncommitted in the working tree.",
+   "changedFiles": [
+    "README.md",
+    "REQUIREMENTS.md",
+    "pricing/discount.go",
+    "pricing/discount_test.go"
+   ],
+   "conflict": [
+    "README.md"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.6",
+   "month": 4,
+   "kind": "test",
+   "prompt": "Add a test that registering the same email twice fails with ErrEmailTaken.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.071714,
+   "timing": {
+    "exit": 0,
+    "seconds": 46.2
+   },
+   "derivedHandEdits": [],
+   "summary": "Added [TestRegisterDuplicateEmail](/private/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M4.6/repo/accounts/session_test.go:21). It registers the same email twice and checks that the second call returns `ErrEmailTaken`.\n\n`go test ./accounts` passes.",
+   "changedFiles": [
+    "accounts/session_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M5.1",
+   "month": 5,
+   "kind": "rename",
+   "prompt": "Rename Sessions.Validate in accounts/session.go to Sessions.Check, and update its callers and tests.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006268,
+   "timing": {
+    "exit": 0,
+    "seconds": 24.1
+   },
+   "derivedHandEdits": [],
+   "summary": "I renamed `Sessions.Validate` to `Sessions.Check` in `accounts/session.go`, updated its callers and tests, and `go vet` and `go test ./...` pass across all packages.\n\nChanges:\n- **`accounts/session.go`**: the method and its doc comment.\n- **`cart/checkout.go`**: the caller in `Checkout.PlaceOrder`.\n- **`accounts/session_test.go`**: the three test calls.\n- **`REQUIREMENTS.md`**: the code pointer under R-SESSION-EXPIRY, so it still names the real method.\n\nI did not commit anything. `README.md` and the `ValidateAmount` function are unchanged, since neither refers to the session method.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "accounts/session.go",
+    "accounts/session_test.go",
+    "cart/checkout.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M5.2",
+   "month": 5,
+   "kind": "refactor",
+   "prompt": "Refactor Money.String in pricing/money.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.077367,
+   "timing": {
+    "exit": 0,
+    "seconds": 67.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Refactored [Money.String](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M5.2/repo/pricing/money.go:46) to handle the sign and calculate dollars and cents in separate, named steps. Its behavior is unchanged.\n\nVerified with `go test ./pricing` and `git diff --check`.",
+   "changedFiles": [
+    "pricing/money.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M5.3",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a method Preview to Checkout in cart/checkout.go that takes the same session token, cart and discount as PlaceOrder and returns the quote that PlaceOrder would charge, without reserving stock or charging. Test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.00829,
+   "timing": {
+    "exit": 0,
+    "seconds": 31.7
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Checkout.Preview` to `cart/checkout.go`. It returns the same `pricing.Quote` that `PlaceOrder` would charge, and it does not reserve stock or call the gateway. All package tests pass, and `gofmt` and `go vet` are clean.\n\n- **Shared pricing path:** session validation, the empty-cart check and `pricing.Price` now live in a private helper, `quote`. `PlaceOrder` and `Preview` both call it, so the preview can't drift from what is charged. `PlaceOrder`'s behaviour is unchanged.\n- **Tests:** four new tests in `cart/checkout_test.go`:\n  - `TestPreviewMatchesPlaceOrder` checks that the preview equals the quote `PlaceOrder` returns, with a 10% discount applied.\n  - `TestPreviewReservesNothingAndCharges` checks that stock stays at 5 and no audit entry is written, even with a declining gateway.\n  - `TestPreviewNeedsSession` checks that a forged token is rejected with `ErrNoSession`.\n  - `TestPreviewRejectsEmptyCart` checks `ErrEmptyCart`.\n- **Requirements:** I tagged `Preview` and its tests with the existing `R-CHECKOUT-ORDER` and `R-CHECKOUT-SESSION` IDs. I did not add a new requirement entry to `REQUIREMENTS.md`, since the preview doesn't introduce a new requirement. Say if you want one.\n- **Stock:** `Preview` returns the quote even when the stock would not cover the order, because it only prices. `PlaceOrder` still fails at reservation in that case.\n\nNothing is committed.",
+   "changedFiles": [
+    "cart/checkout.go",
+    "cart/checkout_test.go"
+   ],
+   "conflict": [
+    "cart/checkout.go"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.4",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a method Clear to Cart in cart/cart.go that removes every line, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.078722,
+   "timing": {
+    "exit": 0,
+    "seconds": 53.3
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `Cart.Clear()` in [cart/cart.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M5.4/repo/cart/cart.go) to remove every line. The new test covers clearing a populated cart, calling `Clear` again, and adding an item afterward.\n\n`go test ./cart` passes.",
+   "changedFiles": [
+    "cart/cart.go",
+    "cart/cart_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M5.5",
+   "month": 5,
+   "kind": "behavior",
+   "prompt": "Make Tax in pricing/tax.go round half to even instead of half up.",
+   "makesFalse": "R-TAX-RATE",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.007985,
+   "timing": {
+    "exit": 0,
+    "seconds": 31.1
+   },
+   "derivedHandEdits": [],
+   "summary": "`Tax` in `pricing/tax.go` now rounds half to even. The full test suite passes, and `go vet` is clean.\n\n**What changed**\n- `pricing/money.go`: the helper `roundHalfUp` is replaced by `roundHalfEven`. It was only used by `Tax`.\n- `pricing/tax_test.go`: added `TestTaxRoundsHalfToEven`, which covers exact halves at 5% (2.5 → 2, 7.5 → 8, 3.5 → 4, 6.5 → 6) plus non-half cases. The existing 14.975% case still gives 1498, since 1497.5 rounds to the even 1498.\n- `REQUIREMENTS.md`: R-TAX-RATE and D-RATES-PPM said \"rounded half up\", so I changed both to \"half to even\" to keep the requirements matching the code.\n\n**Decision for you:** the requirements doc is the spec, and this change contradicts it. I updated the wording because you asked for the behaviour change, but if half-up is still the agreed rule, the code change should be reverted instead. I did not check with anyone else about this.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/money.go",
+    "pricing/tax.go",
+    "pricing/tax_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M5.6",
+   "month": 5,
+   "kind": "test",
+   "prompt": "Add a test that a refund of a receipt that does not exist fails.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.089902,
+   "timing": {
+    "exit": 0,
+    "seconds": 67.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Added [TestRefundUnknownReceipt](/private/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M5.6/repo/payments/refund_test.go:58). It verifies that refunding a nonexistent receipt returns `ErrUnknownReceipt` without calling the gateway or adding an audit entry.\n\n`go test ./payments` passes.",
+   "changedFiles": [
+    "payments/refund_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M6.1",
+   "month": 6,
+   "kind": "move",
+   "prompt": "Move the function Tax from pricing/tax.go into a new file pricing/salestax.go, keeping its name.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.006112,
+   "timing": {
+    "exit": 0,
+    "seconds": 27.5
+   },
+   "derivedHandEdits": [],
+   "summary": "I moved `Tax` out of `pricing/tax.go` into a new `pricing/salestax.go`, keeping the name and body unchanged. `gofmt`, `go vet`, and `go test ./...` all pass.\n\n- **`pricing/salestax.go`** (new): contains only `Tax`, with its doc comment and the same SPDX header.\n- **`pricing/tax.go`**: now contains only the `Region` type. I left `Region` there because you asked me to move only `Tax`. `Region` is referenced by the `D-RATES-PPM` requirement, which still points at `pricing/tax.go`.\n- **`REQUIREMENTS.md`**: I updated the `Tax` code references in R-TAX-RATE and R-TAX-EXEMPT to `pricing/salestax.go`, since they would otherwise point at a file that no longer defines `Tax`.\n\nThe tests stay in `pricing/tax_test.go`, and the requirements still cite them there. I didn't split the test file because you didn't ask for it. Say if you want `TestTax` moved to a `salestax_test.go` too.\n\nI have not committed anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/salestax.go",
+    "pricing/tax.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M6.2",
+   "month": 6,
+   "kind": "refactor",
+   "prompt": "Refactor Processor.receipt in payments/charge.go so that it is easier to read, without changing what it does.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.0644,
+   "timing": {
+    "exit": 0,
+    "seconds": 54.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Renamed the local results in [Processor.receipt](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M6.2/repo/payments/charge.go:99) to `receipt` and `found` for clarity. The lookup and locking behavior are unchanged. `go test ./payments` passes.",
+   "changedFiles": [
+    "payments/charge.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M6.3",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a method Units to Order in cart/checkout.go that returns the number of units over its lines, and test it.",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.005658,
+   "timing": {
+    "exit": 0,
+    "seconds": 20.0
+   },
+   "derivedHandEdits": [],
+   "summary": "I added `Order.Units()` to `cart/checkout.go`. It returns the sum of `Quantity` over the order's lines, and the new `TestOrderUnits` in `cart/checkout_test.go` passes. `gofmt`, `go vet` and `go test ./...` are all clean.\n\nThe method has a value receiver, matching how `Order` is returned by `PlaceOrder`. The test covers a two-line order (5 units) and an empty order (0).\n\nI didn't add an `@req` tag. No requirement in `REQUIREMENTS.md` covers order unit counts, so there was no ID to cite. I also didn't touch `REQUIREMENTS.md`. Nothing is committed.",
+   "changedFiles": [
+    "cart/checkout.go",
+    "cart/checkout_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M6.4",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a function RatePercent to pricing/tax.go that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.120849,
+   "timing": {
+    "exit": 0,
+    "seconds": 65.1
+   },
+   "derivedHandEdits": [],
+   "summary": "Added `RatePercent` to [pricing/tax.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M6.4/repo/pricing/tax.go). It formats rates exactly from integer parts per million, including `14.975%`, and removes trailing fractional zeros. Added cases in [pricing/tax_test.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M6.4/repo/pricing/tax_test.go). `go test ./pricing` passes.",
+   "changedFiles": [
+    "pricing/tax.go",
+    "pricing/tax_test.go"
+   ],
+   "conflict": [
+    "pricing/tax.go"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.5",
+   "month": 6,
+   "kind": "behavior",
+   "prompt": "Make a reservation hold stock for 20 minutes instead of 15.",
+   "makesFalse": "R-STOCK-EXPIRY",
+   "agent": "claude",
+   "model": "claude-haiku-5-5",
+   "cost": 0.004881,
+   "timing": {
+    "exit": 0,
+    "seconds": 19.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Reservations now hold stock for 20 minutes instead of 15. All Go tests pass.\n\nChanges:\n- `inventory/inventory.go`: `HoldDuration` changed from `15 * time.Minute` to `20 * time.Minute`. Reserve, expiry, and commit all read this constant, so they pick up the change.\n- `REQUIREMENTS.md`: R-STOCK-EXPIRY said \"within 15 minutes\", so I changed it to 20 to match the code. Without that, the spec and the code would disagree.\n\nThe tests use `HoldDuration` rather than a hard-coded 15, so they needed no edits. `go test ./...` passes for accounts, cart, inventory, payments and pricing.\n\nThe 15-minute lockout in `accounts/session.go` (R-LOGIN-LOCKOUT) is a separate setting and I left it alone. I haven't committed anything.",
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "inventory/inventory.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  },
+  {
+   "id": "M6.6",
+   "month": 6,
+   "kind": "test",
+   "prompt": "Add a test that reading the audit log returns a copy, so that changing the copy does not change the log.",
+   "agent": "codex",
+   "model": "gpt-6-sol",
+   "cost": 0.096405,
+   "timing": {
+    "exit": 0,
+    "seconds": 79.6
+   },
+   "derivedHandEdits": [],
+   "summary": "Added a regression test in [payments/audit_test.go](/tmp/ostf-trials/phase5/longitudinal-go-shop-none/M6.6/repo/payments/audit_test.go) that replaces an entry and appends to the returned slice, then confirms the audit log is unchanged.\n\n`go test ./payments` passes.",
+   "changedFiles": [
+    "payments/audit_test.go"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": null,
+   "testsPass": true,
+   "derivedChanged": false
+  }
+ ],
+ "merged": 32,
+ "conflicts": 4,
+ "linksBroken": 0,
+ "brokenPer100": 0.0,
+ "byMonth": [
+  {
+   "month": 1,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 0
+  },
+  {
+   "month": 2,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 0
+  },
+  {
+   "month": 3,
+   "merged": 6,
+   "conflicts": 0,
+   "linksBroken": 0,
+   "itemsListed": 0
+  },
+  {
+   "month": 4,
+   "merged": 4,
+   "conflicts": 2,
+   "linksBroken": 0,
+   "itemsListed": 0
+  },
+  {
+   "month": 5,
+   "merged": 5,
+   "conflicts": 1,
+   "linksBroken": 0,
+   "itemsListed": 0
+  },
+  {
+   "month": 6,
+   "merged": 5,
+   "conflicts": 1,
+   "linksBroken": 0,
+   "itemsListed": 0
+  }
+ ],
+ "claimsHold": 0,
+ "claims": 0,
+ "inventedIds": 0,
+ "derivedHandEdits": 0,
+ "cost": 1.698189
+}

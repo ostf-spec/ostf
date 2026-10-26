@@ -1,0 +1,89 @@
+{
+ "run": "claude.intent.ts-shop.T7.3",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "impact",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-TAX-EXEMPT": true,
+   "item:R-TAX-RATE": true,
+   "test:taxes the subtotal after discounts": true,
+   "test:is zero for a tax-exempt customer": true,
+   "test:rounds half up to the cent": true
+  },
+  "questions": {
+   "item:R-TAX-EXEMPT": "Does the final answer name R-TAX-EXEMPT (Tax exemption) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-TAX-RATE": "Does the final answer name R-TAX-RATE (Sales tax) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:taxes the subtotal after discounts": "Does the final answer name the test `taxes the subtotal after discounts` as one that matters for the change, run or to be run?",
+   "test:is zero for a tax-exempt customer": "Does the final answer name the test `is zero for a tax-exempt customer` as one that matters for the change, run or to be run?",
+   "test:rounds half up to the cent": "Does the final answer name the test `rounds half up to the cent` as one that matters for the change, run or to be run?"
+  },
+  "reason": "The final answer lists R-TAX-EXEMPT and R-TAX-RATE as trace items linked to the changed code in `tax()`, and it says each one is \"Kept true\". It also names all three tests, `rounds half up to the cent`, `is zero for a tax-exempt customer` and `taxes the subtotal after discounts`, as the tests covering those requirements. It reports running them with `node --test src/pricing.test.ts` (7/7 passed). So every question is answered yes.",
+  "cost": 0.022879999999999998
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 5351,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 21.1
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 19525,
+  "cache_read_input_tokens": 79648,
+  "output_tokens": 3234,
+  "cost": 0.00631928
+ },
+ "cost": 0.006319,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "## Summary\n\nThe change is a behavior-preserving refactor of `tax()` in `src/pricing.ts`. It has no effect on any price, tax, or total.\n\n- **Reordered the guard.** `exempt || amount <= 0` became `amount <= 0 || exempt`. Both operands are side-effect-free, and both branches return `0`, so the result is identical.\n- **Extracted `const ppm = amount * r.ratePpm`.** This is the same arithmetic, now in a named variable. The name is a little misleading: the value is cents times parts-per-million, not a ppm rate. `ppm` would be clearer as `scaled` or similar, but that is a naming nit.\n\nNothing outside `tax()` changed. `price()` and `checkout` call `tax()` and get the same results.\n\n## Linked trace items\n\nSearched `trace.yaml`, `trace/*.yaml`, and `@req` comments. `tax()` is linked through `code:` fields, not `@req` comments.\n\n- **R-TAX-RATE** (`trace/requirements.yaml`, code: `src/pricing.ts#tax`, `#price`; refines N-FAIR-PRICE). **Kept true.** Tax is still computed on the post-discount subtotal, at the region rate, rounded half up.\n- **R-TAX-EXEMPT** (code: `src/pricing.ts#tax`; refines N-FAIR-PRICE). **Kept true.** Exempt customers still get 0.\n- **D-RATES-PPM** (`trace/design.yaml`, code: `src/pricing.ts#Region`; refines R-MONEY-CENTS). **Kept true.** Integer ppm arithmetic and a single round-half-up at the end are unchanged. The `Region` code link is not affected by this diff.\n\n**Risk or threat items touched:** none. None of the linked items controls a risk or threat, and none refines one. So no change needs the owner's sign-off under AGENTS.md.\n\n**Indirect exposure, for awareness:** `price()` feeds the amount that `R-CHARGE-AMOUNT` validates (it controls RISK-WRONG-CHARGE). This diff does not change that path's output, so I did not treat it as a touched item.\n\n## Tests run\n\n- `node --test src/pricing.test.ts`: 7/7 passed. Covers `tax > rounds half up to the cent`, `tax > is zero for a tax-exempt customer`, and `price > taxes the subtotal after discounts`. These are the tests for R-TAX-RATE and R-TAX-EXEMPT.\n- `npm test` (full suite, Node v26.12.1): 36/36 passed, including the checkout tests that go through `price()`.\n\nI did not add a test for `amount <= 0`. The reorder does not change that branch, so the existing suite covers this change adequately.\n\n## For the PR reviewer\n\nItems linked to the changed code: R-TAX-RATE, R-TAX-EXEMPT, D-RATES-PPM. All three stay true. No risk or threat items were touched.",
+ "date": "2026-10-26"
+}

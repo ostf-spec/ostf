@@ -1,0 +1,96 @@
+{
+ "run": "codex.full.ts-shop.T10.2",
+ "agent": "codex",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T10",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "decision",
+ "model": "gpt-6-sol",
+ "pass": false,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "followsDecision": true,
+  "noInventedIds": true,
+  "linkedToDecision": false,
+  "checkPasses": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "followsDecision",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true,
+   "follows": true
+  },
+  "questions": {
+   "implements": "Does the diff implement what the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer.",
+   "follows": "Does the code in the diff follow the decision D-RATES-PPM (Rates in parts per million), which states: \"Every tax or fee rate that prices an order is an integer number of parts per million, as Region.ratePpm is, and is applied to integer cents with integer arithmetic, rounded half up to the cent once, at the end. Discount codes keep their whole percent. No floating-point number takes part in pricing.\"?"
+  },
+  "reason": "q1: The diff does what was asked. In `price`, the fee is computed on the subtotal after discounts as roundHalfUp(discountedSubtotal * 25_000, 1_000_000), which is 2.5%. Tax is still charged only on the discounted subtotal, so the fee is not taxed. The fee is added to the total. New and updated tests check the fee directly, and their numbers are right: 9000 → 225, 100 → 3 (2.5 rounds up), 90 → 2 (2.25 rounds down), and 1800 → 45 with total 2115. A checkout test also confirms the charged amount includes the fee. q2: The fee rate is the integer 25_000 parts per million. It is applied to integer cents using integer arithmetic and rounded half up once, through the same roundHalfUp helper that tax uses. No floating-point number is involved, and the discount still uses its whole percent. One small point: the rate is written inline as a bare number rather than as a named constant. That is a style issue and does not break the decision.",
+  "cost": 0.0410046
+ },
+ "metrics": {
+  "calls": 21,
+  "callsBeforeFirstEdit": 8,
+  "edited": true,
+  "ostfCalls": 3,
+  "ostfCallsBeforeFirstEdit": 1,
+  "firstOstfCall": 7,
+  "contextCalls": 1,
+  "checkCalls": 3,
+  "traceOutputTokens": 9084,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 97.6
+ },
+ "usage": {
+  "input_tokens": 277522,
+  "cached_input_tokens": 243840,
+  "cache_write_input_tokens": 0,
+  "output_tokens": 3686,
+  "reasoning_output_tokens": 642
+ },
+ "cost": 0.159412,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": 8,
+ "changedSymbols": 8,
+ "tree": "b763cadf30cc9b797a4b07b3e1d8e0c4d884f0b9",
+ "inventedId": false,
+ "corroboration": {
+  "added": 2,
+  "onTestedCode": 2,
+  "corroborated": 2
+ },
+ "firstMessage": null,
+ "finalMessage": "Added a **2.5% service fee** to the subtotal after discounts, rounded half up to the cent. The fee appears on the quote, is excluded from sales tax, and is included in the amount charged.\n\nAll 38 tests pass. `ostf check --base main` reports no errors. Its impacted items remain true: **R-SERVICE-FEE** (new draft), **R-CHECKOUT-ORDER**, **R-TAX-RATE**, and their parent **N-FAIR-PRICE**. It lists the Checkout and price suites, including “places an order,” “charges the discounted order total including the service fee,” “taxes the subtotal after discounts,” “charges an untaxed service fee on the discounted subtotal, rounded half up,” and “rounds half up to the cent.” No risk relevant item was touched.",
+ "date": "2026-10-26"
+}

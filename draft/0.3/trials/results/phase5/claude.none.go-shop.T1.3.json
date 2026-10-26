@@ -1,0 +1,93 @@
+{
+ "run": "claude.none.go-shop.T1.3",
+ "agent": "claude",
+ "arm": "none",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "explain",
+ "model": "claude-haiku-5-5",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": false
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {
+  "namesItems": false
+ },
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "item:R-AUDIT-MONEY": true,
+   "item:R-CHARGE-AMOUNT": true,
+   "item:R-CHARGE-DECLINE": true,
+   "item:R-IDEMPOTENT-CHARGE": true,
+   "test:TestChargeAudited": true,
+   "test:TestChargeDecline": true,
+   "test:TestChargeRetry": true,
+   "test:TestRefund": false,
+   "test:TestValidateAmount": true
+  },
+  "questions": {
+   "item:R-AUDIT-MONEY": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-AMOUNT": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-CHARGE-AMOUNT (Charge amount), which states: \"A charge must be more than zero and at most 10,000.00. Any other amount is rejected before the payment gateway is called.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-DECLINE": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-CHARGE-DECLINE (Declined charge), which states: \"A declined charge returns an error with the gateway's reason and is not stored under its idempotency key, so the customer can retry with the same key.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-IDEMPOTENT-CHARGE": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-IDEMPOTENT-CHARGE (Idempotent charge), which states: \"A retry with the same idempotency key returns the first receipt without creating a second charge.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:TestChargeAudited": "Does the final answer name the test `TestChargeAudited` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestChargeDecline": "Does the final answer name the test `TestChargeDecline` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestChargeRetry": "Does the final answer name the test `TestChargeRetry` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefund": "Does the final answer name the test `TestRefund` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestValidateAmount": "Does the final answer name the test `TestValidateAmount` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "The answer ties Charge to four requirements and says what each one asks of it. For auditing, it says an audit entry is appended for each charge and points to the audit-logging requirement shared with refunds. It doesn't list the entry's fields, but it does state the duty itself (q1). The amount limits are more than 0 and at most 10,000, checked before the gateway is called (q2). A decline returns an error and is not stored, so the customer can retry with the same key (q3). A retry with the same key returns the stored receipt without a second charge (q4). The answer names TestChargeAudited, TestChargeDecline, TestChargeRetry and TestValidateAmount by name (q5, q6, q7, q9). It mentions the refund tests in payments/refund_test.go only in general and never names TestRefund, so q8 is false.",
+  "cost": 0.055136
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 1990,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 13.6
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 8,
+  "cache_creation_input_tokens": 11701,
+  "cache_read_input_tokens": 74157,
+  "output_tokens": 2100,
+  "cost": 0.0041325699999999995
+ },
+ "cost": 0.004133,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "c2fbd05ed169c490327e1af836e90146eebfd21f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "**Why it exists:** `Processor.Charge` (`payments/charge.go:78`) is the single entry point for taking money from a customer. It does four things in order:\n\n1. **Validates the amount** with `ValidateAmount` (more than 0.00, at most 10,000.00). Invalid amounts are rejected before the gateway is called.\n2. **Enforces idempotency.** A retry with a key already seen returns the stored receipt without charging again. If the key comes back with a different account or amount, it returns `ErrKeyReused`.\n3. **Calls the card gateway** through the `Gateway` interface. A decline is returned as an error and is not stored, so the customer can retry with the same key.\n4. **Stores the receipt and audits the charge.** The receipt is kept by key and by ID, and an audit entry is appended. `Processor.receipt` later uses the stored receipt to send a refund back to the original transaction.\n\nIt is called from `cart/checkout.go:60` (`co.Payments.Charge(key, acct.ID, quote.Total)`) when an order is placed. The requirements say checkout charges only after stock is reserved. The refund tests in `payments/refund_test.go` also call it to set up charges.\n\n**Requirements it serves** (from `REQUIREMENTS.md`):\n- `R-IDEMPOTENT-CHARGE` (line 61): the retry behavior. The `Charge` doc comment is tagged with this ID.\n- `R-CHARGE-AMOUNT` (line 205): the amount limits, via `ValidateAmount`.\n- `R-CHARGE-DECLINE` (line 216): declined charges are not remembered. `DeclineError` is defined in `charge.go`.\n- Key-reuse rejection (around line 300): a refinement of `R-IDEMPOTENT-CHARGE`.\n- Audit logging (around line 268), shared with the refund code.\n\n**Tests covering it** (all in `payments/charge_test.go`):\n- `TestValidateAmount`: covers `R-CHARGE-AMOUNT`, the amount bounds.\n- `TestChargeRetry`: covers `R-IDEMPOTENT-CHARGE`, the same key returns the first receipt.\n- `TestChargeKeyReuse`: the key-reuse rejection with a different amount.\n- `TestChargeDecline`: covers `R-CHARGE-DECLINE`.\n- `TestChargeAudited`: the audit entry for a charge.\n\nThe refund tests in `payments/refund_test.go` also exercise `Charge` indirectly. I did not run the test suite; this answer comes from reading the code and requirements. No files were changed.",
+ "date": "2026-10-26"
+}

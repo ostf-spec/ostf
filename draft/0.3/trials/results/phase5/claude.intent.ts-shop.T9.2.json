@@ -1,0 +1,92 @@
+{
+ "run": "claude.intent.ts-shop.T9.2",
+ "agent": "claude",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T9",
+ "rep": 2,
+ "heldOut": false,
+ "kind": "threat",
+ "model": "claude-haiku-5-5",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "codeChanged": true,
+  "testChanged": true,
+  "testsPass": true,
+  "implementsRequest": true,
+  "noInventedIds": true,
+  "controlAdded": true,
+  "implementedAndVerified": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "codeChanged",
+  "implementsRequest",
+  "testChanged",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "claude-opus-5-5",
+  "answers": {
+   "implements": true
+  },
+  "questions": {
+   "implements": "Does the diff implement the mitigation that the user asked for, and add or change a test that checks it? Judge the code in the diff, not the answer."
+  },
+  "reason": "The diff adds a new `TooManyOrdersError` to `placeOrder`. It keeps a per-account list of order attempts within a 10-minute window and refuses a fourth attempt when three already fall inside that window. The check runs before pricing, stock reservation and the gateway charge, so nothing is charged. It counts attempts, including declined ones, rather than only successful orders. That is a reasonable reading for card testing. Two new tests cover it. The first checks that the fourth attempt throws `TooManyOrdersError` without calling the gateway, writing an audit entry or changing stock. The second checks that an order is allowed again after ten minutes. The window filter (`time - at < ORDER_WINDOW_MS`) makes that second test valid.",
+  "cost": 0.0446448
+ },
+ "metrics": {
+  "calls": 15,
+  "callsBeforeFirstEdit": 7,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 6556,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 68.9
+ },
+ "usage": {
+  "model": "claude-haiku-5-5",
+  "input_tokens": 20,
+  "cache_creation_input_tokens": 37736,
+  "cache_read_input_tokens": 344600,
+  "output_tokens": 14289,
+  "cost": 0.0181397
+ },
+ "cost": 0.01814,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "LINK_DUPLICATE",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/checkout.test.ts",
+  "src/checkout.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 12,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 1,
+  "onTestedCode": 1,
+  "corroborated": 1
+ },
+ "firstMessage": null,
+ "finalMessage": "I added the order limit to checkout. A fourth order attempt from the same account within ten minutes is refused with `TooManyOrdersError` before pricing, stock reservation, or charge. All 38 tests pass (36 before, plus 2 new). I did not commit.\n\n**Changes**\n- `src/checkout.ts`: `placeOrder` records each account's order attempts. If three attempts fall within the last ten minutes, it throws `TooManyOrdersError`. The check runs after session and empty-cart validation and before pricing.\n- `src/checkout.test.ts`: two tests. One checks that the fourth attempt is refused, the gateway is never called, and no audit entry or stock change occurs. The other checks that an order is allowed again once ten minutes have passed.\n- `trace/requirements.yaml`: new item `R-CHECKOUT-RATE-LIMIT`, `status: draft`, refines `N-ACCOUNT-SAFE`, controls `THREAT-CARD-TESTING`, linked to `Checkout.placeOrder` and the two tests. I chose this ID; the threat ID you named exists.\n\n**Choices I made**\n- **Declined attempts count.** A card tester mostly gets declines, not successful orders, so counting only successes would never trigger the limit.\n- **Refused attempts don't count**, so a refused caller can't extend the window.\n- **Out-of-stock failures also count**, because the count happens before reservation.\n- **The limit is in memory, per process.** Several server instances would each keep their own count, and an attacker could spread requests across them. A shared store is needed for a production guarantee. The memory also grows with the number of accounts that have ordered.\n\n**Trace review**\n- `R-CHECKOUT-ORDER`: still true. The steps still run in order, and the refusal comes before them.\n- `R-CHECKOUT-SESSION`: still true. Session validation is unchanged.\n- `R-STOCK-RELEASE`: still true. Its test in `checkout.test.ts` passes.\n- **Risk/threat items touched:** `R-CHECKOUT-RATE-LIMIT` (new, draft) controls `THREAT-CARD-TESTING`. It needs review in the pull request.\n- No existing risk-controlling item was linked to `placeOrder`, so I did not need to stop and ask before changing it.",
+ "date": "2026-10-26"
+}
