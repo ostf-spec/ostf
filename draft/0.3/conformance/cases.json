@@ -1,4 +1,8 @@
 {
+ "suite": {
+  "version": 1,
+  "sha256": "5b626d2d42562e0621629ab0438e9fdf3c6b2b01302a05834c1aacbbbb05165a"
+ },
  "checks": [
   {
    "id": "minimal-valid",

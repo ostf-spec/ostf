@@ -3,6 +3,8 @@
 
 [reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, K and L) with the `check` and `context` commands of [Annex I](../ostf.md#annex-i-normative-optional-command-profile), `impact` for `check --base` (Annex C.3) and SARIF output (Annex D). It is independent code ported from the 0.2 Python prototype; it does not import zztrace or touch the network, and the reader itself starts no subprocess: only the command line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV, and for `context` and `check --base` to read change information (Annex I.3). It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
 
+**Claim (OSTF-163).** An Analyzer for Annexes A, K and L, of document revision 0.18, wire version 0.3 and the schema identifiers under `https://ostf.dev/draft/0.3/`, that passes suite version 1; and, as separate claims, Annexes B, D, I and N.
+
 From the repository root, with Python 3.12 or newer:
 
 ```sh
@@ -54,9 +56,13 @@ cd draft/0.3/example/deploy
 
 Each case names the requirements it exercises. Expectations were written from the specification text, not copied from the reader's output; a changed expectation needs a specification reason. The Go tests also check that the schemas accept every file of a case the reader accepts. Not yet covered: Consumer expectations. The SARIF schema is fetched rather than kept here, since it is OASIS's.
 
+## Suite version
+
+The suite is suite version 1, which `suite.version` in [cases.json](cases.json) records and a claim cites (OSTF-163): the cases, the span vectors, the example's expected outputs and the checks of check.py as they stood at revision 0.17, unchanged in revision 0.18. Any case or expectation added, retired or changed, in cases.json, a span vector, an expected output of the example or a check of check.py, gives the suite the next version, and the conversion note that records the change names the version it gives. `suite.sha256` is a digest of cases.json without that entry, the span vectors and the expected outputs, and check.py fails when they change and the digest does not, so no such change ships without a decision on the version. The suite had no number before version 1; each earlier state is reproducible at its document tag, such as `doc-0.16`.
+
 ## From 0.2
 
-Step 2b converted the 0.2 suite's 73 repository cases and 24 schema cases; its 39 vectors run unchanged from [vectors/](vectors/). 75 cases carry on. Each names its 0.2 case in `from02`, and each whose input or expected result changed says why in `note`. The 0.2 expectation was the starting point, including its item and link fingerprints, and every difference is a 0.3 rule:
+Applies to the first suite of draft 0.3, before suite versions. Step 2b converted the 0.2 suite's 73 repository cases and 24 schema cases; its 39 vectors run unchanged from [vectors/](vectors/). 75 cases carry on. Each names its 0.2 case in `from02`, and each whose input or expected result changed says why in `note`. The 0.2 expectation was the starting point, including its item and link fingerprints, and every difference is a 0.3 rule:
 
 - `bodyChange` defaults to `all`, so a body change makes a link suspect unless a profile says otherwise.
 - `tags` is on by default and tags carry IDs only, so `links: {source: ...}` is gone and a `role=` token is read as a name.
@@ -78,11 +84,11 @@ Step 2b converted the 0.2 suite's 73 repository cases and 24 schema cases; its 3
 | The four `schema-snapshot` cases | The snapshot schema was replaced by `external` and `sources`. |
 | `repository-valid` | Its input equals `minimal-valid`, which now carries its requirements. |
 
-The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#annex-h-informative-changes-from-draft-02-and-revisions-014-to-016).
+The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#Annex-H).
 
 ## From revision 0.14
 
-Phase 2 of the [agent-first plan](../plan-agent-first.md) changed rules under the same wire string, and the suite with them; the [decision record](../decisions.md#agent-first-plan-phase-2-wire-04-core) gives each rule. Every case carried on, and none was retired. The converted ones, by rule:
+Applies to the suite of revision 0.15, before suite versions. Phase 2 of the [agent-first plan](../plan-agent-first.md) changed rules under the same wire string, and the suite with them; the [decision record](../decisions.md#agent-first-plan-phase-2-wire-04-core) gives each rule. Every case carried on, and none was retired. The converted ones, by rule:
 
 - **Type kinds.** `risk-relevance-follows-controls-only`, which pinned the 0.3 gap, became `risk-relevance-follows-kind` and expects the opposite; `risk-relevance-through-extended-controls` declares the kind of its new type.
 - **Merges.** The four cases that named OSTF-162 name OSTF-160.
@@ -95,7 +101,7 @@ New expectations: `corroboration` and `hints` in check cases, and `migrations`, 
 
 ## From revision 0.15
 
-Phase 3 of the [agent-first plan](../plan-agent-first.md) missed its pre-registered gate, so its fallback removed the lock and the fingerprints in revision 0.16; the [decision record](../decisions.md#agent-first-plan-phase-3-the-fallback) gives each ruling. Of the 363 cases of revision 0.15, 95 are retired, 268 carry on, 207 of them changed, and 15 are new, 283 in all. The vectors of 0.2 stay byte for byte and are no longer run; the `go2`, `ts1`, `ts2` and `py1` vectors are deleted, and their sources and symbols became the span vectors of Annexes A, K and L.
+Applies to the suite of revision 0.16, before suite versions. Phase 3 of the [agent-first plan](../plan-agent-first.md) missed its pre-registered gate, so its fallback removed the lock and the fingerprints in revision 0.16; the [decision record](../decisions.md#agent-first-plan-phase-3-the-fallback) gives each ruling. Of the 363 cases of revision 0.15, 95 are retired, 268 carry on, 207 of them changed, and 15 are new, 283 in all. The vectors of 0.2 stay byte for byte and are no longer run; the `go2`, `ts1`, `ts2` and `py1` vectors are deleted, and their sources and symbols became the span vectors of Annexes A, K and L.
 
 Retired, by reason:
 
@@ -126,4 +132,4 @@ New: `histories`, eight scripted Git histories run through the command line (Ann
 
 ## From revision 0.16
 
-Phase 5 of the [agent-first plan](../plan-agent-first.md) missed the row that counts hand edits of `trace.derived`, so revision 0.17 moves derived links out of Core into Annex B, an optional annex; the [decision record](../decisions.md#agent-first-plan-phase-5-trials-v2) gives the rulings. No case is retired or added, and no expectation changed. The cases that named OSTF-146 name the annex's sections instead, as the command profile's cases name Annex I, and like them they hold for a reader that claims the annex: `derived-corroboration`, `derived-absent`, `derived-header-only`, `derived-invalid-lines`, `derived-header-invalid`, `derived-broken-test`, `derived-too-large`, which no longer names OSTF-105 since that limit no longer names the file, and the contexts `context-corroboration-without-lock` and `context-corroboration-after-state`. `derived-not-an-anchor` names OSTF-132 alone, which still makes an anchor that names the file `ANCHOR_INVALID`. OSTF-146 joins the retired requirements that no case may name, and the coverage check reads the codes of Annex C.1 and of Annex B.4 apart.
+Gives suite version 1, the suite of revisions 0.17 and 0.18. Phase 5 of the [agent-first plan](../plan-agent-first.md) missed the row that counts hand edits of `trace.derived`, so revision 0.17 moves derived links out of Core into Annex B, an optional annex; the [decision record](../decisions.md#agent-first-plan-phase-5-trials-v2) gives the rulings. No case is retired or added, and no expectation changed. The cases that named OSTF-146 name the annex's sections instead, as the command profile's cases name Annex I, and like them they hold for a reader that claims the annex: `derived-corroboration`, `derived-absent`, `derived-header-only`, `derived-invalid-lines`, `derived-header-invalid`, `derived-broken-test`, `derived-too-large`, which no longer names OSTF-105 since that limit no longer names the file, and the contexts `context-corroboration-without-lock` and `context-corroboration-after-state`. `derived-not-an-anchor` names OSTF-132 alone, which still makes an anchor that names the file `ANCHOR_INVALID`. OSTF-146 joins the retired requirements that no case may name, and the coverage check reads the codes of Annex C.1 and of Annex B.4 apart.

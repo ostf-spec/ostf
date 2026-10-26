@@ -45,6 +45,18 @@ def load(path):
     return json.loads(path.read_text())
 
 
+def suite_digest(cases):
+    """What the suite asks of a reader, as one SHA-256: cases.json without its suite entry, the span vectors and
+    the example's expected outputs, each named and its bytes, in that order."""
+    digest = hashlib.sha256()
+    body = json.dumps({k: v for k, v in cases.items() if k != "suite"}, sort_keys=True).encode()
+    parts = [("cases.json", body)] + [(f"vectors/{name}", (VECTORS / name).read_bytes()) for name in SPAN_VECTORS]
+    parts += [(f"example/expected/{path.name}", path.read_bytes()) for path in sorted((DRAFT / "example" / "expected").iterdir())]
+    for name, data in parts:
+        digest.update(name.encode() + b"\0" + data + b"\0")
+    return digest.hexdigest()
+
+
 def case_files(case):
     """A case's files, each named in padTo extended with line feeds to that size, so that a case
     near a size limit (OSTF-105) need not carry the bytes."""
@@ -181,6 +193,13 @@ def check():
     for retired in RETIRED:
         assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
+    # The suite's version (OSTF-163): any change to what it asks of a reader gives it the next one, so the digest
+    # recorded beside the version must be that of the suite as it is, and the README states the same version.
+    suite = cases["suite"]
+    assert isinstance(suite["version"], int) and suite["version"] >= 1, "suite version"
+    assert suite["sha256"] == suite_digest(cases), \
+        f"the suite changed: give it version {suite['version'] + 1} and the digest {suite_digest(cases)} (conformance README)"
+    assert f"suite version {suite['version']}" in (HERE / "README.md").read_text(), "the conformance README states another suite version"
     every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["schemas"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
@@ -435,7 +454,8 @@ def check():
                 got["text"] = text
             assert got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
     counts["historyCases"] = len(cases["histories"])
-    return {"wireVersion": "0.3", "implementation": "independent-code-python-reader", "counts": counts,
+    return {"wireVersion": "0.3", "suiteVersion": load(HERE / "cases.json")["suite"]["version"],
+            "implementation": "independent-code-python-reader", "counts": counts,
             "passed": True, "independentParty": False, "fullConformance": False}
 
 
