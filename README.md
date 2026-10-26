@@ -18,7 +18,7 @@ items:
 
 `math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. When a change edits `Add`, `ostf check --base` lists the function beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
-A changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. A passing check leaves two things unknown: a symbol in a file of a language the reader does not bind, which is a warning, not an error, and an item that no code or test links, which is not an error either.
+A changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. A passing check can still leave things unknown, among them a symbol in a file of a language the reader does not bind, which is a warning, not an error, and an item that no code or test links, which is not an error either.
 
 ## Start in ten minutes
 
