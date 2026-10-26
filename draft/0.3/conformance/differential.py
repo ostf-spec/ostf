@@ -319,7 +319,7 @@ def summarize(reader, entry):
             results = []
             for row in run_["results"]:
                 location = (row.get("locations") or [{}])[0]
-                # The logical location is the subject (Annex H), which Annex D.2 does not compare.
+                # The logical location is the subject (Annex H), which only the cases compare (Annex D.2).
                 results.append([row["ruleId"], row["level"], ((location.get("physicalLocation") or {}).get("artifactLocation") or {}).get("uri", "")])
             summary["sarif"] = {"exit": code, "rules": sorted(r["id"] for r in run_["tool"]["driver"]["rules"] if ANNEX_CODE.fullmatch(r["id"])),
                                 "results": sorted(r for r in results if ANNEX_CODE.fullmatch(r[0]))}
