@@ -184,7 +184,7 @@ def check():
         f"the suite changed: give it version {suite['version'] + 1} and the digest {suite_digest(cases)} (conformance README)"
     readme = (HERE / "README.md").read_text()
     assert f"suite version {suite['version']}" in readme, "the conformance README states another suite version"
-    # The number 2 named another suite before, so the README's claim cites the digest beside it.
+    # The claim cites the digest beside the version.
     assert f"suite version {suite['version']}, `suite.sha256` `{suite['sha256']}`" in readme, "the conformance README's claim cites another digest"
     every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["schemas"]
     ids = [c["id"] for c in every]
