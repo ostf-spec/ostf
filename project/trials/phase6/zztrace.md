@@ -1,4 +1,4 @@
-Counts of zztrace's OSTF root, from 296b483 to 296b483, read on 2026-10-26 with git+https://github.com/ostf-spec/ostf@75f946d0c3936cf34a0af8d9eb41d3c18b84c351, by `trials/phase6/count.py`.
+Counts of zztrace's OSTF root, from a983df5 to a983df5, read on 2026-10-26 with git+https://github.com/ostf-spec/ostf@e299ac768f55d56f9711f9f276f89d8f2a77fb65, by `trials/phase6/count.py`.
 
 | Merged change | Date | Links broken and left broken | Items listed | Tests listed | Item files edited by hand |
 | --- | --- | --- | --- | --- | --- |

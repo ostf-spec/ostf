@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 """Phase 6's counts for a real repository (agent-first plan, section 11), from its Git history alone.
 
-    python3 count.py REPO START [--root go/ostf] [--branch main] [--reader ostf] [--as-of YYYY-MM-DD] [--name zztrace]
+    python3 count.py REPO [START] [--root go/ostf] [--branch main] [--reader ostf] [--as-of YYYY-MM-DD] [--name zztrace]
 
 Each commit on the first-parent history of BRANCH after START is a merged change; those that touch
 ROOT are counted, in commit order. For each, from trees that `git archive` writes outside the
@@ -27,6 +27,9 @@ import tarfile
 import tempfile
 
 HERE = pathlib.Path(__file__).resolve().parent
+# zztrace's counts start after the merge of its pull request #2, which moved its items to working draft 0.3:
+# a script rewrote every item, ID and link there, so the changes before it say nothing about real use.
+START = "a983df5a299779a2418d50e63918c20cfbabe983"
 GATE_MONTHS = 3
 GATE_SYMBOLS = 200
 
@@ -120,7 +123,7 @@ def report(name, repo_root, start, head, changes, symbols, as_of, pin):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("repo", type=pathlib.Path)
-    parser.add_argument("start")
+    parser.add_argument("start", nargs="?", default=START)
     parser.add_argument("--root", default="go/ostf")
     parser.add_argument("--branch", default="main")
     parser.add_argument("--reader", default="ostf")

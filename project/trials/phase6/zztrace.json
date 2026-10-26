@@ -1,9 +1,9 @@
 {
  "name": "zztrace",
- "start": "296b483268ce4f027c7775138a7e549fcb282f81",
- "head": "296b483268ce4f027c7775138a7e549fcb282f81",
+ "start": "a983df5a299779a2418d50e63918c20cfbabe983",
+ "head": "a983df5a299779a2418d50e63918c20cfbabe983",
  "asOf": "2026-10-26",
- "reader": "git+https://github.com/ostf-spec/ostf@75f946d0c3936cf34a0af8d9eb41d3c18b84c351",
+ "reader": "git+https://github.com/ostf-spec/ostf@e299ac768f55d56f9711f9f276f89d8f2a77fb65",
  "monthsOfUse": 0.0,
  "linkedSymbols": {
   "codeDefinitions": 108,
