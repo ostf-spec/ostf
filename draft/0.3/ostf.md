@@ -275,7 +275,7 @@ This annex satisfies OSTF-164 for Go. Its grammar is that of the Go 1.27 specifi
 
 ## Annex B (normative): derived file grammar
 
-The grammar is published as [trace-lock.abnf](trace-lock.abnf) and reproduced here.
+The grammar is published as [trace-derived.abnf](trace-derived.abnf) and reproduced here.
 
 ```abnf
 derived-file = %s"trace.derived 1" *( newline [ observation ] )
@@ -468,7 +468,7 @@ the pull request.
 - Files: lock files, `stamp`, `migrate` and `--strict` are gone. A project deletes its `trace.lock` and the `.lock` file of each item file, and any CI step that ran `stamp` or `--strict`; a reader treats a lock file left behind as any other file, which an anchor may name and an include glob reads when it matches.
 - Results: link states and reasons, `impact.lock`, the codes `LOCK_MISSING`, `LOCK_INVALID`, `LOCK_DUPLICATE` and `STAMP_REFUSED`, item and link fingerprints and the SARIF results of states are gone. `check` exits 1 on an error diagnostic only, `BROKEN_LINK` included. `context` and `check --base` give each link they describe the last commits that changed its two sides (Annex I.3); `impact` compares span texts after CRLF becomes LF and item fields; the hint of `BROKEN_LINK` names a moved definition by its text, under a base view only.
 - Profiles: the `fingerprints` keys and an attribute's `meaning` are gone, and a profile that declares them is `PROFILE_INVALID`; a link attribute may be named `source`, `target`, `by` or `at`, and only `to` and `ref` stay reserved.
-- Annexes: A, K and L name their grammar and its pin and define spans without token rules, with span vectors in place of `go2`, `ts1`, `ts2` and `py1` vectors, which are deleted; B keeps the grammar of `trace.derived`; I keeps `check` and `context`; agent paragraph 5 and the policy paragraph of F.2 replace their earlier versions.
+- Annexes: A, K and L name their grammar and its pin and define spans without token rules, with span vectors in place of `go2`, `ts1`, `ts2` and `py1` vectors, which are deleted; B keeps the grammar of `trace.derived`, published as `trace-derived.abnf` in place of `trace-lock.abnf`; I keeps `check` and `context`; agent paragraph 5 and the policy paragraph of F.2 replace their earlier versions.
 
 **Requirement ID map.** 0.2 identifiers are retired; the table records where each meaning went.
 

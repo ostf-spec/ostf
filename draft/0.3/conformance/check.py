@@ -162,9 +162,9 @@ def check():
     counts["minimalFixture"] = 1
 
     spec = (DRAFT / "ostf.md").read_text()
-    # Annex B reproduces the rules of trace-lock.abnf.
-    rules = [line.split(";")[0].rstrip() for line in (DRAFT / "trace-lock.abnf").read_text().splitlines()]
-    assert [r for r in rules if r] == re.search(r"## Annex B .*?```abnf\n(.*?)```", spec, re.S)[1].splitlines(), "Annex B differs from trace-lock.abnf"
+    # Annex B reproduces the rules of trace-derived.abnf.
+    rules = [line.split(";")[0].rstrip() for line in (DRAFT / "trace-derived.abnf").read_text().splitlines()]
+    assert [r for r in rules if r] == re.search(r"## Annex B .*?```abnf\n(.*?)```", spec, re.S)[1].splitlines(), "Annex B differs from trace-derived.abnf"
 
     # The Annex C.3 example: edit the body of CheckRefundLimit and add a field to Account.
     edited = {path: example.files[path] for path in example.files}

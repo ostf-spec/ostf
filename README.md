@@ -64,7 +64,7 @@ Nothing in the repository records that confirmation, and a changed definition fa
 | Document | Purpose |
 | --- | --- |
 | [Specification](draft/0.3/ostf.md) | The format in 27 numbered requirements, the Go, TypeScript and Python annexes, the derived-link grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents, context rendering and results for an index |
-| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived` |
+| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived` |
 | [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with derived links and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
 | [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases |
