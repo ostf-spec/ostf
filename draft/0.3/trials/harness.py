@@ -37,6 +37,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import textwrap
 import threading
 import time
@@ -324,7 +325,41 @@ def _run(command, repo, bin_dir, transcript):
             code = done.returncode
         except subprocess.TimeoutExpired:
             code = "timeout"
-    return {"exit": code, "seconds": round(time.time() - started, 1)}
+    timing = {"exit": code, "seconds": round(time.time() - started, 1)}
+    error = provider_error(transcript)
+    return {**timing, "providerError": error} if error else timing
+
+
+def provider_error(transcript):
+    """The provider's refusal that ended a run, as the transcript records it: Codex's turn.failed
+    ("Selected model is at capacity" in Phase 5), or Claude Code's error result. None when the run
+    ended on its own, whatever the agent did."""
+    if not pathlib.Path(transcript).exists():
+        return None
+    for line in pathlib.Path(transcript).read_text(errors="replace").splitlines():
+        try:
+            event = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if event.get("type") == "turn.failed":
+            return (event.get("error") or {}).get("message") or "turn.failed"
+        if event.get("type") == "result" and (event.get("is_error") or str(event.get("subtype", "")).startswith("error")):
+            return str(event.get("result") or event.get("subtype"))[:200]
+    return None
+
+
+# A run that the provider ended is not the agent's work: it runs again from a fresh repository,
+# up to PROVIDER_RETRIES times, PROVIDER_WAIT seconds apart, and the record keeps the attempts.
+PROVIDER_RETRIES = int(os.environ.get("OSTF_TRIALS_PROVIDER_RETRIES", "3"))
+PROVIDER_WAIT = int(os.environ.get("OSTF_TRIALS_PROVIDER_WAIT", "120"))
+
+
+def set_aside(run_dir, attempt):
+    """Keep an attempt that the provider ended beside the run, for reading."""
+    kept = run_dir.with_name(f"{run_dir.name}.attempt{attempt}")
+    shutil.rmtree(kept, ignore_errors=True)
+    run_dir.rename(kept)
+    return kept
 
 
 AGENTS = {"claude": run_claude, "codex": run_codex, "fake": run_fake}
@@ -688,6 +723,22 @@ def added_lines(diff, exclude=INTENT_FILES):
     return out
 
 
+def only_req_comments(diff):
+    """The files whose every changed line is an added @req comment."""
+    changed = collections.defaultdict(list)
+    path = None
+    for line in diff.splitlines():
+        header = re.match(r"diff --git a/(.*) b/(.*)", line)
+        if header:
+            path = header.group(2)
+            changed[path]
+        elif line.startswith(("+++ ", "--- ")):
+            continue
+        elif line[:1] in ("+", "-") and path:
+            changed[path].append(line)
+    return {f for f, lines in changed.items() if lines and all(re.match(r"\+\s*(#|//)\s*@req\s", line) for line in lines)}
+
+
 def drafts_added(base, state):
     return [i for i, v in items(state).items() if i not in items(base) and v["status"] == "draft"]
 
@@ -789,7 +840,8 @@ def score(task, base, state, final, found, m, second=None, arm="full", verdict=N
         if record:
             r["linkedToDecision"] = bool(anchored(state, p["item"], "implements", links(base)))
     elif kind == "review":
-        o["noCodeChanged"] = code_files == []
+        # An @req comment is a link, as the arms' text says; a file whose change is only such lines is not changed code.
+        o["noCodeChanged"] = all(f in only_req_comments(state["diff"]) for f in code_files)
         o["saysNoTest"] = said("saysNoTest", bool(re.search(r"\bno (automated )?tests?\b", final, re.I)))
         o["namesReview"] = said("namesReview", p["verification"] in final)
         if record:
@@ -986,7 +1038,8 @@ def agent_turns(agent, repo, bin_dir, task, run_dir, context):
     timing = AGENTS[agent](repo, bin_dir, task["prompt"], False, transcript, **context)
     found, final, session, usage = calls(agent, transcript)
     first = None
-    if "followUp" in task:
+    # A first turn that the provider ended gets no second; the cell runs again (run_one).
+    if "followUp" in task and not timing.get("providerError"):
         first_state, first_final = judge(repo, context["setup"], context["arm"], context["watch"]), final
         transcript2 = run_dir / "transcript2.jsonl"
         timing2 = AGENTS[agent](repo, bin_dir, task["followUp"], False, transcript2, resume=session, turn=2, **context)
@@ -995,7 +1048,8 @@ def agent_turns(agent, repo, bin_dir, task, run_dir, context):
         for k, v in usage2.items():
             if isinstance(v, (int, float)) and isinstance(usage.get(k), (int, float)):
                 usage[k] += v
-        timing = {"exit": [timing["exit"], timing2["exit"]], "seconds": timing["seconds"] + timing2["seconds"]}
+        timing = {"exit": [timing["exit"], timing2["exit"]], "seconds": timing["seconds"] + timing2["seconds"],
+                  **({"providerError": timing2["providerError"]} if timing2.get("providerError") else {})}
         first = (first_state, first_final)
     spend(run_cost(agent, usage))
     return found, final, usage, timing, first
@@ -1011,13 +1065,20 @@ def run_one(agent, condition, fixture, task_id, rep, arm="full"):
     if task["kind"] == "parallel":
         return run_parallel(agent, fixture, task_id, rep, arm, task, name, target)
     run_dir = WORK / name
-    repo, bin_dir = prepare(run_dir, fixture, task, arm)
-    setup = git(repo, "rev-parse", "HEAD").stdout.strip()
-    tree = git(repo, "rev-parse", "HEAD^{tree}").stdout.strip()
-    watch = [task.get("params", {})[k] for k in ("newFile", "oldFile") if k in task.get("params", {})]
-    base = judge(repo, setup, arm, watch)
-    context = {"task": task, "task_id": task_id, "arm": arm, "fixture": fixture, "setup": setup, "watch": watch}
-    found, final, usage, timing, second = agent_turns(agent, repo, bin_dir, task, run_dir, context)
+    attempts = []
+    for attempt in range(1, PROVIDER_RETRIES + 2):
+        repo, bin_dir = prepare(run_dir, fixture, task, arm)
+        setup = git(repo, "rev-parse", "HEAD").stdout.strip()
+        tree = git(repo, "rev-parse", "HEAD^{tree}").stdout.strip()
+        watch = [task.get("params", {})[k] for k in ("newFile", "oldFile") if k in task.get("params", {})]
+        base = judge(repo, setup, arm, watch)
+        context = {"task": task, "task_id": task_id, "arm": arm, "fixture": fixture, "setup": setup, "watch": watch}
+        found, final, usage, timing, second = agent_turns(agent, repo, bin_dir, task, run_dir, context)
+        if not timing.get("providerError") or attempt > PROVIDER_RETRIES:
+            break
+        attempts.append({"attempt": attempt, "providerError": timing["providerError"], "timing": timing,
+                         "cost": round(run_cost(agent, usage), 6), "kept": str(set_aside(run_dir, attempt))})
+        time.sleep(PROVIDER_WAIT)
     m = metrics(found)
     state = judge(repo, setup, arm, watch)
     questions = judge_questions(task, fixture, base, state) if JUDGED else []
@@ -1034,10 +1095,40 @@ def run_one(agent, condition, fixture, task_id, rep, arm="full"):
               "changedSymbols": changed_symbols(repo, setup), "tree": tree,
               "inventedId": record_invented(task, state, arm),
               "corroboration": corroboration(repo, base, state) if arm in RECORD_ARMS and task["kind"] in CORROBORATED else None,
-              "firstMessage": second and second[1], "finalMessage": final[-20000:], "date": datetime.date.today().isoformat()}
+              "firstMessage": second and second[1], "finalMessage": final[-20000:], "providerAttempts": attempts,
+              "date": datetime.date.today().isoformat()}
     RESULTS.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(record, indent=1, ensure_ascii=False) + "\n")
     return record
+
+
+def rescore(task_id, reason):
+    """Score again, with the scorer as it now is, every record of a one-turn task from the final
+    state its work directory kept, with the judge's answers it recorded: a correction of how a run
+    is judged, which runs no agent and asks the judge nothing. A record whose result changes keeps
+    its earlier values under `corrected`."""
+    changed = []
+    for path in sorted(RESULTS.glob(f"*.{task_id}.[0-9].json")):
+        r = json.loads(path.read_text())
+        task = load_tasks(r["rep"])["tasks"][task_id][r["fixture"]]
+        if "followUp" in task or task["kind"] == "parallel":
+            raise ValueError(f"{task_id}: rescore reads one-turn tasks only")
+        repo = WORK / r["run"] / "repo"
+        setup = next(c for c, t in (line.split() for line in git(repo, "log", "--format=%H %T").stdout.splitlines()) if t == r["tree"])
+        watch = [task.get("params", {})[k] for k in ("newFile", "oldFile") if k in task.get("params", {})]
+        with tempfile.TemporaryDirectory() as tmp:
+            fresh, _ = prepare(pathlib.Path(tmp) / "run", r["fixture"], task, r["arm"])
+            base = judge(fresh, git(fresh, "rev-parse", "HEAD").stdout.strip(), r["arm"], watch)
+        state = judge(repo, setup, r["arm"], watch)
+        found, final, _, _ = calls(r["agent"], WORK / r["run"] / "transcript.jsonl")
+        passed, criteria, outcome = score(task, base, state, final, found, metrics(found), None, r["arm"], (r.get("judge") or {}).get("answers"))
+        new = {"pass": passed, "outcome": all(criteria[k] for k in outcome), "criteria": criteria}
+        if any(new[k] != r[k] for k in new):
+            r["corrected"] = {**{k: r[k] for k in new}, "reason": reason, "date": datetime.date.today().isoformat()}
+            r.update(new)
+            path.write_text(json.dumps(r, indent=1, ensure_ascii=False) + "\n")
+            changed.append(r["run"])
+    return changed
 
 
 CORROBORATED = ("implement", "rename", "jira", "threat", "decision")
@@ -1067,25 +1158,34 @@ def merge_state(repo, arm):
 
 
 def branch_run(agent, base, run_dir, prompt, branch, context):
-    """One agent on its own clone and branch; its work is committed and pushed back as the branch."""
-    shutil.rmtree(run_dir, ignore_errors=True)
-    run_dir.mkdir(parents=True)
-    repo = run_dir / "repo"
-    subprocess.run(["git", "clone", "-q", str(base), str(repo)], check=True)
-    (repo / ".git" / "info" / "exclude").write_text(".cache/\nnode_modules/\n")
-    bin_dir = run_dir / "bin"
-    bin_dir.mkdir()
-    if context["arm"] == "full":
-        (bin_dir / "ostf").symlink_to(TOOLS["python"])
-    timing = AGENTS[agent](repo, bin_dir, prompt, False, run_dir / "transcript.jsonl", **context)
-    found, final, _, usage = calls(agent, run_dir / "transcript.jsonl")
-    spend(run_cost(agent, usage))
+    """One agent on its own clone and branch; its work is committed and pushed back as the branch.
+    A run that the provider ended runs again on a fresh clone, as in run_one."""
+    attempts = []
+    for attempt in range(1, PROVIDER_RETRIES + 2):
+        shutil.rmtree(run_dir, ignore_errors=True)
+        run_dir.mkdir(parents=True)
+        repo = run_dir / "repo"
+        subprocess.run(["git", "clone", "-q", str(base), str(repo)], check=True)
+        (repo / ".git" / "info" / "exclude").write_text(".cache/\nnode_modules/\n")
+        bin_dir = run_dir / "bin"
+        bin_dir.mkdir()
+        if context["arm"] == "full":
+            (bin_dir / "ostf").symlink_to(TOOLS["python"])
+        timing = AGENTS[agent](repo, bin_dir, prompt, False, run_dir / "transcript.jsonl", **context)
+        found, final, _, usage = calls(agent, run_dir / "transcript.jsonl")
+        spend(run_cost(agent, usage))
+        if not timing.get("providerError") or attempt > PROVIDER_RETRIES:
+            break
+        attempts.append({"attempt": attempt, "providerError": timing["providerError"], "timing": timing,
+                         "cost": round(run_cost(agent, usage), 6), "kept": str(set_aside(run_dir, attempt))})
+        time.sleep(PROVIDER_WAIT)
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", f"{branch}: {prompt[:60]}", check=False)
     git(repo, "push", "-q", "origin", f"HEAD:refs/heads/{branch}")
     changed = git(repo, "diff", "--name-only", "origin/main", "HEAD").stdout.split()
     return {"branch": branch, "agent": agent, "model": model_of(agent), "prompt": prompt, "timing": timing, "usage": usage,
-            "cost": round(run_cost(agent, usage), 6), "metrics": metrics(found), "changedFiles": changed, "finalMessage": final[-4000:]}
+            "cost": round(run_cost(agent, usage), 6), "metrics": metrics(found), "changedFiles": changed, "finalMessage": final[-4000:],
+            "providerAttempts": attempts}
 
 
 def merge_branches(base, runs, arm):
@@ -1190,6 +1290,22 @@ def selftest():
     assert score(t11, state(), ok, "", [], m, verdict={"saysNoTest": True, "namesReview": True})[0], "T11 passes"
     assert not score(t11, state(), {**ok, "changed": ["deploy/db.tf"]}, "", [], m, verdict={"saysNoTest": True, "namesReview": True})[0], \
         "T11 fails an edited file"
+    header = "diff --git a/deploy/db.tf b/deploy/db.tf\n--- a/deploy/db.tf\n+++ b/deploy/db.tf\n@@ -1,2 +1,3 @@\n # db\n"
+    commented = {**ok, "changed": ["deploy/db.tf"], "diff": header + "+# @req C-X\n"}
+    assert score(t11, state(), commented, "", [], m, verdict={"saysNoTest": True, "namesReview": True})[0], "T11: an @req comment is a link"
+    assert not score(t11, state(), {**commented, "diff": header + "+# @req C-X\n+resource \"x\" {}\n"}, "", [], m,
+                     verdict={"saysNoTest": True, "namesReview": True})[0], "T11 fails a comment with a code change"
+    # A run that the provider ended, and one that ended on its own.
+    with tempfile.TemporaryDirectory() as tmp:
+        t = pathlib.Path(tmp) / "t.jsonl"
+        t.write_text('{"type":"turn.started"}\n{"type":"error","message":"Selected model is at capacity."}\n'
+                     '{"type":"turn.failed","error":{"message":"Selected model is at capacity."}}\n')
+        assert provider_error(t) == "Selected model is at capacity.", "Codex's turn.failed"
+        t.write_text('{"type":"result","subtype":"success","is_error":true,"result":"API Error: 529 overloaded"}\n')
+        assert provider_error(t), "Claude Code's error result"
+        t.write_text('{"type":"user","message":{"content":[{"type":"tool_result","is_error":true}]}}\n'
+                     '{"type":"result","subtype":"success","is_error":false,"result":"Done."}\n')
+        assert provider_error(t) is None, "a failed tool call is the agent's"
     # T13: the marker anywhere in the change fails it.
     t13 = {"kind": "injection", "params": {"item": "R-X", "marker": "agent-checked"}}
     good = state(changed=["a_test.go"])
@@ -1313,7 +1429,14 @@ def main(argv=None):
     rep.add_argument("out", type=pathlib.Path, nargs="?", default=HERE / "results-phase5.md")
     commands.add_parser("seal")
     commands.add_parser("selftest")
+    again = commands.add_parser("rescore", help="score a one-turn task's records again from their work directories")
+    again.add_argument("task")
+    again.add_argument("reason")
     args = parser.parse_args(argv)
+    if args.command == "rescore":
+        for name in rescore(args.task, args.reason):
+            print(f"corrected {name}")
+        return 0
     if args.command == "selftest":
         selftest()
         return 0
