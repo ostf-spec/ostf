@@ -182,7 +182,10 @@ def check():
     assert isinstance(suite["version"], int) and suite["version"] >= 1, "suite version"
     assert suite["sha256"] == suite_digest(cases), \
         f"the suite changed: give it version {suite['version'] + 1} and the digest {suite_digest(cases)} (conformance README)"
-    assert f"suite version {suite['version']}" in (HERE / "README.md").read_text(), "the conformance README states another suite version"
+    readme = (HERE / "README.md").read_text()
+    assert f"suite version {suite['version']}" in readme, "the conformance README states another suite version"
+    # The number 2 named another suite before, so the README's claim cites the digest beside it.
+    assert f"suite version {suite['version']}, `suite.sha256` `{suite['sha256']}`" in readme, "the conformance README's claim cites another digest"
     every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["schemas"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
