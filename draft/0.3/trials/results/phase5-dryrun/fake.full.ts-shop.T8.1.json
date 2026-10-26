@@ -1,0 +1,75 @@
+{
+ "run": "fake.full.ts-shop.T8.1",
+ "agent": "fake",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "ts-shop",
+ "task": "T8",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "derived",
+ "model": "fake",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "reported": true,
+  "derivedUntouched": true,
+  "noDerivedHandEdit": true
+ },
+ "outcomeCriteria": [
+  "derivedUntouched",
+  "reported"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "fake",
+  "answers": {
+   "reported": true
+  },
+  "questions": {
+   "reported": "Does the final answer tell the user that the check fails because a line of trace.derived is malformed?"
+  },
+  "reason": "dry run",
+  "cost": 0
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "contextCalls": 0,
+  "checkCalls": 2,
+  "traceOutputTokens": 200,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 0.3
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": 1,
+  "codes": [
+   "DERIVED_INVALID",
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b7aee4781ac2a36024e9014049b61df56b99cde9",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The check fails because a line of trace.derived is malformed. A test tool writes that file, so I left it as it is; regenerate it with the tool.",
+ "date": "2026-10-25"
+}

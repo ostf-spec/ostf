@@ -1,0 +1,85 @@
+{
+ "run": "fake.rules.ts-shop.T7.3",
+ "agent": "fake",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T7",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "impact",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "namesItems": false,
+  "namesTests": false,
+  "testsRan": true,
+  "noOtherFilesChanged": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "fake",
+  "answers": {
+   "item:R-TAX-EXEMPT": false,
+   "item:R-TAX-RATE": false,
+   "test:taxes the subtotal after discounts": false,
+   "test:is zero for a tax-exempt customer": false,
+   "test:rounds half up to the cent": false
+  },
+  "questions": {
+   "item:R-TAX-EXEMPT": "Does the final answer name R-TAX-EXEMPT (Tax exemption) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-TAX-RATE": "Does the final answer name R-TAX-RATE (Sales tax) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:taxes the subtotal after discounts": "Does the final answer name the test `taxes the subtotal after discounts` as one that matters for the change, run or to be run?",
+   "test:is zero for a tax-exempt customer": "Does the final answer name the test `is zero for a tax-exempt customer` as one that matters for the change, run or to be run?",
+   "test:rounds half up to the cent": "Does the final answer name the test `rounds half up to the cent` as one that matters for the change, run or to be run?"
+  },
+  "reason": "dry run",
+  "cost": 0
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 0.8
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "src/pricing.ts"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 1,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "I ran the tests; they pass.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,461 @@
+{
+ "run": "fake.rules.ts-shop.T12.3",
+ "agent": "fake",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 5.0
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n1.test.ts",
+    "src/fake-t12n1.ts"
+   ],
+   "finalMessage": "Added fakeT12N1 and its test."
+  },
+  {
+   "branch": "change-02",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 5.0
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n2.test.ts",
+    "src/fake-t12n2.ts"
+   ],
+   "finalMessage": "Added fakeT12N2 and its test."
+  },
+  {
+   "branch": "change-03",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a holdCount method to Stock in src/inventory.ts that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.9
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n3.test.ts",
+    "src/fake-t12n3.ts"
+   ],
+   "finalMessage": "Added fakeT12N3 and its test."
+  },
+  {
+   "branch": "change-04",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add an accountCount method to Sessions in src/accounts.ts that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 5.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n4.test.ts",
+    "src/fake-t12n4.ts"
+   ],
+   "finalMessage": "Added fakeT12N4 and its test."
+  },
+  {
+   "branch": "change-05",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.6
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n5.test.ts",
+    "src/fake-t12n5.ts"
+   ],
+   "finalMessage": "Added fakeT12N5 and its test."
+  },
+  {
+   "branch": "change-06",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function describeDiscount to src/pricing.ts that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 2.6
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n6.test.ts",
+    "src/fake-t12n6.ts"
+   ],
+   "finalMessage": "Added fakeT12N6 and its test."
+  },
+  {
+   "branch": "change-07",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function splitCents to src/money.ts that returns the dollars and the cents of an amount as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 2.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n7.test.ts",
+    "src/fake-t12n7.ts"
+   ],
+   "finalMessage": "Added fakeT12N7 and its test."
+  },
+  {
+   "branch": "change-08",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function savingsPercent in a new file src/savings.ts that returns a quote's discount as a whole percent of its subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 2.3
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n8.test.ts",
+    "src/fake-t12n8.ts"
+   ],
+   "finalMessage": "Added fakeT12N8 and its test."
+  },
+  {
+   "branch": "change-09",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function withTax in a new file src/with-tax.ts that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 2.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n9.test.ts",
+    "src/fake-t12n9.ts"
+   ],
+   "finalMessage": "Added fakeT12N9 and its test."
+  },
+  {
+   "branch": "change-10",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function freeShippingGap in a new file src/shipping.ts that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 2.3
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n10.test.ts",
+    "src/fake-t12n10.ts"
+   ],
+   "finalMessage": "Added fakeT12N10 and its test."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-03",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-04",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-07",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 9,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 35000,
+  "edited": true,
+  "calls": 50,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 36.6
+ },
+ "usage": {
+  "input_tokens": 0,
+  "output_tokens": 0
+ },
+ "cost": 0.0,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-25"
+}

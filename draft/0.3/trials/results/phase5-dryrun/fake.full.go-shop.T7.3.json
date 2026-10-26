@@ -1,0 +1,89 @@
+{
+ "run": "fake.full.go-shop.T7.3",
+ "agent": "fake",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T7",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "impact",
+ "model": "fake",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "namesItems": true,
+  "namesTests": true,
+  "testsRan": true,
+  "noOtherFilesChanged": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noOtherFilesChanged",
+  "testsRan"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "fake",
+  "answers": {
+   "item:R-TAX-EXEMPT": true,
+   "item:R-TAX-RATE": true,
+   "test:TestPrice": true,
+   "test:TestTax": true,
+   "test:TestTaxExempt": true
+  },
+  "questions": {
+   "item:R-TAX-EXEMPT": "Does the final answer name R-TAX-EXEMPT (Tax exemption) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "item:R-TAX-RATE": "Does the final answer name R-TAX-RATE (Sales tax) as one of the items that the change touches, that is, linked to the changed code, and say whether the change keeps it true?",
+   "test:TestPrice": "Does the final answer name the test `TestPrice` as one that matters for the change, run or to be run?",
+   "test:TestTax": "Does the final answer name the test `TestTax` as one that matters for the change, run or to be run?",
+   "test:TestTaxExempt": "Does the final answer name the test `TestTaxExempt` as one that matters for the change, run or to be run?"
+  },
+  "reason": "dry run",
+  "cost": 0
+ },
+ "metrics": {
+  "calls": 3,
+  "callsBeforeFirstEdit": 3,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "contextCalls": 0,
+  "checkCalls": 2,
+  "traceOutputTokens": 5336,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 1.5
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [
+  "pricing/tax.go"
+ ],
+ "changedAnchors": 1,
+ "changedSymbols": 1,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "The change touches R-TAX-EXEMPT, which still holds, R-TAX-RATE, which still holds. Tests: TestPrice, TestTax, TestTaxExempt.",
+ "date": "2026-10-25"
+}

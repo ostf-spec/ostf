@@ -1,0 +1,1017 @@
+{
+ "fixture": "ts-shop",
+ "arm": "full",
+ "agents": [
+  "fake"
+ ],
+ "months": 6,
+ "date": "2026-10-25",
+ "changes": [
+  {
+   "id": "M1.1",
+   "month": 1,
+   "kind": "rename",
+   "prompt": "Rename the remove method of Cart in src/cart.ts to discard, and update its callers and tests.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x1 and its test. I added R-FAKE-M1X1. The check lists R-FAKE-M1X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x1.test.ts",
+    "src/fake-m1x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M1X1"
+   ],
+   "listedTests": [
+    "src/fake-m1x1.test.ts#fakeM1x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M1X1": true,
+    "holds:R-FAKE-M1X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M1.2",
+   "month": 1,
+   "kind": "refactor",
+   "prompt": "Refactor the available method of Stock in src/inventory.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x2 and its test. I added R-FAKE-M1X2. The check lists R-FAKE-M1X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x2.test.ts",
+    "src/fake-m1x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M1.3",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x3 and its test. I added R-FAKE-M1X3. The check lists R-FAKE-M1X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x3.test.ts",
+    "src/fake-m1x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M1.4",
+   "month": 1,
+   "kind": "feature",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x4 and its test. I added R-FAKE-M1X4. The check lists R-FAKE-M1X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x4.test.ts",
+    "src/fake-m1x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M1.5",
+   "month": 1,
+   "kind": "behavior",
+   "prompt": "Make applyDiscount in src/pricing.ts reject a discount code with a negative percent, with a new error class. Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x5 and its test. I added R-FAKE-M1X5. The check lists R-FAKE-M1X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x5.test.ts",
+    "src/fake-m1x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M1.6",
+   "month": 1,
+   "kind": "test",
+   "prompt": "Add a test that the sales tax on an amount of zero is zero.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.4
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM1x6 and its test. I added R-FAKE-M1X6. The check lists R-FAKE-M1X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m1x6.test.ts",
+    "src/fake-m1x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M2.1",
+   "month": 2,
+   "kind": "rename",
+   "prompt": "Rename the release method of Stock in src/inventory.ts to cancel, and update its callers and tests.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.6
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x1 and its test. I added R-FAKE-M2X1. The check lists R-FAKE-M2X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x1.test.ts",
+    "src/fake-m2x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M2X1"
+   ],
+   "listedTests": [
+    "src/fake-m2x1.test.ts#fakeM2x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M2X1": true,
+    "holds:R-FAKE-M2X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M2.2",
+   "month": 2,
+   "kind": "refactor",
+   "prompt": "Refactor the register method of Sessions in src/accounts.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x2 and its test. I added R-FAKE-M2X2. The check lists R-FAKE-M2X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x2.test.ts",
+    "src/fake-m2x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M2.3",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x3 and its test. I added R-FAKE-M2X3. The check lists R-FAKE-M2X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x3.test.ts",
+    "src/fake-m2x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M2.4",
+   "month": 2,
+   "kind": "feature",
+   "prompt": "Add a has method to Cart in src/cart.ts that reports whether a SKU is in the cart, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.6
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x4 and its test. I added R-FAKE-M2X4. The check lists R-FAKE-M2X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x4.test.ts",
+    "src/fake-m2x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M2.5",
+   "month": 2,
+   "kind": "behavior",
+   "prompt": "Raise the largest quantity that a cart line may hold from 99 to 199.",
+   "makesFalse": "R-CART-QTY",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.6
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x5 and its test. I added R-FAKE-M2X5. The check lists R-FAKE-M2X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x5.test.ts",
+    "src/fake-m2x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M2.6",
+   "month": 2,
+   "kind": "test",
+   "prompt": "Add a test that a customer whose session has expired cannot place an order.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.5
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM2x6 and its test. I added R-FAKE-M2X6. The check lists R-FAKE-M2X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m2x6.test.ts",
+    "src/fake-m2x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M3.1",
+   "month": 3,
+   "kind": "move",
+   "prompt": "Move the function price from src/pricing.ts into a new file src/price.ts, keeping its name, and update its imports.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x1 and its test. I added R-FAKE-M3X1. The check lists R-FAKE-M3X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x1.test.ts",
+    "src/fake-m3x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M3X1"
+   ],
+   "listedTests": [
+    "src/fake-m3x1.test.ts#fakeM3x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M3X1": true,
+    "holds:R-FAKE-M3X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M3.2",
+   "month": 3,
+   "kind": "refactor",
+   "prompt": "Refactor the add method of Cart in src/cart.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x2 and its test. I added R-FAKE-M3X2. The check lists R-FAKE-M3X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x2.test.ts",
+    "src/fake-m3x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M3.3",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x3 and its test. I added R-FAKE-M3X3. The check lists R-FAKE-M3X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x3.test.ts",
+    "src/fake-m3x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M3.4",
+   "month": 3,
+   "kind": "feature",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x4 and its test. I added R-FAKE-M3X4. The check lists R-FAKE-M3X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x4.test.ts",
+    "src/fake-m3x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M3.5",
+   "month": 3,
+   "kind": "behavior",
+   "prompt": "Make a session last 60 minutes without use instead of 30.",
+   "makesFalse": "R-SESSION-EXPIRY",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x5 and its test. I added R-FAKE-M3X5. The check lists R-FAKE-M3X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x5.test.ts",
+    "src/fake-m3x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M3.6",
+   "month": 3,
+   "kind": "test",
+   "prompt": "Add a test that a cart with one line of three units at 12.00 has a subtotal of 36.00.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.7
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM3x6 and its test. I added R-FAKE-M3X6. The check lists R-FAKE-M3X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m3x6.test.ts",
+    "src/fake-m3x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.1",
+   "month": 4,
+   "kind": "rename",
+   "prompt": "Rename the confirm method of Stock in src/inventory.ts to commit, and update its callers and tests.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x1 and its test. I added R-FAKE-M4X1. The check lists R-FAKE-M4X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x1.test.ts",
+    "src/fake-m4x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M4X1"
+   ],
+   "listedTests": [
+    "src/fake-m4x1.test.ts#fakeM4x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M4X1": true,
+    "holds:R-FAKE-M4X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M4.2",
+   "month": 4,
+   "kind": "refactor",
+   "prompt": "Refactor the placeOrder method of Checkout in src/checkout.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x2 and its test. I added R-FAKE-M4X2. The check lists R-FAKE-M4X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x2.test.ts",
+    "src/fake-m4x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.3",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x3 and its test. I added R-FAKE-M4X3. The check lists R-FAKE-M4X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x3.test.ts",
+    "src/fake-m4x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.4",
+   "month": 4,
+   "kind": "feature",
+   "prompt": "Add a size method to AuditLog in src/audit.ts that returns the number of entries, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x4 and its test. I added R-FAKE-M4X4. The check lists R-FAKE-M4X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x4.test.ts",
+    "src/fake-m4x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.5",
+   "month": 4,
+   "kind": "behavior",
+   "prompt": "Make the cap on discounts 40 percent of the subtotal instead of 50.",
+   "makesFalse": "R-DISCOUNT-CAP",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x5 and its test. I added R-FAKE-M4X5. The check lists R-FAKE-M4X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x5.test.ts",
+    "src/fake-m4x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M4.6",
+   "month": 4,
+   "kind": "test",
+   "prompt": "Add a test that registering the same email twice throws EmailTakenError.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.8
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM4x6 and its test. I added R-FAKE-M4X6. The check lists R-FAKE-M4X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m4x6.test.ts",
+    "src/fake-m4x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.1",
+   "month": 5,
+   "kind": "rename",
+   "prompt": "Rename the validate method of Sessions in src/accounts.ts to check, and update its callers and tests.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x1 and its test. I added R-FAKE-M5X1. The check lists R-FAKE-M5X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x1.test.ts",
+    "src/fake-m5x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M5X1"
+   ],
+   "listedTests": [
+    "src/fake-m5x1.test.ts#fakeM5x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M5X1": true,
+    "holds:R-FAKE-M5X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M5.2",
+   "month": 5,
+   "kind": "refactor",
+   "prompt": "Refactor the function formatCents in src/money.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x2 and its test. I added R-FAKE-M5X2. The check lists R-FAKE-M5X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x2.test.ts",
+    "src/fake-m5x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.3",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x3 and its test. I added R-FAKE-M5X3. The check lists R-FAKE-M5X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x3.test.ts",
+    "src/fake-m5x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.4",
+   "month": 5,
+   "kind": "feature",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x4 and its test. I added R-FAKE-M5X4. The check lists R-FAKE-M5X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x4.test.ts",
+    "src/fake-m5x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.5",
+   "month": 5,
+   "kind": "behavior",
+   "prompt": "Make tax in src/pricing.ts round half to even instead of half up.",
+   "makesFalse": "R-TAX-RATE",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 1.9
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x5 and its test. I added R-FAKE-M5X5. The check lists R-FAKE-M5X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x5.test.ts",
+    "src/fake-m5x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M5.6",
+   "month": 5,
+   "kind": "test",
+   "prompt": "Add a test that a refund of a receipt that does not exist fails.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM5x6 and its test. I added R-FAKE-M5X6. The check lists R-FAKE-M5X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m5x6.test.ts",
+    "src/fake-m5x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.1",
+   "month": 6,
+   "kind": "move",
+   "prompt": "Move the function tax from src/pricing.ts into a new file src/salestax.ts, keeping its name, and update its imports.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x1 and its test. I added R-FAKE-M6X1. The check lists R-FAKE-M6X1, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x1.test.ts",
+    "src/fake-m6x1.ts",
+    "trace/requirements.yaml"
+   ],
+   "merged": true,
+   "conflict": [],
+   "newlyBroken": [],
+   "inventedIds": [],
+   "check": 0,
+   "testsPass": true,
+   "derivedChanged": false,
+   "listedItems": [
+    "R-FAKE-M6X1"
+   ],
+   "listedTests": [
+    "src/fake-m6x1.test.ts#fakeM6x1 returns one"
+   ],
+   "labels": {
+    "claim:R-FAKE-M6X1": true,
+    "holds:R-FAKE-M6X1": true
+   },
+   "judgeCost": 0
+  },
+  {
+   "id": "M6.2",
+   "month": 6,
+   "kind": "refactor",
+   "prompt": "Refactor the receipt method of Processor in src/payments.ts so that it is easier to read, without changing what it does.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x2 and its test. I added R-FAKE-M6X2. The check lists R-FAKE-M6X2, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x2.test.ts",
+    "src/fake-m6x2.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.3",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a function orderUnits to src/checkout.ts that returns the number of units over an order's lines, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x3 and its test. I added R-FAKE-M6X3. The check lists R-FAKE-M6X3, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x3.test.ts",
+    "src/fake-m6x3.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.4",
+   "month": 6,
+   "kind": "feature",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x4 and its test. I added R-FAKE-M6X4. The check lists R-FAKE-M6X4, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x4.test.ts",
+    "src/fake-m6x4.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.5",
+   "month": 6,
+   "kind": "behavior",
+   "prompt": "Make a reservation hold stock for 20 minutes instead of 15.",
+   "makesFalse": "R-STOCK-EXPIRY",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x5 and its test. I added R-FAKE-M6X5. The check lists R-FAKE-M6X5, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x5.test.ts",
+    "src/fake-m6x5.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  },
+  {
+   "id": "M6.6",
+   "month": 6,
+   "kind": "test",
+   "prompt": "Add a test that reading the audit log returns a copy, so that changing the copy does not change the log.",
+   "agent": "fake",
+   "model": "fake",
+   "cost": 0.0,
+   "timing": {
+    "exit": 0,
+    "seconds": 2.0
+   },
+   "derivedHandEdits": [],
+   "summary": "Added fakeM6x6 and its test. I added R-FAKE-M6X6. The check lists R-FAKE-M6X6, which my change keeps true.",
+   "changedFiles": [
+    "src/fake-m6x6.test.ts",
+    "src/fake-m6x6.ts",
+    "trace/requirements.yaml"
+   ],
+   "conflict": [
+    "trace/requirements.yaml"
+   ],
+   "merged": false
+  }
+ ],
+ "merged": 6,
+ "conflicts": 30,
+ "linksBroken": 0,
+ "brokenPer100": 0.0,
+ "byMonth": [
+  {
+   "month": 1,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  },
+  {
+   "month": 2,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  },
+  {
+   "month": 3,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  },
+  {
+   "month": 4,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  },
+  {
+   "month": 5,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  },
+  {
+   "month": 6,
+   "merged": 1,
+   "conflicts": 5,
+   "linksBroken": 0,
+   "itemsListed": 1
+  }
+ ],
+ "claimsHold": 6,
+ "claims": 6,
+ "inventedIds": 0,
+ "derivedHandEdits": 0,
+ "cost": 0.0
+}

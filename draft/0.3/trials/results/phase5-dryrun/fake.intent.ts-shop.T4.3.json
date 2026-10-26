@@ -1,0 +1,76 @@
+{
+ "run": "fake.intent.ts-shop.T4.3",
+ "agent": "fake",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T4",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "rename",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "renamed": false,
+  "oldNameGone": true,
+  "testsPass": false,
+  "linkMoved": false,
+  "noBrokenLink": true,
+  "checkPasses": true
+ },
+ "outcomeCriteria": [
+  "oldNameGone",
+  "renamed",
+  "testsPass"
+ ],
+ "textMatch": {},
+ "judge": null,
+ "metrics": {
+  "calls": 5,
+  "callsBeforeFirstEdit": 1,
+  "edited": true,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 502,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 1.3
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": false,
+ "changedFiles": [
+  "src/pricing.test.ts",
+  "src/pricing.ts",
+  "trace/requirements.yaml"
+ ],
+ "changedAnchors": null,
+ "changedSymbols": 8,
+ "tree": "d713911d9b9f1411734e2d8870ab856403d8554a",
+ "inventedId": false,
+ "corroboration": {
+  "added": 3,
+  "onTestedCode": 3,
+  "corroborated": 0
+ },
+ "firstMessage": null,
+ "finalMessage": "Renamed applyDiscount to discountAmount.",
+ "date": "2026-10-25"
+}

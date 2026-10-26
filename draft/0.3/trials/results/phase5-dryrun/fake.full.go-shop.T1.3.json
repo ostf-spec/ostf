@@ -1,0 +1,93 @@
+{
+ "run": "fake.full.go-shop.T1.3",
+ "agent": "fake",
+ "arm": "full",
+ "condition": "py-shell",
+ "fixture": "go-shop",
+ "task": "T1",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "explain",
+ "model": "fake",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "noFilesChanged": true,
+  "namesItems": true,
+  "namesTests": true,
+  "noDerivedHandEdit": true,
+  "derivedKept": true
+ },
+ "outcomeCriteria": [
+  "namesItems",
+  "namesTests",
+  "noFilesChanged"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "fake",
+  "answers": {
+   "item:R-AUDIT-MONEY": true,
+   "item:R-CHARGE-AMOUNT": true,
+   "item:R-CHARGE-DECLINE": true,
+   "item:R-IDEMPOTENT-CHARGE": true,
+   "test:TestChargeAudited": true,
+   "test:TestChargeDecline": true,
+   "test:TestChargeRetry": true,
+   "test:TestRefund": true,
+   "test:TestValidateAmount": true
+  },
+  "questions": {
+   "item:R-AUDIT-MONEY": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-AUDIT-MONEY (Audit money movements), which states: \"Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-AMOUNT": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-CHARGE-AMOUNT (Charge amount), which states: \"A charge must be more than zero and at most 10,000.00. Any other amount is rejected before the payment gateway is called.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-CHARGE-DECLINE": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-CHARGE-DECLINE (Declined charge), which states: \"A declined charge returns an error with the gateway's reason and is not stored under its idempotency key, so the customer can retry with the same key.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "item:R-IDEMPOTENT-CHARGE": "Does the final answer explain that payments/charge.go#Processor.Charge exists because of R-IDEMPOTENT-CHARGE (Idempotent charge), which states: \"A retry with the same idempotency key returns the first receipt without creating a second charge.\", by saying what that statement requires of the function, whether or not it gives the ID?",
+   "test:TestChargeAudited": "Does the final answer name the test `TestChargeAudited` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestChargeDecline": "Does the final answer name the test `TestChargeDecline` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestChargeRetry": "Does the final answer name the test `TestChargeRetry` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestRefund": "Does the final answer name the test `TestRefund` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?",
+   "test:TestValidateAmount": "Does the final answer name the test `TestValidateAmount` among the tests that cover the function or what it calls, whether or not it says that the test covers the function directly?"
+  },
+  "reason": "dry run",
+  "cost": 0
+ },
+ "metrics": {
+  "calls": 2,
+  "callsBeforeFirstEdit": 2,
+  "edited": false,
+  "ostfCalls": 2,
+  "ostfCallsBeforeFirstEdit": 2,
+  "firstOstfCall": 0,
+  "contextCalls": 1,
+  "checkCalls": 1,
+  "traceOutputTokens": 2318,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 0.8
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": 0,
+  "codes": [
+   "ostf-reader.UNLINKED"
+  ]
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": 0,
+ "changedSymbols": 0,
+ "tree": "b8f49ca6932453397b13ee48705c1929af0bfa27",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "It exists because of R-AUDIT-MONEY: Every charge and every refund appends an audit entry with the time, the account, the action, the amount and the receipt.; R-CHARGE-AMOUNT: A charge must be more than zero and at most 10,000.00. Any other amount is rejected before the payment gateway is called.; R-CHARGE-DECLINE: A declined charge returns an error with the gateway's reason and is not stored under its idempotency key, so the customer can retry with the same key.; R-IDEMPOTENT-CHARGE: A retry with the same idempotency key returns the first receipt without creating a second charge.. Tests: TestChargeAudited, TestChargeDecline, TestChargeRetry, TestRefund, TestValidateAmount.",
+ "date": "2026-10-25"
+}

@@ -1,0 +1,462 @@
+{
+ "run": "fake.intent.ts-shop.T12.1",
+ "agent": "fake",
+ "arm": "intent",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true,
+  "checkGreenAfterEachMerge": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 9.7
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n1.test.ts",
+    "src/fake-t12n1.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N1 and its test. I added R-FAKE-T12N1."
+  },
+  {
+   "branch": "change-02",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 10.5
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n2.test.ts",
+    "src/fake-t12n2.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N2 and its test. I added R-FAKE-T12N2."
+  },
+  {
+   "branch": "change-03",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 10.9
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n3.test.ts",
+    "src/fake-t12n3.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N3 and its test. I added R-FAKE-T12N3."
+  },
+  {
+   "branch": "change-04",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 10.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n4.test.ts",
+    "src/fake-t12n4.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N4 and its test. I added R-FAKE-T12N4."
+  },
+  {
+   "branch": "change-05",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 10.7
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n5.test.ts",
+    "src/fake-t12n5.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N5 and its test. I added R-FAKE-T12N5."
+  },
+  {
+   "branch": "change-06",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 7.6
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n6.test.ts",
+    "src/fake-t12n6.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N6 and its test. I added R-FAKE-T12N6."
+  },
+  {
+   "branch": "change-07",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 7.8
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n7.test.ts",
+    "src/fake-t12n7.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N7 and its test. I added R-FAKE-T12N7."
+  },
+  {
+   "branch": "change-08",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function formatQuote in a new file src/quote-format.ts that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 6.7
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n8.test.ts",
+    "src/fake-t12n8.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N8 and its test. I added R-FAKE-T12N8."
+  },
+  {
+   "branch": "change-09",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 7.8
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n9.test.ts",
+    "src/fake-t12n9.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N9 and its test. I added R-FAKE-T12N9."
+  },
+  {
+   "branch": "change-10",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 8.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 502,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "src/fake-t12n10.test.ts",
+    "src/fake-t12n10.ts",
+    "trace/requirements.yaml"
+   ],
+   "finalMessage": "Added fakeT12N10 and its test. I added R-FAKE-T12N10."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": 0,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-03",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-04",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-07",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "trace/requirements.yaml"
+   ]
+  }
+ ],
+ "conflicts": 9,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 5020,
+  "edited": true,
+  "calls": 50,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 90.5
+ },
+ "usage": {
+  "input_tokens": 0,
+  "output_tokens": 0
+ },
+ "cost": 0.0,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-25"
+}

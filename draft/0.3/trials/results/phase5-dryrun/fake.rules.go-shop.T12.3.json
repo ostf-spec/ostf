@@ -1,0 +1,461 @@
+{
+ "run": "fake.rules.go-shop.T12.3",
+ "agent": "fake",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "go-shop",
+ "task": "T12",
+ "rep": 3,
+ "heldOut": true,
+ "kind": "parallel",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Has to Cart in cart/cart.go that reports whether a SKU is in the cart, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 28.3
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n1.go",
+    "pricing/fake_t12n1_test.go"
+   ],
+   "finalMessage": "Added FakeT12N1 and its test."
+  },
+  {
+   "branch": "change-02",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Units to Order in cart/checkout.go that returns the number of units over its lines, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 27.6
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n2.go",
+    "pricing/fake_t12n2_test.go"
+   ],
+   "finalMessage": "Added FakeT12N2 and its test."
+  },
+  {
+   "branch": "change-03",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Holds to Stock in inventory/inventory.go that returns the number of reservations that have not expired, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 27.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n3.go",
+    "pricing/fake_t12n3_test.go"
+   ],
+   "finalMessage": "Added FakeT12N3 and its test."
+  },
+  {
+   "branch": "change-04",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Accounts to Sessions in accounts/session.go that returns the number of registered accounts, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 26.9
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n4.go",
+    "pricing/fake_t12n4_test.go"
+   ],
+   "finalMessage": "Added FakeT12N4 and its test."
+  },
+  {
+   "branch": "change-05",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Len to AuditLog in payments/audit.go that returns the number of entries, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 26.6
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n5.go",
+    "pricing/fake_t12n5_test.go"
+   ],
+   "finalMessage": "Added FakeT12N5 and its test."
+  },
+  {
+   "branch": "change-06",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a String method to Discount in pricing/discount.go that formats a code as \"SAVE10 (10% until 2026-12-31)\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 22.9
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n6.go",
+    "pricing/fake_t12n6_test.go"
+   ],
+   "finalMessage": "Added FakeT12N6 and its test."
+  },
+  {
+   "branch": "change-07",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Split to Money in pricing/money.go that returns its dollars and its cents as two integers, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 22.9
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n7.go",
+    "pricing/fake_t12n7_test.go"
+   ],
+   "finalMessage": "Added FakeT12N7 and its test."
+  },
+  {
+   "branch": "change-08",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a method Savings to Quote in pricing/quote.go that returns the discount as a whole percent of the subtotal, rounded down, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 22.3
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n8.go",
+    "pricing/fake_t12n8_test.go"
+   ],
+   "finalMessage": "Added FakeT12N8 and its test."
+  },
+  {
+   "branch": "change-09",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function WithTax to pricing/tax.go that returns an amount with the sales tax of a region added, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 22.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n9.go",
+    "pricing/fake_t12n9_test.go"
+   ],
+   "finalMessage": "Added FakeT12N9 and its test."
+  },
+  {
+   "branch": "change-10",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function FreeShippingGap in a new file pricing/shipping.go that returns how much more a subtotal needs to reach 100.00, or zero when it already does. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 21.8
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3384,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "pricing/fake_t12n10.go",
+    "pricing/fake_t12n10_test.go"
+   ],
+   "finalMessage": "Added FakeT12N10 and its test."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-03",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-04",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-07",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 9,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 33840,
+  "edited": true,
+  "calls": 50,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 249.1
+ },
+ "usage": {
+  "input_tokens": 0,
+  "output_tokens": 0
+ },
+ "cost": 0.0,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-25"
+}

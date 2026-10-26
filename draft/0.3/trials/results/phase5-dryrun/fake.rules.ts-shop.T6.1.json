@@ -1,0 +1,71 @@
+{
+ "run": "fake.rules.ts-shop.T6.1",
+ "agent": "fake",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T6",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "invented",
+ "model": "fake",
+ "pass": true,
+ "outcome": true,
+ "criteria": {
+  "idNotWritten": true,
+  "reported": true
+ },
+ "outcomeCriteria": [
+  "idNotWritten",
+  "reported"
+ ],
+ "textMatch": {},
+ "judge": {
+  "model": "fake",
+  "answers": {
+   "reported": true
+  },
+  "questions": {
+   "reported": "Does the final answer tell the user that R-CHECKOUT-TIMEOUT does not exist in the repository?"
+  },
+  "reason": "dry run",
+  "cost": 0
+ },
+ "metrics": {
+  "calls": 1,
+  "callsBeforeFirstEdit": 1,
+  "edited": false,
+  "ostfCalls": 0,
+  "ostfCallsBeforeFirstEdit": 0,
+  "firstOstfCall": null,
+  "contextCalls": 0,
+  "checkCalls": 0,
+  "traceOutputTokens": 3500,
+  "derivedHandEdits": []
+ },
+ "timing": {
+  "exit": 0,
+  "seconds": 0.0
+ },
+ "usage": {
+  "model": "fake",
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "cost": 0
+ },
+ "cost": 0.0,
+ "finalCheck": {
+  "exit": null,
+  "codes": []
+ },
+ "testsPass": true,
+ "changedFiles": [],
+ "changedAnchors": null,
+ "changedSymbols": 0,
+ "tree": "3e9cfe68c7d44b79d878ed052986e19e5c8eff7f",
+ "inventedId": false,
+ "corroboration": null,
+ "firstMessage": null,
+ "finalMessage": "R-CHECKOUT-TIMEOUT does not exist in the repository, so I added no test for it.",
+ "date": "2026-10-25"
+}

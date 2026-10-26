@@ -1,0 +1,461 @@
+{
+ "run": "fake.rules.ts-shop.T12.1",
+ "agent": "fake",
+ "arm": "rules",
+ "condition": "no-tool",
+ "fixture": "ts-shop",
+ "task": "T12",
+ "rep": 1,
+ "heldOut": false,
+ "kind": "parallel",
+ "model": "fake",
+ "pass": false,
+ "outcome": false,
+ "criteria": {
+  "noConflict": false,
+  "testsPassAfterEachMerge": true,
+  "noDuplicateId": true
+ },
+ "outcomeCriteria": [
+  "noConflict",
+  "noDuplicateId",
+  "testsPassAfterEachMerge"
+ ],
+ "judge": null,
+ "runs": [
+  {
+   "branch": "change-01",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a clear method to Cart in src/cart.ts that removes every line, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n1.test.ts",
+    "src/fake-t12n1.ts"
+   ],
+   "finalMessage": "Added fakeT12N1 and its test."
+  },
+  {
+   "branch": "change-02",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a preview method to Checkout in src/checkout.ts that takes the same session token, cart and discount as placeOrder and returns the quote that placeOrder would charge, without reserving stock or charging. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.4
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n2.test.ts",
+    "src/fake-t12n2.ts"
+   ],
+   "finalMessage": "Added fakeT12N2 and its test."
+  },
+  {
+   "branch": "change-03",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a held method to Stock in src/inventory.ts that returns the units of a SKU that unexpired reservations hold, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n3.test.ts",
+    "src/fake-t12n3.ts"
+   ],
+   "finalMessage": "Added fakeT12N3 and its test."
+  },
+  {
+   "branch": "change-04",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a logout method to Sessions in src/accounts.ts that ends a session, so that validating its token afterwards throws SessionError. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.8
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n4.test.ts",
+    "src/fake-t12n4.ts"
+   ],
+   "finalMessage": "Added fakeT12N4 and its test."
+  },
+  {
+   "branch": "change-05",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a total method to AuditLog in src/audit.ts that returns the sum of the amounts of one account's entries for one action, such as \"charge\" or \"refund\". Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 4.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n5.test.ts",
+    "src/fake-t12n5.ts"
+   ],
+   "finalMessage": "Added fakeT12N5 and its test."
+  },
+  {
+   "branch": "change-06",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function isExpired to src/pricing.ts that reports whether a discount code has expired at a given time, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 3.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n6.test.ts",
+    "src/fake-t12n6.ts"
+   ],
+   "finalMessage": "Added fakeT12N6 and its test."
+  },
+  {
+   "branch": "change-07",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function parseCents to src/money.ts that parses an amount such as 12.05 into cents and rejects more than two decimal places. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 3.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n7.test.ts",
+    "src/fake-t12n7.ts"
+   ],
+   "finalMessage": "Added fakeT12N7 and its test."
+  },
+  {
+   "branch": "change-08",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function formatQuote in a new file src/quote-format.ts that formats a quote as \"subtotal 10.00, discount 1.00, tax 1.35, total 10.35\", and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 3.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n8.test.ts",
+    "src/fake-t12n8.ts"
+   ],
+   "finalMessage": "Added fakeT12N8 and its test."
+  },
+  {
+   "branch": "change-09",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function ratePercent in a new file src/rates.ts that formats a region's rate as a percentage, such as 14.975%, and test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 3.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n9.test.ts",
+    "src/fake-t12n9.ts"
+   ],
+   "finalMessage": "Added fakeT12N9 and its test."
+  },
+  {
+   "branch": "change-10",
+   "agent": "fake",
+   "model": "fake",
+   "prompt": "Add a function regionByCode in a new file src/regions.ts that returns the region for QC (14.975 percent), ON (13 percent) or AB (5 percent), and throws for any other code. Test it.",
+   "timing": {
+    "exit": 0,
+    "seconds": 3.1
+   },
+   "usage": {
+    "model": "fake",
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "cost": 0
+   },
+   "cost": 0.0,
+   "metrics": {
+    "calls": 5,
+    "callsBeforeFirstEdit": 1,
+    "edited": true,
+    "ostfCalls": 0,
+    "ostfCallsBeforeFirstEdit": 0,
+    "firstOstfCall": null,
+    "contextCalls": 0,
+    "checkCalls": 0,
+    "traceOutputTokens": 3500,
+    "derivedHandEdits": []
+   },
+   "changedFiles": [
+    "REQUIREMENTS.md",
+    "src/fake-t12n10.test.ts",
+    "src/fake-t12n10.ts"
+   ],
+   "finalMessage": "Added fakeT12N10 and its test."
+  }
+ ],
+ "merges": [
+  {
+   "branch": "change-01",
+   "conflict": [],
+   "check": null,
+   "testsPass": true,
+   "duplicateIds": [],
+   "invented": false
+  },
+  {
+   "branch": "change-02",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-03",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-04",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-05",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-06",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-07",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-08",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-09",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  },
+  {
+   "branch": "change-10",
+   "conflict": [
+    "REQUIREMENTS.md"
+   ]
+  }
+ ],
+ "conflicts": 9,
+ "inventedId": false,
+ "metrics": {
+  "derivedHandEdits": [],
+  "traceOutputTokens": 35000,
+  "edited": true,
+  "calls": 50,
+  "ostfCalls": 0
+ },
+ "timing": {
+  "seconds": 37.3
+ },
+ "usage": {
+  "input_tokens": 0,
+  "output_tokens": 0
+ },
+ "cost": 0.0,
+ "changedSymbols": null,
+ "corroboration": null,
+ "date": "2026-10-25"
+}
