@@ -1,9 +1,9 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them, and keeps a lock file that shows which links were rechecked since either end last changed. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches.
 
-**Status:** working draft, wire version `ostf: "0.3"`, document revision 0.15. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
+**Status:** working draft, wire version `ostf: "0.3"`, document revision 0.16. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
 
 ## What it looks like
 
@@ -16,9 +16,9 @@ items:
     tests: [math_test.go#TestAdd]
 ```
 
-`math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. A tool that rechecks a link writes the fingerprints of both ends to `trace.lock`; when the requirement text or the function body changes, the link becomes `suspect` until someone rechecks it. A valid link means only that its inputs did not change. It does not mean the test passed or the code is correct.
+`math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. When a change edits `Add`, `ostf check --base` lists the function beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
-Under the default, every edit to a linked function's body makes its link suspect, a renamed variable or a new log line included, and `check` then fails until someone rechecks and stamps the link. The recheck costs one `context` call, but a team that stamps without reading gets a lock that says nothing. Two things keep that in view: `stamp` takes named links only and has no option to restamp everything, and a profile can set `fingerprints.bodyChange: risk` so that body edits are rechecked only for code that controls a declared risk (OSTF-144).
+Nothing in the repository records that confirmation, and a changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. Revision 0.16 removed the lock file and the stamps of earlier revisions after the [agent-first plan](draft/0.3/plan-agent-first.md) measured them (section 8).
 
 ## Start in ten minutes
 
@@ -29,14 +29,9 @@ Under the default, every edit to a linked function's body makes its link suspect
    pipx install git+https://github.com/ostf-spec/ostf
    ```
 
-3. Run `ostf check`. It lists your links as having no state yet. Stamp each one you have checked by hand, quoting it as `check` prints it and naming yourself with `--by`, and commit the `trace.lock` it writes:
-
-   ```sh
-   ostf stamp --by "person:$USER" 'math.go#Add implements R-ADD' 'math_test.go#TestAdd verifies R-ADD'
-   ```
-
+3. Run `ostf check`. It reports any error, such as an unknown ID or a function that does not exist, and counts your items and links; `ostf check --base main` also lists what your branch changed and the items each change serves.
 4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`, and after it your policy for agents, or the [recommended one](draft/0.3/fixtures/agent-policy.txt). Coding agents then run `ostf check --base` before they finish, which also shows what every function they changed serves.
-5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a suspect or broken link, and in a pull request whose base branch has a lock file also on an unstamped link or a missing lock (`check --strict`), shows the impact of a pull request in its log and uploads the findings to code scanning:
+5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a broken link, prints in a pull request's log what the change touches, which never fails it, and uploads the findings to code scanning:
 
    ```yaml
    name: OSTF
@@ -68,14 +63,14 @@ Under the default, every edit to a linked function's body makes its link suspect
 
 | Document | Purpose |
 | --- | --- |
-| [Specification](draft/0.3/ostf.md) | The format in 33 numbered requirements, the Go, TypeScript and Python annexes, the lock grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents, context rendering and results for an index |
-| [Schemas](draft/0.3/schema/) and [lock grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.lock` and `trace.derived` |
-| [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with a real lock file and the expected tool output |
+| [Specification](draft/0.3/ostf.md) | The format in 27 numbered requirements, the Go, TypeScript and Python annexes, the derived-link grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents, context rendering and results for an index |
+| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-lock.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived` |
+| [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with derived links and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
-| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check`, `context` and `stamp` commands, and hand-written cases |
+| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases |
 | [Converters](draft/0.3/tools/README.md) | Doorstop to OSTF and back, and StrictDoc to OSTF, with what each loses |
 | [Agent-readiness plan](draft/0.3/plan-agent-readiness.md) | Five phases that made OSTF work for coding agents without growing its core, all done, with each phase's outcome and the two scorecard rows lowered |
-| [Agent-first plan](draft/0.3/plan-agent-first.md) | Seven phases toward wire 0.4 drawn from two independent reviews of 0.3, from fixing the defects they found to trials against a baseline without OSTF; Phase 0, the fixes, is done in revision 0.13, Phase 1, the [baseline](draft/0.3/trials/baseline.md) against a plain requirements file, is published, and Phase 2, with the [replay under candidate defaults](draft/0.3/trials/baseline-defaults.md), is done in revisions 0.14 and 0.15 |
+| [Agent-first plan](draft/0.3/plan-agent-first.md) | Seven phases toward wire 0.4 drawn from two independent reviews of 0.3, from fixing the defects they found to trials against a baseline without OSTF; Phase 0, the fixes, is done in revision 0.13, Phase 1, the [baseline](draft/0.3/trials/baseline.md) against a plain requirements file, is published, Phase 2, with the [replay under candidate defaults](draft/0.3/trials/baseline-defaults.md), is done in revisions 0.14 and 0.15, and Phase 3 missed its pre-registered gate, so its fallback, the graph without the lock, is revision 0.16 |
 | [Agent trials](draft/0.3/trials/protocol.md) | The protocol, fixtures, harness and every result of coding agents from two vendors, and a small model, doing eight tasks with only the agent paragraph to go on |
 | [Decision record](draft/0.3/decisions.md) | The rulings taken while carrying out the plan: each ambiguity or defect, the rule that settled it and the requirement it touched |
 
@@ -91,7 +86,7 @@ go test ./...
 (cd draft/0.3/example && go test ./...)
 ```
 
-The Python script creates an ignored virtual environment, installs hash-pinned dependencies and runs the reader against the published hash vectors, the example's expected output, the fixtures and the cases, then checks the converters on their samples. `go test ./...` validates the examples and expected outputs against the schemas and checks the specification's size budget.
+The Python script creates an ignored virtual environment, installs hash-pinned dependencies and runs the reader against the span vectors, the example's expected output, the fixtures and the cases, then checks the converters on their samples. `go test ./...` validates the examples and expected outputs against the schemas and checks the specification's size budget.
 
 ## Participate
 

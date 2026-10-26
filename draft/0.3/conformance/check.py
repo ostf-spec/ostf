@@ -241,7 +241,7 @@ def check():
     valid_sarif = sarif_validator()
     try:  # a nested rule of the schema, reached through its references, is enforced
         valid_sarif({"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "x"}}, "results": [
-            {"ruleId": "LINK_BROKEN", "level": "fatal", "message": {"text": "x"}}]}]}, "a level outside SARIF")
+            {"ruleId": "BROKEN_LINK", "level": "fatal", "message": {"text": "x"}}]}]}, "a level outside SARIF")
         raise RuntimeError("the SARIF schema accepted level fatal")
     except AssertionError:
         pass
@@ -254,7 +254,7 @@ def check():
         assert log["version"] == "2.1.0" and len(log["runs"]) == 1, f"{case['id']}: one SARIF 2.1.0 run"
         run_ = log["runs"][0]
         rules = [r["id"] for r in run_["tool"]["driver"]["rules"]]
-        got = {"rules": rules, "diagnostics": [], "links": []}
+        got = {"rules": rules, "diagnostics": []}
         for row, diagnostic in zip(run_["results"], result["diagnostics"]):
             location = (row.get("locations") or [{}])[0]
             assert location.get("physicalLocation", {}).get("artifactLocation", {}).get("uri") == \
@@ -264,14 +264,8 @@ def check():
         for row in run_["results"]:
             assert row["ruleId"] in rules and row["message"]["text"], f"{case['id']}: rule and message of {row}"
             assert not re.search(r"[{}]", row["message"]["text"].replace("{{", "").replace("}}", "")), f"{case['id']}: undoubled brace"
-            if "ostf.link" in row.get("properties", {}):
-                location = row["locations"][0]
-                got["links"].append([row["ruleId"], row["level"], location["physicalLocation"]["artifactLocation"]["uri"],
-                                     location["logicalLocations"][0]["fullyQualifiedName"], row["properties"]["ostf.link"], row["properties"]["ostf.state"]])
-            else:
-                got["diagnostics"].append([row["ruleId"], row["level"]])
+            got["diagnostics"].append([row["ruleId"], row["level"]])
         got["diagnostics"].sort()
-        got["links"].sort()
         assert rules == sorted(rules, key=str.encode) and got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
     counts["checkCases"], counts["contextCases"] = len(cases["checks"]), len(cases["contexts"])
     counts["impactCases"], counts["sarifCases"] = len(cases["impacts"]), len(cases["sarif"])

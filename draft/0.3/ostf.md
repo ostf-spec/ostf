@@ -1,17 +1,17 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.15. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other; f1 and `lf1` are unchanged and the lock format of 0.2 only gains optional pairs, so its item and lock vectors remain valid; `go2` replaces `go1`, whose vectors stay published; and Annexes K and L add `ts2` and `py1`.
+**Working draft, 2026-10-25.** Wire version `ostf: "0.3"`. Proposed document revision 0.16. This document is a from-scratch redesign of the 0.2 draft. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other. Revision 0.16 removes the lock and the fingerprints of earlier revisions (Annex H); the vectors of 0.2 stay published as history.
 
 ## Abstract
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it, and keeps a lock file of fingerprints that shows whether each link was rechecked since either end last changed. Any tool, person or coding agent that can read YAML can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which links need another look. OSTF specifies files, not tools. A four-line file is a complete, valid start.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it. Any tool, person or coding agent that can read YAML can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches. OSTF specifies files, not tools. A four-line file is a complete, valid start.
 
 ## 1. Introduction
 
 ### 1.1 Scope
 
-**OSTF-100 Scope.**<a id="OSTF-100"></a> OSTF specifies the serialized files that tools exchange: items, typed links, code and test identities, link origins and link freshness. It does not specify how a tool stores, indexes, queries, presents or enforces that data; the optional command profile (Annex I) fixes only the names, inputs, outputs and exit codes of three commands. Dependency analysis, test selection beyond directly linked tests, user interfaces, synchronization with other systems, approvals, change policy, signatures and release decisions are outside OSTF. A tool MAY implement them and MAY keep its own data in `x-` extension keys (OSTF-104).
+**OSTF-100 Scope.**<a id="OSTF-100"></a> OSTF specifies the serialized files that tools exchange: items, typed links, code and test identities, link origins and observed coverage. It does not specify how a tool stores, indexes, queries, presents or enforces that data; the optional command profile (Annex I) fixes only the names, inputs, outputs and exit codes of two commands. Dependency analysis, test selection beyond directly linked tests, user interfaces, synchronization with other systems, approvals, change policy, signatures and release decisions are outside OSTF. A tool MAY implement them and MAY keep its own data in `x-` extension keys (OSTF-104).
 
 ### 1.2 Design rules (informative)
 
@@ -19,15 +19,15 @@ OSTF is a plain-text format that records why code exists. A repository declares 
 2. **Four lines to start.** Every field beyond `ostf`, `id`, `text` and one link is optional.
 3. **Links name symbols, not lines.** `pay/charge.go#Service.Charge` survives edits around it. Line numbers belong to a diff, never to a link.
 4. **A typo is an error.** Unknown keys, unknown IDs and unknown types fail. `x-` keys are the one escape hatch.
-5. **Freshness is a separate, machine-written file.** `trace.lock` records fingerprints; it is not a signature and not an approval.
-6. **Borrow before inventing.** YAML 1.2, JSON Schema, RFC 8785, SHA-256, base64url and ABNF are used as published. Diagnostics map to SARIF and execution evidence to in-toto attestations (Annexes D and E).
+5. **The review is the pull request.** A change shows each definition it touched beside the text of the items that definition serves; reading the two together is the recheck, which the forge and Git record, not a file.
+6. **Borrow before inventing.** YAML 1.2, JSON Schema and ABNF are used as published. Diagnostics map to SARIF and execution evidence to in-toto attestations (Annexes D and E).
 7. **No industry in the core.** The default vocabulary serves any team; a profile adds a domain's types and rules.
 
 ### 1.3 Conventions
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY" and "OPTIONAL" in this document are to be interpreted as described in BCP 14 [RFC 2119] [RFC 8174] when, and only when, they appear in all capitals, as shown here.
 
-Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers are never reused; a withdrawn requirement keeps its identifier and is marked retired. Each requirement's paragraph carries an anchor named by its identifier, so that `#OSTF-143` addresses OSTF-143 in a rendered copy of this document. Grammar fragments use ABNF [RFC 5234] with the case-sensitive string notation of [RFC 7405] and the core rules `ALPHA`, `DIGIT`, `HEXDIG`, `SP`, `LF` and `CRLF`. Sections and annexes marked informative, and all examples, carry no requirements. Where this text and a schema disagree, the text wins and the disagreement is a defect.
+Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers are never reused; a withdrawn requirement keeps its identifier and is marked retired. Each requirement's paragraph carries an anchor named by its identifier, so that `#OSTF-132` addresses OSTF-132 in a rendered copy of this document. Grammar fragments use ABNF [RFC 5234] with the case-sensitive string notation of [RFC 7405] and the core rules `ALPHA`, `DIGIT`, `HEXDIG`, `SP`, `LF` and `CRLF`. Sections and annexes marked informative, and all examples, carry no requirements. Where this text and a schema disagree, the text wins and the disagreement is a defect.
 
 ### 1.4 Normative references
 
@@ -52,16 +52,12 @@ Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers 
 | anchor | A reference to a file (`path`) or to a definition in a file (`path#symbol`). |
 | link | A typed, directed relationship from a source (an item or an anchor) to a target item. |
 | origin | Where a link was written: in an OSTF file (`declared`) or in a code comment (`tagged`). |
-| fingerprint | A hash over the parts of an item or definition that carry its meaning. |
-| lock file | `trace.lock`, or the lock of an item file, which holds the entries whose target that file declares (OSTF-142). |
-| lock entry | The fingerprints recorded for both ends of a link when it was last rechecked. |
-| stamp | The act of rewriting a link's lock entry after rechecking it. |
-| link state | `valid`, `suspect`, `unstamped` or `broken` (OSTF-143). |
 | source view | One coherent set of file contents selected for an evaluation: a commit, a working tree or an equivalent materialized tree. |
 | view identifier | A string that names a source view for the tool that records it, such as a Git commit's object name, or `unknown`. |
 | derived link | A record, written by a test tool, that a test covered a definition (OSTF-146). |
-| language annex | A normative annex that defines symbols, spans, tokens, tags and test identities for one language (OSTF-164). |
-| profile | A file that extends the default vocabulary with types, links, attributes and freshness settings. |
+| change information | The last commits that changed the two sides of a link, read from the history of the evaluated view (Annex I.3). |
+| language annex | A normative annex that defines the grammar, symbols, spans, tags and test identities of one language (OSTF-164). |
+| profile | A file that extends the default vocabulary with types, links and attributes. |
 | agent instructions file | A file that a coding agent reads at the start of a session, such as `AGENTS.md`. |
 
 ## 2. Overview (informative)
@@ -77,7 +73,7 @@ items:
     tests: [math_test.go#TestAdd]
 ```
 
-`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that implements the optional command profile (Annex I) answers the questions of the abstract with `context` and `check`.
+`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that implements the optional command profile (Annex I) answers the questions of the abstract with `context` and `check`. When a change edits `Add`, `check --base` lists the definition beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
 The file set is small:
 
@@ -219,7 +215,7 @@ func CheckRefundLimit(r Refund, acct Account) error {
 
 **OSTF-135 Origins.**<a id="OSTF-135"></a> Every link carries an origin: `declared` for a link written in an OSTF file and `tagged` for a link written in a code comment. Readers MUST report the origin with the link. The origin says where the link was written; it says nothing about who wrote it, when the code was written or whether the link is correct. Provenance beyond origin, such as the agent session that proposed a link, is tool data (Annex G).
 
-## 7. Freshness
+## 7. Derived links
 
 <a id="OSTF-140"></a><a id="OSTF-141"></a>OSTF-140 Item fingerprint f1 and OSTF-141 Code fingerprints are retired with the lock, and their algorithms with them; the scope of `PARSE_ERROR` moved to OSTF-132.
 
@@ -243,23 +239,23 @@ func CheckRefundLimit(r Refund, acct Account) error {
 
 ## 9. Conformance
 
-**OSTF-160 Classes.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare. A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses `trace.derived` for syntax; it does not bind symbols or tags and makes no freshness claim. An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex, computes item and code fingerprints, and reports corroboration against one selected source view; it names the annexes and algorithm identifiers it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
+**OSTF-160 Classes.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare. A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses `trace.derived` for syntax; it does not bind symbols or tags. An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex and reports corroboration against one selected source view; it names the annexes it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
 
 <a id="OSTF-161"></a><a id="OSTF-162"></a>OSTF-161 Consumer and OSTF-162 Analyzer are retired, merged into OSTF-160.
 
-**OSTF-163 Claims.**<a id="OSTF-163"></a> A conformance claim names the class, this document's revision, the wire version, the schema identifiers, the language annexes and algorithms, and the version of the conformance suite it passes. Claims for the optional annexes, the SARIF mapping (Annex D) and the command profile (Annex I), are separate. Passing a schema alone supports no claim.
+**OSTF-163 Claims.**<a id="OSTF-163"></a> A conformance claim names the class, this document's revision, the wire version, the schema identifiers, the language annexes, and the version of the conformance suite it passes. Claims for the optional annexes, the SARIF mapping (Annex D) and the command profile (Annex I), are separate. Passing a schema alone supports no claim.
 
 **OSTF-164 Language annex requirements.**<a id="OSTF-164"></a> A language annex MUST define: which files it covers; its grammar, by name and pinned version, a file the grammar does not read being one the annex cannot parse; which files are test files and how a test's identity is written after `#`; the symbol grammar and how a symbol binds to definitions; the span of a definition; the comment syntax in which tags are recognized and the rule that binds a tag to a definition; and fixed vectors of sources with the full symbol and span text of every definition in them and the definitions that each symbol binds to. An annex is normative only when it is published with its vectors. Annexes A (Go), K (TypeScript and JavaScript) and L (Python) are the language annexes of this revision.
 
 ## 10. Versioning
 
-**OSTF-170 Compatibility and release gate.**<a id="OSTF-170"></a> The wire version follows [SemVer]. Minor versions below 1.0 MAY change anything. From 1.0 on, a minor version only adds constructs that a reader may skip under OSTF-103, and a major version may remove or change meaning. Document revisions and conformance-suite versions change independently of the wire version. Fingerprint algorithms are versioned by their identifier: a change in token or projection rules is a new identifier, never a silent change. This draft stays below 1.0 until a second, independently maintained implementation computes its own fingerprints and states and passes the complete conformance suite, and two organizations have used the format on real changes; publication of a draft satisfies neither condition.
+**OSTF-170 Compatibility and release gate.**<a id="OSTF-170"></a> The wire version follows [SemVer]. Minor versions below 1.0 MAY change anything. From 1.0 on, a minor version only adds constructs that a reader may skip under OSTF-103, and a major version may remove or change meaning. Document revisions and conformance-suite versions change independently of the wire version. This draft stays below 1.0 until a second, independently maintained implementation passes the complete conformance suite, and two organizations have used the format on real changes; publication of a draft satisfies neither condition.
 
 <a id="OSTF-171"></a>OSTF-171 Release gate is retired, merged into OSTF-170.
 
 ## 11. Security considerations
 
-OSTF files are data. A reader never executes repository code and never fetches a URL while reading (OSTF-105, OSTF-113, OSTF-121); the YAML subset excludes anchors, aliases and tags, which removes expansion and type-coercion attacks (OSTF-101); the path rules exclude traversal (OSTF-105); and the size limit bounds memory (OSTF-105). A lock entry proves nothing about who rechecked a link or whether they were right, and a derived link nothing about whether its test passed: it detects accidental drift, not tampering, and a project that needs attribution signs its commits or wraps evidence in signed attestations (Annex E). Item text, like any repository content, can contain instructions aimed at a coding agent; a tool that passes OSTF content to a model MUST treat it as data, not as instructions, and MUST NOT let it widen the agent's permissions (Annex F). The command profile keeps `check` and `context` free of writes and limits `stamp` to named links in `trace.lock` (Annex I), so a tool can let an agent read freely while each recheck stays a deliberate act.
+OSTF files are data. A reader never executes repository code and never fetches a URL while reading (OSTF-105, OSTF-113, OSTF-121); the YAML subset excludes anchors, aliases and tags, which removes expansion and type-coercion attacks (OSTF-101); the path rules exclude traversal (OSTF-105); and the size limit bounds memory (OSTF-105). A derived link proves nothing about whether its test passed, and change information nothing about who reviewed a change: a project that needs attribution signs its commits or wraps evidence in signed attestations (Annex E). Item text, like any repository content, can contain instructions aimed at a coding agent; a tool that passes OSTF content to a model MUST treat it as data, not as instructions, and MUST NOT let it widen the agent's permissions (Annex F). The command profile keeps `check` and `context` free of writes, and reads history with Git's plumbing, which runs no repository code (Annex I), so a tool can let an agent read freely.
 
 ## Annex A (normative): Go language annex
 
@@ -388,7 +384,7 @@ A tool that emits OSTF results as SARIF 2.1.0 [SARIF] MUST map them as follows, 
 
 ## Annex E (informative): execution evidence as in-toto attestations
 
-OSTF names tests; it does not record that they ran. A project that needs portable, signable evidence can wrap a test run in an in-toto Statement with the Test Result predicate (`https://in-toto.io/attestation/test-result/v0.1`): the `subject` carries the `gitCommit` digest of the source view that was tested; `passedTests`, `failedTests` and `warnedTests` carry Go test identities exactly as they appear after `#` in OSTF test anchors; `configuration` references `trace.yaml` and `trace.lock` by `gitBlob` digest so a verifier knows which graph and which stamps the run saw; and `url` points to the run. Signing the statement with DSSE gives the attribution that a lock entry cannot. A passing attestation does not make a link valid, and a valid link does not imply a passing attestation.
+OSTF names tests; it does not record that they ran. A project that needs portable, signable evidence can wrap a test run in an in-toto Statement with the Test Result predicate (`https://in-toto.io/attestation/test-result/v0.1`): the `subject` carries the `gitCommit` digest of the source view that was tested; `passedTests`, `failedTests` and `warnedTests` carry Go test identities exactly as they appear after `#` in OSTF test anchors; `configuration` references `trace.yaml` by `gitBlob` digest so a verifier knows which graph the run saw; and `url` points to the run. Signing the statement with DSSE gives the attribution that the files cannot. A passing attestation does not say that the code still satisfies its items, and a link does not say that its tests pass.
 
 ## Annex F: guidance for coding agents
 
@@ -434,37 +430,45 @@ the pull request.
 
 | Specification | What it covers | How OSTF relates |
 | --- | --- | --- |
-| Agent Trace 0.1 (Cursor, Cognition) | Which conversation and contributor produced a line range, with an optional content hash and VCS revision | Attribution, not intent. Complementary: OSTF links carry no proposed state (F.6), so who wrote a link is Git's and Agent Trace's record; a tool may record the Agent Trace record ID of the conversation that proposed a link in an `x-` key. |
+| Agent Trace 0.1 (Cursor, Cognition) | Which conversation and contributor produced a line range, with an optional content hash and VCS revision | Attribution, not intent. Complementary: OSTF links carry no proposed state (F.7), so who wrote a link is Git's and Agent Trace's record; a tool may record the Agent Trace record ID of the conversation that proposed a link in an `x-` key. |
 | OpenTelemetry semantic conventions, `code.*` and `vcs.*` attributes | Runtime and VCS locations in telemetry | Runtime function names map to anchors through a language annex (A.6). OSTF defines no telemetry fields. |
-| SARIF 2.1.0 (OASIS) | Static analysis results | OSTF diagnostics and link states can be emitted as SARIF (Annex D). |
+| SARIF 2.1.0 (OASIS) | Static analysis results | OSTF diagnostics can be emitted as SARIF (Annex D). |
 | Model Context Protocol | Tools that agents call | The command profile exposes `check` and `context` as MCP tools that return the JSON result (Annex I.4). |
 | in-toto attestation framework, Test Result predicate | Signed statements about artifacts | Execution evidence for OSTF test anchors (Annex E). |
-| ReqIF 1.2 (OMG), OSLC RM 2.1 (OASIS) | Requirements exchange between tools; linked-data vocabulary | An item maps to a ReqIF SpecObject or an `oslc_rm:Requirement`; anchors, tags and the lock have no counterpart and are lost in export. Formal mappings are planned, outside Core. |
+| ReqIF 1.2 (OMG), OSLC RM 2.1 (OASIS) | Requirements exchange between tools; linked-data vocabulary | An item maps to a ReqIF SpecObject or an `oslc_rm:Requirement`; anchors and tags have no counterpart and are lost in export. Formal mappings are planned, outside Core. |
 | SCIP (Sourcegraph) | Symbol definitions and references | A possible source of definitions for future language annexes; not required. |
 | Spec Kit, Kiro, OpenSpec | Feature specifications written for an agent before coding | Per-feature intent. The requirements meant to outlive a feature become OSTF items linked to the code that carries them. |
 | OpenFastTrace, StrictDoc, Sphinx-Needs, LOBSTER, Doorstop, reqstool | Requirements-as-code with tool-specific tag syntax | Converters to and from OSTF are the intended adoption path; each should publish what it loses. |
 
-## Annex H (informative): changes from draft 0.2 and revision 0.14
+## Annex H (informative): changes from draft 0.2 and revisions 0.14 and 0.15
 
-**Kept unchanged:** item ID grammar, aliases, the default types and links, `code` and `tests` authoring, `@req` and `@req-file` tags, the f1 projection and digest, `lf1`, the `trace.lock 1` format and its four states and precedence, the Producer, Consumer and Analyzer classes, and the 1.0 release gate.
+**Kept unchanged:** item ID grammar, aliases, the default types and links, `code` and `tests` authoring, `@req` and `@req-file` tags, the Producer, Consumer and Analyzer classes, and the 1.0 release gate.
 
-**Replaced:** `go1` by `go2`, whose token stream keeps a line break that ends a statement as `;` (Annex A.4); the 0.2 `go1` vectors stay published.
+**Removed:** the lock, its states and the fingerprints, f1 and `lf1` among them, by revision 0.16 below, after revision 0.13 had replaced `go1` with `go2`; the item, Go and lock vectors of 0.2 stay published as history.
 
-**Simplified:** `links: {source: yaml|tags|both}` became `tags`, on by default where 0.2 read YAML links only; attribute kinds reduced to `string`, `text`, `number`, `boolean` and `list` with `values` replacing `enum` and `date` becoming a string; undeclared attributes are now allowed and never fingerprinted; the per-link `suspect` setting and profile `extends` were removed; `bodyChange` defaults to `all` instead of `risk-relevant`; tags carry IDs only and the `role=` tag token is gone; the `document` header, `derived`, `owners`, `justifications` and `provenance` fields and the `imported` origin were removed; profiles always merge over the default vocabulary.
+**Simplified:** `links: {source: yaml|tags|both}` became `tags`, on by default where 0.2 read YAML links only; attribute kinds reduced to `string`, `text`, `number`, `boolean` and `list` with `values` replacing `enum` and `date` becoming a string; undeclared attributes are now allowed; the per-link `suspect` setting, profile `extends` and `bodyChange` were removed; tags carry IDs only and the `role=` tag token is gone; the `document` header, `derived`, `owners`, `justifications` and `provenance` fields and the `imported` origin were removed; profiles always merge over the default vocabulary.
 
-**Added to Core:** `external` and `sources` for items owned by another system (the 0.2 snapshot proposal, reduced to identity, revision and an observed copy); `UNSUPPORTED_LANGUAGE` and `PARSE_ERROR` behavior; the conformance result format; the language annex requirements; the TypeScript and JavaScript annex, `ts2`, and the Python annex, `py1` (Annexes K and L).
+**Added to Core:** `external` and `sources` for items owned by another system (the 0.2 snapshot proposal, reduced to identity, revision and an observed copy); `UNSUPPORTED_LANGUAGE` and `PARSE_ERROR` behavior; the conformance result format; the language annex requirements; the TypeScript and JavaScript annex and the Python annex (Annexes K and L).
 
 **Added outside Core:** the `hint` diagnostic field and the `impact` section of the result format, with `schema/result.schema.json`; the SARIF mapping, now normative for tools that emit SARIF (Annex D); the fixed agent paragraph (Annex F.1); the command profile (Annex I); the context rendering (Annex J).
 
 **Moved out of Core:** `logs` and `otel` references (use `x-` keys or a future profile); evidence (Annex E points to in-toto); recovery records and `@req-none` (not carried forward); coverage rules and policy (tool behavior).
 
-**Since document revision 0.14.** The wire string `ostf: "0.3"`, the lock header `trace.lock 1`, the schema identifiers and the algorithms f1, `go2`, `ts2`, `py1` and `lf1` are unchanged; a file written under revision 0.14 is read under the rules of this one.
+**Revision 0.15, since revision 0.14.** The wire string `ostf: "0.3"`, the lock header `trace.lock 1`, the schema identifiers and the algorithms f1, `go2`, `ts2`, `py1` and `lf1` are unchanged; a file written under revision 0.14 was read under the rules of revision 0.15.
 
 - Requirements: OSTF-161 and OSTF-162 are merged into OSTF-160, OSTF-171 into OSTF-170, and OSTF-146 is new.
 - Vocabulary: every type has a kind, which link rules and risk relevance follow, and a profile's new type declares it; `threat` and `control` are default types; [profiles/security.yaml](profiles/security.yaml) is published.
 - Files: `trace.derived` records coverage and gives `implements` links a corroboration; lock entries end with `by` and `at`; an item file may have its own lock; a source entry may name with `ostf` the root that owns its items.
 - Reasons and diagnostics: `FILE_CHANGED` and `DEFINITION_CHANGED`, with the profile keys `fileChange` and `definitionChange`; `DERIVED_INVALID` and `NESTED_ROOT_FAILED`; the hint of `BROKEN_LINK` names a moved definition.
 - Results and agents: `corroboration`, `impact.contexts` and the `ndjson` format (Annex N); lines of item text marked with `| ` in the text of `context`; agent paragraph 4 and the policy paragraph of F.2.
+
+**Revision 0.16, since revision 0.15.** Phase 3 of the agent-first plan missed the gate written before it was measured, so the fallback named beside the gate applies (plan, section 8): the lock and the fingerprints go, and the graph stays. The wire string `ostf: "0.3"` and the schema identifiers are unchanged; the tag `doc-0.15` marks the last revision with the lock.
+
+- Requirements: OSTF-140 to OSTF-145 are retired. The rule of a control moved from OSTF-144 to OSTF-120, and the scope of `PARSE_ERROR` from OSTF-141 to OSTF-132. Core has 27 requirements.
+- Files: lock files, `stamp`, `migrate` and `--strict` are gone. A project deletes its `trace.lock` and the `.lock` file of each item file, and any CI step that ran `stamp` or `--strict`; a reader treats a lock file left behind as any other file, which an anchor may name and an include glob reads when it matches.
+- Results: link states and reasons, `impact.lock`, the codes `LOCK_MISSING`, `LOCK_INVALID`, `LOCK_DUPLICATE` and `STAMP_REFUSED`, item and link fingerprints and the SARIF results of states are gone. `check` exits 1 on an error diagnostic only, `BROKEN_LINK` included. `context` and `check --base` give each link they describe the last commits that changed its two sides (Annex I.3); `impact` compares span texts after CRLF becomes LF and item fields; the hint of `BROKEN_LINK` names a moved definition by its text, under a base view only.
+- Profiles: the `fingerprints` keys and an attribute's `meaning` are gone, and a profile that declares them is `PROFILE_INVALID`.
+- Annexes: A, K and L name their grammar and its pin and define spans without token rules, with span vectors in place of `go2`, `ts1`, `ts2` and `py1` vectors, which are deleted; B keeps the grammar of `trace.derived`; I keeps `check` and `context`; agent paragraph 5 and the policy paragraph of F.2 replace their earlier versions.
 
 **Requirement ID map.** 0.2 identifiers are retired; the table records where each meaning went.
 
@@ -482,13 +486,13 @@ the pull request.
 | OSTF-010 origins | revised | OSTF-135 |
 | OSTF-011 anchors and tags | revised | OSTF-132, OSTF-133 |
 | OSTF-012 test identity | retained | OSTF-132, Annex A.1 |
-| OSTF-013 f1 | retained | OSTF-140 |
-| OSTF-014 code fingerprints | retained | OSTF-141 |
-| OSTF-015 lock | retained | OSTF-142, Annex B |
-| OSTF-016 states | retained | OSTF-143 |
-| OSTF-017 suspect rules | revised | OSTF-144 |
+| OSTF-013 f1 | retired in revision 0.16 | none |
+| OSTF-014 code fingerprints | retired in revision 0.16 | none |
+| OSTF-015 lock | retired in revision 0.16 | none |
+| OSTF-016 states | retired in revision 0.16 | none |
+| OSTF-017 suspect rules | retired in revision 0.16 | none |
 | OSTF-018 risk relevance | retained | OSTF-120 |
-| OSTF-019 no assurance | retained | OSTF-145 |
+| OSTF-019 no assurance | retired in revision 0.16 | none |
 | OSTF-020 referenced items | revised, now in Core | OSTF-113 |
 | OSTF-021 schema boundary | retained | OSTF-106 |
 | OSTF-022 conformance | retained | OSTF-160, OSTF-163 |

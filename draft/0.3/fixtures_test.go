@@ -7,6 +7,7 @@ package draft_test
 import (
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"net/url"
 	"os"
 	"path"
@@ -343,4 +344,64 @@ func matchComponent(g, n []rune) bool {
 		gi++
 	}
 	return gi == len(g)
+}
+
+// lockTokens are the tokens of the lock that revision 0.16 removed (plan,
+// section 8): its header, its reasons and codes, a state written as a
+// result value, and an algorithm prefix. They match tokens, never the words
+// valid or suspect, which the text uses in other senses.
+var lockTokens = regexp.MustCompile(`trace\.lock 1|\b(?:LINK_BROKEN|LINK_UNSTAMPED|UNKNOWN_ALGORITHM|ITEM_CHANGED|FILE_CHANGED|` +
+	`DEFINITION_CHANGED|SIGNATURE_CHANGED|BODY_CHANGED|LOCK_MISSING|LOCK_INVALID|LOCK_DUPLICATE|STAMP_REFUSED)\b|` +
+	`"state"\s*:|ostf\.state|\((?:valid|suspect|unstamped|broken)[,)]|\b(?:f1|go1|go2|ts1|ts2|py1|lf1):[A-Za-z0-9_-]`)
+
+// TestNoLockTokens is the exit gate of the plan's section 8: no token of the
+// lock is left where the format is defined or used, in ostf.md, the schemas,
+// the conformance cases, the fixtures and the example, the reader's command,
+// the Action and the READMEs. What keeps the lock as history is left out:
+// Annex H, the retired markers, the conversion notes of the conformance
+// README, the three vector files of 0.2, trials/, reviews/, the decision
+// record and the plan.
+func TestNoLockTokens(t *testing.T) {
+	texts := map[string]string{}
+	spec := read(t, "ostf.md")
+	annexH, annexI := strings.Index(spec, "\n## Annex H "), strings.Index(spec, "\n## Annex I ")
+	if annexH < 0 || annexI < annexH {
+		t.Fatal("ostf.md has no Annex H before Annex I")
+	}
+	var kept []string
+	for _, line := range strings.Split(spec[:annexH]+spec[annexI:], "\n") {
+		if !strings.HasPrefix(line, `<a id="OSTF-`) { // a retired requirement's marker
+			kept = append(kept, line)
+		}
+	}
+	texts["ostf.md"] = strings.Join(kept, "\n")
+	readme := read(t, "conformance/README.md")
+	if i := strings.Index(readme, "\n## From "); i >= 0 { // the conversion notes, to the end
+		readme = readme[:i]
+	}
+	texts["conformance/README.md"] = readme
+	for _, name := range []string{"../../README.md", "../../action.yml", "conformance/cases.json", "conformance/reader.py",
+		"example/README.md", "fixtures/README.md", "tools/README.md"} {
+		texts[name] = read(t, name)
+	}
+	for _, dir := range []string{"schema", "fixtures", "example"} {
+		if err := fs.WalkDir(os.DirFS(dir), ".", func(name string, entry fs.DirEntry, err error) error {
+			if err == nil && !entry.IsDir() {
+				texts[dir+"/"+name] = read(t, dir+"/"+name)
+			}
+			return err
+		}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for name, text := range texts {
+		for n, line := range strings.Split(text, "\n") {
+			if found := lockTokens.FindString(line); found != "" {
+				t.Errorf("%s:%d holds %q, a token of the lock", name, n+1, found)
+			}
+		}
+	}
+	if len(texts) < 20 {
+		t.Errorf("only %d files read", len(texts))
+	}
 }

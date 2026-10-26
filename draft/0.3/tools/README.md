@@ -18,7 +18,7 @@ python3 doorstop.py export OSTF_DIR DOORSTOP_DIR
 | `header` | `title` | kept |
 | `text` | `text` | kept |
 | `links` to parent items | `refines`, or `verifies` from a `verification` item | kept |
-| link review stamps | `x-doorstop.link-stamps` | kept, never checked: OSTF rechecks links with `trace.lock` |
+| link review stamps | `x-doorstop.link-stamps` | kept, never checked: in OSTF the pull request rechecks a link |
 | `reviewed` | `x-doorstop.reviewed` | kept, never checked |
 | `references` of type file | whole-file `code` anchors, or `tests` for a `verification` item, and `x-doorstop.references` | kept; a `keyword` is kept only in `x-doorstop` |
 | `active: false` | `status: obsolete` | kept |
@@ -26,7 +26,7 @@ python3 doorstop.py export OSTF_DIR DOORSTOP_DIR
 | custom attributes | `attributes` when OSTF can hold the value, otherwise `x-doorstop.attributes` | kept |
 | document settings | `x-doorstop` of the item file | kept |
 
-What does not survive: Doorstop's review stamps carry no meaning in OSTF, so a link that Doorstop calls suspect is unstamped in OSTF until it is stamped. Going back, an anchor with a symbol keeps only its file; `status: draft` exports as active; and link attributes, `controls` links, other profile links, `aliases`, `section` and `rationale` have no Doorstop form; `export` names each one it drops.
+What does not survive: Doorstop's review stamps carry no meaning in OSTF, so a link that Doorstop calls suspect is an ordinary link in OSTF, which the next pull request that touches its code shows beside its item. Going back, an anchor with a symbol keeps only its file; `status: draft` exports as active; and link attributes, `controls` links, other profile links, `aliases`, `section` and `rationale` have no Doorstop form; `export` names each one it drops.
 
 ## StrictDoc, into OSTF
 

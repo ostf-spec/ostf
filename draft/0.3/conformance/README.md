@@ -92,3 +92,33 @@ Phase 2 of the [agent-first plan](../plan-agent-first.md) changed rules under th
 - **Item text as data.** Eleven context cases gained the `| ` marker in their Annex J text, and nothing else.
 
 New expectations: `corroboration` and `hints` in check cases, and `migrations`, the lock files that `migrate` writes (Annex H). The example gained `trace.derived`, and its lock and the minimal fixture's were brought to the current revision with the reader's `migrate`, so each entry ends with `by=unknown at=unknown`.
+
+## From revision 0.15
+
+Phase 3 of the [agent-first plan](../plan-agent-first.md) missed its pre-registered gate, so its fallback removed the lock and the fingerprints in revision 0.16; the [decision record](../decisions.md#agent-first-plan-phase-3-the-fallback) gives each ruling. Of the 363 cases of revision 0.15, 92 are retired, 271 carry on, 209 of them changed, and 13 are new, 284 in all. The vectors of 0.2 stay byte for byte and are no longer run; the `go2`, `ts1`, `ts2` and `py1` vectors are deleted, and their sources and symbols became the span vectors of Annexes A, K and L.
+
+Retired, by reason:
+
+- **Lock files** (OSTF-142, 17): `lock-at-size-limit`, `lock-above-size-limit`, `lock-entry-malformed`, `lock-header-unknown`, `lock-duplicate-uses-neither`, `lock-values-not-validated`, `lock-provenance-read`, `lock-provenance-any-order`, `lock-provenance-invalid`, `lock-provenance-not-identity`, `lock-shards-merge`, `lock-shard-only`, `lock-shard-entry-elsewhere-is-read`, `lock-shards-duplicate`, `lock-shard-invalid-line`, `lock-shard-too-large`, `lock-shard-of-unread-file-ignored`.
+- **Suspect rules** (OSTF-144, 16), whose observable was a state: `body-change-suspect`, `reasons-sorted`, `lock-key-on-one-side-differs`, `body-change-none`, `external-revision-only-stays-valid`, `external-refresh-is-item-changed`, `item-changed`, `body-change-counts-by-default`, `signature-changed`, `reasons-for-what-has-no-body`, `reasons-quieted-on-their-own`, `reasons-quieted-unless-risk-relevant`, `item-link-source-changed`, `item-link-target-changed`, `ts2-line-break-after-return-is-suspect`, `ts2-omitted-semicolon-stays-valid`.
+- **Link states** (OSTF-143, 8): `unstamped-without-entry`, `lock-missing-reports-no-states`, `unknown-algorithm-is-unstamped`, `broken-before-unknown-algorithm`, `no-lock`, `unstamped`, `unknown-algorithm`, `ts1-lock-entry-is-unstamped`.
+- **The meaning of a valid link** (OSTF-145, 1): `helper-change-keeps-valid`.
+- **The hint without a base** (OSTF-132, 2), which read the lock entry; `impact-broken-link-hint-by-text` pins the hint by text: `broken-link-hint-names-the-move`, `broken-link-hint-needs-a-lock-entry`.
+- **The lock-file rules of OSTF-102 and OSTF-132** (6), the glob exclusion and the anchor ban: `lock-shard-not-an-item-file`, `anchor-names-trace-lock`, `anchor-trace-lock-any-case`, `lock-shard-anchor-invalid`, and the contexts `context-trace-lock-does-not-bind` and `context-trace-lock-any-case`.
+- **The profile's fingerprints keys** (OSTF-121, 2): `reasons-setting-invalid` and the schema case `schema-fingerprints-reason-settings`.
+- **`impact.lock`** (Annex C.3, 4): `impact-lock-removed`, `impact-lock-added`, `impact-lock-absent`, `impact-lock-kept-in-another-lock-file`.
+- **Link-state results in SARIF** (Annex D, 1): `sarif-link-states`.
+- **`stamp`** (Annex I.4, 26): every stamp case, from `stamp-creates-lock` to `stamp-root-item-stays-in-trace-lock`, and the list `stamps` with them.
+- **`migrate`** (Annex H, 4): every migration case, and the list `migrations`.
+- **The fingerprints** (OSTF-140, OSTF-141, 4): `formatting-and-comments`, `whole-file-lf1-normalizes-crlf`, and both projections, `string-kept-text-normalized-empty-omitted` and `all-empty-attributes-omitted`, with the list `projections`.
+- **`meaning`** (OSTF-114, 1): `external-without-text-keeps-meaning-attributes`.
+
+Carried, with what changed:
+
+- Every case with a lock file lost it, its states and reasons and the lock codes; a link tuple is now source, link type, target, attributes and origin.
+- Cases that pin risk relevance name OSTF-120, and those without a lock no longer name OSTF-144. The profiles of five cases lost their `fingerprints` keys.
+- Item and link fingerprint expectations are gone; cases that named OSTF-141 for `PARSE_ERROR` name OSTF-132, OSTF-140 is dropped, and the annex sections follow their new numbers.
+- `meaning` left two profiles, three schema inputs and the cases that carry [profiles/security.yaml](../profiles/security.yaml).
+- `impact-items-and-links` counts a new rationale as a changed item; `impact-nested-roots-each-evaluated` fails its nested root with a broken link; `sarif-locations` checks the locations of diagnostics, a tag naming `R{0}` among them; `sarif-info-is-note` uses `NESTED_ROOT`; the Annex J texts lose their states; `context-item-text-marked` forges a corroboration in its title, since a state no longer appears; and SARIF cases no longer list link results.
+
+New: `histories`, eight scripted Git histories run through the command line (Annex I.3); three impact cases, a comment inside a definition, CRLF alone and the hint by text; `leftover-lock-files-are-ordinary-files`; and `attribute-meaning-rejected`.
