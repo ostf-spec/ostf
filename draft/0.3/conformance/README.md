@@ -95,7 +95,7 @@ New expectations: `corroboration` and `hints` in check cases, and `migrations`, 
 
 ## From revision 0.15
 
-Phase 3 of the [agent-first plan](../plan-agent-first.md) missed its pre-registered gate, so its fallback removed the lock and the fingerprints in revision 0.16; the [decision record](../decisions.md#agent-first-plan-phase-3-the-fallback) gives each ruling. Of the 363 cases of revision 0.15, 92 are retired, 271 carry on, 209 of them changed, and 13 are new, 284 in all. The vectors of 0.2 stay byte for byte and are no longer run; the `go2`, `ts1`, `ts2` and `py1` vectors are deleted, and their sources and symbols became the span vectors of Annexes A, K and L.
+Phase 3 of the [agent-first plan](../plan-agent-first.md) missed its pre-registered gate, so its fallback removed the lock and the fingerprints in revision 0.16; the [decision record](../decisions.md#agent-first-plan-phase-3-the-fallback) gives each ruling. Of the 363 cases of revision 0.15, 95 are retired, 268 carry on, 207 of them changed, and 15 are new, 283 in all. The vectors of 0.2 stay byte for byte and are no longer run; the `go2`, `ts1`, `ts2` and `py1` vectors are deleted, and their sources and symbols became the span vectors of Annexes A, K and L.
 
 Retired, by reason:
 
@@ -112,6 +112,7 @@ Retired, by reason:
 - **`migrate`** (Annex H, 4): every migration case, and the list `migrations`.
 - **The fingerprints** (OSTF-140, OSTF-141, 4): `formatting-and-comments`, `whole-file-lf1-normalizes-crlf`, and both projections, `string-kept-text-normalized-empty-omitted` and `all-empty-attributes-omitted`, with the list `projections`.
 - **`meaning`** (OSTF-114, 1): `external-without-text-keeps-meaning-attributes`.
+- **Reserved link attribute names** (OSTF-121, 3), by the maintainer's ruling after the rows: `link-attribute-named-by-rejected`, `profile-reserved-attribute-name` and the schema case `schema-link-attribute-reserved-provenance`.
 
 Carried, with what changed:
 
@@ -121,4 +122,4 @@ Carried, with what changed:
 - `meaning` left two profiles, three schema inputs and the cases that carry [profiles/security.yaml](../profiles/security.yaml).
 - `impact-items-and-links` counts a new rationale as a changed item; `impact-nested-roots-each-evaluated` fails its nested root with a broken link; `sarif-locations` checks the locations of diagnostics, a tag naming `R{0}` among them; `sarif-info-is-note` uses `NESTED_ROOT`; the Annex J texts lose their states; `context-item-text-marked` forges a corroboration in its title, since a state no longer appears; and SARIF cases no longer list link results.
 
-New: `histories`, eight scripted Git histories run through the command line (Annex I.3); three impact cases, a comment inside a definition, CRLF alone and the hint by text; `leftover-lock-files-are-ordinary-files`; and `attribute-meaning-rejected`.
+New: `histories`, eight scripted Git histories run through the command line (Annex I.3); three impact cases, a comment inside a definition, CRLF alone and the hint by text; `leftover-lock-files-are-ordinary-files`; `attribute-meaning-rejected`; and `link-attributes-named-source-target-by-at` and the schema case `schema-link-attribute-named-at`, which accept `source`, `target`, `by` and `at` as link attribute names.

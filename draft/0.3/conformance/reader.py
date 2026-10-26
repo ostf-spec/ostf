@@ -823,7 +823,7 @@ def merge_profile(vocabulary, profile):
             raise ValueError("a new link needs from and to")
         for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
             mapping(declared, {"values", "required"})
-            if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"source", "target", "to", "ref", "by", "at"} or not isinstance(declared.get("required", False), bool):
+            if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"to", "ref"} or not isinstance(declared.get("required", False), bool):
                 raise ValueError("link attribute")
             if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
                 raise ValueError("link attribute values")

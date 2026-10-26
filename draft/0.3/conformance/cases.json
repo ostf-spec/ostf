@@ -616,7 +616,7 @@
     "OSTF-110"
    ],
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: A\n    text: A.\n    aliases: [\"Ä\"]\n  - id: B\n    text: B.\n    aliases: [\"ä\"]\n"
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: A\n    text: A.\n    aliases: [\"\u00c4\"]\n  - id: B\n    text: B.\n    aliases: [\"\u00e4\"]\n"
    },
    "expect": {
     "codes": [],
@@ -690,24 +690,6 @@
    "expect": {
     "codes": [
      "FORMAT_INVALID"
-    ],
-    "links": [],
-    "items": []
-   }
-  },
-  {
-   "id": "profile-reserved-attribute-name",
-   "requirements": [
-    "OSTF-121",
-    "Annex B"
-   ],
-   "files": {
-    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: []\n",
-    "p.yaml": "ostf: \"0.3\"\nlinks:\n  implements:\n    attributes:\n      target: {}\n"
-   },
-   "expect": {
-    "codes": [
-     "PROFILE_INVALID"
     ],
     "links": [],
     "items": []
@@ -3273,7 +3255,7 @@
    ],
    "note": "YAML 1.1 reads U+0085 as a line break and YAML 1.2 does not, so OSTF files exclude it, with U+2028 and U+2029.",
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R, text: \"ab\"}]\n"
+    "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R, text: \"a\u0085b\"}]\n"
    },
    "expect": {
     "codes": [
@@ -3287,7 +3269,7 @@
     "OSTF-101"
    ],
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R, text: \"a b\"}]\n"
+    "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R, text: \"a\u2028b\"}]\n"
    },
    "expect": {
     "codes": [
@@ -4687,18 +4669,31 @@
    }
   },
   {
-   "id": "link-attribute-named-by-rejected",
+   "id": "link-attributes-named-source-target-by-at",
    "requirements": [
     "OSTF-121"
    ],
-   "note": "OSTF-121 still reserves by and at, the lock keys of revision 0.15, as link attribute names.",
+   "note": "Only to and ref are reserved: source, target, by and at, which the lock line of revision 0.15 used, are link attribute names like any other.",
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
-    "p.yaml": "ostf: \"0.3\"\nlinks:\n  verifies:\n    attributes:\n      by: {}\n"
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A\n    tests: [{ref: a_test.go#TestA, source: s, target: t, by: b, at: a}]\n",
+    "p.yaml": "ostf: \"0.3\"\nlinks:\n  verifies:\n    attributes:\n      source: {}\n      target: {}\n      by: {}\n      at: {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestA(t *testing.T) {}\n"
    },
    "expect": {
-    "codes": [
-     "PROFILE_INVALID"
+    "codes": [],
+    "links": [
+     [
+      "a_test.go#TestA",
+      "verifies",
+      "R-A",
+      {
+       "at": "a",
+       "by": "b",
+       "source": "s",
+       "target": "t"
+      },
+      "declared"
+     ]
     ]
    }
   },
@@ -5578,7 +5573,7 @@
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
     "a.go": "package a\n\nfunc F() int { return 1 }\n\nfunc TestLike() {}\n",
-    "a_test.go": "package a\n\nimport \"testing\"\n\ntype S struct{}\n\nfunc helper() int { return 2 }\n\nfunc (S) TestM(t *testing.T) {}\n\nfunc Test(t *testing.T) {}\n\nfunc TestNew(t *testing.T) {}\n\nfunc Test_x(t *testing.T) {}\n\nfunc Testable(t *testing.T) {}\n\nfunc Testé(t *testing.T) {}\n\nfunc FuzzParse(f *testing.F) {}\n\nfunc BenchmarkX(b *testing.B) {}\n\nfunc ExampleF() {}\n"
+    "a_test.go": "package a\n\nimport \"testing\"\n\ntype S struct{}\n\nfunc helper() int { return 2 }\n\nfunc (S) TestM(t *testing.T) {}\n\nfunc Test(t *testing.T) {}\n\nfunc TestNew(t *testing.T) {}\n\nfunc Test_x(t *testing.T) {}\n\nfunc Testable(t *testing.T) {}\n\nfunc Test\u00e9(t *testing.T) {}\n\nfunc FuzzParse(f *testing.F) {}\n\nfunc BenchmarkX(b *testing.B) {}\n\nfunc ExampleF() {}\n"
    },
    "rev": "main",
    "expect": {
@@ -5628,7 +5623,7 @@
        "items": []
       },
       {
-       "anchor": "a_test.go#Testé",
+       "anchor": "a_test.go#Test\u00e9",
        "items": []
       },
       {
@@ -7163,10 +7158,10 @@
     "Annex D"
    ],
    "files": {
-    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"req s/*.yaml\"]\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n  - id: R-ADD\n    text: Add two values.\n    code: [\"my file.go#Add\", \"é.go#Add\", \"a{0}.go#Add\"]\n",
+    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"req s/*.yaml\"]\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n  - id: R-ADD\n    text: Add two values.\n    code: [\"my file.go#Add\", \"\u00e9.go#Add\", \"a{0}.go#Add\"]\n",
     "req s/b.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: Do b.\n    refines: [N-A, N-NOPE]\n",
     "my file.go": "package sample\n// @req R{0}\nfunc Add(a, b int) int { return a+b }\n",
-    "é.go": "package sample\n// @req R{0}\nfunc Add(a, b int) int { return a+b }\n",
+    "\u00e9.go": "package sample\n// @req R{0}\nfunc Add(a, b int) int { return a+b }\n",
     "a{0}.go": "package sample\n// @req R{0}\nfunc Add(a, b int) int { return a+b }\n"
    },
    "expect": {
@@ -7657,7 +7652,7 @@
    "valid": false
   },
   {
-   "id": "schema-link-attribute-reserved-provenance",
+   "id": "schema-link-attribute-named-at",
    "requirements": [
     "OSTF-106",
     "OSTF-121"
@@ -7673,7 +7668,7 @@
      }
     }
    },
-   "valid": false
+   "valid": true
   },
   {
    "id": "schema-source-root",
