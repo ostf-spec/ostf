@@ -1,6 +1,6 @@
 OSTF policy, recommended default. Ask the user before changing code marked
 risk-relevant. Add new behavior as a new item with status: draft, linked to its
 code and tests in the same change. If your change makes an item false, tell the
-user; do not rewrite the item to fit the code. Do not stamp a risk-relevant link
-that your change made suspect or unstamped: name it in your summary, so that
-another principal rechecks it.
+user; do not rewrite the item to fit the code. Name in your summary each
+risk-relevant item your change touched, so that another principal reviews it in
+the pull request.
