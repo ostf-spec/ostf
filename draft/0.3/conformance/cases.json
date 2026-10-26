@@ -1162,7 +1162,8 @@
   {
    "id": "body-change-counts-for-risk-only",
    "requirements": [
-    "OSTF-144"
+    "OSTF-144",
+    "OSTF-120"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: RISK-A\n    type: risk\n    text: Harm.\n  - id: R-CTRL\n    text: Control.\n    controls: [RISK-A]\n  - id: R-CHILD\n    text: Detail.\n    refines: [R-CTRL]\n    code: [a.go#F]\n  - id: R-OTHER\n    text: Other.\n    code: [b.go#G]\n",
@@ -1772,7 +1773,8 @@
    "id": "reasons-quieted-unless-risk-relevant",
    "requirements": [
     "OSTF-121",
-    "OSTF-144"
+    "OSTF-144",
+    "OSTF-120"
    ],
    "note": "Under risk, a definition or file change counts only on a risk-relevant link: R-A controls RISK-A, R-B controls nothing. The lock was stamped on the old sources.",
    "files": {
@@ -2472,7 +2474,8 @@
    "id": "inherited-risk-body",
    "requirements": [
     "OSTF-121",
-    "OSTF-144"
+    "OSTF-144",
+    "OSTF-120"
    ],
    "from02": "inherited-risk-body",
    "note": "0.2 counted this body change because its default was risk-relevant; a profile with bodyChange risk keeps that test.",
@@ -6156,7 +6159,8 @@
    "id": "risk-relevance-through-extended-controls",
    "requirements": [
     "OSTF-144",
-    "OSTF-121"
+    "OSTF-121",
+    "OSTF-120"
    ],
    "note": "controls extended by the profile to hazard, which the kind of hazard already allows, makes R-A a control and the body change suspect.",
    "files": {
@@ -6349,8 +6353,7 @@
   {
    "id": "controls-reaches-every-risk-kind",
    "requirements": [
-    "OSTF-120",
-    "OSTF-144"
+    "OSTF-120"
    ],
    "note": "controls reaches a profile type of kind risk without a link entry, and what refines a control is risk-relevant.",
    "files": {
@@ -6390,7 +6393,6 @@
   {
    "id": "threat-linked-to-risk-is-not-a-control",
    "requirements": [
-    "OSTF-144",
     "OSTF-120",
     "OSTF-121"
    ],
@@ -6431,8 +6433,7 @@
   {
    "id": "breadth-threat-control-decision",
    "requirements": [
-    "OSTF-120",
-    "OSTF-144"
+    "OSTF-120"
    ],
    "note": "threat is of kind risk and control of kind statement, so a control that controls a threat is risk-relevant with no profile; a decision is a design item with a title.",
    "files": {

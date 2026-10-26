@@ -1654,7 +1654,7 @@ class Analysis:
     def _freshness(self):
         types = self.vocabulary["types"]
         self.hashes = {ident: fingerprint("f1", item_projection(item, types)) for ident, item in self.items.items()}
-        # OSTF-144: an item of kind statement that links to an item of kind risk is a control.
+        # OSTF-120: an item of kind statement that links to an item of kind risk is a control.
         kind = lambda ident: types[self.items[ident]["type"]]["kind"]
         controls = {l["source"] for l in self.links.values() if not l["anchor"] and kind(l["source"]) == "statement" and kind(l["target"]) == "risk"}
         self.risk = set(controls)
