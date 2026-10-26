@@ -79,4 +79,14 @@ Gives suite version 1, the suite of revision 0.17, which revision 0.18 numbered.
 
 ## From suite version 1
 
-Gives suite version 2, on 2026-10-26, under revision 0.18; no rule changed. One case is added, `revision-wrong-type-without-external`: items whose `revision` is an integer, a boolean, an empty string or a list, and that have no `external`, are each `INVALID_EXTERNAL` alone. The differential harness found the reference reader reporting `FORMAT_INVALID` beside `INVALID_EXTERNAL` for such an item, where zztrace's reader reported `INVALID_EXTERNAL` alone. By the maintainer's ruling OSTF-151 settles it, a value that breaks a rule with its own code getting that code whatever its type, as the reference reader already applied it to `status`, `type` and `external`; the reference reader is fixed. Beside `external`, a `revision` that is not a nonempty string stays `FORMAT_INVALID`, as `yaml-leading-zero-is-an-integer` and `revision-empty` pin. This record's suite version 2 is the published suite version 1: publishing the work the same day as a first revision of working draft 0.3 reset the count and kept this case, renaming 13 cases for their input and dropping one duplicate.
+Gives suite version 2, on 2026-10-26, under revision 0.18; no rule changed. One case is added, `revision-wrong-type-without-external`: items whose `revision` is an integer, a boolean, an empty string or a list, and that have no `external`, are each `INVALID_EXTERNAL` alone. The differential harness found the reference reader reporting `FORMAT_INVALID` beside `INVALID_EXTERNAL` for such an item, where zztrace's reader reported `INVALID_EXTERNAL` alone. By the maintainer's ruling OSTF-151 settles it, a value that breaks a rule with its own code getting that code whatever its type, as the reference reader already applied it to `status`, `type` and `external`; the reference reader is fixed. Beside `external`, a `revision` that is not a nonempty string stays `FORMAT_INVALID`, as `yaml-leading-zero-is-an-integer` and `revision-empty` pin.
+
+Only the digest, `suite.sha256`, settles which suite a number meant, since three numbered suites were published on 2026-10-26:
+
+| Version | `suite.sha256` | Commit | Suite |
+| --- | --- | --- | --- |
+| 1 | `5b626d2d42562e0621629ab0438e9fdf3c6b2b01302a05834c1aacbbbb05165a` | 86c19f2 | The suite of revision 0.17, numbered by revision 0.18 |
+| 2 | `a4cf3eef4c234ddd0db558070fbca2f33cc602ad095660a632fbe4f26599c5bd` | 40c02a8 | Version 1 and `revision-wrong-type-without-external` |
+| 1 | `74682eb64087646c6ade2330cb00d8ffeba844108a4ab8fc7878dfaf84257825` | e299ac7 | Version 2 as published in working draft 0.3, read as a first revision: the cases name the re-lettered annexes, 13 are renamed for their input and one duplicate is dropped |
+
+The publication reset the count and kept this case, so this record's version 2 is the published version 1 of e299ac7, and the next published version is 2, which its digest tells apart from the version 2 of 40c02a8.
