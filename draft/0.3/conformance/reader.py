@@ -1070,10 +1070,14 @@ class Analysis:
         if not ITEM_ID.fullmatch(ident):
             bad("INVALID_ID", "does not match item-id")
         item = {"type": "requirement", "status": "accepted", **raw}
-        for key in ("title", "text", "section", "rationale", "revision"):
+        for key in ("title", "text", "section", "rationale"):
             if key in raw and not isinstance(raw[key], str):
                 bad("FORMAT_INVALID", key + " must be a string")
-        if raw.get("revision") == "":
+        # A revision without external breaks OSTF-113's own rule, so it is INVALID_EXTERNAL alone, whatever its
+        # type or length (OSTF-151); beside external, a revision that is not a nonempty string is FORMAT_INVALID.
+        if "external" in raw and "revision" in raw and not isinstance(raw["revision"], str):
+            bad("FORMAT_INVALID", "revision must be a string")
+        if "external" in raw and raw.get("revision") == "":
             bad("FORMAT_INVALID", "revision must not be empty")
         if not isinstance(item["type"], str) or item["type"] not in self.vocabulary["types"]:
             bad("UNKNOWN_TYPE", str(item["type"]))

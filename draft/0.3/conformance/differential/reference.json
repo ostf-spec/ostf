@@ -13603,14 +13603,9 @@
  "scalar-153-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13624,18 +13619,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13701,14 +13690,9 @@
  "scalar-156-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13722,18 +13706,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13741,14 +13719,9 @@
  "scalar-157-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13762,18 +13735,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13781,14 +13748,9 @@
  "scalar-158-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13802,18 +13764,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13821,14 +13777,9 @@
  "scalar-159-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13842,18 +13793,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13861,14 +13806,9 @@
  "scalar-160-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13882,18 +13822,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13901,14 +13835,9 @@
  "scalar-161-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13922,18 +13851,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -13970,14 +13893,9 @@
  "scalar-163-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -13991,18 +13909,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -14010,14 +13922,9 @@
  "scalar-164-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -14031,18 +13938,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }
@@ -14108,14 +14009,9 @@
  "scalar-167-revision": {
   "check": {
    "codes": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ],
    "diagnosticFiles": [
-    [
-     "FORMAT_INVALID",
-     "trace.yaml"
-    ],
     [
      "INVALID_EXTERNAL",
      "trace.yaml"
@@ -14129,18 +14025,12 @@
    "exit": 1,
    "results": [
     [
-     "FORMAT_INVALID",
-     "error",
-     "trace.yaml"
-    ],
-    [
      "INVALID_EXTERNAL",
      "error",
      "trace.yaml"
     ]
    ],
    "rules": [
-    "FORMAT_INVALID",
     "INVALID_EXTERNAL"
    ]
   }

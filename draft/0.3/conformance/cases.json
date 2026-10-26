@@ -1,7 +1,7 @@
 {
  "suite": {
-  "version": 1,
-  "sha256": "5b626d2d42562e0621629ab0438e9fdf3c6b2b01302a05834c1aacbbbb05165a"
+  "version": 2,
+  "sha256": "a4cf3eef4c234ddd0db558070fbca2f33cc602ad095660a632fbe4f26599c5bd"
  },
  "checks": [
   {
@@ -2460,6 +2460,26 @@
     ],
     "items": [
      "R-B"
+    ],
+    "links": []
+   }
+  },
+  {
+   "id": "revision-wrong-type-without-external",
+   "requirements": [
+    "OSTF-113",
+    "OSTF-151"
+   ],
+   "note": "A revision without external breaks OSTF-113's own rule, so each item is INVALID_EXTERNAL alone, whatever the revision's type or length (OSTF-151); beside external, yaml-leading-zero-is-an-integer and revision-empty keep FORMAT_INVALID.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - {id: R-A, text: A, revision: 7}\n  - {id: R-B, text: B, revision: true}\n  - {id: R-C, text: C, revision: \"\"}\n  - {id: R-D, text: D, revision: [x]}\n  - {id: R-E, text: E}\n"
+   },
+   "expect": {
+    "codes": [
+     "INVALID_EXTERNAL"
+    ],
+    "items": [
+     "R-E"
     ],
     "links": []
    }
