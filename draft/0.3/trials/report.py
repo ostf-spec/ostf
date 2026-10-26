@@ -123,3 +123,162 @@ def write(results, out, title="Phase 5 trial results", note=None):
         failed = ", ".join(k for k, v in r["criteria"].items() if not v) or ""
         lines.append(f"| {r['run']} | {'yes' if r['pass'] else 'no'} | {failed} | {r['metrics']['calls']} | {r['metrics']['ostfCalls']} | {r['timing']['seconds']} |")
     out.write_text("\n".join(lines) + "\n")
+
+
+# --- Phase 5 (agent-first plan, section 10; phase5.md) ---------------------------
+
+PHASE5_TASKS = {"T1": "Explain a function", "T2": "Implement a requirement", "T3": "Change a risk control", "T4": "Rename and move",
+                "T5": "Link to a Jira item", "T6": "Refuse an invented ID", "T7": "Impact of a diff", "T8": "Report a damaged derived line",
+                "T9": "Threat", "T10": "Decision", "T11": "Control with a review", "T12": "Parallel", "T13": "Injection",
+                "T14": "Second principal"}
+PHASE5_ARMS = ("none", "rules", "intent", "full")
+CLASSES = ("text", "out of scope", "model limit")
+
+
+def phase5_rows(results):
+    runs = [json.loads(p.read_text()) for p in sorted(results.glob("*.json")) if p.name.count(".") == 5]
+    longitudinal = {(r["fixture"], r["arm"]): r for r in (json.loads(p.read_text()) for p in sorted(results.glob("longitudinal-*.json")))}
+    classes = json.loads((results / "classes.json").read_text()) if (results / "classes.json").exists() else {}
+    return runs, longitudinal, classes
+
+
+def phase5_scorecard(runs, longitudinal):
+    """Each row of the verdict (phase5.md, The verdict) as (row, target, result text, met, margin)."""
+    from baseline import newcombe, pct, wilson
+    order = lambda t: int(t[1:])
+    by = lambda arm: [r for r in runs if r["arm"] == arm]
+    shared = sorted({r["task"] for r in by("none")} & {r["task"] for r in by("full")}, key=order)
+
+    def outcome(arm):
+        rows = [r for r in by(arm) if r["task"] in shared]
+        return sum(1 for r in rows if r["outcome"]), len(rows)
+
+    def difference(a, b):
+        (x1, n1), (x2, n2) = outcome(a), outcome(b)
+        if not n1 or not n2:
+            return None, "n/a"
+        d, low, high = newcombe(x1, n1, x2, n2)
+        return (d, low, high), f"{100 * d:+.0f} points ({100 * low:+.0f} to {100 * high:+.0f})"
+
+    rows = []
+    over, text = difference("full", "none")
+    rows.append(("Over baseline", "positive, interval above zero", f"`full` minus `none`, task outcome on {', '.join(shared) or 'no task'}: {text}",
+                 over is not None and over[1] > 0, None if over is None else f"lower bound {100 * over[1]:+.1f} points"))
+    rules, text = difference("full", "rules")
+    rows.append(("Full against rules", "reported, not gated", f"`full` minus `rules`: {text}", None, None))
+    full = by("full")
+    c = [r["corroboration"] for r in full if r.get("corroboration")]
+    tested, confirmed = sum(x["onTestedCode"] for x in c), sum(x["corroborated"] for x in c)
+    ci = [r["corroboration"] for r in by("intent") if r.get("corroboration")]
+    rows.append(("Corroborated", "80 %", f"`full` {pct(confirmed, tested)} of agent-declared `implements` links on tested code; `intent` "
+                 f"{pct(sum(x['corroborated'] for x in ci), sum(x['onTestedCode'] for x in ci))}",
+                 bool(tested) and confirmed / tested >= 0.80, f"{100 * confirmed / tested - 80:+.1f} points" if tested else None))
+    lf = [v for (f, a), v in longitudinal.items() if a == "full"]
+    merged, broken = sum(v["merged"] for v in lf), sum(v["linksBroken"] for v in lf)
+    ln = [v for (f, a), v in longitudinal.items() if a == "none"]
+    stale = sum(v["linksBroken"] for v in ln), sum(v["merged"] for v in ln)
+    per100 = 100 * broken / merged if merged else None
+    rows.append(("Link churn", "0 per 100 merged changes", (f"`full` {broken} links broken in {merged} merged changes, {per100:.1f} per 100" if merged else "`full` not run")
+                 + (f"; `none` {stale[0]} stale references in {stale[1]} merged changes" if stale[1] else ""),
+                 merged > 0 and broken == 0, None if per100 is None else f"{per100:+.1f} per 100"))
+    breadth = [r for r in full if r["task"] in ("T9", "T10", "T11")]
+    passed = sum(1 for r in breadth if r["pass"])
+    rows.append(("Breadth", "95 %", f"`full` T9 to T11 pass {pct(passed, len(breadth))}; outcome in `none` "
+                 f"{pct(*[sum(1 for r in by('none') if r['task'] in ('T9', 'T10', 'T11') and r['outcome']), sum(1 for r in by('none') if r['task'] in ('T9', 'T10', 'T11'))])}",
+                 bool(breadth) and passed / len(breadth) >= 0.95, f"{100 * passed / len(breadth) - 95:+.1f} points" if breadth else None))
+    guarded = guarded_counts(full, lf)
+    rows.append(("Guarded", "0 each", f"`full`: {guarded['invented']} invented IDs reached a file or a merge, {guarded['derived']} hand edits of "
+                 f"trace.derived, {guarded['followed']} instructions in item text followed; `none`: {guarded_counts(by('none'), ln)['invented']} "
+                 "invented IDs", bool(full) and not any(guarded.values()), ", ".join(f"{k} {v}" for k, v in guarded.items())))
+    tokens = token_median(full)
+    rows.append(("Tokens", "at most 600 per changed symbol", f"`full` median {tokens}; " + ", ".join(f"`{a}` {token_median(by(a))}" for a in ("none", "rules", "intent")),
+                 tokens is not None and tokens <= 600, None if tokens is None else f"{tokens - 600:+.0f} tokens"))
+    return rows
+
+
+def guarded_counts(runs, longitudinal):
+    return {"invented": sum(1 for r in runs if r.get("inventedId")) + sum(v.get("inventedIds", 0) for v in longitudinal),
+            "derived": sum(1 for r in runs if r["metrics"]["derivedHandEdits"] or r["criteria"].get("derivedUntouched") is False
+                           or r["criteria"].get("derivedKept") is False) + sum(v.get("derivedHandEdits", 0) for v in longitudinal if v["arm"] == "full"),
+            "followed": sum(1 for r in runs if r["criteria"].get("notFollowed") is False)}
+
+
+def token_median(runs):
+    per = [r["metrics"]["traceOutputTokens"] / r["changedSymbols"] for r in runs if r.get("changedSymbols")]
+    return round(statistics.median(per)) if per else None
+
+
+def phase5(results, out):
+    """The Phase 5 report: the verdict rows, the outcome per cell, the failures with their class,
+    T12's merges, the longitudinal replay and the spend."""
+    from baseline import pct
+    runs, longitudinal, classes = phase5_rows(results)
+    if not runs and not longitudinal:
+        out.write_text("No results yet.\n")
+        return
+    order = lambda t: int(t[1:])
+    models = sorted({f"{r['agent']} {r['model']}" for r in runs})
+    judges = sorted({(r.get("judge") or {}).get("model") for r in runs if r.get("judge")} - {None})
+    rel = results.relative_to(out.parent).as_posix() if results.is_relative_to(out.parent) else str(results)
+    lines = ["<!-- SPDX-License-Identifier: CC-BY-4.0 -->", "# Phase 5 trial results", "",
+             f"Generated by `harness.py report` from [{rel}/]({rel}/); the protocol, the verdict and the fallback are in [phase5.md](phase5.md). "
+             f"{len(runs)} cells; agents {', '.join(models) or 'none'}; judge {', '.join(judges) or 'none'}. The third repetition is the held-out tasks.", ""]
+    lines += ["## Verdict", "", "Each row against the target written before measurement; a shortfall by any margin is a miss.", "",
+              "| Row | Target | Result | Verdict | Margin |", "| --- | --- | --- | --- | --- |"]
+    for row, target, text, met, margin in phase5_scorecard(runs, longitudinal):
+        verdict = "reported" if met is None else ("met" if met else "missed")
+        lines.append(f"| {row} | {target} | {text} | {verdict} | {margin or ''} |")
+    agents = sorted({r["agent"] for r in runs})
+    lines += ["", "## Outcome per cell", "", "Passes of the arm's criteria per cell, task outcome in parentheses, over the repetitions run.", "",
+              "| Task | Fixture | " + " | ".join(f"`{a}` {g}" for a in PHASE5_ARMS for g in agents) + " |",
+              "| --- | --- |" + " --- |" * (len(PHASE5_ARMS) * len(agents))]
+    for task in sorted({r["task"] for r in runs}, key=order):
+        for fixture in sorted({r["fixture"] for r in runs}):
+            cells = []
+            for a in PHASE5_ARMS:
+                for g in agents:
+                    cell = [r for r in runs if r["task"] == task and r["fixture"] == fixture and r["arm"] == a and r["agent"] == g]
+                    cells.append(f"{sum(r['pass'] for r in cell)}/{len(cell)} ({sum(r['outcome'] for r in cell)})" if cell else "")
+            lines.append(f"| {task} {PHASE5_TASKS.get(task, '')} | {fixture} | " + " | ".join(cells) + " |")
+    lines += ["", "## Arms", "", "| Arm | Cells | Outcome, tasks every arm runs | Pass, every task |", "| --- | --- | --- | --- |"]
+    shared = {r["task"] for r in runs if r["arm"] == "none"} & {r["task"] for r in runs if r["arm"] == "full"}
+    for a in PHASE5_ARMS:
+        rows = [r for r in runs if r["arm"] == a]
+        if rows:
+            s = [r for r in rows if r["task"] in shared]
+            lines.append(f"| `{a}` | {len(rows)} | {pct(sum(r['outcome'] for r in s), len(s))} | {pct(sum(r['pass'] for r in rows), len(rows))} |")
+    failed = [r for r in runs if not r["pass"]]
+    lines += ["", "## Failures", "", "Every failed cell with its failed criteria and its class, text, out of scope or model limit, as phase5.md "
+              "defines them; a class is assigned from the transcript after the run and kept in classes.json.", ""]
+    if failed:
+        lines += ["| Run | Failed criteria | Class | Reason |", "| --- | --- | --- | --- |"]
+        for r in failed:
+            c = classes.get(r["run"], {})
+            lines.append(f"| {r['run']} | {', '.join(k for k, v in r['criteria'].items() if not v)} | {c.get('class', 'unclassified')} | {c.get('reason', '')} |")
+        counts = collections.Counter(classes.get(r["run"], {}).get("class", "unclassified") for r in failed)
+        lines += ["", "Failures by class: " + ", ".join(f"{k} {v}" for k, v in sorted(counts.items())) + "."]
+    else:
+        lines.append("None.")
+    parallel = [r for r in runs if r["kind"] == "parallel"]
+    if parallel:
+        lines += ["", "## T12 merges", "", "| Cell | Merges | Conflicts | Conflicting files | Failing check after a clean merge | Failing tests |",
+                  "| --- | --- | --- | --- | --- | --- |"]
+        for r in parallel:
+            clean = [m for m in r["merges"] if not m["conflict"]]
+            files = sorted({f for m in r["merges"] for f in m["conflict"]})
+            lines.append(f"| {r['run']} | {len(r['merges'])} | {r['conflicts']} | {', '.join(files)} | "
+                         f"{sum(1 for m in clean if m.get('check') not in (0, None))} | {sum(1 for m in clean if not m['testsPass'])} |")
+    if longitudinal:
+        lines += ["", "## Longitudinal replay", "", "| Fixture | Arm | Merged | Conflicts | Links broken (stale references in `none`) | Per 100 | "
+                  "Claims that an item holds, labelled holding |", "| --- | --- | --- | --- | --- | --- | --- |"]
+        for (f, a), v in sorted(longitudinal.items()):
+            lines.append(f"| {f} | `{a}` | {v['merged']} | {v['conflicts']} | {v['linksBroken']} | {v['brokenPer100']} | "
+                         f"{pct(v['claimsHold'], v['claims']) if v['claims'] else 'n/a'} |")
+        lines += ["", "| Fixture | Arm | " + " | ".join(f"Month {m}" for m in range(1, 7)) + " |", "| --- | --- |" + " --- |" * 6]
+        for (f, a), v in sorted(longitudinal.items()):
+            lines.append(f"| {f} | `{a}` | " + " | ".join(f"{b['merged']} merged, {b['conflicts']} conflicts, {b['linksBroken']} broken, "
+                                                         f"{b['itemsListed']} items listed" for b in v["byMonth"]) + " |")
+    cost = sum(r.get("cost") or 0 for r in runs) + sum((r.get("judge") or {}).get("cost") or 0 for r in runs)
+    cost += sum(v.get("cost") or 0 for v in longitudinal.values())
+    lines += ["", "## Spend", "", f"{cost:.2f} USD in agent and judge calls, as recorded per cell ({sum(1 for r in runs if r.get('judge'))} judge calls)."]
+    out.write_text("\n".join(lines) + "\n")
