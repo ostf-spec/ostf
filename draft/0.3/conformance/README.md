@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF 0.3 reader and cases
 
-[reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, K and L) with the `check`, `context` and `stamp` commands of [Annex I](../ostf.md#annex-i-normative-optional-command-profile), `impact` for `check --base` (Annex C.3) and SARIF output (Annex D). It is independent code ported from the 0.2 Python prototype; it does not import zztrace or touch the network, and the reader itself starts no subprocess: only the command line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV, and for `context` and `check --base` to read change information (Annex I.3). It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
+[reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, K and L) with the `check` and `context` commands of [Annex I](../ostf.md#annex-i-normative-optional-command-profile), `impact` for `check --base` (Annex C.3) and SARIF output (Annex D). It is independent code ported from the 0.2 Python prototype; it does not import zztrace or touch the network, and the reader itself starts no subprocess: only the command line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV, and for `context` and `check --base` to read change information (Annex I.3). It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
 
 From the repository root, with Python 3.12 or newer:
 
@@ -16,7 +16,6 @@ cd draft/0.3/example
 ../../../.venv/bin/python ../conformance/reader.py check
 ../../../.venv/bin/python ../conformance/reader.py context refund.go#CheckRefundLimit
 ../../../.venv/bin/python ../conformance/reader.py check --format sarif
-../../../.venv/bin/python ../conformance/reader.py stamp 'refund.go#CheckRefundLimit implements R-REFUND-LIMIT'
 ```
 
 `check --base REV` reads the base view from Git with its plumbing commands (`rev-parse`, `ls-tree`, `cat-file`), which run no hooks, filters or repository code; REV is any commit the checkout can name, and a REV without the root's directory is a base with an empty graph (Annex C.3). `context` and `check --base` read the change information of Annex I.3 from the first-parent history of `HEAD` with `log`, `ls-tree` and `cat-file`, and give none outside a Git checkout. For the example, against the last commit:
@@ -26,11 +25,9 @@ cd draft/0.3/example
 ../../../.venv/bin/python ../conformance/reader.py check --base HEAD
 ```
 
-Outside a Git checkout, the added option `--base-tree DIR` (Annex I.6) supplies the base view instead: DIR is the directory that holds this root in a checkout of REV, and REV is then only the label in `impact.base`. For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
+Outside a Git checkout, the added option `--base-tree DIR` (Annex I.5) supplies the base view instead: DIR is the directory that holds this root in a checkout of REV, and REV is then only the label in `impact.base`. For a root at the top level of a repository, DIR is the checkout itself. A DIR without `trace.yaml` is a base with an empty graph, so adopting OSTF lists every item and link as added; a DIR that does not exist exits 2, so a mistyped path cannot pass for an adoption.
 
-The added command `migrate` (Annex H) rewrites the lock files of a tree written under an earlier revision: each entry gains `by` and `at` when it lacks them and moves to the lock file of its target's file.
-
-The reader adds one code of its own, outside Annex C as OSTF-151 allows: `ostf-reader.UNLINKED`, an info that counts the statements, other than obsolete ones, that no link targets, and names the first ten. `check` reports whether links are fresh, not whether statements are covered, so without it a requirement with no code, test or verification passes in silence; whether it must be covered is a policy for the team or a tool on top. The info never fails `check`, and the cases compare Annex C codes only. When `context` is given a path that does not resolve, its hint names the covered files whose paths end with that path, spelled from the working directory, which is where Annex I.3 reads TARGET from:
+The reader adds one code of its own, outside Annex C as OSTF-151 allows: `ostf-reader.UNLINKED`, an info that counts the statements, other than obsolete ones, that no link targets, and names the first ten. `check` reports broken links, not whether statements are covered, so without it a requirement with no code, test or verification passes in silence; whether it must be covered is a policy for the team or a tool on top. The info never fails `check`, and the cases compare Annex C codes only. When `context` is given a path that does not resolve, its hint names the covered files whose paths end with that path, spelled from the working directory, which is where Annex I.3 reads TARGET from:
 
 ```sh
 cd draft/0.3/example/deploy
@@ -42,17 +39,16 @@ cd draft/0.3/example/deploy
 
 | Check | What it pins |
 | --- | --- |
-| [vectors/](vectors/) | The item, Go and lock vectors published with 0.2: f1 and `trace.lock 1` are unchanged, and the Go vectors still pass under the superseded `go1`; and the `go2`, `ts2` and `py1` vectors of Annexes A, K and L, with those of the superseded `ts1` |
+| [vectors/](vectors/) | The item and Go vectors published with 0.2: f1 is unchanged, and the Go vectors still pass under the superseded `go1`; the lock vectors of 0.2 stay published unchanged and are not run; and the `go2`, `ts2` and `py1` vectors of Annexes A, K and L, with those of the superseded `ts1` |
 | [example/expected/](../example/expected/) | `check` and `context` JSON and the Annex J text, byte for byte |
-| [fixtures/minimal/](../fixtures/minimal/) | Two valid links and no diagnostics |
-| [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes, origins, states and reasons, corroboration by link identity, risk relevance, context selections and Annex J text, and f1 projections; a file that a case names in `padTo` is extended with line feeds to that size in bytes, so that a case at the size limit need not carry it; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
-| `stamps` in cases.json | The stamped links and the exact lock bytes, or no write when a link is refused; then that the named links are valid, no other link changed state and stamping again changes nothing |
+| [fixtures/minimal/](../fixtures/minimal/) | Two links and no diagnostics |
+| [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes and origins, corroboration by link identity, risk relevance, context selections and Annex J text, and f1 projections; a file that a case names in `padTo` is extended with line feeds to that size in bytes, so that a case at the size limit need not carry it; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
 | `impacts` in cases.json | A base view and an evaluated view with the expected `impact`, and the evaluated view's codes, read after the impact so it cannot add a diagnostic; [fixtures_test.go](../fixtures_test.go) checks each expected `impact` against the result schema |
 | `histories` in cases.json | A scripted Git history, built with Git's plumbing, a merge and a shallow clone among them, run through the command line; every commit identifier in the output, whole or cut to 12 characters, is replaced by its commit's subject before the change information and the Annex J text are compared, so a case holds whatever object format, names and dates Git uses |
-| `sarif` in cases.json | Rules, levels, locations, `ostf.link` and `ostf.state` of link-state results, and the mapping of each diagnostic; every SARIF log the suite produces is also validated against the OASIS SARIF 2.1.0 schema |
-| Annex C.3 example | The edit that C.3 describes, applied to the example, yields the JSON printed in the specification; stamping the example's eight links from no lock yields its `trace.lock` |
+| `sarif` in cases.json | Rules, levels, locations and messages of each diagnostic; every SARIF log the suite produces is also validated against the OASIS SARIF 2.1.0 schema |
+| Annex C.3 example | The edit that C.3 describes, applied to the example, yields the JSON printed in the specification |
 | Coverage | The vector files of 0.2 are unchanged byte for byte, Annex B reproduces [trace-lock.abnf](../trace-lock.abnf), a retired requirement is defined nowhere and named by no case, the cases that use [profiles/security.yaml](../profiles/security.yaml) carry it byte for byte, and every requirement and Annex C code has a case or a reason in `notCovered` |
-| The command line | Exit codes 0, 1 and 2 of all three commands, root selection from TARGET, TARGET kept as given, the hint for a path given from another directory, and on an edited copy of the example `check --base`, `--format sarif`, a refused stamp that writes nothing, a stamp that makes `check` pass and leaves no temporary file, no write through a symbolic or hard link, and text `check` naming links that have no state yet |
+| The command line | Exit codes 0, 1 and 2 of both commands, root selection from TARGET, TARGET kept as given, the hint for a path given from another directory, text `check` counting items and links, and on an edited copy of the example `check --base`, which lists the change and passes, and `--format sarif` |
 
 [generate_tree.py](generate_tree.py) writes the deterministic 10 000-file tree on which both implementations time `check` (plan, section 5.4): `python3 generate_tree.py DIR`.
 

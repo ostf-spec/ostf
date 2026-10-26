@@ -43,7 +43,7 @@ Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers 
 - [FIPS 180-4] NIST, "Secure Hash Standard (SHS)", 2015. SHA-256.
 - [SemVer] "Semantic Versioning 2.0.0".
 - [SARIF] OASIS, "Static Analysis Results Interchange Format (SARIF) Version 2.1.0", 2020. For Annex D.
-- [MCP] "Model Context Protocol Specification", revision 2025-06-18 or later, which defines structured tool output. For Annex I.5.
+- [MCP] "Model Context Protocol Specification", revision 2025-06-18 or later, which defines structured tool output. For Annex I.4.
 
 ### 1.5 Terms
 
@@ -80,15 +80,7 @@ items:
     tests: [math_test.go#TestAdd]
 ```
 
-`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that rechecks those links writes `trace.lock`, with the principal that rechecked each and the view it did so in, here `unknown`:
-
-```text
-trace.lock 1
-math.go#Add implements R-ADD source.sig=go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E source.body=go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown
-math_test.go#TestAdd verifies R-ADD source.sig=go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM source.body=go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg target=f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE by=unknown at=unknown
-```
-
-When the requirement text or the body of `Add` changes, the recorded fingerprints no longer match and the link is `suspect` until someone rechecks it. A valid link says only that its inputs have not changed. It does not say the test passed or the code is correct. A tool that implements the optional command profile (Annex I) answers the three questions of the abstract with `context` and `check`, and records a recheck with `stamp`.
+`math.go#Add` implements `R-ADD`; `math_test.go#TestAdd` verifies it. A tool that implements the optional command profile (Annex I) answers the questions of the abstract with `context` and `check`.
 
 The file set is small:
 
@@ -97,23 +89,22 @@ The file set is small:
 | `trace.yaml` | Root: version, optional profile, includes, sources, tag switch, items | People, agents, importers |
 | included item files | More items, split by area | People, agents, importers |
 | a profile file | Optional vocabulary extension | People |
-| `trace.lock`, and an item file's lock | Fingerprints of rechecked links | Tools only |
 | `trace.derived` | Definitions that tests were observed to cover | Test tools only |
 | source files | `@req` comments that link definitions to items | People, agents |
 
-The [example](example/README.md) shows a need, a risk, a requirement that controls the risk, a requirement owned by an issue tracker, YAML-declared and tag-declared links, and a lock file with real fingerprints.
+The [example](example/README.md) shows a need, a risk, a requirement that controls the risk, a requirement owned by an issue tracker, YAML-declared and tag-declared links, and a `trace.derived` file that corroborates them.
 
 ## 3. Files
 
 **OSTF-101 Encoding and YAML subset.**<a id="OSTF-101"></a> An OSTF file MUST be UTF-8 without a byte order mark and without the characters U+0085, U+2028 and U+2029, which YAML 1.1 reads as line breaks, and MUST contain exactly one YAML document [YAML 1.2.2] using only plain mappings, sequences and scalars of the core schema. A reader MUST reject anchors, aliases, merge keys, explicit tags, duplicate mapping keys and non-string mapping keys. Only `true` and `false` are booleans; other spellings, such as `True`, are strings. A value that this specification defines as a string, such as `revision`, SHOULD be quoted when YAML would otherwise read it as another type. YAML parsing precedes schema validation. A file that is not the YAML subset is `FORMAT_INVALID`; a schema failure is reported as OSTF-150 says.
 
-**OSTF-102 Root, includes and item files.**<a id="OSTF-102"></a> The root file is named `trace.yaml`. Its directory is the root, and every path in that root's files, including anchors, is relative to it. A root covers the files beneath its directory whose paths are valid (OSTF-105), except those beneath a nested directory that holds its own `trace.yaml`. A repository MAY contain several roots; each is read on its own, and a reader reports every other `trace.yaml` beneath the root as `NESTED_ROOT`, whatever the outcome of graph construction, so that a result is never taken to cover a nested root. With a base view (Annex C.3), a reader also evaluates each nested root on its own, with the same options, and reports one whose `check` would exit 1 (Annex I.1) as `NESTED_ROOT_FAILED`. A repository that uses OSTF SHOULD keep a root at its top level, and its agent instructions file SHOULD contain the paragraph of Annex F.1, so that an agent finds both in its first turn. The root MAY list `include` globs for item files. A glob component uses `*` and `?` within one path component and `**` for zero or more complete components. The files that the root covers, other than its `trace.yaml` and files whose names end in `.lock`, and that any glob matches are read once each, in the byte order of their paths, whatever the order of the globs; a glob that matches none of them is reported `INCLUDE_EMPTY`. An item file MUST contain `ostf` and `items` (`FORMAT_INVALID`) and MUST NOT contain `profile`, `include`, `sources` or `tags` (`UNKNOWN_KEY`).
+**OSTF-102 Root, includes and item files.**<a id="OSTF-102"></a> The root file is named `trace.yaml`. Its directory is the root, and every path in that root's files, including anchors, is relative to it. A root covers the files beneath its directory whose paths are valid (OSTF-105), except those beneath a nested directory that holds its own `trace.yaml`. A repository MAY contain several roots; each is read on its own, and a reader reports every other `trace.yaml` beneath the root as `NESTED_ROOT`, whatever the outcome of graph construction, so that a result is never taken to cover a nested root. With a base view (Annex C.3), a reader also evaluates each nested root on its own, with the same options, and reports one whose `check` would exit 1 (Annex I.1) as `NESTED_ROOT_FAILED`. A repository that uses OSTF SHOULD keep a root at its top level, and its agent instructions file SHOULD contain the paragraph of Annex F.1, so that an agent finds both in its first turn. The root MAY list `include` globs for item files. A glob component uses `*` and `?` within one path component and `**` for zero or more complete components. The files that the root covers, other than its `trace.yaml`, and that any glob matches are read once each, in the byte order of their paths, whatever the order of the globs; a glob that matches none of them is reported `INCLUDE_EMPTY`. An item file MUST contain `ostf` and `items` (`FORMAT_INVALID`) and MUST NOT contain `profile`, `include`, `sources` or `tags` (`UNKNOWN_KEY`).
 
 **OSTF-103 Wire version.**<a id="OSTF-103"></a> Every root, item and profile file MUST carry the string `ostf: "0.3"`; a value that is not two decimal numbers joined by a dot fails the schema. A reader MUST reject a file whose major version it does not implement, and, while the major version is 0, a file with any minor version it does not implement (`VERSION_UNSUPPORTED`). From 1.0 on, a reader MAY read a file with a newer minor version of a major version it implements; it MUST then report each key it does not know as `RESERVED_KEY_SKIPPED` and MUST NOT claim to have interpreted the skipped constructs.
 
 **OSTF-104 Keys and extensions.**<a id="OSTF-104"></a> A reader MUST reject a key that this specification, the selected profile or OSTF-103 does not define: `UNKNOWN_KEY`, or `PROFILE_INVALID` in a profile file (OSTF-121). The only exception is a key beginning with `x-` directly in a root, item file, item, source entry or profile file; anywhere else it is rejected like any other undefined key. Readers MUST preserve `x-` values when rewriting a file, MUST NOT give them OSTF meaning, and MUST NOT include them in any fingerprint.
 
-**OSTF-105 Paths, limits and isolation.**<a id="OSTF-105"></a> A path is a slash-separated relative path with no empty, `.` or `..` component, no backslash, `#`, carriage return or line feed, and no leading slash; anything else is `PATH_INVALID`. An OSTF file, lock file or `trace.derived` larger than 8 MiB is `FILE_TOO_LARGE`. While reading, a tool MUST NOT fetch network resources and MUST NOT execute code from the repository.
+**OSTF-105 Paths, limits and isolation.**<a id="OSTF-105"></a> A path is a slash-separated relative path with no empty, `.` or `..` component, no backslash, `#`, carriage return or line feed, and no leading slash; anything else is `PATH_INVALID`. An OSTF file or `trace.derived` larger than 8 MiB is `FILE_TOO_LARGE`. While reading, a tool MUST NOT fetch network resources and MUST NOT execute code from the repository.
 
 **OSTF-106 Schemas.**<a id="OSTF-106"></a> `schema/trace.schema.json` defines the structural shape of root and item files and `schema/profile.schema.json` that of profile files, both in [JSON Schema] 2020-12. Validators MUST resolve the `https://ostf.dev/draft/0.3/` identifiers locally. Passing a schema is necessary but not sufficient: the rules in this document also apply.
 
@@ -125,7 +116,7 @@ The [example](example/README.md) shows a need, a risk, a requirement that contro
 item-id = ALPHA *127( ALPHA / DIGIT / "." / "_" / "-" )
 ```
 
-The IDs and aliases of all items in a root share one namespace. Two names that are equal when ASCII case is ignored collide (`DUPLICATE_ID`), and the item read later is excluded; a malformed ID is `INVALID_ID`. An alias is a nonempty single-line string of at most 512 bytes without leading or trailing whitespace or control characters (`INVALID_ALIAS`); it preserves an identifier from another system and need not match `item-id`. Links and tags MAY name an alias; readers resolve it and use the canonical ID in output and in the lock file. A name resolves only when it equals an ID or alias exactly, case included. An ID identifies the same item for its whole life and MUST NOT be reused for a different item; an item that no longer applies is marked `obsolete`. Across roots and repositories, an item is identified by its repository, named as it is cloned without a scheme, the path of its root from the repository's top, and its ID; its URI is `ostf://`, the repository, `#`, the root's path followed by `/` unless the root is at the top, and the ID, as in `ostf://github.com/acme/shop#services/payments/R-PAY-1`, each part percent-encoded as Annex D encodes a `uri`. A root's URI without an ID is the same without the ID, so it ends in `/`, as `ostf://github.com/acme/controls#security/`, and never equals the URI of an item of the top root; the top root's is `ostf://` and the repository, without `#`.
+The IDs and aliases of all items in a root share one namespace. Two names that are equal when ASCII case is ignored collide (`DUPLICATE_ID`), and the item read later is excluded; a malformed ID is `INVALID_ID`. An alias is a nonempty single-line string of at most 512 bytes without leading or trailing whitespace or control characters (`INVALID_ALIAS`); it preserves an identifier from another system and need not match `item-id`. Links and tags MAY name an alias; readers resolve it and use the canonical ID in output. A name resolves only when it equals an ID or alias exactly, case included. An ID identifies the same item for its whole life and MUST NOT be reused for a different item; an item that no longer applies is marked `obsolete`. Across roots and repositories, an item is identified by its repository, named as it is cloned without a scheme, the path of its root from the repository's top, and its ID; its URI is `ostf://`, the repository, `#`, the root's path followed by `/` unless the root is at the top, and the ID, as in `ostf://github.com/acme/shop#services/payments/R-PAY-1`, each part percent-encoded as Annex D encodes a `uri`. A root's URI without an ID is the same without the ID, so it ends in `/`, as `ostf://github.com/acme/controls#security/`, and never equals the URI of an item of the top root; the top root's is `ostf://` and the repository, without `#`.
 
 **OSTF-111 Fields.**<a id="OSTF-111"></a> An item is a mapping with the fields below. `text` is REQUIRED unless `external` is present (`MISSING_TEXT`). Any other key MUST be a link type of the selected vocabulary (section 6) or an `x-` key.
 
@@ -176,7 +167,7 @@ attr-name = ALPHA *47( ALPHA / DIGIT )
 
 In the table, statement, risk and verification stand for every type of that kind, a profile's included, and `code` and `tests` denote anchors (OSTF-132). A `risk` is anything that can cause harm or loss: a security breach, a financial loss or an injury alike, and a `threat` is a risk that an adversary causes on purpose. A `control` states a safeguard that `controls` a risk or a threat. An item of kind statement that links to an item of kind risk, by a link of any type, is a control. A control, every item that `refines` it directly or transitively, and every link whose source or target is one of those items are risk-relevant. A decision is a `design` item whose `title` names it, whose `text` states what was decided and whose `rationale` says why. A `verification` is a check that is not an automated test, such as an inspection or a review procedure. Inverse readings are computed by tools and never stored. The default vocabulary declares no attributes; the profile [profiles/security.yaml](profiles/security.yaml), published with this draft, adds STRIDE categories, assets and trust boundaries to threats (OSTF-121).
 
-**OSTF-121 Profiles.**<a id="OSTF-121"></a> The root MAY name a profile file with `profile: <path>`. A profile carries `ostf`, and OPTIONAL `types`, `links` and `fingerprints` mappings. A type name matches `type-name`; a link name matches `link-name`. An entry whose name exists in the default vocabulary merges over the default definition, property by property; an entry with a new name defines a new type or link. A new type MUST declare its `kind`, and a default type keeps its own. A new link MUST declare `from` and `to`. Link endpoints in a profile are type names or the anchor kinds `code` and `tests`, and endpoints a profile lists for a default link replace the kinds of OSTF-120; only `implements` and `verifies` MAY list anchor kinds in `from`. A type or link MAY carry a `description`. A type MAY declare `attributes` (OSTF-114); a link MAY declare string-valued link attributes, other than `to`, `ref`, `source`, `target`, `by` and `at`, with allowed values and a required flag, `acyclic`, and an `inverse` name. `fingerprints` carries `bodyChange`, `fileChange` and `definitionChange` (OSTF-144). A profile that fails its schema or these rules is `PROFILE_INVALID` and graph construction stops. A profile is a file in the repository; OSTF defines no profile registry and readers MUST NOT fetch one.
+**OSTF-121 Profiles.**<a id="OSTF-121"></a> The root MAY name a profile file with `profile: <path>`. A profile carries `ostf`, and OPTIONAL `types` and `links` mappings. A type name matches `type-name`; a link name matches `link-name`. An entry whose name exists in the default vocabulary merges over the default definition, property by property; an entry with a new name defines a new type or link. A new type MUST declare its `kind`, and a default type keeps its own. A new link MUST declare `from` and `to`. Link endpoints in a profile are type names or the anchor kinds `code` and `tests`, and endpoints a profile lists for a default link replace the kinds of OSTF-120; only `implements` and `verifies` MAY list anchor kinds in `from`. A type or link MAY carry a `description`. A type MAY declare `attributes` (OSTF-114); a link MAY declare string-valued link attributes, other than `to`, `ref`, `source`, `target`, `by` and `at`, with allowed values and a required flag, `acyclic`, and an `inverse` name. A profile that fails its schema or these rules is `PROFILE_INVALID` and graph construction stops. A profile is a file in the repository; OSTF defines no profile registry and readers MUST NOT fetch one.
 
 ```abnf
 type-name = LOALPHA *47( LOALPHA / DIGIT / "-" )
@@ -197,11 +188,9 @@ links:
   verifies:
     attributes:
       role: {values: [implementation, effectiveness]}
-fingerprints:
-  bodyChange: risk
 ```
 
-Under this profile a requirement that `mitigates` a hazard is a control, since `hazard` is of kind risk (OSTF-120), so `bodyChange: risk` counts body changes to its code; `controls` also reaches a hazard, with no entry in the profile.
+Under this profile a requirement that `mitigates` a hazard is a control, since `hazard` is of kind risk (OSTF-120); `controls` also reaches a hazard, with no entry in the profile.
 
 ## 6. Links
 
@@ -219,7 +208,7 @@ items:
     tests: [refund_test.go#TestRefundLimit]
 ```
 
-**OSTF-132 Anchors.**<a id="OSTF-132"></a> An anchor is a path (OSTF-105), optionally followed by `#` and a symbol. A path alone names the whole file. A symbol is interpreted by the language annex for the file's language, which also defines the identity of a test; without an annex for that language, a symbol anchor cannot be bound and an Analyzer MUST report `UNSUPPORTED_LANGUAGE` for it and MUST NOT report a state for its link. A syntactically malformed anchor, one that names a lock file or `trace.derived` in any ASCII case, which tools rewrite, and a whole-file anchor equal to an item ID, whose link identity would be that of a link from the item, are `ANCHOR_INVALID`. An anchor whose file or symbol does not exist in the evaluated source view is `BROKEN_LINK`; for a declared link, its hint names as anchors the definitions or files that the root covers whose text in the evaluated view is the anchor's text in the base view (Annex I.3), or, without a base view, whose fingerprint equals the anchor's `source.body`, or `source.sig` for a whole file, that its lock entry records, so that a moved definition is linked again in the same change. Anchors name a location and a symbol, never their contents or a line number.
+**OSTF-132 Anchors.**<a id="OSTF-132"></a> An anchor is a path (OSTF-105), optionally followed by `#` and a symbol. A path alone names the whole file. A symbol is interpreted by the language annex for the file's language, which also defines the identity of a test; without an annex for that language, a symbol anchor cannot be bound and an Analyzer MUST report `UNSUPPORTED_LANGUAGE` for it. A syntactically malformed anchor, one that names `trace.derived` in any ASCII case, which tools rewrite, and a whole-file anchor equal to an item ID, whose link identity would be that of a link from the item, are `ANCHOR_INVALID`. An anchor whose file or symbol does not exist in the evaluated source view is `BROKEN_LINK`; with a base view (Annex C.3), for a declared link, its hint names as anchors the definitions or files that the root covers whose text in the evaluated view is the anchor's text in the base view (Annex I.3), so that a moved definition is linked again in the same change. Anchors name a location and a symbol, never their contents or a line number.
 
 **OSTF-133 Tags.**<a id="OSTF-133"></a> Tags are on unless the root sets `tags: false`. While they are on, an Analyzer MUST read `@req` and `@req-file` tags in the comments of the files that the root covers (OSTF-102) and that a language annex it implements covers; it does not read comments in other files, and a link tagged there is absent from its graph. A tag is `@req` followed by a space or tab and one or more IDs or aliases separated by spaces, tabs or commas, ending at the end of the comment line. Lines, for tags and the definitions they bind to, are counted at line feeds. A `@req` tag binds to the definition that its comment documents, or to the innermost definition that encloses it, as the annex defines; `@req-file` binds to the whole file. In a test file, as the annex defines it, a tag declares a `verifies` link; elsewhere it declares an `implements` link. The bound anchor is the source and each named item is a target. An unknown ID is `TAG_UNKNOWN_ID`; a tag that binds to nothing is `TAG_UNBOUND`. Text inside a string literal is never a tag. Tags carry IDs only; a link that needs attributes is declared in an item. A Consumer that does not bind tags MUST report `TAGS_NOT_BOUND` while tags are on, because the file-declared links are then not the whole graph.
 
@@ -229,9 +218,9 @@ items:
 func CheckRefundLimit(r Refund, acct Account) error {
 ```
 
-**OSTF-134 Validation.**<a id="OSTF-134"></a> A reader MUST reject a link whose type the vocabulary does not define (`UNKNOWN_LINK_TYPE`), whose target does not resolve (`UNKNOWN_TARGET`), whose source and target are the same item (`SELF_LINK`), whose endpoint types the vocabulary does not allow (`LINK_NOT_ALLOWED`), or whose attributes violate their declaration or are not declared for its link type (`INVALID_ATTRIBUTE`). A set of links of an acyclic type that forms a cycle is `LINK_CYCLE` and none of those links enters the graph. The same link identity declared more than once, whether in two places of the OSTF files or in a file and a tag, is `LINK_DUPLICATE` and enters the graph once, with origin `declared` when any of its declarations is in an OSTF file. A link to an obsolete item is `OBSOLETE_TARGET`. A rejected link does not enter the graph and MUST NOT receive a state.
+**OSTF-134 Validation.**<a id="OSTF-134"></a> A reader MUST reject a link whose type the vocabulary does not define (`UNKNOWN_LINK_TYPE`), whose target does not resolve (`UNKNOWN_TARGET`), whose source and target are the same item (`SELF_LINK`), whose endpoint types the vocabulary does not allow (`LINK_NOT_ALLOWED`), or whose attributes violate their declaration or are not declared for its link type (`INVALID_ATTRIBUTE`). A set of links of an acyclic type that forms a cycle is `LINK_CYCLE` and none of those links enters the graph. The same link identity declared more than once, whether in two places of the OSTF files or in a file and a tag, is `LINK_DUPLICATE` and enters the graph once, with origin `declared` when any of its declarations is in an OSTF file. A link to an obsolete item is `OBSOLETE_TARGET`. A rejected link does not enter the graph.
 
-**OSTF-135 Origins.**<a id="OSTF-135"></a> Every link carries an origin: `declared` for a link written in an OSTF file and `tagged` for a link written in a code comment. Readers MUST report the origin with the link, separately from its state. The origin says where the link was written; it says nothing about who wrote it, when the code was written or whether the link is correct. Provenance beyond origin, such as the agent session that proposed a link, is tool data (Annex G).
+**OSTF-135 Origins.**<a id="OSTF-135"></a> Every link carries an origin: `declared` for a link written in an OSTF file and `tagged` for a link written in a code comment. Readers MUST report the origin with the link. The origin says where the link was written; it says nothing about who wrote it, when the code was written or whether the link is correct. Provenance beyond origin, such as the agent session that proposed a link, is tool data (Annex G).
 
 ## 7. Freshness
 
@@ -250,24 +239,9 @@ algorithm   = LOALPHA *( LOALPHA / DIGIT )
 fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 ```
 
-**OSTF-142 Lock files.**<a id="OSTF-142"></a> `trace.lock` lives beside `trace.yaml`, and an item file MAY have its own lock, the file whose path is the item file's followed by `.lock`. A writer writes each entry in the lock file of the file that declares its target item, and removes any other copy; a reader merges `trace.lock` and the locks of the item files it reads. Each lock file follows the grammar in Annex B, and its first line is `trace.lock 1`. Each further nonempty line is one entry: the percent-escaped source, the link type, the percent-escaped target, the link attributes as `name=value` pairs sorted by name, then the fingerprint pairs `source`, `source.sig`, `source.body` and `target` in that order, each present only when applicable, then `by`, the principal that rechecked the link, and `at`, the view identifier of the view in which it did. A principal is `person:`, `agent:` or `ci:` followed by a name, as in `agent:claude-haiku-5-5`, or `unknown`. A writer writes `by` and `at` in every entry it writes; a reader reads an entry without them, as written before they were defined, as both `unknown`. An entry's source, link type, target and attribute pairs, as a writer writes them, are its link's identity in text (Annex I.2). A writer escapes octets of value 0x20 and below, `%`, `=` and 0x7F as `%` and two uppercase hexadecimal digits, sorts entry lines by their bytes, ends every line with LF and uses no empty lines. A reader accepts CRLF, unsorted lines and pairs, and lowercase hexadecimal. Recorded fingerprint values are compared as written and not otherwise validated. A malformed line is `LOCK_INVALID` and its entry is not used; when the first line is malformed, or the file is larger than 8 MiB (OSTF-105), no entry of that file is used. Two entries with the same link identity, in one lock file or two, are `LOCK_DUPLICATE` and neither is used. Only tools write lock files; people and agents SHOULD NOT edit them. A lock entry is a record of a recheck, not a signature.
+<a id="OSTF-142"></a><a id="OSTF-143"></a><a id="OSTF-144"></a><a id="OSTF-145"></a>OSTF-142 Lock files, OSTF-143 Link states, OSTF-144 Suspect rules and OSTF-145 Meaning of a valid link are retired with the lock; the rule of a control moved to OSTF-120.
 
-**OSTF-143 Link states.**<a id="OSTF-143"></a> When no lock file exists, a reader reports `LOCK_MISSING` once and reports no link states. When a lock file exists, an Analyzer evaluates every link in the graph against the selected source view and assigns exactly one state:
-
-| State | Condition | Reasons |
-| --- | --- | --- |
-| `broken` | An endpoint cannot be resolved in the source view. | `LINK_BROKEN` |
-| `unstamped` | No lock entry matches the link identity, or a recorded fingerprint value does not begin with an algorithm identifier that the Analyzer implements and a colon. | `LINK_UNSTAMPED`, `UNKNOWN_ALGORITHM` |
-| `suspect` | A recorded fingerprint differs from the current one under OSTF-144. | `ITEM_CHANGED`, `FILE_CHANGED`, `DEFINITION_CHANGED`, `SIGNATURE_CHANGED`, `BODY_CHANGED` |
-| `valid` | Every recorded fingerprint matches. | none |
-
-`broken` takes precedence over `unstamped`, which takes precedence over `suspect`. Reasons are reported with the state. Restoring the recorded content restores `valid`. A link with `UNSUPPORTED_LANGUAGE` (OSTF-132) has no state.
-
-**OSTF-144 Suspect rules.**<a id="OSTF-144"></a> An Analyzer compares the recorded and current fingerprints key by key; a key present on only one side differs. A differing `source` or `target` is `ITEM_CHANGED`. A differing `source.sig` is `FILE_CHANGED` for a whole-file anchor, `DEFINITION_CHANGED` for a symbol anchor whose current `source.sig` and `source.body` are equal, as the language annexes make them for a definition without a body, such as a constant, a type or a field, and `SIGNATURE_CHANGED` otherwise. A differing `source.body` with an unchanged `source.sig` is `BODY_CHANGED`. `BODY_CHANGED`, `FILE_CHANGED` and `DEFINITION_CHANGED` count according to the profile's `fingerprints` keys `bodyChange`, `fileChange` and `definitionChange`: `all` (the default) counts every such change; `risk` counts it only when the link is risk-relevant (OSTF-120); `none` counts none. A change that does not count leaves the link `valid`.
-
-**OSTF-145 Meaning of a valid link.**<a id="OSTF-145"></a> A valid link means only that the fingerprinted inputs are unchanged since the recorded recheck. It is not approval, correctness, execution, test success, compliance or release authorization. Code outside an anchor, such as a helper it calls, a constant, a configuration file or a dependency, can change without changing the anchor's fingerprint. Analyses that follow such dependencies are tool behavior.
-
-**OSTF-146 Derived links.**<a id="OSTF-146"></a> A root MAY hold `trace.derived` beside `trace.lock`, written by a test tool to record which definitions each test covered; people and agents SHOULD NOT edit it. It follows the grammar in Annex B: its first line is `trace.derived 1`, and each further nonempty line holds the percent-escaped test anchor, `covers`, the percent-escaped code anchor, `view=` the view identifier of the view the tool observed and `tool=` the tool's name, escaped and sorted as lock entries are (OSTF-142). A line that does not follow Annex B or does not name two anchors is `DERIVED_INVALID` and is not used; when the first line is malformed or the file is larger than 8 MiB, no line is used. When the file exists, an Analyzer reports the corroboration of each `implements` link whose anchor binds, beside its state and never merged into it: `corroborated` when a test anchor that `verifies` the same item covers the anchor, `uncorroborated` when such a test anchor binds and none covers it, and `unobserved` when none binds. A line covers an anchor of a test and an anchor of code when its two anchors bind to the same definitions as they do in the evaluated view. The file is data: how a tool observes coverage, and whether the view it observed is the evaluated one, is outside OSTF.
+**OSTF-146 Derived links.**<a id="OSTF-146"></a> A root MAY hold `trace.derived` beside `trace.yaml`, written by a test tool to record which definitions each test covered; people and agents SHOULD NOT edit it. It follows the grammar in Annex B: its first line is `trace.derived 1`, and each further nonempty line holds the percent-escaped test anchor, `covers`, the percent-escaped code anchor, `view=` the view identifier of the view the tool observed and `tool=` the tool's name, escaped and sorted as Annex B says. A line that does not follow Annex B or does not name two anchors is `DERIVED_INVALID` and is not used; when the first line is malformed or the file is larger than 8 MiB, no line is used. When the file exists, an Analyzer reports the corroboration of each `implements` link whose anchor binds, beside the link: `corroborated` when a test anchor that `verifies` the same item covers the anchor, `uncorroborated` when such a test anchor binds and none covers it, and `unobserved` when none binds. A line covers an anchor of a test and an anchor of code when its two anchors bind to the same definitions as they do in the evaluated view. The file is data: how a tool observes coverage, and whether the view it observed is the evaluated one, is outside OSTF.
 
 ## 8. Processing
 
@@ -279,13 +253,13 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 4. Register items, IDs, aliases and external identities (section 4). An item whose fields, other than its links, `code` and `tests`, fail the schema or section 4 is reported with the code of the failed rule, or `FORMAT_INVALID` when none is more specific; it is excluded and MUST NOT become a link endpoint.
 5. Resolve item links and validate anchors (section 6). An Analyzer additionally binds symbols and tags for the languages it implements. A defect in a link list or entry rejects only that link, reported with the code of the failed rule or `FORMAT_INVALID`.
 6. Check acyclic link types on the resulting graph.
-7. Parse the lock files and `trace.derived`. A Consumer reports their syntax and duplicate diagnostics. An Analyzer additionally computes fingerprints, states and corroboration (section 7).
+7. Parse `trace.derived`. A Consumer reports its syntax diagnostics. An Analyzer additionally computes fingerprints and corroboration (section 7).
 
-**OSTF-151 Diagnostics.**<a id="OSTF-151"></a> A reader reports diagnostics using the codes and severities in Annex C. A value that breaks a rule with its own code gets that code whatever its type. An `error` means the construct is rejected and excluded, except that a link with `BROKEN_LINK` stays in the graph and, when a lock exists, has state `broken`; a `warning` means it is accepted and the reader draws attention to it; an `info` is informational. A reader MAY emit additional codes for behavior outside OSTF; they MUST NOT collide with Annex C and SHOULD carry a tool prefix. The order of diagnostics and the complete set of secondary diagnostics on an input with several defects are not conformance targets; a conformance case specifies the codes required for its exact input.
+**OSTF-151 Diagnostics.**<a id="OSTF-151"></a> A reader reports diagnostics using the codes and severities in Annex C. A value that breaks a rule with its own code gets that code whatever its type. An `error` means the construct is rejected and excluded, except that a link with `BROKEN_LINK` stays in the graph; a `warning` means it is accepted and the reader draws attention to it; an `info` is informational. A reader MAY emit additional codes for behavior outside OSTF; they MUST NOT collide with Annex C and SHOULD carry a tool prefix. The order of diagnostics and the complete set of secondary diagnostics on an input with several defects are not conformance targets; a conformance case specifies the codes required for its exact input.
 
 ## 9. Conformance
 
-**OSTF-160 Classes.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare, and satisfies OSTF-142 when it writes `trace.lock`. A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses the lock files and `trace.derived` for syntax and duplicates; it does not bind symbols or tags and makes no freshness claim. An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex, computes item and code fingerprints, and reports link states and reasons against one selected source view; it names the annexes and algorithm identifiers it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
+**OSTF-160 Classes.**<a id="OSTF-160"></a> A Producer writes root, item and profile files that satisfy the schemas and every applicable rule of sections 3 to 6 for the vocabulary they declare. A Consumer reads every construct of sections 3 to 6, resolves IDs, aliases and item-declared links, validates anchors syntactically, reports origins and the diagnostics of OSTF-150 steps 1 to 6, and parses `trace.derived` for syntax; it does not bind symbols or tags and makes no freshness claim. An Analyzer is a Consumer that additionally binds anchors and tags for at least one language annex, computes item and code fingerprints, and reports corroboration against one selected source view; it names the annexes and algorithm identifiers it implements and reports `UNSUPPORTED_LANGUAGE` for the rest.
 
 <a id="OSTF-161"></a><a id="OSTF-162"></a>OSTF-161 Consumer and OSTF-162 Analyzer are retired, merged into OSTF-160.
 
@@ -321,33 +295,22 @@ This annex satisfies OSTF-164 for Go. It references the lexical elements, functi
 
 **A.7 Runtime names (informative).** OpenTelemetry's `code.function.name` for Go has the form `example.com/pkg.(*Service).Charge`. The corresponding anchor is the file that defines `Service.Charge` within that package, written `pkg/charge.go#Service.Charge`. The translation needs the package path to file mapping of the source view and is tool behavior.
 
-## Annex B (normative): lock and derived file grammar
+## Annex B (normative): derived file grammar
 
 The grammar is published as [trace-lock.abnf](trace-lock.abnf) and reproduced here.
 
 ```abnf
-lock-file    = header *( newline [ entry ] )
-header       = %s"trace.lock 1"
-entry        = source SP link-name SP target *( SP pair )
-source       = 1*( safe-octet / escape )
-target       = 1*( safe-octet / escape )
-pair         = key "=" value
-key          = fp-key / %s"by" / %s"at" / attr-name
-fp-key       = %s"source.sig" / %s"source.body" / %s"source" / %s"target"
-value        = *( safe-octet / escape )
-escape       = "%" HEXDIG HEXDIG
-safe-octet   = %x21-24 / %x26-3C / %x3E-7E / %x80-FF
-link-name    = LOALPHA *47( LOALPHA / DIGIT / "_" )
-attr-name    = ALPHA *47( ALPHA / DIGIT )
-newline      = CRLF / LF
-LOALPHA      = %x61-7A
-principal    = %s"unknown" / ( %s"person" / %s"agent" / %s"ci" ) ":" 1*( safe-octet / escape )
 derived-file = %s"trace.derived 1" *( newline [ observation ] )
 observation  = source SP %s"covers" SP target 2( SP derived-pair )
 derived-pair = ( %s"view" / %s"tool" ) "=" 1*( safe-octet / escape )
+source       = 1*( safe-octet / escape )
+target       = 1*( safe-octet / escape )
+escape       = "%" HEXDIG HEXDIG
+safe-octet   = %x21-24 / %x26-3C / %x3E-7E / %x80-FF
+newline      = CRLF / LF
 ```
 
-Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, `%` (0x25), `=` (0x3D) and 0x7F. After percent-decoding, a value MUST be valid UTF-8. The fingerprint keys `source`, `source.sig`, `source.body` and `target`, and `by` and `at`, are never attribute names. The value of `by` matches `principal` and that of `at` is not empty. A key occurs at most once per entry, and an observation holds `view` and `tool` once each. A canonical writer follows OSTF-142: attribute pairs sorted by name precede fingerprint pairs, fingerprint pairs appear in the order `source`, `source.sig`, `source.body`, `target`, then `by` and `at`, `view` precedes `tool`, lines are sorted by bytes, every line ends in LF and no line is empty.
+Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, `%` (0x25), `=` (0x3D) and 0x7F. After percent-decoding, a value MUST be valid UTF-8. An observation holds `view` and `tool` once each. A writer escapes each excluded octet as `%` and two uppercase hexadecimal digits, writes `view` before `tool`, sorts lines by their bytes, ends every line with LF and writes no empty line; a reader accepts CRLF, unsorted lines and pairs, and lowercase hexadecimal.
 
 ## Annex C (normative): diagnostic codes and result format
 
@@ -360,7 +323,7 @@ Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, 
 | `RESERVED_KEY_SKIPPED` | info | OSTF-103 | A key of a newer minor version was skipped. |
 | `UNKNOWN_KEY` | error | OSTF-102, OSTF-104 | A key not defined where it appears. |
 | `PATH_INVALID` | error | OSTF-105 | Unclean, absolute or traversing path. |
-| `FILE_TOO_LARGE` | error | OSTF-105, OSTF-142, OSTF-146 | An OSTF file, lock file or `trace.derived` above 8 MiB; no line of such a file is used. |
+| `FILE_TOO_LARGE` | error | OSTF-105, OSTF-146 | An OSTF file or `trace.derived` above 8 MiB; no line of such a file is used. |
 | `INCLUDE_EMPTY` | warning | OSTF-102 | A glob matched no covered file other than `trace.yaml`. |
 | `NESTED_ROOT` | info | OSTF-102 | A nested root, named by its `trace.yaml`, whose files the result does not cover. |
 | `NESTED_ROOT_FAILED` | error | OSTF-102 | A nested root whose own `check` would exit 1, evaluated with a base view. |
@@ -382,20 +345,14 @@ Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, 
 | `LINK_CYCLE` | error | OSTF-134 | A cycle in an acyclic link type. |
 | `LINK_DUPLICATE` | warning | OSTF-134 | The same link identity declared twice. |
 | `OBSOLETE_TARGET` | warning | OSTF-112 | Link to an obsolete item. |
-| `ANCHOR_INVALID` | error | OSTF-132 | Anchor syntax or path invalid, or the anchor names a lock file or `trace.derived`. |
+| `ANCHOR_INVALID` | error | OSTF-132 | Anchor syntax or path invalid, or the anchor names `trace.derived`. |
 | `BROKEN_LINK` | error | OSTF-132, OSTF-141 | Anchor file or symbol not found, or file unparseable for a symbol anchor. |
 | `UNSUPPORTED_LANGUAGE` | warning | OSTF-132 | Symbol anchor in a language without an implemented annex. |
 | `PARSE_ERROR` | warning | OSTF-141 | An annexed file that an anchor or tag needs could not be parsed. |
 | `TAG_UNKNOWN_ID` | error | OSTF-133 | A tag names an unknown ID. |
 | `TAG_UNBOUND` | error | OSTF-133 | A tag binds to no definition. |
 | `TAGS_NOT_BOUND` | info | OSTF-133 | Tags are on and this reader did not bind them. |
-| `LOCK_MISSING` | info | OSTF-143 | No lock file; no states reported. |
-| `LOCK_INVALID` | error | OSTF-142 | A lock line does not follow Annex B. |
-| `LOCK_DUPLICATE` | error | OSTF-142 | Two lock entries share a link identity. |
 | `DERIVED_INVALID` | error | OSTF-146 | A `trace.derived` line breaks Annex B or OSTF-146 and is not used. |
-| `STAMP_REFUSED` | error | Annex I.4 | A link named to `stamp` cannot be stamped, or a lock file would exceed 8 MiB; nothing was stamped. |
-
-State reasons (OSTF-143) are `LINK_BROKEN`, `LINK_UNSTAMPED`, `UNKNOWN_ALGORITHM`, `ITEM_CHANGED`, `FILE_CHANGED`, `DEFINITION_CHANGED`, `SIGNATURE_CHANGED` and `BODY_CHANGED`. They accompany a state and are not diagnostics.
 
 **C.2 Result format.** Implementations exchange results through this JSON document, whose shape [schema/result.schema.json](schema/result.schema.json) defines. A tool MAY present results in any other form; a result it submits for a conformance case, and the `json` output of Annex I, MUST take this form. For the [minimal fixture](fixtures/minimal/) with a mistyped tag `// @req R-AD` added above `Add`:
 
@@ -415,19 +372,17 @@ State reasons (OSTF-143) are `LINK_BROKEN`, `LINK_UNSTAMPED`, `UNKNOWN_ALGORITHM
      "origin": "declared",
      "fingerprints": {"source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
                       "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc",
-                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"},
-     "state": "valid", "reasons": []},
+                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"}},
     {"source": "math_test.go#TestAdd", "type": "verifies", "target": "R-ADD", "attributes": {},
      "origin": "declared",
      "fingerprints": {"source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
                       "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg",
-                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"},
-     "state": "valid", "reasons": []}
+                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"}}
   ]
 }
 ```
 
-`items` are sorted by ID and `links` by the bytes of their identity (Annex I.2). Every item carries `riskRelevant` under OSTF-120. `fingerprints` holds the values computed in the evaluated view and omits a key that cannot be computed; `reasons` are unique and sorted by bytes. `fingerprints`, `state` and `reasons` are omitted by a Consumer; `state` and `reasons` are also omitted when no lock exists or the link has `UNSUPPORTED_LANGUAGE`; `corroboration` is present only as OSTF-146 says, and `sourceChangedIn` and `targetChangedIn` only as Annex I.3 says. `subject` is the first that applies of: the unknown name in a tag; the source, as written, of the link that the diagnostic concerns; the ID of the item that it concerns or whose entry it concerns; the line of a tag or of `trace.lock`. A diagnostic MAY carry `hint`, a short repair suggestion. A conformance case compares the set of codes, the item fingerprints and risk relevance, the link tuples with their origins, states, reasons and corroboration, `impact` when present, and the change information of a scripted history; `message`, `hint`, apart from the anchors of OSTF-132, and the order of `diagnostics` are not compared.
+`items` are sorted by ID and `links` by the bytes of their identity (Annex I.2). Every item carries `riskRelevant` under OSTF-120. `fingerprints` holds the values computed in the evaluated view and omits a key that cannot be computed, and a Consumer omits it; `corroboration` is present only as OSTF-146 says, and `sourceChangedIn` and `targetChangedIn` only as Annex I.3 says. `subject` is the first that applies of: the unknown name in a tag; the source, as written, of the link that the diagnostic concerns; the ID of the item that it concerns or whose entry it concerns; the line of a tag or of `trace.derived`. A diagnostic MAY carry `hint`, a short repair suggestion. A conformance case compares the set of codes, the item fingerprints and risk relevance, the link tuples with their origins and corroboration, `impact` when present, and the change information of a scripted history; `message`, `hint`, apart from the anchors of OSTF-132, and the order of `diagnostics` are not compared.
 
 **C.3 Impact.** A result computed against a base view carries `impact` (Annex I.1). For a change to the [example](example/README.md) that edits the body of `CheckRefundLimit` and adds a field to `Account`:
 
@@ -446,16 +401,15 @@ State reasons (OSTF-143) are `LINK_BROKEN`, `LINK_UNSTAMPED`, `UNKNOWN_ALGORITHM
   ],
   "items": {"added": [], "changed": [], "removed": []},
   "links": {"added": [], "removed": []},
-  "lock": "kept",
   "tests": ["refund_test.go#TestRefundLimit"]
 }
 ```
 
-`base` is the revision as given. `lock` is `kept` when both views hold a lock file, `added` or `removed` when only the evaluated or only the base view does, and `absent` when neither does. `changed` lists every definition whose span text differs, after CRLF becomes LF, between the base view and the evaluated view or that exists in only one of them, named by its full symbol under the annex, among the files that an implemented language annex covers and that, in either view, the root covers (OSTF-102) or an anchor of its graph names; a file that cannot be parsed in a view has no definitions there. It also lists every file named by a whole-file anchor whose text differs, after CRLF becomes LF, or that exists in only one view. Each entry names the items linked, in either graph, from an anchor that binds to it in that graph's view or from the whole-file anchor of its file. `contexts` gives, in the order of `changed`, the context (Annex I.3) of each anchor there that resolves in the evaluated view and names an item: the anchor as `context`, the IDs of its `items` and the identities of its `links`, the result's `items` adding to each of those items the fields that a context adds, and its `links` adding to each of those links its change information (Annex I.3). `items` lists the IDs of items added, removed, or changed as Annex I.3 defines it. `links` lists the identities (Annex I.2) of links added or removed. `tests` lists every test anchor, as its link writes it, that binds in the evaluated view and verifies an item named in `changed`, `items.added` or `items.changed`, and every changed definition that exists in the evaluated view and that its language annex defines as a test (A.1). All lists are sorted by bytes. A base view without the root's `trace.yaml` has an empty graph. When graph construction fails in either view (OSTF-150), `impact` is omitted. `coverage` names the boundary of the analysis. `direct`, the only value this revision defines, means that no dependency was followed (OSTF-145).
+`base` is the revision as given. `changed` lists every definition whose span text differs, after CRLF becomes LF, between the base view and the evaluated view or that exists in only one of them, named by its full symbol under the annex, among the files that an implemented language annex covers and that, in either view, the root covers (OSTF-102) or an anchor of its graph names; a file that cannot be parsed in a view has no definitions there. It also lists every file named by a whole-file anchor whose text differs, after CRLF becomes LF, or that exists in only one view. Each entry names the items linked, in either graph, from an anchor that binds to it in that graph's view or from the whole-file anchor of its file. `contexts` gives, in the order of `changed`, the context (Annex I.3) of each anchor there that resolves in the evaluated view and names an item: the anchor as `context`, the IDs of its `items` and the identities of its `links`, the result's `items` adding to each of those items the fields that a context adds, and its `links` adding to each of those links its change information (Annex I.3). `items` lists the IDs of items added, removed, or changed as Annex I.3 defines it. `links` lists the identities (Annex I.2) of links added or removed. `tests` lists every test anchor, as its link writes it, that binds in the evaluated view and verifies an item named in `changed`, `items.added` or `items.changed`, and every changed definition that exists in the evaluated view and that its language annex defines as a test (A.1). All lists are sorted by bytes. A base view without the root's `trace.yaml` has an empty graph. When graph construction fails in either view (OSTF-150), `impact` is omitted. `coverage` names the boundary of the analysis. `direct`, the only value this revision defines, means that no dependency was followed (OSTF-100).
 
 ## Annex D (normative, optional): results as SARIF
 
-A tool that emits OSTF results as SARIF 2.1.0 [SARIF] MUST map them as follows, in one `run`. Its `tool.driver.rules` hold one `reportingDescriptor` for each Annex C code and state reason that a result uses, whose `id` is that code or reason, sorted by bytes. Each diagnostic is a `result` with `ruleId` equal to the code and `level` `error`, `warning` or `note` for OSTF severities error, warning and info; its `file` becomes `locations[0].physicalLocation.artifactLocation.uri` and its `subject` `locations[0].logicalLocations[0].fullyQualifiedName`, each when present; a `hint` goes in the result's `properties` as `ostf.hint`. A link state is one `result` per reason, whose `ruleId` is the reason and whose `level` is `error` for `broken`, `warning` for `suspect` and `note` for `unstamped`, with `properties` `ostf.link` (the link identity, Annex I.2) and `ostf.state`; its location is the link's source, as the anchor's path and the anchor, or as the file that declares the source item and the item's ID. A `uri` is the path relative to the root with every octet other than an unreserved character [RFC 3986] or `/` percent-encoded. Every `result` carries `message.text`, with `{` and `}` doubled as SARIF requires: a diagnostic's message, or its code when it has none; for a link state, the identity and the state. Valid links produce no SARIF result, and neither `impact` nor corroboration has a SARIF form. This mapping lets an OSTF check appear in any code-scanning view that reads SARIF without a new report format.
+A tool that emits OSTF results as SARIF 2.1.0 [SARIF] MUST map them as follows, in one `run`. Its `tool.driver.rules` hold one `reportingDescriptor` for each Annex C code that a result uses, whose `id` is that code, sorted by bytes. Each diagnostic is a `result` with `ruleId` equal to the code and `level` `error`, `warning` or `note` for OSTF severities error, warning and info; its `file` becomes `locations[0].physicalLocation.artifactLocation.uri` and its `subject` `locations[0].logicalLocations[0].fullyQualifiedName`, each when present; a `hint` goes in the result's `properties` as `ostf.hint`. A `uri` is the path relative to the root with every octet other than an unreserved character [RFC 3986] or `/` percent-encoded. Every `result` carries `message.text`, with `{` and `}` doubled as SARIF requires: a diagnostic's message, or its code when it has none. A link produces no SARIF result of its own, a broken one being reported by its `BROKEN_LINK`, and neither `impact` nor corroboration has a SARIF form. This mapping lets an OSTF check appear in any code-scanning view that reads SARIF without a new report format.
 
 ## Annex E (informative): execution evidence as in-toto attestations
 
@@ -510,7 +464,7 @@ another principal rechecks it.
 | Agent Trace 0.1 (Cursor, Cognition) | Which conversation and contributor produced a line range, with an optional content hash and VCS revision | Attribution, not intent. Complementary: OSTF links carry no proposed state (F.6), so who wrote a link is Git's and Agent Trace's record; a tool may record the Agent Trace record ID of the conversation that proposed a link in an `x-` key. |
 | OpenTelemetry semantic conventions, `code.*` and `vcs.*` attributes | Runtime and VCS locations in telemetry | Runtime function names map to anchors through a language annex (A.7). OSTF defines no telemetry fields. |
 | SARIF 2.1.0 (OASIS) | Static analysis results | OSTF diagnostics and link states can be emitted as SARIF (Annex D). |
-| Model Context Protocol | Tools that agents call | The command profile exposes `check`, `context` and `stamp` as MCP tools that return the JSON result (Annex I.5). |
+| Model Context Protocol | Tools that agents call | The command profile exposes `check` and `context` as MCP tools that return the JSON result (Annex I.4). |
 | in-toto attestation framework, Test Result predicate | Signed statements about artifacts | Execution evidence for OSTF test anchors (Annex E). |
 | ReqIF 1.2 (OMG), OSLC RM 2.1 (OASIS) | Requirements exchange between tools; linked-data vocabulary | An item maps to a ReqIF SpecObject or an `oslc_rm:Requirement`; anchors, tags and the lock have no counterpart and are lost in export. Formal mappings are planned, outside Core. |
 | SCIP (Sourcegraph) | Symbol definitions and references | A possible source of definitions for future language annexes; not required. |
@@ -538,8 +492,6 @@ another principal rechecks it.
 - Files: `trace.derived` records coverage and gives `implements` links a corroboration; lock entries end with `by` and `at`; an item file may have its own lock; a source entry may name with `ostf` the root that owns its items.
 - Reasons and diagnostics: `FILE_CHANGED` and `DEFINITION_CHANGED`, with the profile keys `fileChange` and `definitionChange`; `DERIVED_INVALID` and `NESTED_ROOT_FAILED`; the hint of `BROKEN_LINK` names a moved definition.
 - Results and agents: `corroboration`, `impact.contexts` and the `ndjson` format (Annex N); lines of item text marked with `| ` in the text of `context`; agent paragraph 4 and the policy paragraph of F.2.
-
-A tool MAY offer `migrate`, an added command (Annex I.6), which rewrites the lock files of a tree written under an earlier revision: every entry a reader may use gains `by=unknown` and `at=unknown` when it lacks them and moves to the lock file of its target's file, an entry whose target is no item stays where it is, and malformed or duplicated entries are dropped, as a stamp drops them. It changes no state, leaves a lock file above 8 MiB as it is, and writes nothing when graph construction fails or a lock file would exceed 8 MiB. Two changes need a person: a profile's new type without a `kind` is `PROFILE_INVALID` until someone states its kind, which no tool can infer, and a link attribute named `by` or `at` must be renamed.
 
 **Requirement ID map.** 0.2 identifiers are retired; the table records where each meaning went.
 
@@ -572,27 +524,24 @@ A tool MAY offer `migrate`, an added command (Annex I.6), which rewrites the loc
 
 ## Annex I (normative, optional): command profile
 
-This annex fixes the names, inputs, outputs and exit codes of three commands. A tool that claims it is an Analyzer (OSTF-160).
+This annex fixes the names, inputs, outputs and exit codes of two commands. A tool that claims it is an Analyzer (OSTF-160).
 
 **I.1 Commands.**
 
 | Command | Output | Exit code 0 | Exit code 1 |
 | --- | --- | --- | --- |
-| `check [--base REV] [--strict]` | The root's result, with `impact` (C.3) under `--base` | No error diagnostic, no `suspect` or `broken` link and, with `--strict`, no `unstamped` link and no `LOCK_MISSING` for a graph with links | Otherwise |
+| `check [--base REV]` | The root's result, with `impact` (C.3) under `--base` | No error diagnostic | An error diagnostic, `BROKEN_LINK` of a broken link included |
 | `context TARGET` | The context of TARGET (I.3) | TARGET resolves | It does not |
-| `stamp LINK...` | The stamped links (I.4) | Every named link was stamped | Nothing was stamped |
 
 Each command accepts `--root DIR` and `--format json|text`; `check` also accepts `--format sarif` (Annex D) and `ndjson` (Annex N.1). Without `--root`, the root is the nearest directory at or above the working directory holding `trace.yaml`. The evaluated view is the working tree; the base view is `REV`. `json` output is a result of Annex C; `text`, the default, is not compared, but that of `check` shows every diagnostic and that of `context` SHOULD follow Annex J. Exit code 2 means the command could not run.
 
-**I.2 Link identity.** A link is named by its identity as OSTF-142 writes it. The text of `check` names each link that is not `valid` this way, and each argument of `stamp` names the link whose identity it equals byte for byte.
+**I.2 Link identity.** A link is named by its identity: its source, its link type and its target, then its link attributes as `name=value` pairs sorted by name, separated by single spaces, with the source, the target and each value escaped as Annex B escapes them.
 
-**I.3 Context.** TARGET names an item when an item ID or alias equals it. Otherwise it is an anchor, its path relative to the working directory, and without `--root` the root is the one covering its file. TARGET resolves when it names an item or its anchor binds in the evaluated view, unless graph construction fails. Two anchors match when they bind to the same definitions. The context of an item is the item, every item reached from it by item-to-item links in their direction, every link whose source is one of those items, and every link to the item, with its source when that is an item. The context of an anchor is the union of the contexts of the items it links to, counting the links of its file's whole-file anchor for a symbol anchor and those of every symbol anchor in the file for a whole-file anchor. A `json` context is a result whose `context` is TARGET as given, whose `items` and `links` are the context's, with `title`, `text`, `rationale`, `external` and `revision` added to items when present, and whose `diagnostics` are those that stop graph construction or concern a lock file or `trace.derived`, the one for an unresolved TARGET, and those whose subject is in the context or whose file holds one of its anchors. Each of its links carries its change information, `sourceChangedIn` and `targetChangedIn`: the view identifiers of the last commits that changed its source and its target, read from the first-parent history of the evaluated view's commit, newest first. A side changed in the first commit in which it differs from that side in the commit's first parent, or in an empty view for a commit without one. An anchor differs when the text of its file, for a whole-file anchor, or of the spans of the definitions it binds to, in source order, differs after CRLF becomes LF, or when it binds in one view only; an item differs when its fields other than its ID, links, `code`, `tests` and `x-` keys differ, or when it exists in one view only. A field is omitted when the evaluated view has no history, when no commit changed the side, and when the walk reaches a commit whose parents the history lacks, as at the edge of a shallow clone, before it finds the change. An unresolved TARGET is `ANCHOR_INVALID` when it is not a valid anchor (OSTF-132), else `UNKNOWN_TARGET` when it matches `item-id`, `UNSUPPORTED_LANGUAGE` for a symbol anchor in a file no implemented annex covers, and `BROKEN_LINK` otherwise.
+**I.3 Context.** TARGET names an item when an item ID or alias equals it. Otherwise it is an anchor, its path relative to the working directory, and without `--root` the root is the one covering its file. TARGET resolves when it names an item or its anchor binds in the evaluated view, unless graph construction fails. Two anchors match when they bind to the same definitions. The context of an item is the item, every item reached from it by item-to-item links in their direction, every link whose source is one of those items, and every link to the item, with its source when that is an item. The context of an anchor is the union of the contexts of the items it links to, counting the links of its file's whole-file anchor for a symbol anchor and those of every symbol anchor in the file for a whole-file anchor. A `json` context is a result whose `context` is TARGET as given, whose `items` and `links` are the context's, with `title`, `text`, `rationale`, `external` and `revision` added to items when present, and whose `diagnostics` are those that stop graph construction or concern `trace.derived`, the one for an unresolved TARGET, and those whose subject is in the context or whose file holds one of its anchors. Each of its links carries its change information, `sourceChangedIn` and `targetChangedIn`: the view identifiers of the last commits that changed its source and its target, read from the first-parent history of the evaluated view's commit, newest first. A side changed in the first commit in which it differs from that side in the commit's first parent, or in an empty view for a commit without one. An anchor differs when the text of its file, for a whole-file anchor, or of the spans of the definitions it binds to, in source order, differs after CRLF becomes LF, or when it binds in one view only; an item differs when its fields other than its ID, links, `code`, `tests` and `x-` keys differ, or when it exists in one view only. A field is omitted when the evaluated view has no history, when no commit changed the side, and when the walk reaches a commit whose parents the history lacks, as at the edge of a shallow clone, before it finds the change. An unresolved TARGET is `ANCHOR_INVALID` when it is not a valid anchor (OSTF-132), else `UNKNOWN_TARGET` when it matches `item-id`, `UNSUPPORTED_LANGUAGE` for a symbol anchor in a file no implemented annex covers, and `BROKEN_LINK` otherwise.
 
-**I.4 Stamp.** For each named link, `stamp` writes the fingerprints computed in the evaluated view as its lock entry, with `by` and `at` from `--by PRINCIPAL` and `--at VIEW`, or `unknown`, in its lock file (OSTF-142), creating it when needed and writing it canonically. It keeps the entries a reader may use and drops the rest (OSTF-142). It stamps every named link or none: an argument that names no link in the graph, a `broken` link or a link with `UNSUPPORTED_LANGUAGE` is `STAMP_REFUSED`, and so is the whole stamp when a lock file it would write exceeds 8 MiB (OSTF-105). Its `json` output is a result whose `links` are the stamped links, each `valid`, whose `items` are their item endpoints, and whose `diagnostics` are `STAMP_REFUSED` and those that stop graph construction or concern a lock file as read. No option stamps unnamed links.
+**I.4 MCP binding.** A tool serving the Model Context Protocol [MCP] exposes the commands as tools `ostf_check` (arguments `base`, `root`) and `ostf_context` (`target`, `root`); only `target` is required. Each returns its `json` result as structured content and MAY add its text form. Exit code 1 maps to a successful call carrying the findings, exit code 2 to a tool error.
 
-**I.5 MCP binding.** A tool serving the Model Context Protocol [MCP] exposes the commands as tools `ostf_check` (arguments `base`, `root`), `ostf_context` (`target`, `root`) and `ostf_stamp` (`links`, a list of identities, `by`, `at` and `root`); only `target` and `links` are required. Each returns its `json` result as structured content and MAY add its text form. Exit code 1 maps to a successful call carrying the findings, exit code 2 to a tool error.
-
-**I.6 Writes and extensions.** `check` and `context` MUST NOT modify any file; `stamp` MUST NOT modify any file other than lock files, which it MAY create or replace. A tool MAY add options and commands, but an added option MUST NOT change the meaning of those above, and added commands are outside a claim of this annex.
+**I.5 Writes and extensions.** `check` and `context` MUST NOT modify any file. A tool MAY add options and commands, but an added option MUST NOT change the meaning of those above, and added commands are outside a claim of this annex.
 
 ## Annex J (informative): context rendering
 
@@ -600,19 +549,19 @@ The text form of `context` is meant to fit on one screen and to cost an agent fe
 
 ```text
 refund.go#CheckRefundLimit
-  implements R-REFUND-LIMIT: Refund limit (valid, corroborated)
+  implements R-REFUND-LIMIT: Refund limit (corroborated)
     risk-relevant: ask before changing
     | A refund must not exceed the original order, and refunds above the daily limit for an account need a second approval.
-    controls RISK-REFUND-ABUSE: A compromised account or a mistaken operator drains funds through refunds. (valid)
-    refines N-REFUNDS: Customers get refunds quickly without the business losing money to abuse. (valid)
-    verified_by refund_test.go#TestRefundLimit (valid)
+    controls RISK-REFUND-ABUSE: A compromised account or a mistaken operator drains funds through refunds.
+    refines N-REFUNDS: Customers get refunds quickly without the business losing money to abuse.
+    verified_by refund_test.go#TestRefundLimit
 ```
 
-1. The first line is TARGET as given. For an item, it is instead the item line of rule 2 without a link name or state.
-2. Each item that TARGET links to follows, risk-relevant items first, then by ID; an item linked more than once gets one item line per link, in identity order, and its details once. Its item line holds the link name, the ID, a colon and the title when there is one, its lines joined by one space, the status in brackets unless it is `accepted`, and the link state in parentheses. Below it, one level deeper: `risk-relevant: ask before changing` for a risk-relevant item; its text, one output line per line after normalization (OSTF-140), each beginning with `| `; then, when present, the rationale the same way with `rationale: ` after the `| ` of its first line, and `external: ` with the external ID, `revision ` and the revision, and the display URL, joined by `, `.
-3. Next, at the same depth, each item reached from it by item-to-item links, by link name, ID, then identity: the link name, the ID, a colon, the title or else the first line of the text, the status unless `accepted`, and the state. An item reached through another sits one level deeper; an item already shown appears again with its link name, ID and state, without its title or text.
-4. Then each link to the item from another anchor or from an item, unless rule 3 showed it, by its inverse reading (`implemented_by`, `verified_by`, `refined_by`, `controlled_by`) and then by the bytes of its source, with the state; an item is written as in rule 3.
-5. A level is two spaces. Lines end with LF and carry no trailing spaces. The state is left out when no lock exists or the link has no state, and a corroboration (OSTF-146) follows it after `, `, or stands alone. When either side has change information (I.3), `changed` follows after `; `, or stands alone, with the first 12 characters of `sourceChangedIn` and of `targetChangedIn`, `-` standing for an omitted one. Link attributes follow the link name as `name=value`.
+1. The first line is TARGET as given. For an item, it is instead the item line of rule 2 without a link name.
+2. Each item that TARGET links to follows, risk-relevant items first, then by ID; an item linked more than once gets one item line per link, in identity order, and its details once. Its item line holds the link name, the ID, a colon and the title when there is one, its lines joined by one space, and the status in brackets unless it is `accepted`. Below it, one level deeper: `risk-relevant: ask before changing` for a risk-relevant item; its text, one output line per line after normalization (OSTF-140), each beginning with `| `; then, when present, the rationale the same way with `rationale: ` after the `| ` of its first line, and `external: ` with the external ID, `revision ` and the revision, and the display URL, joined by `, `.
+3. Next, at the same depth, each item reached from it by item-to-item links, by link name, ID, then identity: the link name, the ID, a colon, the title or else the first line of the text, and the status unless `accepted`. An item reached through another sits one level deeper; an item already shown appears again with its link name and ID, without its title or text.
+4. Then each link to the item from another anchor or from an item, unless rule 3 showed it, by its inverse reading (`implemented_by`, `verified_by`, `refined_by`, `controlled_by`) and then by the bytes of its source; an item is written as in rule 3.
+5. A level is two spaces. Lines end with LF and carry no trailing spaces. A link line ends with the link's corroboration (OSTF-146) in parentheses, and when either side has change information (I.3), `changed` follows it after `; `, or stands alone in the parentheses, with the first 12 characters of `sourceChangedIn` and of `targetChangedIn`, `-` standing for an omitted one. Link attributes follow the link name as `name=value`.
 6. A tool MAY append lines that begin with `x-` after the standard lines.
 7. The text of `check --base` renders each context of `impact.contexts` (Annex C.3) in this form after the impact, so that one call shows what every changed definition serves.
 
@@ -661,11 +610,10 @@ N.1 is normative for a tool that writes `ndjson`. The rest of this annex is info
 | Table | Key | Columns | From |
 | --- | --- | --- | --- |
 | item | ID | type, status, riskRelevant, fingerprint, title, text, external | `items` of the result |
-| link | identity (Annex I.2) | source, type, target, attributes, origin, state, reasons, corroboration | `links` of the result |
+| link | identity (Annex I.2) | source, type, target, attributes, origin, corroboration | `links` of the result |
 | anchor | anchor | path, symbol, `source.sig`, `source.body` | the source of each link from an anchor |
-| lock entry | identity | lock file, fingerprints, `by`, `at` | the lock files (OSTF-142) |
 | derived link | test anchor, code anchor | view, tool | `trace.derived` (OSTF-146) |
 | diagnostic | code, file, subject | severity, message, hint | `diagnostics` of the result |
-| impact | base | changed, contexts, items, links, lock, tests | `impact` of the result |
+| impact | base | changed, contexts, items, links, tests | `impact` of the result |
 
 An external item whose source names a root with `ostf` (OSTF-113) joins the item of that root whose ID is its native ID. That join is how an index answers what no reader resolves: which code, in any repository, serves a control kept in a shared catalog.

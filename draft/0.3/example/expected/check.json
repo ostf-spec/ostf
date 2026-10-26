@@ -55,9 +55,7 @@
       "fingerprints": {
         "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
         "target": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "R-REFUND-LIMIT",
@@ -68,9 +66,7 @@
       "fingerprints": {
         "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
         "target": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "V-ENCRYPTION-REVIEW",
@@ -81,9 +77,7 @@
       "fingerprints": {
         "source": "f1:gzikKGMTSX3Ncx82gUYdKsELgCJY-kS-AgUbwH4nelo",
         "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "charge.go#Service.Charge",
@@ -96,8 +90,6 @@
         "source.body": "go2:Jw2w-95r5lgsRFHMnsxh3Fv3CpRUaBwuMtEY37USaM0",
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
       },
-      "state": "valid",
-      "reasons": [],
       "corroboration": "corroborated"
     },
     {
@@ -110,9 +102,7 @@
         "source.sig": "go2:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0",
         "source.body": "go2:DMGD_AqBImkmXDZz9gjG4l7bMZhMaHU7fwl4jhEbUBg",
         "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "deploy/database.tf",
@@ -124,8 +114,6 @@
         "source.sig": "lf1:tG3FA3jnS89z9QX07SrkOGGysS02vzQfu_3ZPoiDqNI",
         "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
       },
-      "state": "valid",
-      "reasons": [],
       "corroboration": "unobserved"
     },
     {
@@ -139,8 +127,6 @@
         "source.body": "go2:QDiQOM8Mdapw64qINhfEceHRv5rJqWGmQDeok1bNN5M",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
-      "state": "valid",
-      "reasons": [],
       "corroboration": "corroborated"
     },
     {
@@ -153,9 +139,7 @@
         "source.sig": "go2:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
         "source.body": "go2:rckr3heqlM8R-vIAGLat7g_d9XKCA137w9VTa57Y5qM",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     }
   ]
 }

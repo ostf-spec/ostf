@@ -25,7 +25,7 @@
     "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
     "identities": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1, "$comment": "Link identity: canonical lock line without fingerprint pairs (Annex I.2)." }
+      "items": { "type": "string", "minLength": 1, "$comment": "Link identity: source, link type, target and attribute pairs, escaped (Annex I.2)." }
     },
     "diagnostic": {
       "type": "object",
@@ -77,17 +77,11 @@
           },
           "additionalProperties": false
         },
-        "state": { "enum": ["valid", "suspect", "unstamped", "broken"] },
-        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the state, never part of it." },
+        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the link." },
         "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the source." },
-        "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." },
-        "reasons": {
-          "type": "array",
-          "items": { "enum": ["LINK_BROKEN", "LINK_UNSTAMPED", "UNKNOWN_ALGORITHM", "ITEM_CHANGED", "FILE_CHANGED", "DEFINITION_CHANGED", "SIGNATURE_CHANGED", "BODY_CHANGED"] }
-        }
+        "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." }
       },
       "required": ["source", "type", "target", "attributes", "origin"],
-      "dependentRequired": { "state": ["reasons"], "reasons": ["state"] },
       "patternProperties": { "^x-": {} },
       "additionalProperties": false
     },
@@ -141,10 +135,9 @@
           "required": ["added", "removed"],
           "additionalProperties": false
         },
-        "lock": { "enum": ["kept", "added", "removed", "absent"] },
         "tests": { "type": "array", "items": { "$ref": "#/$defs/anchor" } }
       },
-      "required": ["base", "coverage", "changed", "contexts", "items", "links", "lock", "tests"],
+      "required": ["base", "coverage", "changed", "contexts", "items", "links", "tests"],
       "patternProperties": { "^x-": {} },
       "additionalProperties": false
     }

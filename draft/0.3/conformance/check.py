@@ -30,11 +30,11 @@ SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e
 VECTORS_02 = {
     "item-vectors.json": ("7ef4e294933e4757e913b7abe20ea1d8211f415ad31fa302a4c738959c779e27", ["OSTF-140", "OSTF-170"]),
     "code-vectors.json": ("0b1fde1b4551cad0a5e60f6a78d2c27e23c9bc210f14fbdbc154bdb1493b199b", ["OSTF-141", "OSTF-170", "Annex A"]),
-    "lock-vectors.json": ("004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc", ["OSTF-142", "Annex B"]),
+    "lock-vectors.json": ("004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc", []),
 }
 # Requirements merged into others to stay within 35 (agent-first plan, section 7): Consumer and Analyzer into
-# OSTF-160, the release gate into OSTF-170.
-RETIRED = {"OSTF-161", "OSTF-162", "OSTF-171"}
+# OSTF-160, the release gate into OSTF-170; and the lock's, retired with it (plan, section 8).
+RETIRED = {"OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-161", "OSTF-162", "OSTF-171"}
 
 
 def load(path):
@@ -51,32 +51,12 @@ def case_files(case):
 
 
 def links(result):
-    return [[l["source"], l["type"], l["target"], l["attributes"], l["origin"], l.get("state"), l.get("reasons")] for l in result["links"]]
+    return [[l["source"], l["type"], l["target"], l["attributes"], l["origin"]] for l in result["links"]]
 
 
 def codes(result):
     """The Annex C codes of a result; the reader's own codes (OSTF-151) are no conformance target."""
     return sorted({d["code"] for d in result["diagnostics"] if not d["code"].startswith(reader.OWN_PREFIX)})
-
-
-def states(analysis):
-    return {k: (l.get("state"), l.get("reasons")) for k, l in analysis.links.items()}
-
-
-def check_stamp(case_id, files, names, result, texts, by="unknown", at="unknown"):
-    """Annex I.4: a stamp leaves canonical lock files in which the named links are valid and every other link
-    keeps its state; without a lock file before, the others get the states an empty lock gives them."""
-    locked = any(path in files for path in reader.Analysis(files).lock_paths)
-    before = states(reader.Analysis(files if locked else {**files, "trace.lock": "trace.lock 1\n"}))
-    again = reader.Analysis({**files, **texts})
-    assert not {"LOCK_INVALID", "LOCK_DUPLICATE"} & set(codes(again.result())), f"{case_id}: lock problems after stamping"
-    for path, text in texts.items():
-        assert reader.lock_text(reader.parse_lock(text)[0]) == text, f"{case_id}: {path} not canonical"
-    for key, state in states(again).items():
-        want = ("valid", []) if key in names else before[key]
-        assert state == want, f"{case_id}: {key} is {state} after stamping, want {want}"
-    assert all(again.data(path).decode() == text for path, text in reader.stamp(again, names, by, at)[1].items()), \
-        f"{case_id}: stamping twice changes a lock file"
 
 
 def sarif_validator():
@@ -163,12 +143,8 @@ def check():
             got = {"source.sig": reader.fingerprint("go1", sig)}
         assert sig.decode() == case["sigTokens"], case["id"] + ": signature tokens"
         assert got == case["expect"], case["id"] + f": {got} != {case['expect']}"
-    for case in load(VECTORS / "lock-vectors.json"):
-        entries, problems = reader.parse_lock(case["text"])
-        assert sorted({code for code, _ in problems}) == case["errors"], case["id"] + ": lock errors"
-        if not problems:
-            assert reader.lock_text(entries) == case["canonical"], case["id"] + ": lock bytes"
-    counts["vectors02"] = sum(len(load(VECTORS / n)) for n in ("item-vectors.json", "code-vectors.json", "lock-vectors.json"))
+    # The lock vectors stay published unchanged with the lock gone (plan, section 8); they are not run.
+    counts["vectors02"] = sum(len(load(VECTORS / n)) for n in ("item-vectors.json", "code-vectors.json"))
 
     # Annexes A, K and L: the go2, ts2 and py1 vectors, token bytes and digests, and those of the superseded ts1.
     superseded = {"ts1": ("ts2", reader.ts1_source)}
@@ -208,7 +184,6 @@ def check():
 
     minimal = reader.Analysis(reader.Tree(DRAFT / "fixtures" / "minimal"))
     assert minimal.result()["diagnostics"] == [] and not minimal.failed(), "minimal fixture diagnostics"
-    assert [l[5] for l in links(minimal.result())] == ["valid", "valid"], "minimal fixture states"
     counts["minimalFixture"] = 1
 
     spec = (DRAFT / "ostf.md").read_text()
@@ -222,18 +197,14 @@ def check():
         b"if acct.RefundedToday+r.Amount > acct.DailyLimit && !r.Approved", b"if (acct.Frozen || acct.RefundedToday+r.Amount > acct.DailyLimit) && !r.Approved")
     spec_impact = json.loads(re.search(r"\*\*C\.3 Impact\.\*\*.*?```json\n(.*?)```", spec, re.S)[1])
     assert reader.impact(example, reader.Analysis(edited), "main") == spec_impact, "Annex C.3 example"
-    # Stamping every link of the example from no lock rebuilds its lock, tagged and item links included (Annex I.4).
-    unlocked = {path: value for path, value in edited.items() if path != "trace.lock"} | {"refund.go": example.files["refund.go"]}
-    result, text = reader.stamp(reader.Analysis(unlocked), sorted(example.links))
-    assert text == {"trace.lock": example.files["trace.lock"].decode()} and len(result["links"]) == 8, "example lock from stamp"
-    counts["exampleOutputs"] = 5
+    counts["exampleOutputs"] = 4
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))
     # Section 1.3: a retired requirement keeps its identifier and its anchor, is no longer defined, and no case names it.
     for retired in RETIRED:
         assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
-    every = cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["projections"] + cases["schemas"] + cases["migrations"]
+    every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["projections"] + cases["schemas"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
     for case in every:
@@ -281,19 +252,6 @@ def check():
         if "text" in expect:
             got["text"] = reader.render(analysis, case["context"])
         assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
-    for case in cases["stamps"]:
-        result, texts = reader.stamp(reader.Analysis(case_files(case)), case["stamp"], case.get("by", "unknown"), case.get("at", "unknown"))
-        expect = case["expect"]
-        got = {"codes": codes(result), "links": [reader.identity(l) for l in result["links"]], "items": [i["id"] for i in result["items"]]}
-        if "locks" in expect:  # every lock file written, by path (OSTF-142)
-            got["locks"] = texts
-        else:  # trace.lock alone
-            assert texts is None or list(texts) == ["trace.lock"], f"{case['id']}: wrote {sorted(texts)}"
-            got["lock"] = texts and texts["trace.lock"]
-        assert got == expect, f"{case['id']}:\n got {got}\nwant {expect}"
-        assert all(l["state"] == "valid" and l["reasons"] == [] for l in result["links"]), f"{case['id']}: stamped links are valid"
-        if texts is not None:
-            check_stamp(case["id"], case_files(case), case["stamp"], result, texts, case.get("by", "unknown"), case.get("at", "unknown"))
     for case in cases["impacts"]:
         # The result of check --base: impact, and the nested roots evaluated on their own (OSTF-102).
         result = reader.check_base(reader.Analysis(case["base"]), reader.Analysis(case["files"]), case["rev"])
@@ -346,50 +304,21 @@ def check():
         assert rules == sorted(rules, key=str.encode) and got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
     for case in cases["projections"]:
         assert reader.item_projection(case["item"], case["types"]).decode() == case["canonical"], case["id"]
-    for case in cases["migrations"]:  # Annex H: the lock files that migrate writes, by path, or None
-        analysis = reader.Analysis(case["files"])
-        got = {"codes": codes(analysis.result()), "locks": reader.migrate(analysis)}
-        assert got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
-        if got["locks"]:  # migrating again changes nothing, and no link changes state
-            again = reader.Analysis({**case["files"], **got["locks"]})
-            assert reader.migrate(again) == {}, f"{case['id']}: migrating twice writes again"
-            assert {k: v for k, v in states(again).items()} == states(analysis), f"{case['id']}: a state changed"
     counts["checkCases"], counts["contextCases"], counts["projections"] = len(cases["checks"]), len(cases["contexts"]), len(cases["projections"])
-    counts["stampCases"], counts["impactCases"], counts["sarifCases"] = len(cases["stamps"]), len(cases["impacts"]), len(cases["sarif"])
+    counts["impactCases"], counts["sarifCases"] = len(cases["impacts"]), len(cases["sarif"])
     counts["schemaCases"] = len(cases["schemas"])  # run by fixtures_test.go
-    counts["migrationCases"] = len(cases["migrations"])
 
     # Inputs that JSON cases cannot carry, and limits that must not crash the reader.
     bad = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: R-A\n    text: A.\n', "a.go": b"package a\n// @req R-A \xff\nfunc F() {}\n"})
-    assert codes(bad.result()) == ["LOCK_MISSING", "PARSE_ERROR"], "invalid UTF-8 in Go source"
+    assert codes(bad.result()) == ["PARSE_ERROR"], "invalid UTF-8 in Go source"
     chain = 'ostf: "0.3"\nitems:\n' + "".join(f"  - id: R-{i}\n    text: Step {i}.\n" + (f"    refines: [R-{i + 1}]\n" if i < 1199 else "") for i in range(1200))
     deep = reader.Analysis({"trace.yaml": chain})
     assert reader.render(deep, "R-0").count("\n") == 1201, "deep rendering"
     limit = 8 * 1024 * 1024
     head = 'ostf: "0.3"\nitems: []\n'
-    assert codes(reader.Analysis({"trace.yaml": head + "#" * (limit - len(head))}).result()) == ["LOCK_MISSING"], "8 MiB is allowed"
+    assert codes(reader.Analysis({"trace.yaml": head + "#" * (limit - len(head))}).result()) == [], "8 MiB is allowed"
     assert codes(reader.Analysis({"trace.yaml": head + "#" * (limit - len(head) + 1)}).result()) == ["FILE_TOO_LARGE"], "above 8 MiB"
-    # A lock line that is not UTF-8 voids only itself (OSTF-142), so stamping keeps the other entries (Annex I.4).
     minimal_files = {path: (DRAFT / "fixtures" / "minimal" / path).read_bytes() for path in ("trace.yaml", "math.go", "math_test.go")}
-    lock = (DRAFT / "fixtures" / "minimal" / "trace.lock").read_bytes()
-    damaged = reader.Analysis({**minimal_files, "trace.lock": lock + b"\xff\n"})
-    assert codes(damaged.result()) == ["LOCK_INVALID"] and all(l["state"] == "valid" for l in damaged.links.values()), "non-UTF-8 lock line"
-    stamped = lock  # its entries record by and at, as a stamp writes them (OSTF-142)
-    assert reader.stamp(damaged, ["math.go#Add implements R-ADD"])[1]["trace.lock"].encode() == stamped, "stamp drops only the non-UTF-8 line"
-    assert codes(reader.Analysis({**minimal_files, "trace.lock": b"trace.lock 1\xff\n" + lock[13:]}).result()) == ["LOCK_INVALID"], "non-UTF-8 header"
-    # OSTF-105 and Annex I.4: stamp writes a lock of at most 8 MiB and refuses the whole stamp above it. The lock
-    # holds entries for links outside the graph, which a stamp keeps, so that adding one entry crosses the limit.
-    add = next(line for line in lock.decode().splitlines() if line.startswith("math.go#Add ")) + "\n"
-    filler = lambda i, pad: f"f{i:07}{'x' * pad}.go#F implements R-ADD source.sig=go2:{'A' * 43} target=f1:{'A' * 43}\n"
-    count, rest = divmod(limit - len(stamped), len(filler(0, 0)))
-    for over in (0, 1):
-        full = "trace.lock 1\n" + "".join(sorted(stamped.decode().splitlines(keepends=True)[1:] + [filler(i, rest + over if i == 0 else 0) for i in range(count)]))
-        assert len(full.encode()) == limit + over
-        result, written = reader.stamp(reader.Analysis({**minimal_files, "trace.lock": full.replace(add, "")}), ["math.go#Add implements R-ADD"])
-        if over:
-            assert written is None and codes(result) == ["STAMP_REFUSED"] and result["links"] == [], "stamp refuses a lock above 8 MiB"
-        else:
-            assert written == {"trace.lock": full} and codes(result) == [], "stamp writes a lock of 8 MiB"
     # The reader's own info for statements that no link targets (OSTF-151): one diagnostic, never a failure.
     lonely = reader.Analysis({"trace.yaml": 'ostf: "0.3"\nitems:\n  - id: N-A\n    type: need\n    text: A need.\n'
                               '  - id: R-A\n    text: Do a.\n    refines: [N-A]\n  - id: R-B\n    text: Do b.\n    status: draft\n'
@@ -405,16 +334,15 @@ def check():
     run_ = log["runs"][0]
     assert {"id": reader.UNLINKED} in run_["tool"]["driver"]["rules"] and \
         [r["level"] for r in run_["results"] if r["ruleId"] == reader.UNLINKED] == ["note"], "unlinked statements in SARIF"
-    counts["directChecks"] = 11
+    counts["directChecks"] = 7
 
     # Every requirement and Annex C code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
     covered = {r for case in every for r in case["requirements"]}
     covered |= {r for _, requirements in VECTORS_02.values() for r in requirements}
-    covered |= {code for case in cases["checks"] + cases["contexts"] + cases["stamps"] + cases["impacts"] for code in case["expect"]["codes"]}
-    covered |= {code for case in load(VECTORS / "lock-vectors.json") for code in case["errors"]}
+    covered |= {code for case in cases["checks"] + cases["contexts"] + cases["impacts"] for code in case["expect"]["codes"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
     annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))
-    assert len(annex_c) == 39, "Annex C.1 codes"
+    assert len(annex_c) == 35, "Annex C.1 codes"
     for name, reason in cases["notCovered"].items():
         assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
     for name in sorted(defined | annex_c):
@@ -446,26 +374,16 @@ def check():
         assert code == 0 and [i["id"] for i in json.loads(out)["items"]] == ["R-B"], "alias before anchor from a subdirectory"
         code, out = run(tree / "sub", "context", "a.go#F", "--root", "..", "--format", "json")
         assert code == 0 and [i["id"] for i in json.loads(out)["items"]] == ["R-B"], "alias before anchor with --root"
-        (tree / "trace.lock").write_text("trace.lock 1\nsub/a.go#F implements R-A source.sig=go2:" + "A" * 43 + " target=f1:" + "A" * 43 + "\n")
-        assert run(tree, "check")[0] == 1, "check exit 1 on a suspect link"
+        (tree / "sub" / "a.go").write_text("package a\n")
+        assert run(tree, "check")[0] == 1, "check exit 1 on a broken link"
         os.remove(tree / "trace.yaml")
         assert run(tree, "check")[0] == 2, "check exit 2 without a root"
-        assert run(tree, "stamp", "x implements R-A")[0] == 2, "stamp exit 2 without a root"
     with tempfile.TemporaryDirectory() as temp:
         tree = pathlib.Path(temp)
         for name, data in minimal_files.items():
             (tree / name).write_bytes(data)
         code, out = run(tree, "check")
-        assert code == 0 and "math.go#Add implements R-ADD" in out and "math_test.go#TestAdd verifies R-ADD" in out, "text check names links without a state"
-        # OSTF-142: a stamp writes the entry of an item declared in an item file to that file's lock.
-        (tree / "trace").mkdir()
-        (tree / "trace" / "more.yaml").write_text('ostf: "0.3"\nitems:\n  - id: R-SUB\n    text: Subtract.\n    code: [math.go#Add]\n')
-        (tree / "trace.yaml").write_text(minimal_files["trace.yaml"].decode().replace('ostf: "0.3"\n', 'ostf: "0.3"\ninclude: [trace/*.yaml]\n'))
-        code, out = run(tree, "stamp", "math.go#Add implements R-SUB")
-        assert code == 0 and (tree / "trace" / "more.yaml.lock").read_text().startswith("trace.lock 1\nmath.go#Add implements R-SUB ") \
-            and not (tree / "trace.lock").exists(), "stamp writes an item file's lock"
-        shutil.rmtree(tree / "trace")
-        (tree / "trace.yaml").write_bytes(minimal_files["trace.yaml"])
+        assert code == 0 and out == "1 items, 2 links\n", "text check counts items and links"
         # OSTF-102 and I.1: a nested root shows in the text of check, which still passes.
         (tree / "svc").mkdir()
         (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems: []\n')
@@ -476,42 +394,21 @@ def check():
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(tree))
         assert code == 1 and "NESTED_ROOT_FAILED svc/trace.yaml" in out and run(tree, "check")[0] == 0, "check --base fails on a failing nested root"
         os.remove(tree / "svc" / "trace.yaml")
-        # I.1: --strict also fails on LOCK_MISSING with links in the graph and on an unstamped link.
-        assert run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 without a lock"
-        (tree / "trace.lock").write_text("trace.lock 1\n")
-        assert run(tree, "check")[0] == 0 and run(tree, "check", "--strict")[0] == 1, "check --strict exit 1 on unstamped links"
-        (tree / "trace.lock").write_bytes(lock)
-        assert run(tree, "check", "--strict")[0] == 0, "check --strict exit 0 when every link is valid"
-        # Annex H: migrate gives a lock written before by and at its pairs, then has nothing more to write.
-        (tree / "trace.lock").write_text(lock.decode().replace(" by=unknown at=unknown", ""))
-        code, out = run(tree, "migrate")
-        assert code == 0 and out == "migrated trace.lock\n" and (tree / "trace.lock").read_bytes() == lock, "migrate"
-        assert run(tree, "migrate") == (0, ""), "migrate twice"
-        os.remove(tree / "trace.lock")
-        (tree / "empty").mkdir()
-        (tree / "empty" / "trace.yaml").write_text('ostf: "0.3"\nitems:\n  - id: R-A\n    text: Do a.\n')
-        assert run(tree / "empty", "check", "--strict")[0] == 0, "check --strict exit 0 without a lock or a link"
-        # A lock that exists but cannot be read is not a missing lock: the command cannot run.
-        (tree / "trace.lock").write_bytes(lock)
-        os.chmod(tree / "trace.lock", 0)
-        if not os.access(tree / "trace.lock", os.R_OK):
-            assert run(tree, "check")[0] == 2, "check exit 2 on an unreadable lock"
-        os.chmod(tree / "trace.lock", 0o644)
         # With --root, an anchor outside the root is in no file of the view (Annex I.3).
         (tree / "elsewhere").mkdir()
         code, out = run(tree / "elsewhere", "context", "math.go#Add", "--root", "..", "--format", "json")
         assert code == 1 and json.loads(out)["items"] == [], "context TARGET outside --root does not resolve"
         assert json.loads(out)["diagnostics"][0].get("hint", "").endswith("try ../math.go#Add"), "context hint with --root"
-    # check --base, SARIF and stamp on an edited copy of the example, as an agent would run them.
+    # check --base and SARIF on an edited copy of the example, as an agent would run them.
     with tempfile.TemporaryDirectory() as temp:
         tree = pathlib.Path(temp) / "example"
         shutil.copytree(DRAFT / "example", tree)
         (tree / "refund.go").write_bytes(edited["refund.go"])
         assert run(tree, "check", "--base", "main")[0] == 2, "check --base outside a Git checkout exits 2"
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "json")
-        assert code == 1 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example"
+        assert code == 0 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example lists the change and passes"
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"))
-        assert code == 1 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (suspect, corroborated)\n" in out, \
+        assert code == 0 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (corroborated)\n" in out, \
             "the text of check --base renders each context (Annex J)"
         # Annex N.1: ndjson is the json result, one record per line, after the version line.
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "ndjson")
@@ -523,43 +420,11 @@ def check():
                 rebuilt["impact"] = value
             else:
                 rebuilt[{"diagnostic": "diagnostics", "item": "items", "link": "links"}[kind]].append(value)
-        assert code == 1 and rows[0] == {"ostf": "0.3"} and out.endswith("\n") and \
+        assert code == 0 and rows[0] == {"ostf": "0.3"} and out.endswith("\n") and \
             rebuilt == json.loads(run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "json")[1]), "check --format ndjson"
         code, out = run(tree, "check", "--format", "sarif")
-        assert code == 1 and [r["ruleId"] for r in json.loads(out)["runs"][0]["results"]] == ["BODY_CHANGED"], "check --format sarif"
+        assert code == 0 and json.loads(out)["runs"][0]["results"] == [], "check --format sarif"
         valid_sarif(json.loads(out), "check --format sarif")
-        lock = (tree / "trace.lock").read_bytes()
-        code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-NOPE", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT")
-        assert code == 1 and (tree / "trace.lock").read_bytes() == lock, "stamp exit 1 writes nothing"
-        assert run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT", "--by", "ana")[0] == 2 and \
-            (tree / "trace.lock").read_bytes() == lock, "stamp --by without a principal exits 2 and writes nothing"
-        code, out = run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT", "--format", "json", "--by", "agent:claude-haiku-5-5", "--at", "9fceb02")
-        assert code == 0 and [l["state"] for l in json.loads(out)["links"]] == ["valid"], "stamp exit 0"
-        assert " by=agent:claude-haiku-5-5 at=9fceb02\n" in (tree / "trace.lock").read_text(), "stamp records --by and --at (OSTF-142)"
-        assert run(tree, "check")[0] == 0 and (tree / "trace.lock").read_bytes() != lock, "check passes after the stamp"
-        assert not list(tree.glob(".trace.lock.*")), "stamp leaves no temporary file"
-        os.remove(tree / "trace.lock")
-        os.symlink(DRAFT / "example" / "trace.lock", tree / "trace.lock")
-        assert run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT")[0] == 2, "stamp does not write through a symbolic link"
-        os.remove(tree / "trace.lock")
-        outside = pathlib.Path(temp) / "outside.lock"
-        outside.write_bytes(lock)
-        os.link(outside, tree / "trace.lock")
-        assert run(tree, "stamp", "refund.go#CheckRefundLimit implements R-REFUND-LIMIT")[0] == 2 and outside.read_bytes() == lock, "stamp does not write a hard link"
-        os.remove(tree / "trace.lock")
-        os.symlink(outside, tree / "trace.lock")
-        nofollow = getattr(os, "O_NOFOLLOW", None)
-        if nofollow is not None:
-            del os.O_NOFOLLOW  # as on platforms without it
-        try:
-            reader.write_lock(tree / "trace.lock", "trace.lock 1\n")
-            raise AssertionError("write_lock wrote through a symbolic link without O_NOFOLLOW")
-        except OSError:
-            pass
-        finally:
-            if nofollow is not None:
-                os.O_NOFOLLOW = nofollow
-        assert outside.read_bytes() == lock, "write_lock without O_NOFOLLOW"
     # check --base REV reads the base view from Git when no base tree is given.
     if shutil.which("git"):
         with tempfile.TemporaryDirectory() as temp:
@@ -577,7 +442,7 @@ def check():
             found = json.loads(out)["impact"]
             assert [c["anchor"] for c in found["changed"]] == ["a.go#F"] and found["items"]["added"] == [], "check --base from Git"
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
-    counts["commandLine"] = 40
+    counts["commandLine"] = 22
 
     # Annex I.3: change information, from scripted Git histories run through the command line. Each commit has
     # its own subject, and every commit identifier in the output, whole or cut to 12 characters, is replaced by

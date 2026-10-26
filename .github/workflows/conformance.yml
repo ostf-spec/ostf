@@ -48,7 +48,7 @@ jobs:
         with:
           root: draft/0.3/example
           sarif: ${{ github.event_name == 'push' && 'true' || 'false' }}
-      - name: Make a link suspect in a copy of the example
+      - name: Change a linked body in a copy of the example
         run: |
           cp -R draft/0.3/example "$RUNNER_TEMP/edited"
           sed -i 's/return ErrRefundTooLarge/return ErrNeedsApproval/' "$RUNNER_TEMP/edited/refund.go"
@@ -59,22 +59,21 @@ jobs:
         with:
           root: ${{ runner.temp }}/edited
           sarif: "false"
-      - name: The action fails on a suspect link
-        run: test "${{ steps.edited.outcome }}" = failure && test "${{ steps.edited.outputs.exit-code }}" = 1
-      - name: Drop the lock in a copy of the example
+      - name: The action passes on a changed definition alone
+        run: test "${{ steps.edited.outcome }}" = success && test "${{ steps.edited.outputs.exit-code }}" = 0
+      - name: Break a link in a copy of the example
         run: |
-          cp -R draft/0.3/example "$RUNNER_TEMP/unlocked"
-          rm "$RUNNER_TEMP/unlocked/trace.lock"
-      - name: Check the copy without a lock, strictly
-        id: unlocked
+          cp -R draft/0.3/example "$RUNNER_TEMP/broken"
+          sed -i 's/func CheckRefundLimit(/func CheckRefundCap(/' "$RUNNER_TEMP/broken/refund.go"
+      - name: Check the broken copy with the action
+        id: broken
         continue-on-error: true
         uses: ./
         with:
-          root: ${{ runner.temp }}/unlocked
+          root: ${{ runner.temp }}/broken
           sarif: "false"
-          strict: "true"
-      - name: The strict action fails on a missing lock
-        run: test "${{ steps.unlocked.outcome }}" = failure && test "${{ steps.unlocked.outputs.exit-code }}" = 1
+      - name: The action fails on a broken link
+        run: test "${{ steps.broken.outcome }}" = failure && test "${{ steps.broken.outputs.exit-code }}" = 1
   pre-commit:
     runs-on: ubuntu-latest
     timeout-minutes: 15

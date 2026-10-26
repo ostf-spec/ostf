@@ -24,15 +24,6 @@
       "type": "object",
       "propertyNames": { "pattern": "^[a-z][a-z0-9_]{0,47}$" },
       "additionalProperties": { "$ref": "#/$defs/link" }
-    },
-    "fingerprints": {
-      "type": "object",
-      "properties": {
-        "bodyChange": { "enum": ["all", "risk", "none"] },
-        "fileChange": { "enum": ["all", "risk", "none"] },
-        "definitionChange": { "enum": ["all", "risk", "none"] }
-      },
-      "additionalProperties": false
     }
   },
   "required": ["ostf"],

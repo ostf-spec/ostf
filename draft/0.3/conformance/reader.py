@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """OSTF wire 0.3 reader: an independent-code Analyzer for Go, TypeScript, JavaScript and
-Python (Annexes A, K and L) with the check, context and stamp commands of Annex I. Does not
+Python (Annexes A, K and L) with the check and context commands of Annex I. Does not
 import or execute zztrace.
 
 It is a development probe ported from the 0.2 Python prototype, not a hardened service. The
 reader reads one root from a local tree with no subprocess and no network; only the command
-line's `check --base REV` without `--base-tree` runs Git's plumbing commands to read REV.
+line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV,
+and for `context` and `check --base` to read change information (Annex I.3).
 """
 from __future__ import annotations
 
@@ -24,9 +25,7 @@ import os
 import pathlib
 import posixpath
 import re
-import stat
 import sys
-import tempfile
 import tokenize
 import unicodedata
 import urllib.parse
@@ -45,11 +44,6 @@ LINK_NAME = re.compile(r"[a-z][a-z0-9_]{0,47}\Z")
 ATTRIBUTE_NAME = re.compile(r"[A-Za-z][A-Za-z0-9]{0,47}\Z")
 SOURCE_ALIAS = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
 EXTERNAL = re.compile(r"([a-z][a-z0-9-]{0,31}):([^\s\x00-\x1f\x7f]+)\Z")
-FINGERPRINT_KEYS = ("source", "source.sig", "source.body", "target")
-# OSTF-142: who rechecked a link and in which view, after the fingerprint pairs.
-PROVENANCE_KEYS = ("by", "at")
-PRINCIPAL = re.compile(r"unknown\Z|(?:person|agent|ci):.+\Z", re.S)
-ALGORITHMS = {"f1", "go2", "lf1", "ts2", "py1"}
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
 # Annex C.3, Annex I.3: the fields whose change changes an item, all but its ID, links, code, tests and x- keys.
@@ -70,8 +64,7 @@ SEVERITY = {
     "LINK_NOT_ALLOWED": "error", "LINK_CYCLE": "error", "LINK_DUPLICATE": "warning",
     "OBSOLETE_TARGET": "warning", "ANCHOR_INVALID": "error", "BROKEN_LINK": "error",
     "UNSUPPORTED_LANGUAGE": "warning", "PARSE_ERROR": "warning", "TAG_UNKNOWN_ID": "error",
-    "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info", "LOCK_MISSING": "info",
-    "LOCK_INVALID": "error", "LOCK_DUPLICATE": "error", "STAMP_REFUSED": "error",
+    "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info",
     "NESTED_ROOT": "info", "DERIVED_INVALID": "error", "NESTED_ROOT_FAILED": "error",
 }
 # This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
@@ -894,20 +887,20 @@ def annex_for(path):
     return next((a for a in ANNEXES if path.endswith(a.extensions)), None)
 
 
-# --- lock file (OSTF-142, Annex B) ------------------------------------------
+# --- link identity (Annex I.2) and trace.derived (OSTF-146, Annex B) ---------
 
-def lock_escape(value):
+def escape(value):
     return "".join(f"%{b:02X}" if b <= 32 or b in {37, 61, 127} else bytes([b]).decode("latin1") for b in value.encode()).encode("latin1").decode()
 
 
 def identity(link):
-    fields = [lock_escape(link["source"]), link["type"], lock_escape(link["target"])]
-    fields += [name + "=" + lock_escape(value) for name, value in sorted(link["attributes"].items())]
+    fields = [escape(link["source"]), link["type"], escape(link["target"])]
+    fields += [name + "=" + escape(value) for name, value in sorted(link["attributes"].items())]
     return " ".join(fields)
 
 
 def _lines(data, code):
-    """The lines of a lock or derived file, each decoded on its own: None, and a problem, for one that is not UTF-8."""
+    """The lines of a derived file, each decoded on its own: None, and a problem, for one that is not UTF-8."""
     data = data.encode() if isinstance(data, str) else data
     lines, problems = [], []
     for raw in data.replace(b"\r\n", b"\n").split(b"\n"):
@@ -924,44 +917,6 @@ def _unescape(value):
     if re.search(r"%(?![0-9a-fA-F]{2})", value) or any(ord(c) <= 32 or c in "=\x7f" for c in value):
         raise ValueError("bad escape")
     return urllib.parse.unquote(value, errors="strict")
-
-
-def parse_lock(data, seen=None):
-    """Entries by identity, and (code, line) problems. Each line is decoded on its own. `seen`, when
-    given, receives the identity of every well-formed entry, duplicates included."""
-    entries, duplicates = {}, set()
-    lines, problems = _lines(data, "LOCK_INVALID")
-    if lines[0] != "trace.lock 1":
-        return entries, problems if lines[0] is None else [("LOCK_INVALID", lines[0])]
-    decode = _unescape
-    for line in lines[1:]:
-        if not line:  # an empty line, or one already reported as not UTF-8
-            continue
-        try:
-            parts = line.split(" ")
-            if len(parts) < 3 or not LINK_NAME.fullmatch(parts[1]) or not parts[0] or not parts[2]:
-                raise ValueError("bad entry")
-            entry = {"source": decode(parts[0]), "type": parts[1], "target": decode(parts[2]), "attributes": {}, "fingerprints": {}, "provenance": {}}
-            for part in parts[3:]:
-                key, value = part.split("=", 1)
-                field = "fingerprints" if key in FINGERPRINT_KEYS else "provenance" if key in PROVENANCE_KEYS else "attributes"
-                if key in entry[field] or (field == "attributes" and not ATTRIBUTE_NAME.fullmatch(key)):
-                    raise ValueError("bad or repeated key")
-                entry[field][key] = decode(value)
-            if not PRINCIPAL.match(entry["provenance"].get("by", "unknown")) or entry["provenance"].get("at", "unknown") == "":
-                raise ValueError("by is a principal and at is not empty")
-            key = identity(entry)
-            if seen is not None:
-                seen.add(key)
-            if key in entries:
-                problems.append(("LOCK_DUPLICATE", line))
-                duplicates.add(key)
-            else:
-                entries[key] = entry
-        except (ValueError, UnicodeError):
-            problems.append(("LOCK_INVALID", line))
-    # OSTF-142: neither duplicate entry is used, so the link is unstamped.
-    return {key: entry for key, entry in entries.items() if key not in duplicates}, problems
 
 
 def parse_derived(data):
@@ -990,18 +945,6 @@ def parse_derived(data):
             problems.append(("DERIVED_INVALID", line))
     return observations, problems
 
-
-def lock_text(entries):
-    """OSTF-142: canonical lock bytes; an entry's by and at are written as recorded, absent when it has none."""
-    lines = []
-    for key, entry in entries.items():
-        pairs = [k + "=" + lock_escape(entry["fingerprints"][k]) for k in FINGERPRINT_KEYS if k in entry["fingerprints"]]
-        pairs += [k + "=" + lock_escape(entry["provenance"][k]) for k in PROVENANCE_KEYS if k in entry.get("provenance", {})]
-        lines.append(" ".join([key] + pairs))
-    return "trace.lock 1\n" + "".join(line + "\n" for line in sorted(lines, key=str.encode))
-
-
-# --- paths and globs (OSTF-102, OSTF-105) -----------------------------------
 
 def clean_path(value):
     return (isinstance(value, str) and bool(value) and "\\" not in value and "#" not in value and not value.startswith("/")
@@ -1056,12 +999,12 @@ def source_root_ok(value):
 
 
 def split_anchor(anchor):
-    """Path and symbol of an anchor, or None when it is malformed or names the root's trace.lock or
-    trace.derived, in any ASCII case (OSTF-132)."""
+    """Path and symbol of an anchor, or None when it is malformed or names the root's trace.derived,
+    in any ASCII case (OSTF-132)."""
     if not isinstance(anchor, str):
         return None
     path, hash_, symbol = anchor.partition("#")
-    if not clean_path(path) or fold(path) in ("trace.lock", "trace.derived") or (hash_ and (not symbol or "\r" in symbol or "\n" in symbol)):
+    if not clean_path(path) or fold(path) == "trace.derived" or (hash_ and (not symbol or "\r" in symbol or "\n" in symbol)):
         return None
     return path, symbol
 
@@ -1077,7 +1020,6 @@ def default_vocabulary():
             "implements": {"from": ["code"], "to": ["kind:statement"], "inverse": "implemented_by"},
             "verifies": {"from": ["tests", "kind:verification"], "to": ["kind:statement", "kind:verification"], "inverse": "verified_by"},
         },
-        "bodyChange": "all", "fileChange": "all", "definitionChange": "all",
     }
 
 
@@ -1097,7 +1039,7 @@ def merge_profile(vocabulary, profile):
             raise ValueError("unexpected profile shape")
         return value
 
-    mapping(profile, {"ostf", "types", "links", "fingerprints"} | {k for k in profile if k.startswith("x-")})
+    mapping(profile, {"ostf", "types", "links"} | {k for k in profile if k.startswith("x-")})
     for name, spec in mapping(profile.get("types", {}), set(profile.get("types", {}))).items():
         if not TYPE_NAME.fullmatch(name):
             raise ValueError("type name")
@@ -1145,11 +1087,6 @@ def merge_profile(vocabulary, profile):
                     raise ValueError("anchor kinds only in from of implements and verifies")
                 if not anchor and not e.startswith("kind:") and e not in vocabulary["types"]:
                     raise ValueError("unknown endpoint type " + e)
-    fingerprints = mapping(profile.get("fingerprints", {}), {"bodyChange", "fileChange", "definitionChange"})
-    for setting, value in fingerprints.items():
-        if value not in {"all", "risk", "none"}:
-            raise ValueError(setting + " is all, risk or none")
-        vocabulary[setting] = value
     return vocabulary
 
 
@@ -1210,11 +1147,6 @@ class Analysis:
         self.parsed = {}         # path -> go_source result or None
         self.risk = set()
         self.hashes = {}
-        self.lock = None         # identity -> usable entry, merged from every lock file (OSTF-142)
-        self.lock_paths = ["trace.lock"]  # the lock files of trace.yaml and of the item files read
-        self.lock_files = {}     # lock path -> its usable entries
-        self.lock_seen = {}      # lock path -> every identity written in it
-        self.fingerprinted = None  # (kind, fingerprint) -> anchors of this view, for broken links (OSTF-132)
         try:
             self._build()
         except Stop:
@@ -1321,7 +1253,7 @@ class Analysis:
             if name not in self.files:
                 self.report("PROFILE_INVALID", "trace.yaml", name, "profile file not found")
                 raise Stop
-            profile = self._load(name, {"ostf", "types", "links", "fingerprints"}, "PROFILE_INVALID", "PROFILE_INVALID")
+            profile = self._load(name, {"ostf", "types", "links"}, "PROFILE_INVALID", "PROFILE_INVALID")
             try:
                 self.vocabulary = merge_profile(self.vocabulary, profile)
             except (ValueError, TypeError, KeyError) as error:
@@ -1338,12 +1270,10 @@ class Analysis:
             if not clean_path(pattern):
                 self.report("PATH_INVALID", "trace.yaml", "include", str(pattern))
                 raise Stop
-            found = {p for p in self.files if p != "trace.yaml" and not p.endswith(".lock") and self.covered(p) and match_glob(pattern, p)}
+            found = {p for p in self.files if p != "trace.yaml" and self.covered(p) and match_glob(pattern, p)}
             if not found:
                 self.report("INCLUDE_EMPTY", "trace.yaml", pattern)
             matched |= found
-        # OSTF-142: an item file's lock is its path followed by .lock.
-        self.lock_paths = ["trace.lock"] + [path + ".lock" for path in sorted(matched, key=str.encode)]
         for path in sorted(matched, key=str.encode):
             document = self._load(path, {"ostf", "items"})
             if "items" not in document:
@@ -1519,8 +1449,8 @@ class Analysis:
                 if anchor is None:  # an entry of another shape (OSTF-131)
                     self.report("FORMAT_INVALID", path, ident, "malformed " + field + " entry")
                     continue
-                if split_anchor(anchor) is None or self.is_lock(anchor):
-                    self.report("ANCHOR_INVALID", path, anchor, "malformed anchor, or a lock file")
+                if split_anchor(anchor) is None:
+                    self.report("ANCHOR_INVALID", path, anchor, "malformed anchor, or trace.derived")
                     continue
                 if "#" not in anchor and anchor in self.items:  # its identity would be the item's (OSTF-132)
                     self.report("ANCHOR_INVALID", path, anchor, "a whole-file anchor equals an item ID")
@@ -1629,18 +1559,10 @@ class Analysis:
                     del self.links[key]
 
     # binding and fingerprints (OSTF-132, OSTF-141)
-    def is_lock(self, anchor):
-        """OSTF-132: whether an anchor names a lock file, in any ASCII case."""
-        return fold(anchor.partition("#")[0]) in {fold(path) for path in self.lock_paths}
-
-    def lock_home(self, ident):
-        """OSTF-142: the lock file of the file that declares an item."""
-        return "trace.lock" if self.item_file[ident] == "trace.yaml" else self.item_file[ident] + ".lock"
-
     def bind(self, anchor):
         """('ok', fingerprints, binding) or (problem, None, None) for an anchor in this view."""
         parts = split_anchor(anchor)
-        if parts is None or self.is_lock(anchor):
+        if parts is None:
             return "invalid", None, None
         path, symbol = parts
         if path not in self.files:
@@ -1676,30 +1598,6 @@ class Analysis:
             if added <= self.risk:
                 break
             self.risk |= added
-        # OSTF-142: the lock files are merged; an identity in two of them is used in neither.
-        for path in (p for p in self.lock_paths if p in self.files):
-            self.lock = self.lock if self.lock is not None else {}
-            self.lock_seen[path] = set()
-            if self.size(path) > MAX_FILE_BYTES:
-                # OSTF-105: a lock file above the size limit is not read, and no entry of it is used.
-                self.lock_files[path] = {}
-                self.report("FILE_TOO_LARGE", path, message="larger than 8 MiB; no entry is used")
-                continue
-            self.lock_files[path], problems = parse_lock(self.data(path), self.lock_seen[path])
-            for code, line in problems:
-                self.report(code, path, line)
-        if self.lock is None:
-            self.report("LOCK_MISSING", "trace.lock")
-        else:
-            homes = {}
-            for path, entries in self.lock_files.items():
-                for key in entries:
-                    homes.setdefault(key, []).append(path)
-            for key, paths in homes.items():
-                if len(paths) > 1:
-                    self.report("LOCK_DUPLICATE", paths[1], key, key + " has an entry in " + " and ".join(paths))
-                else:
-                    self.lock[key] = self.lock_files[paths[0]][key]
         for link in self.links.values():
             current = {}
             status = "ok"
@@ -1710,70 +1608,17 @@ class Analysis:
                 elif status == "unsupported":
                     self.report("UNSUPPORTED_LANGUAGE", link["file"], link["source"])
                 else:
-                    self.report("BROKEN_LINK", link["file"], link["source"], hint=self._moved(link))
+                    self.report("BROKEN_LINK", link["file"], link["source"])
             else:
                 current["source"] = self.hashes[link["source"]]
             current["target"] = self.hashes[link["target"]]
             link["fingerprints"] = current
             link["status"] = status
-            if self.lock is None or status == "unsupported":
-                continue
-            if status != "ok":
-                link["state"], link["reasons"] = "broken", ["LINK_BROKEN"]
-                continue
-            entry = self.lock.get(link["identity"])
-            if entry is None:
-                link["state"], link["reasons"] = "unstamped", ["LINK_UNSTAMPED"]
-                continue
-            recorded = entry["fingerprints"]
-            if any(not value.partition(":")[1] or value.partition(":")[0] not in ALGORITHMS for value in recorded.values()):
-                link["state"], link["reasons"] = "unstamped", ["UNKNOWN_ALGORITHM"]
-                continue
-            risky = link["source"] in self.risk or link["target"] in self.risk
-            counts = lambda setting: self.vocabulary[setting] == "all" or (self.vocabulary[setting] == "risk" and risky)
-            reasons = set()
-            if any(recorded.get(key) != current.get(key) for key in ("source", "target")):
-                reasons.add("ITEM_CHANGED")
-            # OSTF-144: a whole file and a definition without a body have reasons of their own.
-            if recorded.get("source.sig") != current.get("source.sig"):
-                if link["anchor"] and "#" not in link["source"]:
-                    reasons |= {"FILE_CHANGED"} if counts("fileChange") else set()
-                elif link["anchor"] and current.get("source.sig") == current.get("source.body"):
-                    reasons |= {"DEFINITION_CHANGED"} if counts("definitionChange") else set()
-                else:
-                    reasons.add("SIGNATURE_CHANGED")
-            elif recorded.get("source.body") != current.get("source.body") and counts("bodyChange"):
-                reasons.add("BODY_CHANGED")
-            link["reasons"] = sorted(reasons, key=str.encode)
-            link["state"] = "suspect" if reasons else "valid"
         self._corroboration()
 
-    def _moved(self, link):
-        """OSTF-132: for a broken declared link, a hint naming the definitions or files of this view whose
-        fingerprint equals the one its lock entry records, or None."""
-        entry = (self.lock or {}).get(link["identity"]) if link["origin"] == "declared" else None
-        whole = "#" not in link["source"]
-        recorded = entry and entry["fingerprints"].get("source.sig" if whole else "source.body")
-        if not recorded:
-            return None
-        if self.fingerprinted is None:  # every covered file and definition, by fingerprint, built once
-            self.fingerprinted = {}
-            for path in sorted(self.files, key=str.encode):
-                if not self.covered(path) or self.is_lock(path) or path == "trace.derived":
-                    continue
-                annex = annex_for(path)
-                parsed = _parsed(self, path) if annex else None
-                self.fingerprinted.setdefault(("file", _file_sig(self, path)), []).append(path)
-                for d in parsed["definitions"] if parsed else []:
-                    self.fingerprinted.setdefault(("defs", fingerprint(annex.algorithm, d["body"])), []).append(path + "#" + d["name"])
-        found = sorted(set(self.fingerprinted.get(("file" if whole else "defs", recorded), [])), key=str.encode)
-        if not found:
-            return None
-        return "moved? the same content is at " + ", ".join(found[:3]) + (f" and {len(found) - 3} more" if len(found) > 3 else "")
-
     def _corroboration(self):
-        """OSTF-146: beside the state of each implements link whose anchor binds, whether a test anchor
-        that verifies its item covers it, by the definitions each anchor binds to in this view."""
+        """OSTF-146: beside each implements link whose anchor binds, whether a test anchor that
+        verifies its item covers it, by the definitions each anchor binds to in this view."""
         if "trace.derived" not in self.files:
             return
         if self.size("trace.derived") > MAX_FILE_BYTES:
@@ -1795,7 +1640,7 @@ class Analysis:
 
     def _unlinked(self):
         """One info for the statements, other than obsolete ones, that no link targets: check
-        reports whether links are fresh, so without it such a statement passes in silence.
+        reports broken links, not coverage, so without it such a statement passes in silence.
         The count and the first ten IDs keep it short on a large imported set."""
         targets = {link["target"] for link in self.links.values()}
         statements = {name for name, spec in self.vocabulary["types"].items() if spec["kind"] == "statement"}
@@ -1820,8 +1665,6 @@ class Analysis:
     def link_row(self, link, changes=False):
         """A link of the result; with `changes`, one that the result describes, with its change information (I.3)."""
         row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin", "fingerprints")}
-        if "state" in link:
-            row["state"], row["reasons"] = link["state"], link["reasons"]
         if "corroboration" in link:
             row["corroboration"] = link["corroboration"]
         if changes:
@@ -1845,13 +1688,9 @@ class Analysis:
             "links": [self.link_row(self.links[k]) for k in sorted(self.links, key=str.encode)],
         }
 
-    def failed(self, strict=False):
-        """Annex I.1: whether check exits 1; with strict, also on an unstamped link and on a missing
-        lock while the graph has links."""
-        failing = {"suspect", "broken", "unstamped"} if strict else {"suspect", "broken"}
-        return any(d["severity"] == "error" for d in self.diagnostics) or \
-            any(l.get("state") in failing for l in self.links.values()) or \
-            (strict and self.lock is None and not self.stopped and bool(self.links))
+    def failed(self):
+        """Annex I.1: whether check exits 1, on an error diagnostic, a broken link's BROKEN_LINK among them."""
+        return any(d["severity"] == "error" for d in self.diagnostics)
 
 
 # --- context (Annex I.3, Annex J) -------------------------------------------
@@ -1941,7 +1780,7 @@ def context(analysis, target, anchor=None, spell=lambda path: path):
         unresolved = [row]
     subjects = items | {analysis.links[k]["source"] for k in links} | links
     paths = {split_anchor(analysis.links[k]["source"])[0] for k in links if analysis.links[k]["anchor"]}
-    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") in analysis.lock_paths + ["trace.derived"]
+    result["diagnostics"] = unresolved + [d for d in analysis.diagnostics if d.get("file") == "trace.derived"
                                           or d.get("subject") in subjects or d.get("file") in paths]
     result["items"] = [analysis.item_row(i, True) for i in sorted(items, key=str.encode)]
     result["links"] = [analysis.link_row(analysis.links[k], True) for k in sorted(links, key=str.encode)]
@@ -1965,8 +1804,8 @@ def render(analysis, target, anchor=None):
         return text
 
     def state(link):
-        """Rule 5: the state, then the corroboration (OSTF-146), then the change information (I.3), in parentheses."""
-        shown = ", ".join(link[k] for k in ("state", "corroboration") if k in link)
+        """Rule 5: the corroboration (OSTF-146), then the change information (I.3), in parentheses."""
+        shown = link.get("corroboration", "")
         changes = analysis.changed_in(link)
         if any(changes):
             changed = "changed " + " ".join(value[:12] if value else "-" for value in changes)
@@ -2092,7 +1931,7 @@ def moved_hint(base, current, link):
     if current.texts is None:  # every covered file and definition, by text, built once
         current.texts = {}
         for where in sorted(current.files, key=str.encode):
-            if not current.covered(where) or current.is_lock(where) or where == "trace.derived":
+            if not current.covered(where) or where == "trace.derived":
                 continue
             current.texts.setdefault(("file", _file_text(current, where)), []).append(where)
             parsed = _parsed(current, where) if annex_for(where) else None
@@ -2175,8 +2014,6 @@ def impact(base, current, rev):
         "items": {"added": added, "changed": modified, "removed": removed},
         "links": {"added": sorted(current.links.keys() - base.links.keys(), key=str.encode),
                   "removed": sorted(base.links.keys() - current.links.keys(), key=str.encode)},
-        "lock": {(True, True): "kept", (False, True): "added", (True, False): "removed", (False, False): "absent"}[
-            tuple(any(path in view.files for path in view.lock_paths) for view in views)],
         "tests": sorted(tests, key=str.encode),
     }
 
@@ -2189,23 +2026,21 @@ def nested_view(files, directory):
     return {path[len(prefix):]: value for path, value in files.items() if path.startswith(prefix)}
 
 
-def check_base(base, current, rev, strict=False):
+def check_base(base, current, rev):
     """Annex I.1: the result of check --base, with impact (C.3), and each nested root evaluated on its own
     with the same options, one whose check would exit 1 being NESTED_ROOT_FAILED (OSTF-102)."""
     found = impact(base, current, rev)
     if found is not None:
-        # OSTF-132: under a base view, the hint of a broken declared link compares texts, not a recorded fingerprint.
+        # OSTF-132: under a base view, the hint of a broken declared link names the same text in the evaluated view.
         for link in current.links.values():
             if link["anchor"] and link["origin"] == "declared" and link["status"] not in ("ok", "unsupported"):
                 hint = moved_hint(base, current, link)
                 for d in current.diagnostics:
-                    if d["code"] == "BROKEN_LINK" and d.get("subject") == link["source"] and d.get("file") == link["file"]:
-                        d.pop("hint", None)
-                        if hint:
-                            d["hint"] = hint
+                    if hint and d["code"] == "BROKEN_LINK" and d.get("subject") == link["source"] and d.get("file") == link["file"]:
+                        d["hint"] = hint
     for d in [d for d in current.diagnostics if d["code"] == "NESTED_ROOT"]:
         directory = d["file"][:-len("/trace.yaml")]
-        if Analysis(nested_view(current.files, directory)).failed(strict):
+        if Analysis(nested_view(current.files, directory)).failed():
             current.report("NESTED_ROOT_FAILED", d["file"], message=f"the nested root {directory}/ fails its own check",
                            hint=f"run check with --root {directory}")
     result = current.result()
@@ -2220,84 +2055,9 @@ def check_base(base, current, rev, strict=False):
     return result
 
 
-# --- stamp (Annex I.4) ------------------------------------------------------
-
-def stamp(analysis, names, by="unknown", at="unknown"):
-    """Annex I.4: the json result and the new text of each lock file it writes, by path, or None when
-    nothing is stamped. Each stamped entry records the principal `by` and the view identifier `at`, and
-    goes to the lock file of its target's file, any other copy being removed (OSTF-142)."""
-    result = {"ostf": "0.3", "diagnostics": [d for d in analysis.diagnostics if analysis.stopped or d.get("file") in analysis.lock_paths],
-              "items": [], "links": []}
-    chosen, refused = [], []
-    for name in dict.fromkeys(names):
-        link = analysis.links.get(name)  # keys are identities, so a LINK must equal one byte for byte
-        if link is None or link["status"] != "ok":
-            why = "is not a link in the graph" if link is None else "has UNSUPPORTED_LANGUAGE" if link["status"] == "unsupported" else "is broken"
-            refused.append({"code": "STAMP_REFUSED", "severity": "error", "subject": name, "message": name + " " + why})
-        else:
-            chosen.append(link)
-    if refused:
-        result["diagnostics"] += refused
-        return result, None
-    # Keep, in each lock file it writes, every entry a reader may use (OSTF-142); malformed lines and
-    # duplicates are dropped.
-    usable = analysis.lock or {}
-    files = {path: {k: e for k, e in entries.items() if k in usable} for path, entries in analysis.lock_files.items()}
-    written, items = set(), set()
-    for link in chosen:
-        home = analysis.lock_home(link["target"])
-        for path in files:
-            if link["identity"] in analysis.lock_seen.get(path, ()):
-                files[path].pop(link["identity"], None)
-                written.add(path)
-        files.setdefault(home, {})[link["identity"]] = {"fingerprints": link["fingerprints"], "provenance": {"by": by, "at": at}}
-        written.add(home)
-        items |= {link["target"]} | (set() if link["anchor"] else {link["source"]})
-    texts = {path: lock_text(files[path]) for path in sorted(written, key=str.encode)}
-    for path, text in texts.items():
-        if len(text.encode()) > MAX_FILE_BYTES:  # a lock file that no reader would use (OSTF-105)
-            result["diagnostics"].append({"code": "STAMP_REFUSED", "severity": "error", "file": path,
-                                          "message": path + " would be larger than 8 MiB", "hint": "split the item file or the root, so that each lock holds fewer links"})
-            return result, None
-    result["items"] = [analysis.item_row(i) for i in sorted(items, key=str.encode)]
-    result["links"] = [{**analysis.link_row(l), "state": "valid", "reasons": []} for l in sorted(chosen, key=lambda l: l["identity"].encode())]
-    return result, texts
-
-
-# --- migrate (Annex H) ------------------------------------------------------
-
-def migrate(analysis):
-    """Annex H: the text of each lock file that changes when a tree written under an earlier revision is
-    brought up to this one, by path, or None when graph construction failed. Every entry a reader may use
-    gains by and at, unknown when absent, and moves to the lock file of its target's file; an entry whose
-    target is no item stays where it is, and a lock file above 8 MiB is left as it is (OSTF-142)."""
-    if analysis.stopped:
-        return None
-    usable = analysis.lock or {}
-    readable = {path for path in analysis.lock_files if analysis.size(path) <= MAX_FILE_BYTES}
-    files = {path: {} for path in readable}
-    for path in readable:
-        for key, entry in analysis.lock_files[path].items():
-            if key in usable:
-                home = analysis.lock_home(entry["target"]) if entry["target"] in analysis.items else path
-                home = path if home in analysis.lock_files and home not in readable else home
-                files.setdefault(home, {})[key] = {**entry, "provenance": {"by": "unknown", "at": "unknown", **entry.get("provenance", {})}}
-    texts = {}
-    for path in sorted(files, key=str.encode):
-        text = lock_text(files[path])
-        exists = path in analysis.files
-        if (exists and analysis.data(path) == text.encode()) or (not exists and not files[path]):
-            continue
-        texts[path] = text
-    if any(len(text.encode()) > MAX_FILE_BYTES for text in texts.values()):
-        return None  # a lock file no reader would use is never written (OSTF-105)
-    return texts
-
-
 # --- SARIF (Annex D) --------------------------------------------------------
 
 LEVEL = {"error": "error", "warning": "warning", "info": "note"}
-STATE_LEVEL = {"broken": "error", "suspect": "warning", "unstamped": "note"}
 
 
 def sarif(analysis, result):
@@ -2320,14 +2080,6 @@ def sarif(analysis, result):
         if "hint" in d:
             row["properties"] = {"ostf.hint": d["hint"]}
         results.append(row)
-    for link in result["links"]:
-        if link.get("state", "valid") == "valid":
-            continue
-        key = identity(link)
-        file = split_anchor(link["source"])[0] if analysis.links[key]["anchor"] else analysis.item_file[link["source"]]
-        for reason in link["reasons"]:
-            results.append({"ruleId": reason, "level": STATE_LEVEL[link["state"]], "message": text(key + " " + link["state"]),
-                            **locations(file, link["source"]), "properties": {"ostf.link": key, "ostf.state": link["state"]}})
     rules = sorted({r["ruleId"] for r in results}, key=str.encode)
     return {"version": "2.1.0", "runs": [{"tool": {"driver": {"name": "ostf-reader", "rules": [{"id": r} for r in rules]}},
                                           "results": results}]}
@@ -2363,28 +2115,6 @@ class Tree(dict):
         return self._checked(path).read_bytes()
 
 
-def write_lock(path, text):
-    """Annex I.6: modify no file but trace.lock. A lock that is a symbolic link, not a regular file or
-    has other hard links is refused; the new lock is written to a file created beside it and renamed
-    into place, so that a link made in the meantime is replaced, never written through."""
-    path = pathlib.Path(path)
-    try:
-        info = os.lstat(path)
-    except FileNotFoundError:
-        info = None
-    if info is not None and (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1):
-        raise OSError("trace.lock is not a regular file with one link; not writing it")
-    fd, temp = tempfile.mkstemp(prefix=".trace.lock.", dir=path.parent)
-    try:
-        with os.fdopen(fd, "wb") as lock:
-            lock.write(text.encode())
-        os.chmod(temp, 0o644)
-        os.replace(temp, path)
-    except BaseException:
-        os.unlink(temp)
-        raise
-
-
 def find_root(start):
     for directory in [start, *start.parents]:
         if (directory / "trace.yaml").is_file():
@@ -2412,18 +2142,13 @@ def text_diagnostics(result):
 def text_check(result, analysis=None):
     """I.1 and Annex J: check's text; with impact, each context of impact.contexts rendered after it."""
     lines = text_diagnostics(result)
-    for link in result["links"]:
-        if link.get("state") != "valid":
-            lines.append(f"{link.get('state', 'no-state')} {identity(link)} {' '.join(link.get('reasons', []))}".rstrip())
-    states = [l.get("state") for l in result["links"]]
-    lines.append(f"{len(result['items'])} items, {len(states)} links, {states.count('valid')} valid")
+    lines.append(f"{len(result['items'])} items, {len(result['links'])} links")
     if "impact" in result:
         found = result["impact"]
         lines.append(f"impact against {found['base']} ({found['coverage']}):")
         lines += [f"  changed {c['anchor']} {' '.join(c['items'])}".rstrip() for c in found["changed"]]
         lines += [f"  item {kind} {i}" for kind in ("added", "changed", "removed") for i in found["items"][kind]]
         lines += [f"  link {kind} {i}" for kind in ("added", "removed") for i in found["links"][kind]]
-        lines += [f"  trace.lock {found['lock']}"] if found["lock"] in ("added", "removed") else []
         lines += [f"  test {t}" for t in found["tests"]]
         if analysis is not None:
             lines += [render(analysis, c["context"]).rstrip("\n") for c in found["contexts"]]
@@ -2431,24 +2156,19 @@ def text_check(result, analysis=None):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="OSTF 0.3 reader (Annex I check, context and stamp).")
+    parser = argparse.ArgumentParser(description="OSTF 0.3 reader (Annex I check and context).")
     commands = parser.add_subparsers(dest="command", required=True)
-    for command in ("check", "context", "stamp", "migrate"):  # migrate is an added command (Annex I.6, Annex H)
+    for command in ("check", "context"):
         sub = commands.add_parser(command)
         sub.add_argument("--root", type=pathlib.Path)
-        sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["text"] if command == "migrate" else ["json", "text"], default="text")
+        sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["json", "text"], default="text")
         if command == "check":
             sub.add_argument("--base", metavar="REV")
-            # Added option (Annex I.6): read the base view from a checkout of REV, given as the
+            # Added option (Annex I.5): read the base view from a checkout of REV, given as the
             # directory that holds this root there, instead of from Git.
             sub.add_argument("--base-tree", metavar="DIR", type=pathlib.Path)
-            sub.add_argument("--strict", action="store_true")
         if command == "context":
             sub.add_argument("target")
-        if command == "stamp":
-            sub.add_argument("links", nargs="+", metavar="LINK")
-            sub.add_argument("--by", metavar="PRINCIPAL", default="unknown")
-            sub.add_argument("--at", metavar="VIEW", default="unknown")
     args = parser.parse_args(argv)
     cwd = pathlib.Path(os.path.realpath(os.getcwd()))
     target = getattr(args, "target", None)
@@ -2469,9 +2189,6 @@ def main(argv=None):
     anchor = None
     if looks_like_anchor:
         anchor = full.relative_to(root).as_posix() + target[len(path):] if full.is_relative_to(root) and full != root else ""
-    if args.command == "stamp" and (not PRINCIPAL.match(args.by) or not args.at):
-        print("--by takes a principal, person:, agent: or ci: and a name, and --at a nonempty view identifier (OSTF-142)", file=sys.stderr)
-        return 2
     if args.command == "check" and (args.base is not None or args.base_tree is not None):
         if not args.base or (args.base_tree is not None and not args.base_tree.is_dir()):
             print("--base needs a nonempty REV, and --base-tree a directory: a checkout of REV at this root", file=sys.stderr)
@@ -2643,30 +2360,14 @@ def _run(args, analysis, target, anchor, root):
         if args.base is not None:
             analysis.history = History(root)
             base = Tree(args.base_tree) if args.base_tree is not None else git_view(root, args.base)
-            result = check_base(Analysis(base), analysis, args.base, args.strict)
+            result = check_base(Analysis(base), analysis, args.base)
         if args.format == "sarif":
             print(json.dumps(sarif(analysis, result), indent=2, ensure_ascii=False))
         elif args.format == "ndjson":
             print(ndjson(result), end="")
         else:
             print(json.dumps(result, indent=2, ensure_ascii=False) if args.format == "json" else text_check(result, analysis), end="\n" if args.format == "json" else "")
-        return 1 if analysis.failed(args.strict) else 0
-    if args.command == "migrate":
-        texts = migrate(analysis)
-        print("".join(line + "\n" for line in text_diagnostics({"diagnostics": [d for d in analysis.diagnostics if analysis.stopped]})), end="")
-        for path, text in (texts or {}).items():
-            write_lock(root / path, text)
-            print("migrated " + path)
-        return 0 if texts is not None else 1
-    if args.command == "stamp":
-        result, texts = stamp(analysis, args.links, args.by, args.at)
-        for path, text in (texts or {}).items():
-            write_lock(root / path, text)
-        if args.format == "json":
-            print(json.dumps(result, indent=2, ensure_ascii=False))
-        else:
-            print("".join(line + "\n" for line in text_diagnostics(result) + ["stamped " + identity(l) for l in result["links"]]), end="")
-        return 0 if texts is not None else 1
+        return 1 if analysis.failed() else 0
     cwd = os.path.realpath(os.getcwd())
     analysis.history = History(root)
     result, resolved = context(analysis, target, anchor, lambda p: pathlib.Path(os.path.relpath(root / p, cwd)).as_posix())

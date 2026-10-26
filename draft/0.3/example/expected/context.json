@@ -39,9 +39,7 @@
       "fingerprints": {
         "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
         "target": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "R-REFUND-LIMIT",
@@ -52,9 +50,7 @@
       "fingerprints": {
         "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
         "target": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     },
     {
       "source": "refund.go#CheckRefundLimit",
@@ -67,8 +63,6 @@
         "source.body": "go2:QDiQOM8Mdapw64qINhfEceHRv5rJqWGmQDeok1bNN5M",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
       },
-      "state": "valid",
-      "reasons": [],
       "corroboration": "corroborated"
     },
     {
@@ -81,9 +75,7 @@
         "source.sig": "go2:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
         "source.body": "go2:rckr3heqlM8R-vIAGLat7g_d9XKCA137w9VTa57Y5qM",
         "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      },
-      "state": "valid",
-      "reasons": []
+      }
     }
   ]
 }

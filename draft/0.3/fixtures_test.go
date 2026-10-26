@@ -5,7 +5,6 @@
 package draft_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -57,7 +56,6 @@ func blocks(t *testing.T, start, lang string) []string {
 func TestSpecMatchesFixtures(t *testing.T) {
 	for _, c := range []struct{ start, lang, file string }{
 		{"## 2. Overview", "yaml", "fixtures/minimal/trace.yaml"},
-		{"## 2. Overview", "text", "fixtures/minimal/trace.lock"},
 		{"**F.1 Agent paragraph", "text", "fixtures/agent-paragraph.txt"},
 		{"**F.2 Policy paragraph", "text", "fixtures/agent-policy.txt"},
 		{"## Annex J", "text", "example/expected/context.txt"},
@@ -173,7 +171,6 @@ func TestSchemas(t *testing.T) {
 		{"expected context", "result.schema.json", read(t, "example/expected/context.json"), true},
 		{"result with unknown key", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "proposed": []}`, false},
 		{"impact with unknown coverage", "result.schema.json", strings.Replace(`{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": `+impact+`}`, `"direct"`, `"transitive"`, 1), false},
-		{"impact with unknown lock state", "result.schema.json", strings.Replace(`{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": `+impact+`}`, `"kept"`, `"lost"`, 1), false},
 	} {
 		t.Run(c.id, func(t *testing.T) {
 			if err := validator(t, c.schema).Validate(instance(t, c.text)); (err == nil) != c.valid {
@@ -268,8 +265,7 @@ func TestSchemasAcceptCaseFiles(t *testing.T) {
 		include, _ := root["include"].([]any)
 		for name := range c.Files {
 			for _, glob := range include {
-				// OSTF-102: a glob matches no file whose name ends in .lock, such as an item file's lock (OSTF-142).
-				if g, ok := glob.(string); ok && name != "trace.yaml" && !strings.HasSuffix(name, ".lock") && covered(c.Files, name) && matchGlob(g, name) {
+				if g, ok := glob.(string); ok && name != "trace.yaml" && covered(c.Files, name) && matchGlob(g, name) {
 					selected[name] = "trace.schema.json"
 				}
 			}
@@ -347,39 +343,4 @@ func matchComponent(g, n []rune) bool {
 		gi++
 	}
 	return gi == len(g)
-}
-
-func TestExpectedMatchesLock(t *testing.T) {
-	lock := map[string]map[string]string{}
-	for _, line := range strings.Split(strings.TrimSuffix(read(t, "example/trace.lock"), "\n"), "\n")[1:] {
-		fields := strings.Fields(line)
-		pairs := map[string]string{}
-		for _, p := range fields[3:] {
-			// by and at record who rechecked the link and where (OSTF-142); they are not fingerprints.
-			if k, v, _ := strings.Cut(p, "="); k != "by" && k != "at" {
-				pairs[k] = v
-			}
-		}
-		lock[strings.Join(fields[:3], " ")] = pairs
-	}
-	for _, name := range []string{"example/expected/check.json", "example/expected/context.json"} {
-		var result struct {
-			Links []struct {
-				Source, Type, Target string
-				Fingerprints         map[string]string
-			}
-		}
-		if err := json.NewDecoder(bytes.NewReader([]byte(read(t, name)))).Decode(&result); err != nil {
-			t.Fatal(err)
-		}
-		for _, l := range result.Links {
-			id := l.Source + " " + l.Type + " " + l.Target
-			if got, ok := lock[id]; !ok || fmt.Sprint(got) != fmt.Sprint(l.Fingerprints) {
-				t.Errorf("%s: %s fingerprints %v; lock has %v", name, id, l.Fingerprints, got)
-			}
-		}
-		if name == "example/expected/check.json" && len(result.Links) != len(lock) {
-			t.Errorf("check.json has %d links; the lock has %d", len(result.Links), len(lock))
-		}
-	}
 }

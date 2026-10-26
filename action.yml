@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 name: OSTF check
-description: Run the OSTF 0.3 check, upload its result as SARIF, and fail on an error or a suspect or broken link, and in strict mode on an unstamped link or a missing lock.
+description: Run the OSTF 0.3 check, upload its result as SARIF, and fail on an error or a broken link; with a base branch, list what the change touches without failing on it.
 author: OSTF contributors
 branding:
   icon: link
@@ -10,14 +10,11 @@ inputs:
     description: Directory that holds trace.yaml, relative to the workspace.
     default: "."
   base:
-    description: Base branch for impact (Annex C.3). Defaults to the pull request's base branch; empty outside pull requests. With a base, the Action fetches the full history, which change information reads (Annex I.3).
+    description: Base branch for impact (Annex C.3). Defaults to the pull request's base branch; empty outside pull requests. With a base, the Action fetches the full history, which change information reads (Annex I.3), and prints the listing of check --base, the changed definitions with their contexts, the items, the links and the tests. The listing is information. The Action fails only when check does, on an error or a broken link, so a changed definition alone never fails it, and it is no gate on drift in CI.
     default: ""
   sarif:
     description: Upload the SARIF result to GitHub code scanning, which needs the security-events write permission.
     default: "true"
-  strict:
-    description: Run check --strict (Annex I.1), which also fails on an unstamped link or a missing lock. auto turns it on when the base branch has a lock file in this root, trace.lock or an item file's lock (OSTF-142), so a change that loses or empties the lock fails. It learns that from impact.lock (Annex C.3), so with a base branch auto runs the check twice. true or false sets it.
-    default: "auto"
 outputs:
   exit-code:
     description: The exit code of ostf check, 0 when it passes.
@@ -37,15 +34,9 @@ runs:
       working-directory: ${{ inputs.root }}
       env:
         BASE: ${{ inputs.base || github.base_ref }}
-        STRICT: ${{ inputs.strict }}
       run: |
         set +e
         args=()
-        if [ "$STRICT" != auto ] && [ "$STRICT" != true ] && [ "$STRICT" != false ]; then
-          echo "ostf: strict is auto, true or false, not $STRICT" >&2
-          echo "exit-code=2" >> "$GITHUB_OUTPUT"
-          exit 0
-        fi
         if [ -n "$BASE" ]; then
           # Change information walks the first-parent history (Annex I.3), which a shallow checkout lacks:
           # fetch it whole, and the base branch with it, so no commit at the edge of a clone is named.
@@ -60,16 +51,6 @@ runs:
             exit 0
           fi
           args=(--base "origin/$BASE")
-          # impact.lock is kept or removed when the base view holds a lock file, wherever it is (Annex C.3).
-          if [ "$STRICT" = auto ]; then
-            lock=$(ostf check "${args[@]}" --format json | python -c 'import json, sys; print(json.load(sys.stdin).get("impact", {}).get("lock", ""))')
-            if [ "$lock" = kept ] || [ "$lock" = removed ]; then
-              STRICT=true
-            fi
-          fi
-        fi
-        if [ "$STRICT" = true ]; then
-          args+=(--strict)
         fi
         ostf check "${args[@]}"
         status=$?

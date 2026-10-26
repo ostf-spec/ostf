@@ -37,9 +37,7 @@ def main():
         schema.write_bytes(data)
     subprocess.run([str(python), str(HERE / "check.py")], cwd=ROOT, check=True)
     subprocess.run([str(python), str(HERE.parent / "tools" / "check_tools.py")], cwd=ROOT, check=True)
-    subprocess.run([str(python), str(HERE.parent / "trials" / "harness.py"), "selftest"], cwd=ROOT, check=True)
-    subprocess.run([str(python), str(HERE.parent / "trials" / "parallel.py"), "selftest"], cwd=ROOT, check=True)
-    subprocess.run([str(python), str(HERE.parent / "trials" / "baseline.py"), "check"], cwd=ROOT, check=True)
+    # The trials, which need the lock, stay as they ran: reproducible at the tag doc-0.15 (plan, section 8), not run here.
 
 
 if __name__ == "__main__":
