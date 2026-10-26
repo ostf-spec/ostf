@@ -1429,6 +1429,7 @@ def main(argv=None):
     rep.add_argument("out", type=pathlib.Path, nargs="?", default=HERE / "results-phase5.md")
     commands.add_parser("seal")
     commands.add_parser("selftest")
+    commands.add_parser("sample", help="write RESULTS/human-sample.md, one verdict of the judge in ten")
     again = commands.add_parser("rescore", help="score a one-turn task's records again from their work directories")
     again.add_argument("task")
     again.add_argument("reason")
@@ -1436,6 +1437,10 @@ def main(argv=None):
     if args.command == "rescore":
         for name in rescore(args.task, args.reason):
             print(f"corrected {name}")
+        return 0
+    if args.command == "sample":
+        import report
+        print("%d of %d verdicts written to human-sample.md" % report.phase5_sample(RESULTS))
         return 0
     if args.command == "selftest":
         selftest()
