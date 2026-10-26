@@ -3,7 +3,7 @@
 
 OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches.
 
-**Status:** working draft, wire version `ostf: "0.3"`, document revision 0.16. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
+**Status:** working draft, wire version `ostf: "0.3"`, document revision 0.17. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
 
 ## What it looks like
 
@@ -18,7 +18,7 @@ items:
 
 `math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. When a change edits `Add`, `ostf check --base` lists the function beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
-Nothing in the repository records that confirmation, and a changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. Revision 0.16 removed the lock file and the stamps of earlier revisions after the [agent-first plan](draft/0.3/plan-agent-first.md) measured them (section 8).
+Nothing in the repository records that confirmation, and a changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. Revision 0.16 removed the lock file and the stamps of earlier revisions after the [agent-first plan](draft/0.3/plan-agent-first.md) measured them (section 8), and revision 0.17 moved derived links, the `trace.derived` file of observed coverage, out of Core into an optional annex after the plan's trials found agents editing it by hand (section 10).
 
 ## Start in ten minutes
 
@@ -63,8 +63,8 @@ Nothing in the repository records that confirmation, and a changed definition fa
 
 | Document | Purpose |
 | --- | --- |
-| [Specification](draft/0.3/ostf.md) | The format in 27 numbered requirements, the Go, TypeScript and Python annexes, the derived-link grammar and diagnostics, and optional annexes for SARIF output, the command profile for coding agents, context rendering and results for an index |
-| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived` |
+| [Specification](draft/0.3/ostf.md) | The format in 26 numbered requirements, the Go, TypeScript and Python annexes and the diagnostics, and optional annexes for derived links, SARIF output, the command profile for coding agents, context rendering and results for an index |
+| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived`, the file of the optional Annex B |
 | [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with derived links and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
 | [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases |

@@ -35,8 +35,10 @@ VECTORS_02 = {
 # The span vectors of Annexes A, K and L (OSTF-164).
 SPAN_VECTORS = ("go-spans.json", "ts-spans.json", "py-spans.json")
 # Requirements merged into others to stay within 35 (agent-first plan, section 7): Consumer and Analyzer into
-# OSTF-160, the release gate into OSTF-170; and the lock's, retired with it (plan, section 8).
-RETIRED = {"OSTF-140", "OSTF-141", "OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-161", "OSTF-162", "OSTF-171"}
+# OSTF-160, the release gate into OSTF-170; the lock's, retired with it (plan, section 8); and derived links,
+# which left Core for the optional Annex B (plan, section 10).
+RETIRED = {"OSTF-140", "OSTF-141", "OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-146", "OSTF-161", "OSTF-162",
+           "OSTF-171"}
 
 
 def load(path):
@@ -199,7 +201,7 @@ def check():
             assert links(result) == expect["links"], f"{case['id']}: links\n got {links(result)}\nwant {expect['links']}"
         if "items" in expect:
             assert [i["id"] for i in result["items"]] == expect["items"], f"{case['id']}: items"
-        if "corroboration" in expect:  # OSTF-146: by link identity, for every link that has one
+        if "corroboration" in expect:  # Annex B.3: by link identity, for every link that has one
             got = {reader.identity(l): l["corroboration"] for l in result["links"] if "corroboration" in l}
             assert got == expect["corroboration"], f"{case['id']}: corroboration\n got {got}\nwant {expect['corroboration']}"
         if "linkCount" in expect:
@@ -304,8 +306,12 @@ def check():
     covered |= {r for name in SPAN_VECTORS for case in load(VECTORS / name) for r in case["requirements"]}
     covered |= {code for case in cases["checks"] + cases["contexts"] + cases["impacts"] for code in case["expect"]["codes"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
-    annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))
-    assert len(annex_c) == 35, "Annex C.1 codes"
+    # The codes of Annex C.1 and the one of the optional Annex B, each a table row of the same form.
+    code_row = r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|"
+    annex_b = set(re.findall(code_row, re.search(r"\n## Annex B .*?\n## Annex C ", spec, re.S)[0], re.MULTILINE))
+    annex_c = set(re.findall(code_row, re.search(r"\n## Annex C .*?\n## Annex D ", spec, re.S)[0], re.MULTILINE))
+    assert len(annex_c) == 34 and annex_b == {"DERIVED_INVALID"}, "Annex C.1 and Annex B.4 codes"
+    annex_c |= annex_b
     for name, reason in cases["notCovered"].items():
         assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
     for name in sorted(defined | annex_c):

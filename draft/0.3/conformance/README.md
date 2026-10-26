@@ -78,7 +78,7 @@ Step 2b converted the 0.2 suite's 73 repository cases and 24 schema cases; its 3
 | The four `schema-snapshot` cases | The snapshot schema was replaced by `external` and `sources`. |
 | `repository-valid` | Its input equals `minimal-valid`, which now carries its requirements. |
 
-The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#annex-h-informative-changes-from-draft-02-and-revision-014).
+The 0.2 requirement map, `suite.json`, is replaced by the `requirements` of each case and the coverage check. 0.2 identifiers map to 0.3 through [Annex H](../ostf.md#annex-h-informative-changes-from-draft-02-and-revisions-014-to-016).
 
 ## From revision 0.14
 
@@ -123,3 +123,7 @@ Carried, with what changed:
 - `impact-items-and-links` counts a new rationale as a changed item; `impact-nested-roots-each-evaluated` fails its nested root with a broken link; `sarif-locations` checks the locations of diagnostics, a tag naming `R{0}` among them; `sarif-info-is-note` uses `NESTED_ROOT`; the Annex J texts lose their states; `context-item-text-marked` forges a corroboration in its title, since a state no longer appears; and SARIF cases no longer list link results.
 
 New: `histories`, eight scripted Git histories run through the command line (Annex I.3); three impact cases, a comment inside a definition, CRLF alone and the hint by text; `leftover-lock-files-are-ordinary-files`; `attribute-meaning-rejected`; and `link-attributes-named-source-target-by-at` and the schema case `schema-link-attribute-named-at`, which accept `source`, `target`, `by` and `at` as link attribute names.
+
+## From revision 0.16
+
+Phase 5 of the [agent-first plan](../plan-agent-first.md) missed the row that counts hand edits of `trace.derived`, so revision 0.17 moves derived links out of Core into Annex B, an optional annex; the [decision record](../decisions.md#agent-first-plan-phase-5-trials-v2) gives the rulings. No case is retired or added, and no expectation changed. The cases that named OSTF-146 name the annex's sections instead, as the command profile's cases name Annex I, and like them they hold for a reader that claims the annex: `derived-corroboration`, `derived-absent`, `derived-header-only`, `derived-invalid-lines`, `derived-header-invalid`, `derived-broken-test`, `derived-too-large`, which no longer names OSTF-105 since that limit no longer names the file, and the contexts `context-corroboration-without-lock` and `context-corroboration-after-state`. `derived-not-an-anchor` names OSTF-132 alone, which still makes an anchor that names the file `ANCHOR_INVALID`. OSTF-146 joins the retired requirements that no case may name, and the coverage check reads the codes of Annex C.1 and of Annex B.4 apart.

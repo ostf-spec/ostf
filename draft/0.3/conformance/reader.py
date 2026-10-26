@@ -641,7 +641,7 @@ def annex_for(path):
     return next((a for a in ANNEXES if path.endswith(a.extensions)), None)
 
 
-# --- link identity (Annex I.2) and trace.derived (OSTF-146, Annex B) ---------
+# --- link identity (Annex I.2) and trace.derived (Annex B) ------------------
 
 def escape(value):
     return "".join(f"%{b:02X}" if b <= 32 or b in {37, 61, 127} else bytes([b]).decode("latin1") for b in value.encode()).encode("latin1").decode()
@@ -674,7 +674,7 @@ def _unescape(value):
 
 
 def parse_derived(data):
-    """OSTF-146: the (test anchor, code anchor) of each observation, and (code, line) problems."""
+    """Annex B.1: the (test anchor, code anchor) of each observation, and (code, line) problems."""
     observations = []
     lines, problems = _lines(data, "DERIVED_INVALID")
     if lines[0] != "trace.derived 1":
@@ -1334,7 +1334,7 @@ class Analysis:
         return "ok", ("defs", path, frozenset((d["start"], d["name"]) for d in found))
 
     def _evaluate(self):
-        """Step 7 for an Analyzer: risk relevance (OSTF-120), bindings and corroboration (OSTF-146)."""
+        """After step 6, for an Analyzer: risk relevance (OSTF-120), bindings and corroboration (Annex B.3)."""
         types = self.vocabulary["types"]
         # OSTF-120: an item of kind statement that links to an item of kind risk is a control.
         kind = lambda ident: types[self.items[ident]["type"]]["kind"]
@@ -1357,7 +1357,7 @@ class Analysis:
         self._corroboration()
 
     def _corroboration(self):
-        """OSTF-146: beside each implements link whose anchor binds, whether a test anchor that
+        """Annex B.3: beside each implements link whose anchor binds, whether a test anchor that
         verifies its item covers it, by the definitions each anchor binds to in this view."""
         if "trace.derived" not in self.files:
             return
@@ -1543,7 +1543,7 @@ def render(analysis, target, anchor=None):
         return text
 
     def state(link):
-        """Rule 5: the corroboration (OSTF-146), then the change information (I.3), in parentheses."""
+        """Rule 5: the corroboration (Annex B.3), then the change information (I.3), in parentheses."""
         shown = link.get("corroboration", "")
         changes = analysis.changed_in(link)
         if any(changes):

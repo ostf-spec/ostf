@@ -5,8 +5,8 @@ title: "Open Software Traceability Format"
 type: software
 authors:
   - name: "Medoya LLC"
-version: "0.16"
-date-released: "2026-10-25"
+version: "0.17"
+date-released: "2026-10-26"
 url: "https://github.com/ostf-spec/ostf"
 preferred-citation:
   type: standard
@@ -14,5 +14,5 @@ preferred-citation:
   authors:
     - name: "Medoya LLC"
   year: 2026
-  version: "0.16"
+  version: "0.17"
   url: "https://github.com/ostf-spec/ostf"

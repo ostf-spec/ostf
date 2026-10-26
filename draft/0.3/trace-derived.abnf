@@ -1,5 +1,5 @@
 ; SPDX-License-Identifier: Apache-2.0
-; OSTF 0.3 working draft, Annex B: trace.derived grammar (OSTF-146).
+; OSTF 0.3 working draft, Annex B.2 (normative, optional): trace.derived grammar.
 ; RFC 5234 ABNF with RFC 7405 case-sensitive literals. The file is a
 ; sequence of octets. Semantic constraints that the grammar does not
 ; express: a percent-decoded value is valid UTF-8; an observation holds

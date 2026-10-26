@@ -65,7 +65,7 @@
         "target": { "$ref": "#/$defs/id" },
         "attributes": { "type": "object", "additionalProperties": { "type": "string" } },
         "origin": { "enum": ["declared", "tagged"] },
-        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the link." },
+        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "Annex B.3, optional: beside the link." },
         "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the source." },
         "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." }
       },

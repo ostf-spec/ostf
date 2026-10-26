@@ -4154,8 +4154,8 @@
   {
    "id": "derived-corroboration",
    "requirements": [
-    "OSTF-146",
-    "Annex B"
+    "Annex B.3",
+    "Annex B.2"
    ],
    "note": "F is covered by TestF, which verifies R-A; Service.Run by TestRun, spelled as Run and as a subtest, since anchors match by the definitions they bind to; G and b.go have a verifying test that covers neither; H's item has no test, so TestF covering it corroborates nothing. Verifies links get no corroboration.",
    "files": {
@@ -4230,7 +4230,7 @@
   {
    "id": "derived-absent",
    "requirements": [
-    "OSTF-146"
+    "Annex B.3"
    ],
    "note": "Without trace.derived no corroboration is reported.",
    "files": {
@@ -4298,7 +4298,7 @@
   {
    "id": "derived-header-only",
    "requirements": [
-    "OSTF-146"
+    "Annex B.1"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G, a.go#Service.Run, b.go]\n    tests: [a_test.go#TestF, a_test.go#TestRun/fast]\n  - id: R-B\n    text: B.\n    code: [a.go#H]\n",
@@ -4372,8 +4372,8 @@
   {
    "id": "derived-invalid-lines",
    "requirements": [
-    "OSTF-146",
-    "Annex B"
+    "Annex B.1",
+    "Annex B.2"
    ],
    "note": "Each malformed line is not used and the others are: a line without tool, with another word than covers, with a pair other than view and tool or one of them twice, with an empty value, a bad escape, or a test anchor that is not an anchor.",
    "files": {
@@ -4450,8 +4450,8 @@
   {
    "id": "derived-header-invalid",
    "requirements": [
-    "OSTF-146",
-    "Annex B"
+    "Annex B.1",
+    "Annex B.2"
    ],
    "note": "A malformed first line voids every line.",
    "files": {
@@ -4528,8 +4528,7 @@
   {
    "id": "derived-too-large",
    "requirements": [
-    "OSTF-105",
-    "OSTF-146"
+    "Annex B.1"
    ],
    "note": "trace.derived is padded with line feeds to one byte above 8 MiB, so no line is used.",
    "files": {
@@ -4609,7 +4608,7 @@
   {
    "id": "derived-broken-test",
    "requirements": [
-    "OSTF-146"
+    "Annex B.3"
    ],
    "note": "A verifying test anchor that does not bind is no test of the item, so the code is unobserved; a broken code anchor has no corroboration.",
    "files": {
@@ -4653,8 +4652,7 @@
   {
    "id": "derived-not-an-anchor",
    "requirements": [
-    "OSTF-132",
-    "OSTF-146"
+    "OSTF-132"
    ],
    "note": "A tool rewrites trace.derived, so it is not an anchor.",
    "files": {
@@ -5316,7 +5314,7 @@
   {
    "id": "context-corroboration-without-lock",
    "requirements": [
-    "OSTF-146",
+    "Annex B.3",
     "Annex I.3",
     "Annex J"
    ],
@@ -5349,7 +5347,7 @@
   {
    "id": "context-corroboration-after-state",
    "requirements": [
-    "OSTF-146",
+    "Annex B.3",
     "Annex I.3",
     "Annex J"
    ],
