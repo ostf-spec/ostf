@@ -5,7 +5,7 @@
 
 ## Abstract
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it. Any tool, person or coding agent that can read YAML can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches. OSTF specifies files, not tools. A four-line file is a complete, valid start.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it. Within the items the repository declares and the links that a reader for its languages binds, a person, tool or coding agent can answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches. OSTF specifies files, not tools. A four-line file is a complete, valid start.
 
 ## 1. Introduction
 
@@ -460,18 +460,19 @@ I.1 is normative for a tool that writes `ndjson`. The rest of this annex is info
 
 **I.2 Identity.**<a id="Annex-I.2"></a> An index keys every row on the repository, the root's path from the repository's top and the view identifier of the view it was computed in, and an item on its URI (OSTF-110). The files in the repository stay the source of truth: an index is built from them for each view and never written back, since a change to code and to intent lands in one reviewed commit.
 
-**I.3 Tables.**<a id="Annex-I.3"></a> The records map to tables as follows, each key preceded by repository, root and view.
+**I.3 Tables.**<a id="Annex-I.3"></a> The records map to tables as follows, each key preceded by repository, root and view. A column comes from the `check` result of that view when the result carries it, and otherwise from the root's files in the same view, which stay the source of truth (I.2).
 
 | Table | Key | Columns | From |
 | --- | --- | --- | --- |
-| item | ID | type, status, riskRelevant, title, text, external | `items` of the result |
+| item | ID | type, status, riskRelevant, title, text, external | `items` of the result for the first three, the item in the root's files for the rest |
 | link | identity (Annex F.2) | source, type, target, attributes, origin, corroboration | `links` of the result |
 | anchor | anchor | path, symbol | the source of each link from an anchor |
+| source | alias | url, ostf | `sources` in the root's `trace.yaml` (OSTF-113) |
 | derived link | test anchor, code anchor | view, tool | `trace.derived` (Annex E) |
 | diagnostic | code, file, subject | severity, message, hint | `diagnostics` of the result |
 | impact | base | changed, contexts, items, links, tests | `impact` of the result |
 
-An external item whose source names a root with `ostf` (OSTF-113) joins the item of that root whose ID is its native ID. That join is how an index answers what no reader resolves: which code, in any repository, serves a control kept in a shared catalog.
+An external item joins through the source table: when the source that its `external` names carries `ostf`, the item joins the item of the root that `ostf` names whose ID is its native ID. That join is how an index answers what no reader resolves: which code, in any repository, serves a control kept in a shared catalog.
 
 ## Annex J (informative): execution evidence as in-toto attestations<a id="Annex-J"></a>
 
@@ -481,7 +482,7 @@ OSTF names tests; it does not record that they ran. A project that needs portabl
 
 K.1 is normative. The rest of this annex is informative.
 
-**K.1 Agent paragraph (normative).**<a id="Annex-K.1"></a> The paragraph below is version 1. A project includes it verbatim in its agent instructions file (OSTF-102), replacing each `<tool>` with the command that runs its checker and changing nothing else; the other words in angle brackets are for the agent to fill. [fixtures/agent-paragraph.txt](fixtures/agent-paragraph.txt) holds the same bytes. A later version changes the number in the first line. The paragraph names only the commands of Annex F, so it works with any tool that claims that annex, and it carries no workflow policy, which OSTF-100 leaves to the project.
+**K.1 Agent paragraph (normative).**<a id="Annex-K.1"></a> The paragraph below is version 1. A project includes it verbatim in its agent instructions file (OSTF-102), replacing each `<tool>` with the command that runs its checker and changing nothing else; the other words in angle brackets are for the agent to fill. [fixtures/agent-paragraph.txt](fixtures/agent-paragraph.txt) holds the same bytes. A later version changes the number in the first line. The paragraph names only the commands of Annex F, so it works with any tool that claims that annex. It carries the minimum workflow that makes `check --base` run before an agent finishes and makes summaries comparable across projects and tools; policy, meaning approvals and the drafting and rewriting of items, stays in K.2, since OSTF-100 leaves it to the project.
 
 ```text
 OSTF agent paragraph 1. This repository traces requirements to code.
