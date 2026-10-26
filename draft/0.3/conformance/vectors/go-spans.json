@@ -1,0 +1,851 @@
+[
+  {
+    "id": "go-function",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Add(a, b int) int { return a+b }\n",
+    "symbol": "Add",
+    "definitions": [
+      [
+        "Add",
+        "func Add(a, b int) int { return a+b }"
+      ]
+    ],
+    "binds": [
+      "func Add(a, b int) int { return a+b }"
+    ]
+  },
+  {
+    "id": "go-comments",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\n// docs\nfunc Add(a,b int)int { /* hi */ return a + b // end\n}\n",
+    "symbol": "Add",
+    "definitions": [
+      [
+        "Add",
+        "func Add(a,b int)int { /* hi */ return a + b // end\n}"
+      ]
+    ],
+    "binds": [
+      "func Add(a,b int)int { /* hi */ return a + b // end\n}"
+    ]
+  },
+  {
+    "id": "go-whole",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Add(a,b int)int{return a+b}\n",
+    "definitions": [
+      [
+        "Add",
+        "func Add(a,b int)int{return a+b}"
+      ]
+    ]
+  },
+  {
+    "id": "go-explicit-semicolon",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() { x := 1; _ = x }\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "func F() { x := 1; _ = x }"
+      ]
+    ],
+    "binds": [
+      "func F() { x := 1; _ = x }"
+    ]
+  },
+  {
+    "id": "go-pointer-method",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct{}\nfunc (p *Pump) Stop() {}\n",
+    "symbol": "Pump.Stop",
+    "definitions": [
+      [
+        "Pump",
+        "type Pump struct{}"
+      ],
+      [
+        "Pump.Stop",
+        "func (p *Pump) Stop() {}"
+      ]
+    ],
+    "binds": [
+      "func (p *Pump) Stop() {}"
+    ]
+  },
+  {
+    "id": "go-bare-method",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct{}\nfunc (p *Pump) Stop() {}\n",
+    "symbol": "Stop",
+    "definitions": [
+      [
+        "Pump",
+        "type Pump struct{}"
+      ],
+      [
+        "Pump.Stop",
+        "func (p *Pump) Stop() {}"
+      ]
+    ],
+    "binds": [
+      "func (p *Pump) Stop() {}"
+    ]
+  },
+  {
+    "id": "go-generic-method",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump[T any] struct{}\nfunc (p *Pump[T]) Stop(v T) T {return v}\n",
+    "symbol": "Pump.Stop",
+    "definitions": [
+      [
+        "Pump",
+        "type Pump[T any] struct{}"
+      ],
+      [
+        "Pump.Stop",
+        "func (p *Pump[T]) Stop(v T) T {return v}"
+      ]
+    ],
+    "binds": [
+      "func (p *Pump[T]) Stop(v T) T {return v}"
+    ]
+  },
+  {
+    "id": "go-type",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump struct { Limit int }\n",
+    "symbol": "Pump",
+    "definitions": [
+      [
+        "Pump",
+        "type Pump struct { Limit int }"
+      ]
+    ],
+    "binds": [
+      "type Pump struct { Limit int }"
+    ]
+  },
+  {
+    "id": "go-type-group",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype (\n Pump struct { Limit int }\n Other int\n)\n",
+    "symbol": "Pump",
+    "definitions": [
+      [
+        "Pump",
+        "Pump struct { Limit int }"
+      ],
+      [
+        "Other",
+        "Other int"
+      ]
+    ],
+    "binds": [
+      "Pump struct { Limit int }"
+    ]
+  },
+  {
+    "id": "go-const",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nconst Max = 0x_FF\n",
+    "symbol": "Max",
+    "definitions": [
+      [
+        "Max",
+        "const Max = 0x_FF"
+      ]
+    ],
+    "binds": [
+      "const Max = 0x_FF"
+    ]
+  },
+  {
+    "id": "go-const-group",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nconst (\n Max = 4\n Min = 1\n)\n",
+    "symbol": "Min",
+    "definitions": [
+      [
+        "Max",
+        "Max = 4"
+      ],
+      [
+        "Min",
+        "Min = 1"
+      ]
+    ],
+    "binds": [
+      "Min = 1"
+    ]
+  },
+  {
+    "id": "go-var-group",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nvar (\n X = 1\n Y = 2\n)\n",
+    "symbol": "Y",
+    "definitions": [
+      [
+        "X",
+        "X = 1"
+      ],
+      [
+        "Y",
+        "Y = 2"
+      ]
+    ],
+    "binds": [
+      "Y = 2"
+    ]
+  },
+  {
+    "id": "go-multi-name",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nvar A, B = 1, 2\n",
+    "symbol": "B",
+    "definitions": [
+      [
+        "A",
+        "var A, B = 1, 2"
+      ],
+      [
+        "B",
+        "var A, B = 1, 2"
+      ]
+    ],
+    "binds": [
+      "var A, B = 1, 2"
+    ]
+  },
+  {
+    "id": "go-unicode",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Δ(α int) int { return α }\n",
+    "symbol": "Δ",
+    "definitions": [
+      [
+        "Δ",
+        "func Δ(α int) int { return α }"
+      ]
+    ],
+    "binds": [
+      "func Δ(α int) int { return α }"
+    ]
+  },
+  {
+    "id": "go-literals",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc S() string { return \"a\\n\\\"b\" }\n",
+    "symbol": "S",
+    "definitions": [
+      [
+        "S",
+        "func S() string { return \"a\\n\\\"b\" }"
+      ]
+    ],
+    "binds": [
+      "func S() string { return \"a\\n\\\"b\" }"
+    ]
+  },
+  {
+    "id": "go-raw-cr",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc S() string { return `a\r\nb` }\n",
+    "symbol": "S",
+    "definitions": [
+      [
+        "S",
+        "func S() string { return `a\nb` }"
+      ]
+    ],
+    "binds": [
+      "func S() string { return `a\nb` }"
+    ]
+  },
+  {
+    "id": "go-result-struct",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() struct{X int} { return struct{X int}{1} }\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "func F() struct{X int} { return struct{X int}{1} }"
+      ]
+    ],
+    "binds": [
+      "func F() struct{X int} { return struct{X int}{1} }"
+    ]
+  },
+  {
+    "id": "go-bare-multiple",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype A int\ntype B int\nfunc (a A) F() {}\nfunc (b B) F() {}\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "A",
+        "type A int"
+      ],
+      [
+        "B",
+        "type B int"
+      ],
+      [
+        "A.F",
+        "func (a A) F() {}"
+      ],
+      [
+        "B.F",
+        "func (b B) F() {}"
+      ]
+    ],
+    "binds": [
+      "func (a A) F() {}",
+      "func (b B) F() {}"
+    ]
+  },
+  {
+    "id": "go-generic-receiver-pair",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\ntype Pump[K, V any] struct{}\nfunc (p *Pump[K, V]) Stop() {}\n",
+    "symbol": "Pump.Stop",
+    "definitions": [
+      [
+        "Pump",
+        "type Pump[K, V any] struct{}"
+      ],
+      [
+        "Pump.Stop",
+        "func (p *Pump[K, V]) Stop() {}"
+      ]
+    ],
+    "binds": [
+      "func (p *Pump[K, V]) Stop() {}"
+    ]
+  },
+  {
+    "id": "go-interface-func-signature",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc Run(f func(interface{ Done() }) error) error { return f(nil) }\n",
+    "symbol": "Run",
+    "definitions": [
+      [
+        "Run",
+        "func Run(f func(interface{ Done() }) error) error { return f(nil) }"
+      ]
+    ],
+    "binds": [
+      "func Run(f func(interface{ Done() }) error) error { return f(nil) }"
+    ]
+  },
+  {
+    "id": "go-block-comment-newline",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "sample.go",
+    "source": "package sample\nfunc F() { return /*\n*/ }\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "func F() { return /*\n*/ }"
+      ]
+    ],
+    "binds": [
+      "func F() { return /*\n*/ }"
+    ]
+  },
+  {
+    "id": "go2-return-line-break",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (err error) {\n\tif c {\n\t\treturn\n\t\tg()\n\t}\n\treturn nil\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f(c bool) (err error) {\n\tif c {\n\t\treturn\n\t\tg()\n\t}\n\treturn nil\n}"
+      ]
+    ],
+    "binds": [
+      "func f(c bool) (err error) {\n\tif c {\n\t\treturn\n\t\tg()\n\t}\n\treturn nil\n}"
+    ]
+  },
+  {
+    "id": "go2-return-call",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (err error) {\n\tif c {\n\t\treturn g()\n\t}\n\treturn nil\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f(c bool) (err error) {\n\tif c {\n\t\treturn g()\n\t}\n\treturn nil\n}"
+      ]
+    ],
+    "binds": [
+      "func f(c bool) (err error) {\n\tif c {\n\t\treturn g()\n\t}\n\treturn nil\n}"
+    ]
+  },
+  {
+    "id": "go2-parenthesized-call-line-break",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() any {\n\tx := h\n\t(g())\n\treturn x\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() any {\n\tx := h\n\t(g())\n\treturn x\n}"
+      ]
+    ],
+    "binds": [
+      "func f() any {\n\tx := h\n\t(g())\n\treturn x\n}"
+    ]
+  },
+  {
+    "id": "go2-call",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() any {\n\tx := h(g())\n\treturn x\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() any {\n\tx := h(g())\n\treturn x\n}"
+      ]
+    ],
+    "binds": [
+      "func f() any {\n\tx := h(g())\n\treturn x\n}"
+    ]
+  },
+  {
+    "id": "go2-receive-line-break",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (v int) {\n\tif c {\n\t\treturn\n\t\t<-ch\n\t}\n\treturn 1\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f(c bool) (v int) {\n\tif c {\n\t\treturn\n\t\t<-ch\n\t}\n\treturn 1\n}"
+      ]
+    ],
+    "binds": [
+      "func f(c bool) (v int) {\n\tif c {\n\t\treturn\n\t\t<-ch\n\t}\n\treturn 1\n}"
+    ]
+  },
+  {
+    "id": "go2-return-receive",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(c bool) (v int) {\n\tif c {\n\t\treturn <-ch\n\t}\n\treturn 1\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f(c bool) (v int) {\n\tif c {\n\t\treturn <-ch\n\t}\n\treturn 1\n}"
+      ]
+    ],
+    "binds": [
+      "func f(c bool) (v int) {\n\tif c {\n\t\treturn <-ch\n\t}\n\treturn 1\n}"
+    ]
+  },
+  {
+    "id": "go2-one-line-body",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() int { return 1 }\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "func F() int { return 1 }"
+      ]
+    ],
+    "binds": [
+      "func F() int { return 1 }"
+    ]
+  },
+  {
+    "id": "go2-three-line-body",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() int {\n\treturn 1\n}\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "func F() int {\n\treturn 1\n}"
+      ]
+    ],
+    "binds": [
+      "func F() int {\n\treturn 1\n}"
+    ]
+  },
+  {
+    "id": "go2-struct-one-line",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype T struct{ a int; b int }\n",
+    "symbol": "T",
+    "definitions": [
+      [
+        "T",
+        "type T struct{ a int; b int }"
+      ]
+    ],
+    "binds": [
+      "type T struct{ a int; b int }"
+    ]
+  },
+  {
+    "id": "go2-struct-lines",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype T struct {\n\ta int\n\tb int\n}\n",
+    "symbol": "T",
+    "definitions": [
+      [
+        "T",
+        "type T struct {\n\ta int\n\tb int\n}"
+      ]
+    ],
+    "binds": [
+      "type T struct {\n\ta int\n\tb int\n}"
+    ]
+  },
+  {
+    "id": "go2-interface",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\ntype I interface {\n\tM()\n\t~int | string\n}\n",
+    "symbol": "I",
+    "definitions": [
+      [
+        "I",
+        "type I interface {\n\tM()\n\t~int | string\n}"
+      ]
+    ],
+    "binds": [
+      "type I interface {\n\tM()\n\t~int | string\n}"
+    ]
+  },
+  {
+    "id": "go2-grouped-spec",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nvar (\n\ta = 1\n\tb = 2\n)\n",
+    "symbol": "b",
+    "definitions": [
+      [
+        "a",
+        "a = 1"
+      ],
+      [
+        "b",
+        "b = 2"
+      ]
+    ],
+    "binds": [
+      "b = 2"
+    ]
+  },
+  {
+    "id": "go2-switch-one-line",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f(x int) { switch x { case 1: a() } }\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f(x int) { switch x { case 1: a() } }"
+      ]
+    ],
+    "binds": [
+      "func f(x int) { switch x { case 1: a() } }"
+    ]
+  },
+  {
+    "id": "go2-label-at-end",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() {\n\tgoto L\nL:\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() {\n\tgoto L\nL:\n}"
+      ]
+    ],
+    "binds": [
+      "func f() {\n\tgoto L\nL:\n}"
+    ]
+  },
+  {
+    "id": "go2-empty-statement",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();; }\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() { a();; }"
+      ]
+    ],
+    "binds": [
+      "func f() { a();; }"
+    ]
+  },
+  {
+    "id": "go2-whole-imports",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nimport (\n\t\"a\"\n\t\"b\"\n)\n",
+    "definitions": []
+  },
+  {
+    "id": "go2-whole-no-newline",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc F() {}",
+    "definitions": [
+      [
+        "F",
+        "func F() {}"
+      ]
+    ]
+  },
+  {
+    "id": "go2-empty-statement-between",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();; b() }\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() { a();; b() }"
+      ]
+    ],
+    "binds": [
+      "func f() { a();; b() }"
+    ]
+  },
+  {
+    "id": "go2-empty-statements",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc f() { a();;; b() }\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() { a();;; b() }"
+      ]
+    ],
+    "binds": [
+      "func f() { a();;; b() }"
+    ]
+  },
+  {
+    "id": "go2-new-with-call",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nimport \"example.com/exit\"\n\nfunc f() *exit.Code {\n\treturn new(exit.ExitCode())\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "func f() *exit.Code {\n\treturn new(exit.ExitCode())\n}"
+      ]
+    ],
+    "binds": [
+      "func f() *exit.Code {\n\treturn new(exit.ExitCode())\n}"
+    ]
+  },
+  {
+    "id": "go2-new-with-literal",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nvar x = new(T{A: 1})\n",
+    "symbol": "x",
+    "definitions": [
+      [
+        "x",
+        "var x = new(T{A: 1})"
+      ]
+    ],
+    "binds": [
+      "var x = new(T{A: 1})"
+    ]
+  },
+  {
+    "id": "go2-new-with-expression-beside-make",
+    "requirements": [
+      "Annex A",
+      "OSTF-164"
+    ],
+    "path": "p.go",
+    "source": "package p\n\nfunc g(n int) *[]int {\n\ts := make([]int, n)\n\treturn new(append(s, n))\n}\n",
+    "symbol": "g",
+    "definitions": [
+      [
+        "g",
+        "func g(n int) *[]int {\n\ts := make([]int, n)\n\treturn new(append(s, n))\n}"
+      ]
+    ],
+    "binds": [
+      "func g(n int) *[]int {\n\ts := make([]int, n)\n\treturn new(append(s, n))\n}"
+    ]
+  }
+]

@@ -8,7 +8,6 @@
       "type": "need",
       "status": "accepted",
       "riskRelevant": false,
-      "fingerprint": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs",
       "text": "Customers get refunds quickly without the business losing money to abuse."
     },
     {
@@ -16,7 +15,6 @@
       "type": "requirement",
       "status": "accepted",
       "riskRelevant": true,
-      "fingerprint": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
       "title": "Refund limit",
       "text": "A refund must not exceed the original order, and refunds above the daily limit for an account need a second approval."
     },
@@ -25,7 +23,6 @@
       "type": "risk",
       "status": "accepted",
       "riskRelevant": false,
-      "fingerprint": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0",
       "text": "A compromised account or a mistaken operator drains funds through refunds."
     }
   ],
@@ -35,22 +32,14 @@
       "type": "controls",
       "target": "RISK-REFUND-ABUSE",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
-        "target": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
-      }
+      "origin": "declared"
     },
     {
       "source": "R-REFUND-LIMIT",
       "type": "refines",
       "target": "N-REFUNDS",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
-        "target": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs"
-      }
+      "origin": "declared"
     },
     {
       "source": "refund.go#CheckRefundLimit",
@@ -58,11 +47,6 @@
       "target": "R-REFUND-LIMIT",
       "attributes": {},
       "origin": "declared",
-      "fingerprints": {
-        "source.sig": "go2:Sk2hoKJ7XFGtX9rBO9ArLtwl3XP4w3ZIm0-_Jecg1Yo",
-        "source.body": "go2:QDiQOM8Mdapw64qINhfEceHRv5rJqWGmQDeok1bNN5M",
-        "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      },
       "corroboration": "corroborated"
     },
     {
@@ -70,12 +54,7 @@
       "type": "verifies",
       "target": "R-REFUND-LIMIT",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source.sig": "go2:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
-        "source.body": "go2:rckr3heqlM8R-vIAGLat7g_d9XKCA137w9VTa57Y5qM",
-        "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      }
+      "origin": "declared"
     }
   ]
 }

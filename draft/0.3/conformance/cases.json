@@ -478,7 +478,7 @@
   {
    "id": "parse-error-when-anchored",
    "requirements": [
-    "OSTF-141"
+    "OSTF-132"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go]\n",
@@ -496,19 +496,13 @@
       {},
       "declared"
      ]
-    ],
-    "linkFingerprints": {
-     "a.go implements R-A": {
-      "source.sig": "lf1:FX48xZfQv_PFe3tTSWxME2uT357MigRuG6tXWN3vpRk",
-      "target": "f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo"
-     }
-    }
+    ]
    }
   },
   {
    "id": "parse-error-not-when-unneeded",
    "requirements": [
-    "OSTF-141"
+    "OSTF-132"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n",
@@ -579,9 +573,6 @@
     "items": [
      "R"
     ],
-    "itemFingerprints": {
-     "R": "f1:WZPzG071WjzsPnYjiUM8p0AaMEBAdHSMpRnqalHDsI4"
-    },
     "diagnosticFiles": {
      "DUPLICATE_ID": [
       "z.yaml"
@@ -742,7 +733,7 @@
   {
    "id": "invalid-go-escape-is-a-parse-error",
    "requirements": [
-    "OSTF-141",
+    "OSTF-132",
     "Annex A"
    ],
    "files": {
@@ -761,13 +752,7 @@
       {},
       "declared"
      ]
-    ],
-    "linkFingerprints": {
-     "a.go implements R-A": {
-      "source.sig": "lf1:Y2spX_mlHnTdlHpEbKTcfvuwooYHA9cjr1_bdZUCmEA",
-      "target": "f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE"
-     }
-    }
+    ]
    }
   },
   {
@@ -798,7 +783,7 @@
   {
    "id": "parse-error-disabled-tags",
    "requirements": [
-    "OSTF-141"
+    "OSTF-132"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\ntags: false\nitems: []\n",
@@ -889,56 +874,6 @@
      "R-CHILD",
      "R-CTRL"
     ]
-   }
-  },
-  {
-   "id": "formatting-and-comments",
-   "requirements": [
-    "OSTF-141",
-    "Annex A.4"
-   ],
-   "from02": "formatting-and-comments",
-   "files": {
-    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-ADD\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
-    "math.go": "package sample\n// docs\nfunc Add(a,b int)int { /* hi */ return a + b // end\n}\n",
-    "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n"
-   },
-   "expect": {
-    "codes": [],
-    "links": [
-     [
-      "math.go#Add",
-      "implements",
-      "R-ADD",
-      {},
-      "declared"
-     ],
-     [
-      "math_test.go#TestAdd",
-      "verifies",
-      "R-ADD",
-      {},
-      "declared"
-     ]
-    ],
-    "items": [
-     "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
    }
   },
   {
@@ -1098,20 +1033,7 @@
     ],
     "items": [
      "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    },
    "note": "0.2 gave a broken link no fingerprints; C.2 keeps the target's, which can still be computed."
   },
@@ -1148,20 +1070,7 @@
     ],
     "items": [
      "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    },
    "note": "0.2 gave a broken link no fingerprints; C.2 keeps the target's, which can still be computed."
   },
@@ -1207,27 +1116,7 @@
     "items": [
      "R-ADD",
      "RISK-X"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-     "RISK-X": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc"
-    },
-    "linkFingerprints": {
-     "R-ADD controls RISK-X": {
-      "target": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc",
-      "source": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-     },
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1284,32 +1173,7 @@
      "R-ADD",
      "RC-PARENT",
      "RISK-X"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-     "RC-PARENT": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc",
-     "RISK-X": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc"
-    },
-    "linkFingerprints": {
-     "R-ADD refines RC-PARENT": {
-      "target": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc",
-      "source": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-     },
-     "RC-PARENT controls RISK-X": {
-      "target": "f1:trVEwFfAutusliOZFsqEhmdAbGI4exb9kvkk6GpjUuc",
-      "source": "f1:uXeF9Nz9AVuBivSynOg2pGtTpwE4j2r9EVlxvJNu9qc"
-     },
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1344,22 +1208,7 @@
       {},
       "declared"
      ]
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1396,22 +1245,7 @@
     ],
     "items": [
      "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1450,22 +1284,7 @@
     ],
     "items": [
      "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1544,8 +1363,7 @@
    "id": "x-keys-ignored",
    "requirements": [
     "OSTF-100",
-    "OSTF-104",
-    "OSTF-140"
+    "OSTF-104"
    ],
    "from02": "opaque-extension-reserved",
    "note": "0.2 also accepted a reserved root key external; 0.3 has no reserved keys below 1.0, so it was dropped, and an x- key on the item checks that f1 ignores it.",
@@ -1572,24 +1390,9 @@
       "declared"
      ]
     ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
     "items": [
      "R-ADD"
-    ],
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1597,16 +1400,15 @@
    "requirements": [
     "OSTF-101",
     "OSTF-114",
-    "OSTF-121",
-    "OSTF-140"
+    "OSTF-121"
    ],
    "from02": "custom-meaning-profile",
-   "note": "extends and the bool kind were removed; boolean replaces bool and the fingerprint is unchanged.",
+   "note": "extends and the bool kind were removed; boolean replaces bool.",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-ADD\n    attributes: {limit: 4.5, enabled: true, label: yes}\n    text: Add two values.\n    code: [math.go#Add]\n    tests: [math_test.go#TestAdd]\n",
     "math.go": "package sample\nfunc Add(a, b int) int { return a-b }\n",
     "math_test.go": "package sample\nimport \"testing\"\nfunc TestAdd(t *testing.T) { if Add(1,2)!=3 { t.Fail() } }\n",
-    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number, meaning: true}\n      enabled: {type: boolean, meaning: true}\n      label: {type: string}\n"
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number}\n      enabled: {type: boolean}\n      label: {type: string}\n"
    },
    "expect": {
     "codes": [],
@@ -1626,24 +1428,9 @@
       "declared"
      ]
     ],
-    "itemFingerprints": {
-     "R-ADD": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg"
-    },
     "items": [
      "R-ADD"
-    ],
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:_OUAHZS1UTaWNpAjPS4ckDpW6fhyGXBvRtsbVNhD57c"
-     },
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:URRproHxRbkzO5oZrlvtCOi-CFxD0Er_ElXITIBJTyg",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -1940,10 +1727,7 @@
     "items": [
      "R-ADD"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    }
+    "links": []
    }
   },
   {
@@ -1965,11 +1749,7 @@
      "R-A",
      "R-B"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-A": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-     "R-B": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    }
+    "links": []
    }
   },
   {
@@ -2097,22 +1877,7 @@
     ],
     "items": [
      "R-ADD"
-    ],
-    "itemFingerprints": {
-     "R-ADD": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"
-    },
-    "linkFingerprints": {
-     "math.go#Add implements R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc"
-     },
-     "math_test.go#TestAdd verifies R-ADD role=effectiveness": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -2247,19 +2012,7 @@
       },
       "declared"
      ]
-    ],
-    "linkFingerprints": {
-     "math_test.go#TestAdd verifies R-ADD": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     },
-     "math_test.go#TestAdd verifies R-ADD role=effectiveness": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -2327,14 +2080,7 @@
       },
       "declared"
      ]
-    ],
-    "linkFingerprints": {
-     "math_test.go#TestAdd verifies R-ADD note=reviewed": {
-      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE",
-      "source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg"
-     }
-    }
+    ]
    }
   },
   {
@@ -2354,11 +2100,7 @@
      "R-FIRST",
      "R-SECOND"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-FIRST": "f1:I2fKy8EUmrkzNiRHVWEQp3VxJKSsSf3WDrW3RC2hSKU",
-     "R-SECOND": "f1:yXof7JMmnv8DLCg_jkX0aHil25r9S1Cwyz97P72BSlI"
-    }
+    "links": []
    }
   },
   {
@@ -2426,40 +2168,26 @@
       {},
       "declared"
      ]
-    ],
-    "itemFingerprints": {
-     "R-A": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk",
-     "R-OLD": "f1:1iHkGnA5hb30rnypaBe8Y0l0c6oGi8W6HTxREQCuxS0"
-    },
-    "linkFingerprints": {
-     "R-A refines R-OLD": {
-      "target": "f1:1iHkGnA5hb30rnypaBe8Y0l0c6oGi8W6HTxREQCuxS0",
-      "source": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
-     }
-    }
+    ]
    }
   },
   {
    "id": "attributes-date-list",
    "requirements": [
-    "OSTF-114",
-    "OSTF-140"
+    "OSTF-114"
    ],
    "from02": "attributes-date-list",
-   "note": "The date kind became string; the fingerprint is unchanged.",
+   "note": "The date kind became string.",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-A\n    text: A\n    attributes: {due: \"2026-10-22\", labels: [alpha, beta]}\n",
-    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      due: {type: string, meaning: true}\n      labels: {type: list, meaning: true}\n"
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      due: {type: string}\n      labels: {type: list}\n"
    },
    "expect": {
     "codes": [],
     "items": [
      "R-A"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-A": "f1:u7vIH0EEHxGxOgHE4O6LG6iKxgfsWVtP8tnJ1tVi0KI"
-    }
+    "links": []
    }
   },
   {
@@ -2505,17 +2233,7 @@
     ],
     "items": [
      "R-A"
-    ],
-    "itemFingerprints": {
-     "R-A": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
-    },
-    "linkFingerprints": {
-     "main_test.go#TestRun/child verifies R-A": {
-      "target": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk",
-      "source.sig": "go2:eSTTLKHPHn3v9w-03ckN6C1lT3wuGKLxHfnL76UYNSg",
-      "source.body": "go2:8VfEkdcI6K4iFe3o19VHK2xfabaz4uAyyMuu0L6yNbU"
-     }
-    }
+    ]
    }
   },
   {
@@ -2545,15 +2263,7 @@
     ],
     "items": [
      "R-A"
-    ],
-    "itemFingerprints": {
-     "R-A": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
-    },
-    "linkFingerprints": {
-     "main_test.go#TestMissing/child verifies R-A": {
-      "target": "f1:Y9rOTzD5FNhISeFlKvYB6aeqXpWbC0AWVTO6TxILyrk"
-     }
-    }
+    ]
    },
    "note": "0.2 gave a broken link no fingerprints; C.2 keeps the target's, which can still be computed."
   },
@@ -2573,10 +2283,7 @@
     "items": [
      "R-ONE"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-ONE": "f1:SeIiYvnsKV8v3irSjcwQ-aKDTGvmMai1qcurD2nh-KU"
-    }
+    "links": []
    }
   },
   {
@@ -2794,8 +2501,7 @@
    "requirements": [
     "OSTF-104",
     "OSTF-111",
-    "OSTF-113",
-    "OSTF-140"
+    "OSTF-113"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: \"https://jira.example/browse/{id}\", x-team: payments}\nitems:\n  - id: R-A\n    title: Login\n    external: \"jira:PAY-1\"\n    revision: \"42\"\n"
@@ -2805,10 +2511,7 @@
     "items": [
      "R-A"
     ],
-    "links": [],
-    "itemFingerprints": {
-     "R-A": "f1:W1e_oLdsIuc2dhs43oARnT2QkwhKjszkJz8bEgboPpU"
-    }
+    "links": []
    }
   },
   {
@@ -2831,7 +2534,7 @@
    "id": "tag-in-string-literal-is-not-a-tag",
    "requirements": [
     "OSTF-133",
-    "Annex A.5"
+    "Annex A.4"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R-A, text: A}]\n",
@@ -2846,7 +2549,7 @@
    "id": "req-file-binds-whole-file",
    "requirements": [
     "OSTF-133",
-    "Annex A.5"
+    "Annex A.4"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R-A, text: A}]\n",
@@ -2938,57 +2641,6 @@
     ],
     "items": [],
     "links": []
-   }
-  },
-  {
-   "id": "external-without-text-keeps-meaning-attributes",
-   "requirements": [
-    "OSTF-113",
-    "OSTF-114",
-    "OSTF-140"
-   ],
-   "files": {
-    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nsources: {jira: {}}\nitems:\n  - id: R-A\n    title: Login\n    external: \"jira:PAY-1\"\n    attributes: {priority: high}\n",
-    "p.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      priority: {type: string, meaning: true}\n"
-   },
-   "expect": {
-    "codes": [],
-    "items": [
-     "R-A"
-    ],
-    "links": [],
-    "itemFingerprints": {
-     "R-A": "f1:Vzx2BWZVPeYcfKhPN1iPDmMzMQWx0HuON6uKwO5REUA"
-    }
-   }
-  },
-  {
-   "id": "whole-file-lf1-normalizes-crlf",
-   "requirements": [
-    "OSTF-132",
-    "OSTF-141"
-   ],
-   "files": {
-    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [limits.conf]\n",
-    "limits.conf": "limit: 100\r\nmode: strict\r\n"
-   },
-   "expect": {
-    "codes": [],
-    "links": [
-     [
-      "limits.conf",
-      "implements",
-      "R-A",
-      {},
-      "declared"
-     ]
-    ],
-    "linkFingerprints": {
-     "limits.conf implements R-A": {
-      "source.sig": "lf1:BgX-b-snjblneUk2_HJ0R4wk8L8-8Q2pkaHkyEQ1LpQ",
-      "target": "f1:153H40yd66tx9iOzyfsei7nJF2j2CuHJudWwhNamHdo"
-     }
-    }
    }
   },
   {
@@ -3420,7 +3072,7 @@
   {
    "id": "tag-trailing-comment-binds",
    "requirements": [
-    "Annex A.5",
+    "Annex A.4",
     "OSTF-133"
    ],
    "note": "A comment on a line of a definition binds to it, whether it trails the definition or precedes it on the same line.",
@@ -3460,7 +3112,7 @@
   {
    "id": "tag-trailing-is-not-next-doc",
    "requirements": [
-    "Annex A.5"
+    "Annex A.4"
    ],
    "note": "The comment does not begin its own line, so it is not among the comments directly above G.",
    "files": {
@@ -3483,7 +3135,7 @@
   {
    "id": "tag-group-keyword-unbound",
    "requirements": [
-    "Annex A.5",
+    "Annex A.4",
     "OSTF-133"
    ],
    "files": {
@@ -3516,7 +3168,7 @@
    "id": "tag-multi-name-binds-each",
    "requirements": [
     "Annex A.2",
-    "Annex A.5"
+    "Annex A.4"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
@@ -3693,7 +3345,7 @@
   {
    "id": "tag-crlf-block-comment-binds",
    "requirements": [
-    "Annex A.5"
+    "Annex A.4"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems: [{id: R, text: A.}]\n",
@@ -3715,7 +3367,7 @@
   {
    "id": "tag-line-directive-uses-physical-lines",
    "requirements": [
-    "Annex A.5"
+    "Annex A.4"
    ],
    "note": "Lines are the file's own; a //line directive does not move them.",
    "files": {
@@ -3738,7 +3390,7 @@
   {
    "id": "ts-tags-bind-innermost",
    "requirements": [
-    "Annex K.5",
+    "Annex K.4",
     "OSTF-133"
    ],
    "note": "The tag above the class binds to the class; the tag in the class above the method binds to the method only; text in a string is not a tag.",
@@ -3770,7 +3422,7 @@
    "id": "ts-tags-in-tests-verify",
    "requirements": [
     "Annex K.1",
-    "Annex K.5",
+    "Annex K.4",
     "OSTF-133"
    ],
    "files": {
@@ -3841,7 +3493,7 @@
   {
    "id": "ts-jsx-comment-tag",
    "requirements": [
-    "Annex K.5"
+    "Annex K.4"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n  - id: R-B\n    text: B.\n",
@@ -3863,7 +3515,7 @@
   {
    "id": "ts-req-file",
    "requirements": [
-    "Annex K.5",
+    "Annex K.4",
     "OSTF-133"
    ],
    "files": {
@@ -3886,8 +3538,8 @@
   {
    "id": "ts-parse-error",
    "requirements": [
-    "Annex K.4",
-    "OSTF-141"
+    "Annex K",
+    "OSTF-132"
    ],
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [bad.ts, bad.ts#f]\n",
@@ -3913,19 +3565,13 @@
       {},
       "declared"
      ]
-    ],
-    "linkFingerprints": {
-     "bad.ts implements R-A": {
-      "source.sig": "lf1:gvr2iXcp6l9giwL3YCvMJ0trMbwMArEZ4hR-4GbMUbI",
-      "target": "f1:hSZZvPvtHGuVPa5KHQbNiyWCbB1qiZNEwb860MUv6CE"
-     }
-    }
+    ]
    }
   },
   {
    "id": "py-tags-bind-innermost",
    "requirements": [
-    "Annex L.5",
+    "Annex L.4",
     "OSTF-133"
    ],
    "note": "A docstring is a string, so its @req is not a tag.",
@@ -3957,7 +3603,7 @@
    "id": "py-tests-and-parametrization",
    "requirements": [
     "Annex L.1",
-    "Annex L.5"
+    "Annex L.4"
    ],
    "note": "A parametrization identifier binds only a test function; helper is not one.",
    "files": {
@@ -4090,7 +3736,7 @@
   {
    "id": "ts-no-tag-in-template-literal",
    "requirements": [
-    "Annex K.5",
+    "Annex K.4",
     "OSTF-133"
    ],
    "note": "A comment inside a template literal's substitution is inside the literal, so its @req is not a tag.",
@@ -4107,7 +3753,7 @@
    "id": "ts-tags-count-lines-at-line-feeds",
    "requirements": [
     "OSTF-133",
-    "Annex K.5"
+    "Annex K.4"
    ],
    "note": "Without line feeds the file is one line, which C and C.m both cover; the innermost is C.m.",
    "files": {
@@ -4485,7 +4131,7 @@
    "note": "profile.yaml is profiles/security.yaml byte for byte, which check.py confirms.",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: T-REPLAY\n    type: threat\n    text: An attacker replays a captured payment request.\n    attributes: {stride: [spoofing, tampering], assets: [payments], boundaries: [internet]}\n  - id: C-NONCE\n    type: control\n    text: Each payment request carries a nonce that the server accepts once.\n    controls: [T-REPLAY]\n",
-    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n        meaning: true\n      assets: {type: list, meaning: true}\n      boundaries: {type: list, meaning: true}\n"
+    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n      assets: {type: list}\n      boundaries: {type: list}\n"
    },
    "expect": {
     "codes": [],
@@ -4512,7 +4158,7 @@
    "note": "profile.yaml is profiles/security.yaml byte for byte; a threat without a STRIDE category, or with one outside it, is excluded.",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: T-1\n    type: threat\n    text: An attacker replays a request.\n  - id: T-2\n    type: threat\n    text: An attacker floods the queue.\n    attributes: {stride: [flooding]}\n  - id: R-A\n    text: A.\n",
-    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n        meaning: true\n      assets: {type: list, meaning: true}\n      boundaries: {type: list, meaning: true}\n"
+    "profile.yaml": "# SPDX-License-Identifier: Apache-2.0\n# OSTF security profile, published with draft 0.3 (OSTF-120, OSTF-121). Copy it into a\n# repository and name it in trace.yaml with `profile: <path>`; readers never fetch it.\n# It classifies threats by STRIDE and names the assets and trust boundaries they reach.\nostf: \"0.3\"\ntypes:\n  threat:\n    description: A risk that an adversary causes on purpose.\n    attributes:\n      stride:\n        type: list\n        values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]\n        required: true\n      assets: {type: list}\n      boundaries: {type: list}\n"
    },
    "expect": {
     "codes": [
@@ -5080,6 +4726,25 @@
       "declared"
      ]
     ]
+   }
+  },
+  {
+   "id": "attribute-meaning-rejected",
+   "requirements": [
+    "OSTF-114",
+    "OSTF-121"
+   ],
+   "note": "Revision 0.16: meaning put an attribute into the item fingerprint, which goes, so a profile that declares it is invalid.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number, meaning: true}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": []
    }
   }
  ],
@@ -5994,7 +5659,7 @@
    "id": "impact-whole-file-anchors",
    "requirements": [
     "Annex C.3",
-    "OSTF-141"
+    "OSTF-132"
    ],
    "base": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go]\n    tests: [a_test.go#TestF]\n  - id: R-B\n    text: Do b.\n    code: [spec.txt]\n  - id: R-C\n    text: Do c.\n    code: [b.go#G]\n  - id: R-D\n    text: Do d.\n    code: [crlf.txt]\n",
@@ -6457,7 +6122,7 @@
    "id": "impact-file-stops-parsing",
    "requirements": [
     "Annex C.3",
-    "OSTF-141"
+    "OSTF-132"
    ],
    "base": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: Do a.\n    code: [a.go#F]\n    tests: [a_test.go#TestF]\n",
@@ -6510,7 +6175,7 @@
    "id": "impact-reports-no-parse-error",
    "requirements": [
     "Annex C.3",
-    "OSTF-141"
+    "OSTF-132"
    ],
    "note": "b.go is neither named by an anchor nor tagged, so its parse failure is not PARSE_ERROR; it has no definitions in the evaluated view.",
    "base": {
@@ -6919,7 +6584,7 @@
    "id": "impact-line-break-after-return",
    "requirements": [
     "Annex C.3",
-    "Annex K.4"
+    "Annex K"
    ],
    "note": "A line break after return changes what f returns; under ts1 f had the same body token stream in both views and was not listed.",
    "base": {
@@ -7534,66 +7199,6 @@
    "note": "Revision 0.16: link-state results are gone, so the locations are those of diagnostics in files whose paths need encoding."
   }
  ],
- "projections": [
-  {
-   "id": "string-kept-text-normalized-empty-omitted",
-   "requirements": [
-    "OSTF-140"
-   ],
-   "types": {
-    "requirement": {
-     "attributes": {
-      "s": {
-       "type": "string",
-       "meaning": true
-      },
-      "t": {
-       "type": "text",
-       "meaning": true
-      },
-      "u": {
-       "type": "string",
-       "meaning": true
-      }
-     }
-    }
-   },
-   "item": {
-    "id": "R",
-    "text": "x",
-    "attributes": {
-     "s": "a ",
-     "t": " \t\n",
-     "u": ""
-    }
-   },
-   "canonical": "{\"attributes\":{\"s\":\"a \"},\"text\":\"x\",\"type\":\"requirement\"}"
-  },
-  {
-   "id": "all-empty-attributes-omitted",
-   "requirements": [
-    "OSTF-140"
-   ],
-   "types": {
-    "requirement": {
-     "attributes": {
-      "t": {
-       "type": "text",
-       "meaning": true
-      }
-     }
-    }
-   },
-   "item": {
-    "id": "R",
-    "text": "x",
-    "attributes": {
-     "t": "  "
-    }
-   },
-   "canonical": "{\"text\":\"x\",\"type\":\"requirement\"}"
-  }
- ],
  "schemas": [
   {
    "id": "schema-root-valid",
@@ -7746,8 +7351,7 @@
      "requirement": {
       "attributes": {
        "limit": {
-        "type": "number",
-        "meaning": true
+        "type": "number"
        }
       }
      }
@@ -7805,8 +7409,7 @@
      "requirement": {
       "attributes": {
        "limit": {
-        "type": "number",
-        "meaning": true
+        "type": "number"
        }
       },
       "meaning": [
@@ -7832,8 +7435,7 @@
      "requirement": {
       "attributes": {
        "limit": {
-        "type": "number",
-        "meaning": true
+        "type": "number"
        }
       },
       "x-note": "extra"
@@ -8158,8 +7760,8 @@
  ],
  "notCovered": {
   "OSTF-163": "A claim is a statement, not behavior.",
-  "OSTF-164": "A rule for annex authors; Annex A meets it with its vectors.",
   "RESERVED_KEY_SKIPPED": "Only a reader of wire 1.0 or later skips keys.",
-  "TAGS_NOT_BOUND": "A Consumer code: the cases hold Analyzer expectations, and Consumer expectations (OSTF-160) are not written yet."
+  "TAGS_NOT_BOUND": "A Consumer code: the cases hold Analyzer expectations, and Consumer expectations (OSTF-160) are not written yet.",
+  "OSTF-170": "Versions and the release gate bind publishers; with the fingerprint algorithms gone, no reader behavior tests them."
  }
 }

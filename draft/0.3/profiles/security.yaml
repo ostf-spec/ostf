@@ -11,6 +11,5 @@ types:
         type: list
         values: [spoofing, tampering, repudiation, information-disclosure, denial-of-service, elevation-of-privilege]
         required: true
-        meaning: true
-      assets: {type: list, meaning: true}
-      boundaries: {type: list, meaning: true}
+      assets: {type: list}
+      boundaries: {type: list}

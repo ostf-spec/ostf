@@ -1,0 +1,1189 @@
+[
+  {
+    "id": "ts-function",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "a.ts",
+    "source": "export function add(a: number, b: number): number {\n  return a + b;\n}\n",
+    "symbol": "add",
+    "definitions": [
+      [
+        "add",
+        "export function add(a: number, b: number): number {\n  return a + b;\n}"
+      ]
+    ],
+    "binds": [
+      "export function add(a: number, b: number): number {\n  return a + b;\n}"
+    ]
+  },
+  {
+    "id": "ts-whole-file",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "b.ts",
+    "source": "// header\nconst x = 1;\nexport { x };\n",
+    "definitions": [
+      [
+        "x",
+        "const x = 1;"
+      ]
+    ]
+  },
+  {
+    "id": "ts-overloads",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "o.ts",
+    "source": "function f(a: string): string;\nfunction f(a: number): number;\nfunction f(a: any): any { return a; }\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "function f(a: string): string;"
+      ],
+      [
+        "f",
+        "function f(a: number): number;"
+      ],
+      [
+        "f",
+        "function f(a: any): any { return a; }"
+      ]
+    ],
+    "binds": [
+      "function f(a: string): string;",
+      "function f(a: number): number;",
+      "function f(a: any): any { return a; }"
+    ]
+  },
+  {
+    "id": "ts-class-method",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart.add",
+    "definitions": [
+      [
+        "Cart",
+        "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}"
+      ],
+      [
+        "Cart.add",
+        "add(item: string): void {\n    this.items.push(item);\n  }"
+      ]
+    ],
+    "binds": [
+      "add(item: string): void {\n    this.items.push(item);\n  }"
+    ]
+  },
+  {
+    "id": "ts-member-last-component",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "add",
+    "definitions": [
+      [
+        "Cart",
+        "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}"
+      ],
+      [
+        "Cart.add",
+        "add(item: string): void {\n    this.items.push(item);\n  }"
+      ]
+    ],
+    "binds": [
+      "add(item: string): void {\n    this.items.push(item);\n  }"
+    ]
+  },
+  {
+    "id": "ts-class-decorated",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cart.ts",
+    "source": "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}\n",
+    "symbol": "Cart",
+    "definitions": [
+      [
+        "Cart",
+        "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}"
+      ],
+      [
+        "Cart.add",
+        "add(item: string): void {\n    this.items.push(item);\n  }"
+      ]
+    ],
+    "binds": [
+      "@Injectable()\nexport class Cart {\n  items: string[] = [];\n  add(item: string): void {\n    this.items.push(item);\n  }\n}"
+    ]
+  },
+  {
+    "id": "ts-arrow-const",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "d.ts",
+    "source": "export const double = (n: number) => n * 2;\n",
+    "symbol": "double",
+    "definitions": [
+      [
+        "double",
+        "export const double = (n: number) => n * 2;"
+      ]
+    ],
+    "binds": [
+      "export const double = (n: number) => n * 2;"
+    ]
+  },
+  {
+    "id": "ts-several-declarators",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.ts",
+    "source": "const a = 1, b = { x: 1, };\n",
+    "symbol": "b",
+    "definitions": [
+      [
+        "a",
+        "a = 1"
+      ],
+      [
+        "b",
+        "b = { x: 1, }"
+      ]
+    ],
+    "binds": [
+      "b = { x: 1, }"
+    ]
+  },
+  {
+    "id": "ts-template-regex",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "g.ts",
+    "source": "function greet(name: string) {\n  return `Hello, ${ name /* c */ }!`.replace(/\\s+/g, \" \");\n}\n",
+    "symbol": "greet",
+    "definitions": [
+      [
+        "greet",
+        "function greet(name: string) {\n  return `Hello, ${ name /* c */ }!`.replace(/\\s+/g, \" \");\n}"
+      ]
+    ],
+    "binds": [
+      "function greet(name: string) {\n  return `Hello, ${ name /* c */ }!`.replace(/\\s+/g, \" \");\n}"
+    ]
+  },
+  {
+    "id": "ts-test",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart > adds an item",
+    "definitions": [
+      [
+        "Cart",
+        "describe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});"
+      ],
+      [
+        "Cart > adds an item",
+        "it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });"
+      ]
+    ],
+    "binds": [
+      "it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });"
+    ]
+  },
+  {
+    "id": "ts-suite",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cart.test.ts",
+    "source": "import { describe, it, expect } from \"vitest\";\n\ndescribe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});\n",
+    "symbol": "Cart",
+    "definitions": [
+      [
+        "Cart",
+        "describe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});"
+      ],
+      [
+        "Cart > adds an item",
+        "it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });"
+      ]
+    ],
+    "binds": [
+      "describe(\"Cart\", () => {\n  it(\"adds an item\", () => {\n    expect(1 + 1).toBe(2);\n  });\n});"
+    ]
+  },
+  {
+    "id": "ts-jsx",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "view.tsx",
+    "source": "export function View({ name }: { name: string }) {\n  return (\n    <div className=\"v\">\n      Hello,   {name}\n      <b>!</b>\n      <br />\n    </div>\n  );\n}\n",
+    "symbol": "View",
+    "definitions": [
+      [
+        "View",
+        "export function View({ name }: { name: string }) {\n  return (\n    <div className=\"v\">\n      Hello,   {name}\n      <b>!</b>\n      <br />\n    </div>\n  );\n}"
+      ]
+    ],
+    "binds": [
+      "export function View({ name }: { name: string }) {\n  return (\n    <div className=\"v\">\n      Hello,   {name}\n      <b>!</b>\n      <br />\n    </div>\n  );\n}"
+    ]
+  },
+  {
+    "id": "ts-generics",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "t.ts",
+    "source": "type Pair<T> = Map<string, Array<T>>;\n",
+    "symbol": "Pair",
+    "definitions": [
+      [
+        "Pair",
+        "type Pair<T> = Map<string, Array<T>>;"
+      ]
+    ],
+    "binds": [
+      "type Pair<T> = Map<string, Array<T>>;"
+    ]
+  },
+  {
+    "id": "ts-namespace-member",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.ts",
+    "source": "export namespace Geo {\n  export function area(r: number) { return 3.14 * r * r; }\n}\n",
+    "symbol": "Geo.area",
+    "definitions": [
+      [
+        "Geo",
+        "export namespace Geo {\n  export function area(r: number) { return 3.14 * r * r; }\n}"
+      ],
+      [
+        "Geo.area",
+        "export function area(r: number) { return 3.14 * r * r; }"
+      ]
+    ],
+    "binds": [
+      "export function area(r: number) { return 3.14 * r * r; }"
+    ]
+  },
+  {
+    "id": "ts-exports-assignment",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "lib.js",
+    "source": "exports.send = function (msg) { return msg; };\n",
+    "symbol": "exports.send",
+    "definitions": [
+      [
+        "exports.send",
+        "exports.send = function (msg) { return msg; };"
+      ]
+    ],
+    "binds": [
+      "exports.send = function (msg) { return msg; };"
+    ]
+  },
+  {
+    "id": "ts-trailing-commas",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "c.ts",
+    "source": "function f(a, b,) {\n  return [a, b,];\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "function f(a, b,) {\n  return [a, b,];\n}"
+      ]
+    ],
+    "binds": [
+      "function f(a, b,) {\n  return [a, b,];\n}"
+    ]
+  },
+  {
+    "id": "ts-unicode",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "u.ts",
+    "source": "const café = \"naïve\";\n",
+    "symbol": "café",
+    "definitions": [
+      [
+        "café",
+        "const café = \"naïve\";"
+      ]
+    ],
+    "binds": [
+      "const café = \"naïve\";"
+    ]
+  },
+  {
+    "id": "ts-hashbang-whole-file",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "cli.js",
+    "source": "#!/usr/bin/env node\nconsole.log(\"hi\")\n",
+    "definitions": []
+  },
+  {
+    "id": "ts-getter-setter",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "gs.ts",
+    "source": "class C {\n  get x() { return 1; }\n  set x(v) {}\n}\n",
+    "symbol": "C.x",
+    "definitions": [
+      [
+        "C",
+        "class C {\n  get x() { return 1; }\n  set x(v) {}\n}"
+      ],
+      [
+        "C.x",
+        "get x() { return 1; }"
+      ],
+      [
+        "C.x",
+        "set x(v) {}"
+      ]
+    ],
+    "binds": [
+      "get x() { return 1; }",
+      "set x(v) {}"
+    ]
+  },
+  {
+    "id": "ts-decorated-method",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "s.ts",
+    "source": "class S {\n  @log()\n  run() {}\n}\n",
+    "symbol": "S.run",
+    "definitions": [
+      [
+        "S",
+        "class S {\n  @log()\n  run() {}\n}"
+      ],
+      [
+        "S.run",
+        "@log()\n  run() {}"
+      ]
+    ],
+    "binds": [
+      "@log()\n  run() {}"
+    ]
+  },
+  {
+    "id": "ts-template-literal-type",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "t2.ts",
+    "source": "type Route<T extends string> = `/api/${T}`;\n",
+    "symbol": "Route",
+    "definitions": [
+      [
+        "Route",
+        "type Route<T extends string> = `/api/${T}`;"
+      ]
+    ],
+    "binds": [
+      "type Route<T extends string> = `/api/${T}`;"
+    ]
+  },
+  {
+    "id": "ts-jsx-character-reference",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "p.tsx",
+    "source": "const V = <p>a&nbsp;b</p>;\n",
+    "symbol": "V",
+    "definitions": [
+      [
+        "V",
+        "const V = <p>a&nbsp;b</p>;"
+      ]
+    ],
+    "binds": [
+      "const V = <p>a&nbsp;b</p>;"
+    ]
+  },
+  {
+    "id": "ts-parenthesized-member-assignment",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "m.js",
+    "source": "exports.send = (() => 1);\n",
+    "symbol": "send",
+    "definitions": [
+      [
+        "exports.send",
+        "exports.send = (() => 1);"
+      ]
+    ],
+    "binds": [
+      "exports.send = (() => 1);"
+    ]
+  },
+  {
+    "id": "ts-destructuring",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "d2.ts",
+    "source": "const { x, y: z, ...rest } = obj;\n",
+    "symbol": "z",
+    "definitions": [
+      [
+        "x",
+        "const { x, y: z, ...rest } = obj;"
+      ],
+      [
+        "z",
+        "const { x, y: z, ...rest } = obj;"
+      ],
+      [
+        "rest",
+        "const { x, y: z, ...rest } = obj;"
+      ]
+    ],
+    "binds": [
+      "const { x, y: z, ...rest } = obj;"
+    ]
+  },
+  {
+    "id": "ts-export-declare",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e2.ts",
+    "source": "export declare function f(): void;\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "export declare function f(): void;"
+      ]
+    ],
+    "binds": [
+      "export declare function f(): void;"
+    ]
+  },
+  {
+    "id": "ts-comment-between-test-arguments",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "a.test.ts",
+    "source": "test(\"works\", /* why */ () => {\n  run();\n});\n",
+    "symbol": "works",
+    "definitions": [
+      [
+        "works",
+        "test(\"works\", /* why */ () => {\n  run();\n});"
+      ]
+    ],
+    "binds": [
+      "test(\"works\", /* why */ () => {\n  run();\n});"
+    ]
+  },
+  {
+    "id": "ts-comment-after-decorator",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "c2.ts",
+    "source": "class C {\n  @d()\n  /* note */\n  m() {}\n}\n",
+    "symbol": "C.m",
+    "definitions": [
+      [
+        "C",
+        "class C {\n  @d()\n  /* note */\n  m() {}\n}"
+      ],
+      [
+        "C.m",
+        "@d()\n  /* note */\n  m() {}"
+      ]
+    ],
+    "binds": [
+      "@d()\n  /* note */\n  m() {}"
+    ]
+  },
+  {
+    "id": "ts-interface",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "i.ts",
+    "source": "export interface Item { id: string; qty?: number }\n",
+    "symbol": "Item",
+    "definitions": [
+      [
+        "Item",
+        "export interface Item { id: string; qty?: number }"
+      ]
+    ],
+    "binds": [
+      "export interface Item { id: string; qty?: number }"
+    ]
+  },
+  {
+    "id": "ts2-return-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "r.js",
+    "source": "function f() {\n  return\n  1\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "function f() {\n  return\n  1\n}"
+      ]
+    ],
+    "binds": [
+      "function f() {\n  return\n  1\n}"
+    ]
+  },
+  {
+    "id": "ts2-return-same-line",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "r.js",
+    "source": "function f() {\n  return 1\n}\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "function f() {\n  return 1\n}"
+      ]
+    ],
+    "binds": [
+      "function f() {\n  return 1\n}"
+    ]
+  },
+  {
+    "id": "ts2-postfix-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "p.js",
+    "source": "function g(a, b) {\n  a\n  ++b\n}\n",
+    "symbol": "g",
+    "definitions": [
+      [
+        "g",
+        "function g(a, b) {\n  a\n  ++b\n}"
+      ]
+    ],
+    "binds": [
+      "function g(a, b) {\n  a\n  ++b\n}"
+    ]
+  },
+  {
+    "id": "ts2-postfix-same-line",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "p.js",
+    "source": "function g(a, b) {\n  a++\n  b\n}\n",
+    "symbol": "g",
+    "definitions": [
+      [
+        "g",
+        "function g(a, b) {\n  a++\n  b\n}"
+      ]
+    ],
+    "binds": [
+      "function g(a, b) {\n  a++\n  b\n}"
+    ]
+  },
+  {
+    "id": "ts2-async-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "a.js",
+    "source": "async\nfunction f() {}\n",
+    "definitions": [
+      [
+        "f",
+        "function f() {}"
+      ]
+    ]
+  },
+  {
+    "id": "ts2-async-function",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "a.js",
+    "source": "async function f() {}\n",
+    "definitions": [
+      [
+        "f",
+        "async function f() {}"
+      ]
+    ]
+  },
+  {
+    "id": "ts2-break-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "l.js",
+    "source": "outer: for (;;) {\n  break\n  outer\n}\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-break-label",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "l.js",
+    "source": "outer: for (;;) {\n  break outer\n}\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-not-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.ts",
+    "source": "x\n!y\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-non-null",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.ts",
+    "source": "x!\ny\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-type-member-line-break",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "m.ts",
+    "source": "type T = { a: B\n[C] }\n",
+    "symbol": "T",
+    "definitions": [
+      [
+        "T",
+        "type T = { a: B\n[C] }"
+      ]
+    ],
+    "binds": [
+      "type T = { a: B\n[C] }"
+    ]
+  },
+  {
+    "id": "ts2-indexed-access-type",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "m.ts",
+    "source": "type T = { a: B[C] }\n",
+    "symbol": "T",
+    "definitions": [
+      [
+        "T",
+        "type T = { a: B[C] }"
+      ]
+    ],
+    "binds": [
+      "type T = { a: B[C] }"
+    ]
+  },
+  {
+    "id": "ts2-type-members-lines",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "i.ts",
+    "source": "interface I {\n  a: string\n  b(): void\n}\n",
+    "symbol": "I",
+    "definitions": [
+      [
+        "I",
+        "interface I {\n  a: string\n  b(): void\n}"
+      ]
+    ],
+    "binds": [
+      "interface I {\n  a: string\n  b(): void\n}"
+    ]
+  },
+  {
+    "id": "ts2-type-members-commas",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "i.ts",
+    "source": "interface I { a: string, b(): void, }\n",
+    "symbol": "I",
+    "definitions": [
+      [
+        "I",
+        "interface I { a: string, b(): void, }"
+      ]
+    ],
+    "binds": [
+      "interface I { a: string, b(): void, }"
+    ]
+  },
+  {
+    "id": "ts2-type-members-semicolons",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "i.ts",
+    "source": "interface I { a: string; b(): void }\n",
+    "symbol": "I",
+    "definitions": [
+      [
+        "I",
+        "interface I { a: string; b(): void }"
+      ]
+    ],
+    "binds": [
+      "interface I { a: string; b(): void }"
+    ]
+  },
+  {
+    "id": "ts2-class-fields",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  a = 1\n  b = () => 2\n}\n",
+    "symbol": "K",
+    "definitions": [
+      [
+        "K",
+        "class K {\n  a = 1\n  b = () => 2\n}"
+      ],
+      [
+        "K.b",
+        "b = () => 2"
+      ]
+    ],
+    "binds": [
+      "class K {\n  a = 1\n  b = () => 2\n}"
+    ]
+  },
+  {
+    "id": "ts2-class-field-member",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  a = 1\n  b = () => 2\n}\n",
+    "symbol": "K.b",
+    "definitions": [
+      [
+        "K",
+        "class K {\n  a = 1\n  b = () => 2\n}"
+      ],
+      [
+        "K.b",
+        "b = () => 2"
+      ]
+    ],
+    "binds": [
+      "b = () => 2"
+    ]
+  },
+  {
+    "id": "ts2-export-default-function",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "x.js",
+    "source": "export default function () {}\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-export-arrow",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "x.js",
+    "source": "export const f = () => 1\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "export const f = () => 1"
+      ]
+    ],
+    "binds": [
+      "export const f = () => 1"
+    ]
+  },
+  {
+    "id": "ts2-do-while",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "w.js",
+    "source": "do x(); while (y) z()\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-no-insertion",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "c.js",
+    "source": "const x = a\n(b)\n",
+    "symbol": "x",
+    "definitions": [
+      [
+        "x",
+        "const x = a\n(b)"
+      ]
+    ],
+    "binds": [
+      "const x = a\n(b)"
+    ]
+  },
+  {
+    "id": "ts2-several-declarators",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.ts",
+    "source": "const a = 1, b = { x: 1, }\n",
+    "symbol": "b",
+    "definitions": [
+      [
+        "a",
+        "a = 1"
+      ],
+      [
+        "b",
+        "b = { x: 1, }"
+      ]
+    ],
+    "binds": [
+      "b = { x: 1, }"
+    ]
+  },
+  {
+    "id": "ts2-ambient-module",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "d.ts",
+    "source": "declare module \"x\"\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-ambient-module-semicolon",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "d.ts",
+    "source": "declare module \"x\";\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-elision",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.js",
+    "source": "const a = [,]\n",
+    "symbol": "a",
+    "definitions": [
+      [
+        "a",
+        "const a = [,]"
+      ]
+    ],
+    "binds": [
+      "const a = [,]"
+    ]
+  },
+  {
+    "id": "ts2-empty-array",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.js",
+    "source": "const a = []\n",
+    "symbol": "a",
+    "definitions": [
+      [
+        "a",
+        "const a = []"
+      ]
+    ],
+    "binds": [
+      "const a = []"
+    ]
+  },
+  {
+    "id": "ts2-elision-pattern",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.js",
+    "source": "[,] = it\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-trailing-elision",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.js",
+    "source": "const a = [1,,]\n",
+    "symbol": "a",
+    "definitions": [
+      [
+        "a",
+        "const a = [1,,]"
+      ]
+    ],
+    "binds": [
+      "const a = [1,,]"
+    ]
+  },
+  {
+    "id": "ts2-trailing-comma-array",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "e.js",
+    "source": "const a = [1,]\n",
+    "symbol": "a",
+    "definitions": [
+      [
+        "a",
+        "const a = [1,]"
+      ]
+    ],
+    "binds": [
+      "const a = [1,]"
+    ]
+  },
+  {
+    "id": "ts2-if-else",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "f.js",
+    "source": "if (a) b\nelse c\n",
+    "definitions": []
+  },
+  {
+    "id": "ts2-test-without-semicolons",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "s.test.ts",
+    "source": "test(\"works\", () => {\n  run()\n})\n",
+    "symbol": "works",
+    "definitions": [
+      [
+        "works",
+        "test(\"works\", () => {\n  run()\n})"
+      ]
+    ],
+    "binds": [
+      "test(\"works\", () => {\n  run()\n})"
+    ]
+  },
+  {
+    "id": "ts2-async-generator-method",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "k.ts",
+    "source": "class K {\n  static async *d() { yield 1 }\n}\n",
+    "symbol": "K.d",
+    "definitions": [
+      [
+        "K",
+        "class K {\n  static async *d() { yield 1 }\n}"
+      ],
+      [
+        "K.d",
+        "static async *d() { yield 1 }"
+      ]
+    ],
+    "binds": [
+      "static async *d() { yield 1 }"
+    ]
+  },
+  {
+    "id": "ts2-numeric-separators",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.js",
+    "source": "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0\n",
+    "symbol": "n",
+    "definitions": [
+      [
+        "n",
+        "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0"
+      ]
+    ],
+    "binds": [
+      "const n = 1_000_000n + 0b1_0n + 0xf_f + 1_0.5e1_0"
+    ]
+  },
+  {
+    "id": "ts2-separator-after-prefix",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.js",
+    "source": "const n = 0x_ff;\n",
+    "parses": false
+  },
+  {
+    "id": "ts2-separator-after-zero",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.js",
+    "source": "const n = 0_1;\n",
+    "parses": false
+  },
+  {
+    "id": "ts2-double-separator",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "n.js",
+    "source": "const n = 1__0;\n",
+    "parses": false
+  },
+  {
+    "id": "ts2-variance-annotation",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "v.ts",
+    "source": "interface I<in out T> { x: T }\n",
+    "parses": false
+  },
+  {
+    "id": "ts2-export-type-star",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "x.ts",
+    "source": "export type * from \"x\";\n",
+    "parses": false
+  },
+  {
+    "id": "ts2-static-accessor",
+    "requirements": [
+      "Annex K",
+      "OSTF-164"
+    ],
+    "path": "a.ts",
+    "source": "class A { static accessor y = 2 }\n",
+    "parses": false
+  }
+]

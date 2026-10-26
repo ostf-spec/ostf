@@ -6,43 +6,37 @@
       "id": "N-REFUNDS",
       "type": "need",
       "status": "accepted",
-      "riskRelevant": false,
-      "fingerprint": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs"
+      "riskRelevant": false
     },
     {
       "id": "PAY-123",
       "type": "requirement",
       "status": "accepted",
-      "riskRelevant": false,
-      "fingerprint": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
+      "riskRelevant": false
     },
     {
       "id": "R-DATA-AT-REST",
       "type": "requirement",
       "status": "accepted",
-      "riskRelevant": false,
-      "fingerprint": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
+      "riskRelevant": false
     },
     {
       "id": "R-REFUND-LIMIT",
       "type": "requirement",
       "status": "accepted",
-      "riskRelevant": true,
-      "fingerprint": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
+      "riskRelevant": true
     },
     {
       "id": "RISK-REFUND-ABUSE",
       "type": "risk",
       "status": "accepted",
-      "riskRelevant": false,
-      "fingerprint": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
+      "riskRelevant": false
     },
     {
       "id": "V-ENCRYPTION-REVIEW",
       "type": "verification",
       "status": "accepted",
-      "riskRelevant": false,
-      "fingerprint": "f1:gzikKGMTSX3Ncx82gUYdKsELgCJY-kS-AgUbwH4nelo"
+      "riskRelevant": false
     }
   ],
   "links": [
@@ -51,33 +45,21 @@
       "type": "controls",
       "target": "RISK-REFUND-ABUSE",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
-        "target": "f1:CMOZWk-aYAZf3Z3NxwZMtr-7racFErEnscP9s1pkQI0"
-      }
+      "origin": "declared"
     },
     {
       "source": "R-REFUND-LIMIT",
       "type": "refines",
       "target": "N-REFUNDS",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM",
-        "target": "f1:M_LHXVi--0JX2y2Nwm9ckzU7dFKcrrh9IUg_xk9jNhs"
-      }
+      "origin": "declared"
     },
     {
       "source": "V-ENCRYPTION-REVIEW",
       "type": "verifies",
       "target": "R-DATA-AT-REST",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source": "f1:gzikKGMTSX3Ncx82gUYdKsELgCJY-kS-AgUbwH4nelo",
-        "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
-      }
+      "origin": "declared"
     },
     {
       "source": "charge.go#Service.Charge",
@@ -85,11 +67,6 @@
       "target": "PAY-123",
       "attributes": {},
       "origin": "tagged",
-      "fingerprints": {
-        "source.sig": "go2:yldS4_vemVDMKn7G-adDXben29GTlgflD-sWIKU__pw",
-        "source.body": "go2:Jw2w-95r5lgsRFHMnsxh3Fv3CpRUaBwuMtEY37USaM0",
-        "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
-      },
       "corroboration": "corroborated"
     },
     {
@@ -97,12 +74,7 @@
       "type": "verifies",
       "target": "PAY-123",
       "attributes": {},
-      "origin": "tagged",
-      "fingerprints": {
-        "source.sig": "go2:LyhfB8K1FBf43pc6pU25kOZY_ogDsaRsa5QpyPKEXl0",
-        "source.body": "go2:DMGD_AqBImkmXDZz9gjG4l7bMZhMaHU7fwl4jhEbUBg",
-        "target": "f1:IE3jl7KQqb0r4xVcU7kmXD7N2Xt7nAm92vJzI2WlJnw"
-      }
+      "origin": "tagged"
     },
     {
       "source": "deploy/database.tf",
@@ -110,10 +82,6 @@
       "target": "R-DATA-AT-REST",
       "attributes": {},
       "origin": "declared",
-      "fingerprints": {
-        "source.sig": "lf1:tG3FA3jnS89z9QX07SrkOGGysS02vzQfu_3ZPoiDqNI",
-        "target": "f1:LkcfcbkkCMiWwJ-tDnkKfmWvZi2vT2BETOO9g-Tuhac"
-      },
       "corroboration": "unobserved"
     },
     {
@@ -122,11 +90,6 @@
       "target": "R-REFUND-LIMIT",
       "attributes": {},
       "origin": "declared",
-      "fingerprints": {
-        "source.sig": "go2:Sk2hoKJ7XFGtX9rBO9ArLtwl3XP4w3ZIm0-_Jecg1Yo",
-        "source.body": "go2:QDiQOM8Mdapw64qINhfEceHRv5rJqWGmQDeok1bNN5M",
-        "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      },
       "corroboration": "corroborated"
     },
     {
@@ -134,12 +97,7 @@
       "type": "verifies",
       "target": "R-REFUND-LIMIT",
       "attributes": {},
-      "origin": "declared",
-      "fingerprints": {
-        "source.sig": "go2:T6_7i5BfiJXiOqmQxkUTeZUniaLDWAyFRrX93Ohv8cY",
-        "source.body": "go2:rckr3heqlM8R-vIAGLat7g_d9XKCA137w9VTa57Y5qM",
-        "target": "f1:lejKGs-l-EPUSqtGnPtufmG2THy78VfgvmzHZsg-JXM"
-      }
+      "origin": "declared"
     }
   ]
 }

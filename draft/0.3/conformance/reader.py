@@ -13,11 +13,8 @@ from __future__ import annotations
 
 import argparse
 import ast
-import base64
-import bisect
 import copy
 import difflib
-import hashlib
 import io
 import json
 import math
@@ -30,7 +27,6 @@ import tokenize
 import unicodedata
 import urllib.parse
 
-import rfc8785
 import yaml
 from tree_sitter import Language, Parser
 import tree_sitter_go
@@ -71,8 +67,6 @@ SEVERITY = {
 OWN_PREFIX = "ostf-reader."
 UNLINKED = OWN_PREFIX + "UNLINKED"
 SEVERITY[UNLINKED] = "info"
-LITERALS = {"interpreted_string_literal", "raw_string_literal", "rune_literal", "int_literal",
-            "float_literal", "imaginary_literal"}
 GO = Language(tree_sitter_go.language())
 TS = Language(tree_sitter_typescript.language_typescript())
 TSX = Language(tree_sitter_typescript.language_tsx())
@@ -145,11 +139,7 @@ def parse_yaml(data):
     return documents[0]
 
 
-# --- hashes (OSTF-140, OSTF-141, Annex A) -----------------------------------
-
-def fingerprint(algorithm, data):
-    return algorithm + ":" + base64.urlsafe_b64encode(hashlib.sha256(data).digest()).decode().rstrip("=")
-
+# --- spans (Annexes A, K and L) --------------------------------------------
 
 def _span_text(source, start, end):
     """The text of a definition's span, compared after CRLF becomes LF (Annex C.3, Annex I.3)."""
@@ -158,104 +148,6 @@ def _span_text(source, start, end):
 
 def normalize_text(text):
     return "\n".join(line.rstrip(" \t\r") for line in text.replace("\r\n", "\n").split("\n")).rstrip("\n")
-
-
-def item_projection(item, types):
-    fields = {"type": item.get("type", "requirement")}
-    for key in ("title", "text"):
-        value = normalize_text(item.get(key, ""))
-        if value:
-            fields[key] = value
-    attributes = {}
-    values = item.get("attributes", {})
-    for name, spec in types.get(fields["type"], {}).get("attributes", {}).items():
-        if name not in values or not spec.get("meaning"):
-            continue
-        value = values[name]
-        if spec.get("type") == "text":
-            value = normalize_text(value)
-        if value != "":
-            attributes[name] = value
-    if attributes:
-        fields["attributes"] = attributes
-    return rfc8785.dumps(fields)
-
-
-# A.4 (go2): the lists whose elements the grammar ends with ;, and the declarations whose
-# specifications are such elements when grouped in parentheses.
-GO_LISTS = {"source_file", "statement_list", "import_spec_list", "var_spec_list", "field_declaration_list", "interface_type"}
-GO_GROUPS = {"const_declaration", "type_declaration"}
-
-
-def _go_element(n):
-    """A.4 (go2): whether n is a statement, declaration, specification, field or interface element
-    that the grammar ends with ;."""
-    if not n.is_named or n.type == "comment" or n.parent is None:
-        return False
-    if n.parent.type in GO_LISTS:
-        return True
-    return n.parent.type in GO_GROUPS and any(c.type == "(" for c in n.parent.children)
-
-
-def _go_omitted(root):
-    """A.4 (go2): the (start, end) of every element whose ; the source omits, at a line end or
-    before a closing bracket: neither its last token nor the token after it is a written ;."""
-    tokens, elements, stack = [], [], [root]
-    while stack:
-        n = stack.pop()
-        if n.type == "comment":
-            continue
-        if _go_element(n):
-            elements.append(n)
-        if n.type in LITERALS or not n.children:
-            tokens.append((n.start_byte, n.type))
-            continue
-        stack.extend(reversed(n.children))
-    starts = [t[0] for t in tokens]
-    omitted = []
-    for n in elements:
-        after = bisect.bisect_left(starts, n.end_byte)
-        written = (after > 0 and tokens[after - 1][1] == ";" and tokens[after - 1][0] >= n.start_byte) or \
-            (after < len(tokens) and tokens[after][1] == ";")
-        if not written:
-            omitted.append((n.start_byte, n.end_byte))
-    return sorted(omitted, key=lambda span: span[1])
-
-
-def _insert_omitted(tokens, ends, omitted, start, end, own=None):
-    """A.4, K.4: a ; after each construct in `omitted`, sorted by end, that source[start:end] holds
-    whole, other than `own`."""
-    for element in omitted[bisect.bisect_right(omitted, start, key=lambda span: span[1]):]:
-        if element[1] > end:
-            break
-        if element[0] >= start and element != own:
-            at = bisect.bisect_right(ends, element[1])
-            tokens.insert(at, b";")
-            ends.insert(at, element[1])
-
-
-def _token_bytes(node, source, start, end, omitted=None, own=None):
-    """A.4: the token stream of source[start:end]. With `omitted`, that of go2: a ; after each element
-    in it that the span holds whole, other than `own`, the definition the span belongs to."""
-    tokens, ends = [], []
-
-    def visit(n):
-        if n.end_byte <= start or n.start_byte >= end or n.type == "comment":
-            return
-        if n.type in LITERALS or not n.children:
-            raw = source[max(start, n.start_byte):min(end, n.end_byte)]
-            if n.type == "raw_string_literal":
-                raw = raw.replace(b"\r", b"")
-            if raw:
-                tokens.append(raw)
-                ends.append(n.end_byte)
-            return
-        for child in n.children:
-            visit(child)
-
-    visit(node)
-    _insert_omitted(tokens, ends, omitted or [], start, end, own)
-    return b" ".join(tokens)
 
 
 ESCAPE = {"interpreted_string_literal": re.compile(rb'\\(?:[abfnrtv\\"]|[0-7]{3}|x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|U[0-9a-fA-F]{8})'),
@@ -276,7 +168,7 @@ def _escapes_ok(root, source):
 
 
 def _doc_start(source, comments, start):
-    """A.5, K.5, L.5: the first byte of the comments directly above `start`, each beginning its own
+    """A.4, K.4, L.4: the first byte of the comments directly above `start`, each beginning its own
     line with no blank line between; `start` itself when there are none."""
     doc_start = start
     for comment in reversed(comments):
@@ -366,9 +258,8 @@ def _go_parse(source):
     return tree
 
 
-def go_source(source, path="", algorithm="go2"):
-    """Annex A: definitions, whole-file token stream and comments, or None when the file does not parse.
-    With algorithm "go1", the token streams of the superseded go1 (A.6)."""
+def go_source(source, path=""):
+    """Annex A: definitions and comments, or None when the file does not parse."""
     try:
         source.decode("utf-8")
     except UnicodeError:
@@ -378,7 +269,6 @@ def go_source(source, path="", algorithm="go2"):
         return None
     definitions = []
     comments = _tree_comments(tree.root_node, source)
-    omitted = _go_omitted(tree.root_node) if algorithm == "go2" else None
     spelled = lambda n: source[n.start_byte:n.end_byte].decode()  # as written, whatever _go_parse respelled
     for declaration in tree.root_node.named_children:
         spans = []
@@ -392,8 +282,7 @@ def go_source(source, path="", algorithm="go2"):
                 while t.type in {"pointer_type", "generic_type", "parenthesized_type"}:
                     t = t.child_by_field_name("type") or t.named_children[0]
                 name, member = spelled(t) + "." + name, True
-            body = declaration.child_by_field_name("body")
-            spans.append((name, declaration.start_byte, declaration.end_byte, body.start_byte if body else declaration.end_byte, member))
+            spans.append((name, declaration.start_byte, declaration.end_byte, member))
         elif declaration.type in {"type_declaration", "var_declaration", "const_declaration"}:
             grouped = any(c.type in {"(", "var_spec_list"} for c in declaration.children)
             specs = [c for c in declaration.named_children if c.type in {"type_spec", "type_alias", "var_spec", "const_spec"}]
@@ -402,20 +291,13 @@ def go_source(source, path="", algorithm="go2"):
             for spec in specs:
                 for name_node in spec.children_by_field_name("name"):
                     start, end = (spec.start_byte, spec.end_byte) if grouped else (declaration.start_byte, declaration.end_byte)
-                    spans.append((spelled(name_node), start, end, end, False))
-        for name, start, end, header, member in spans:
+                    spans.append((spelled(name_node), start, end, False))
+        for name, start, end, member in spans:
             definition = {"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                          "function": function, "member": member, "text": _span_text(source, start, end),
-                          "sig": _token_bytes(tree.root_node, source, start, header, omitted, (start, end)),
-                          "body": _token_bytes(tree.root_node, source, start, end, omitted, (start, end))}
+                          "function": function, "member": member, "text": _span_text(source, start, end)}
             definition["test"] = is_test(definition, path)
             definitions.append(definition)
-    return {"definitions": definitions, "whole": _token_bytes(tree.root_node, source, 0, len(source), omitted), "comments": comments}
-
-
-def go1_source(source, path=""):
-    """A.6: the superseded go1, for its vectors; no Analyzer state uses it."""
-    return go_source(source, path, "go1")
+    return {"definitions": definitions, "comments": comments}
 
 
 def is_test(definition, path):
@@ -445,7 +327,7 @@ def select(definitions, symbol, path=""):
     return _select_members(definitions, symbol)
 
 
-# --- Annex K: TypeScript and JavaScript, ts2 --------------------------------
+# --- Annex K: TypeScript and JavaScript -------------------------------------
 
 TS_TYPESCRIPT, TS_TSX = (".ts", ".mts", ".cts"), (".tsx",)
 TS_JAVASCRIPT = (".js", ".mjs", ".cjs", ".jsx")
@@ -453,21 +335,8 @@ TS_ATOMS = {"string", "template_string", "template_literal_type", "regex", "jsx_
 TS_COMMENTS = {"comment", "hash_bang_line", "html_comment"}
 TS_FUNCTIONS = {"arrow_function", "function_expression", "function", "generator_function"}
 TS_NAMES = {"identifier", "type_identifier", "property_identifier", "private_property_identifier", "nested_identifier"}
-# K.4 (ts2): the statements and declarations that the grammar ends with ;, the class members that end with
-# one, the containers of type members, and what export default declares without one.
-TS_TERMINATED = {"expression_statement", "variable_declaration", "lexical_declaration", "return_statement",
-                 "throw_statement", "break_statement", "continue_statement", "debugger_statement", "do_statement",
-                 "import_statement", "import_alias", "type_alias_declaration", "function_signature"}
-TS_CLASS_FIELDS = {"public_field_definition", "field_definition", "method_signature", "abstract_method_signature",
-                   "index_signature"}
-TS_TYPE_MEMBERS = {"object_type", "interface_body"}
-TS_UNTERMINATED_EXPORTS = {"function_expression", "generator_function", "class", "import_alias"}
-# ECMAScript WhiteSpace and LineTerminator code points (K.4).
-JS_SPACE = re.compile("[\t\v\f  ﻿  -   　\n\r  ]+")
-
-
 _DIGITS = r"[0-9](?:_?[0-9])*"
-# ECMAScript 2024 NumericLiteral: a separator stands between two digits (K.4). Legacy octal and
+# ECMAScript 2024 NumericLiteral: a separator stands between two digits (Annex K). Legacy octal and
 # octal-like integers take none.
 JS_NUMBER = re.compile(rf"""(?:(?:0|[1-9](?:_?[0-9])*|0[0-7]*[89][0-9]*)(?:\.(?:{_DIGITS})?)?(?:[eE][+-]?{_DIGITS})?
                           |\.{_DIGITS}(?:[eE][+-]?{_DIGITS})?
@@ -498,81 +367,8 @@ def ts_test_file(path):
     return stem.endswith((".test", ".spec")) or "__tests__" in path.split("/")[:-1]
 
 
-def _ts_terminated(n):
-    """K.4 (ts2): whether the grammar ends n with ;: a statement or declaration that takes one, a class
-    field or member signature, or a type member. Keywords, such as module, are not constructs."""
-    if not n.is_named:
-        return False
-    parent = n.parent.type if n.parent is not None else None
-    if parent in TS_TYPE_MEMBERS:
-        return n.type not in TS_COMMENTS
-    if parent == "class_body":
-        return n.type in TS_CLASS_FIELDS
-    if n.type == "export_statement":
-        named = [c for c in n.named_children if c.type not in TS_COMMENTS and c.type != "decorator"]
-        return n.child_by_field_name("declaration") is None and not (named and named[-1].type in TS_UNTERMINATED_EXPORTS)
-    if n.type == "module":  # declare module "name", without a body
-        return n.child_by_field_name("body") is None
-    return n.type in TS_TERMINATED
-
-
-def _ts_omitted(root):
-    """K.4 (ts2): the (start, end) of every construct that the grammar ends with ; and whose ; the source
-    omits: neither its last token nor the token after it is a ;, or a , after a type member."""
-    tokens, constructs, stack = [], [], [root]
-    while stack:
-        n = stack.pop()
-        if n.type in TS_COMMENTS:
-            continue
-        if _ts_terminated(n):
-            constructs.append(n)
-        if n.type in TS_ATOMS or not n.children:
-            if n.end_byte > n.start_byte:
-                tokens.append((n.start_byte, n.end_byte, n.type))
-            continue
-        stack.extend(reversed(n.children))
-    starts = [t[0] for t in tokens]
-    omitted = []
-    for n in constructs:
-        last = bisect.bisect_left(starts, n.end_byte) - 1
-        after = last + 1
-        written = (last >= 0 and tokens[last][2] == ";" and tokens[last][0] >= n.start_byte) or \
-            (after < len(tokens) and tokens[after][2] in ((";", ",") if n.parent.type in TS_TYPE_MEMBERS else (";",)))
-        if not written:
-            omitted.append((n.start_byte, n.end_byte))
-    return sorted(omitted, key=lambda span: span[1])
-
-
-def _ts_tokens(root, source, start, end, omitted=None):
-    """K.4: the ts2 token stream of source[start:end], with a ; after each construct in `omitted` that the
-    span holds whole and a ; for each , after a type member; with `omitted` None, that of ts1."""
-    tokens, ends = [], []
-    stack = [root]
-    while stack:
-        n = stack.pop()
-        if n.end_byte <= start or n.start_byte >= end or n.type in TS_COMMENTS:
-            continue
-        if n.type in TS_ATOMS or not n.children:
-            raw = source[max(start, n.start_byte):min(end, n.end_byte)]
-            if n.type == "jsx_text":
-                raw = JS_SPACE.sub(" ", raw.decode()).strip(" ").encode()
-            if raw == b"," and omitted is not None and n.parent.type in TS_TYPE_MEMBERS:
-                raw = b";"  # ts2: a , after a type member is its ;
-            if raw:
-                tokens.append(raw)
-                ends.append(n.end_byte)
-            continue
-        stack.extend(reversed(n.children))
-    _insert_omitted(tokens, ends, omitted or [], start, end)
-    # A , before a closing bracket is dropped; under ts2, not an elision, a , after [ or another , (K.4).
-    kept = [t for i, t in enumerate(tokens) if not (t == b"," and i + 1 < len(tokens) and tokens[i + 1] in (b")", b"]", b"}", b">")
-                                                    and (omitted is None or i == 0 or tokens[i - 1] not in (b"[", b",")))]
-    return b" ".join(kept)
-
-
-def ts_source(source, path="", algorithm="ts2"):
-    """Annex K: definitions, whole-file token stream and comments, or None when the file does not parse.
-    With algorithm "ts1", the token streams of the superseded ts1 (K.6)."""
+def ts_source(source, path=""):
+    """Annex K: definitions and comments, or None when the file does not parse."""
     try:
         source.decode("utf-8")
     except UnicodeError:
@@ -583,7 +379,6 @@ def ts_source(source, path="", algorithm="ts2"):
     if root.has_error or not _js_numbers_ok(root):
         return None
     comments = _tree_comments(root, source, opaque=TS_ATOMS)
-    omitted = _ts_omitted(root) if algorithm == "ts2" else None
     definitions = []
     test_file = ts_test_file(path)
 
@@ -598,12 +393,12 @@ def ts_source(source, path="", algorithm="ts2"):
     def body_of(n):
         return unparen(n).child_by_field_name("body")
 
-    def add(name, outer, body, member=False, test=False):
+    def add(name, outer, member=False, test=False):
         if not name:
             return
         start, end = outer.start_byte, outer.end_byte
         previous = outer.prev_sibling
-        while previous is not None and previous.type in ("decorator", "comment"):  # K.3, K.5: decorators, past comments
+        while previous is not None and previous.type in ("decorator", "comment"):  # K.3, K.4: decorators, past comments
             if previous.type == "decorator":
                 start = previous.start_byte
             previous = previous.prev_sibling
@@ -612,11 +407,8 @@ def ts_source(source, path="", algorithm="ts2"):
             following = following.next_sibling
         if member and following is not None and following.type == ";":  # K.3: a class member's terminating ;
             end = following.end_byte
-        header = body.start_byte if body is not None else end
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                            "member": member, "test": test, "text": _span_text(source, start, end),
-                            "sig": _ts_tokens(root, source, start, header, omitted),
-                            "body": _ts_tokens(root, source, start, end, omitted)})
+                            "member": member, "test": test, "text": _span_text(source, start, end)})
 
     def named(node, prefix):
         field = node.child_by_field_name("name")
@@ -651,26 +443,24 @@ def ts_source(source, path="", algorithm="ts2"):
     def definition(outer, inner, prefix):
         kind, member = inner.type, bool(prefix)
         if kind in {"function_declaration", "generator_function_declaration", "function_signature"}:
-            add(named(inner, prefix), outer, inner.child_by_field_name("body"), member)
+            add(named(inner, prefix), outer, member)
         elif kind in {"class_declaration", "abstract_class_declaration"}:
             name, body = named(inner, prefix), inner.child_by_field_name("body")
-            add(name, outer, body, member)
+            add(name, outer, member)
             if name and body is not None:
                 class_members(body, name + ".")
         elif kind in {"interface_declaration", "type_alias_declaration", "enum_declaration"}:
-            add(named(inner, prefix), outer, None, member)
+            add(named(inner, prefix), outer, member)
         elif kind in {"internal_module", "module"}:
             name, body = named(inner, prefix), inner.child_by_field_name("body")
-            add(name, outer, body, member)
+            add(name, outer, member)
             if name and body is not None:
                 container(body, name + ".")
         elif kind in {"lexical_declaration", "variable_declaration"}:
             declarators = [c for c in inner.named_children if c.type == "variable_declarator"]
             for declarator in declarators:
-                value = declarator.child_by_field_name("value")
-                body = body_of(value) if function(value) else None
                 for name in bound_names(declarator.child_by_field_name("name")):
-                    add(prefix + name, outer if len(declarators) == 1 else declarator, body, member)
+                    add(prefix + name, outer if len(declarators) == 1 else declarator, member)
         elif kind == "expression_statement" and inner.named_children:
             child = inner.named_children[0]
             if child.type == "internal_module":
@@ -680,18 +470,18 @@ def ts_source(source, path="", algorithm="ts2"):
             elif child.type == "assignment_expression":
                 left, right = child.child_by_field_name("left"), child.child_by_field_name("right")
                 if left is not None and left.type in {"identifier", "member_expression", "subscript_expression"} and function(right):
-                    add(prefix + left.text.decode(), outer, body_of(right), member or left.type != "identifier")
+                    add(prefix + left.text.decode(), outer, member or left.type != "identifier")
 
     def class_members(body, prefix):
         for m in body.named_children:
             if m.type in {"method_definition", "method_signature", "abstract_method_signature"}:
-                add(named(m, prefix), m, m.child_by_field_name("body"), True)
+                add(named(m, prefix), m, True)
             elif m.type in {"public_field_definition", "field_definition"}:
                 value = m.child_by_field_name("value")
                 if function(value):
                     field = m.child_by_field_name("name") or m.child_by_field_name("property")
                     if field is not None and field.type in TS_NAMES:
-                        add(prefix + field.text.decode(), m, body_of(value), True)
+                        add(prefix + field.text.decode(), m, True)
 
     def test_call(outer, call, prefix):
         callee = call.child_by_field_name("function")
@@ -711,19 +501,14 @@ def ts_source(source, path="", algorithm="ts2"):
             return
         name = prefix + contents
         body = body_of(second)
-        add(name, outer, body, test=True)
+        add(name, outer, test=True)
         if word in {"describe", "suite"} and body is not None and body.type == "statement_block":
             for statement in body.named_children:
                 if statement.type == "expression_statement" and statement.named_children and statement.named_children[0].type == "call_expression":
                     test_call(statement, statement.named_children[0], name + " > ")
 
     container(root, "")
-    return {"definitions": definitions, "whole": _ts_tokens(root, source, 0, len(source), omitted), "comments": comments}
-
-
-def ts1_source(source, path=""):
-    """K.6: the superseded ts1, for its vectors; no Analyzer state uses it."""
-    return ts_source(source, path, "ts1")
+    return {"definitions": definitions, "comments": comments}
 
 
 def ts_select(definitions, symbol, path=""):
@@ -731,7 +516,7 @@ def ts_select(definitions, symbol, path=""):
     return _select_members(definitions, symbol)
 
 
-# --- Annex L: Python, py1 ---------------------------------------------------
+# --- Annex L: Python ---------------------------------------------------------
 
 def py_test_file(path):
     """L.1: a name beginning with test_ or ending in _test.py."""
@@ -740,8 +525,8 @@ def py_test_file(path):
 
 
 def py_source(source, path=""):
-    """Annex L with CPython's own tokenizer and parser: definitions, whole-file token stream and
-    comments, or None when the file does not parse."""
+    """Annex L with CPython's own tokenizer and parser: definitions and comments, or None when the
+    file does not parse."""
     try:
         # Python reads CRLF and CR as line ends; positions below are in the normalized source.
         text = source.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
@@ -764,8 +549,8 @@ def py_source(source, path=""):
             return total
         return starts[row - 1] + (len(lines[row - 1][:col].encode()) if chars else col)
 
-    # L.4: tokens with their logical line and indentation depth; an f-string is one token.
-    tokens, comments, depth, logical, f_depth, f_start = [], [], 0, 0, 0, None
+    # Tokens with their offsets, an f-string as one, to find names and decorators as written.
+    tokens, comments, f_depth, f_start = [], [], 0, None
     for tok in raw_tokens:
         kind = tok.type
         if f_depth:
@@ -775,39 +560,23 @@ def py_source(source, path=""):
                 f_depth -= 1
                 if not f_depth:
                     end = offset(*tok.end)
-                    tokens.append((source[f_start:end], f_start, end, depth, logical))
+                    tokens.append((source[f_start:end], f_start, end))
             continue
-        if kind == tokenize.INDENT:
-            depth += 1
-        elif kind == tokenize.DEDENT:
-            depth -= 1
-        elif kind == tokenize.NEWLINE:
-            logical += 1
-        elif kind == tokenize.COMMENT:
+        if kind == tokenize.COMMENT:
             start = offset(*tok.start)
             comments.append(_comment(start, offset(*tok.end), tok.start[0] - 1, tok.string))
         elif kind == getattr(tokenize, "FSTRING_START", -1):
             f_depth, f_start = 1, offset(*tok.start)
         elif kind in (tokenize.NAME, tokenize.NUMBER, tokenize.STRING, tokenize.OP, tokenize.ERRORTOKEN):
             start, end = offset(*tok.start), offset(*tok.end)
-            tokens.append((source[start:end], start, end, depth, logical))
-
-    def stream(start, end):
-        lines_, base = {}, None
-        for spelling, a, b, d, line in tokens:
-            if a >= start and b <= end:
-                if base is None:
-                    base = d
-                lines_.setdefault(line, [d - base]).append(spelling)
-        return b"\n".join(str(group[0]).encode() + b" " + b" ".join(group[1:]) for _, group in sorted(lines_.items()))
+            tokens.append((source[start:end], start, end))
 
     test_file = py_test_file(path)
     definitions = []
 
-    def add(name, start, end, header, member, test=False):
+    def add(name, start, end, member, test=False):
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
-                            "member": member, "test": test, "text": _span_text(source, start, end),
-                            "sig": stream(start, header), "body": stream(start, end)})
+                            "member": member, "test": test, "text": _span_text(source, start, end)})
 
     def names(target):
         if isinstance(target, ast.Name):  # as written, not as the parser normalizes it (L.2)
@@ -817,20 +586,6 @@ def py_source(source, path=""):
         if isinstance(target, ast.Starred):
             return names(target.value)
         return []
-
-    def header_end(keyword):
-        """The end of the colon that ends a def or class header: the first at bracket depth 0."""
-        depth = 0
-        for spelling, a, b, _, _ in tokens:
-            if a < keyword:
-                continue
-            if spelling in (b"(", b"[", b"{"):
-                depth += 1
-            elif spelling in (b")", b"]", b"}"):
-                depth -= 1
-            elif spelling == b":" and depth == 0:
-                return b
-        return keyword
 
     def spelled(start):
         """The name token at or after start, as written (L.2)."""
@@ -846,10 +601,9 @@ def py_source(source, path=""):
                     at = offset(first.lineno, first.col_offset, chars=False)
                     start = max(t[1] for t in tokens if t[0] == b"@" and t[1] < at)
                 end = offset(node.end_lineno, node.end_col_offset, chars=False)
-                header = header_end(keyword)
                 name = prefix + spelled(keyword)
                 test = (not isinstance(node, ast.ClassDef) and test_file and node.name.startswith("test") and (top or test_class))
-                add(name, start, end, header, bool(prefix), test)
+                add(name, start, end, bool(prefix), test)
                 if isinstance(node, ast.ClassDef):
                     visit(node.body, name + ".", False, top and node.name.startswith("Test"))
             elif top and isinstance(node, (ast.Assign, ast.AnnAssign)):
@@ -857,10 +611,10 @@ def py_source(source, path=""):
                 end = offset(node.end_lineno, node.end_col_offset, chars=False)
                 targets = node.targets if isinstance(node, ast.Assign) else [node.target]
                 for name in dict.fromkeys(n for target in targets for n in names(target)):
-                    add(name, start, end, end, False)
+                    add(name, start, end, False)
 
     visit(tree.body, "", True, False)
-    return {"definitions": definitions, "whole": stream(0, len(source)), "comments": comments, "source": source}
+    return {"definitions": definitions, "comments": comments, "source": source}
 
 
 def py_select(definitions, symbol, path=""):
@@ -871,14 +625,14 @@ def py_select(definitions, symbol, path=""):
 
 
 class Annex:
-    def __init__(self, algorithm, extensions, parse, select_, test_file):
-        self.algorithm, self.extensions, self.parse, self.select, self.test_file = algorithm, extensions, parse, select_, test_file
+    def __init__(self, extensions, parse, select_, test_file):
+        self.extensions, self.parse, self.select, self.test_file = extensions, parse, select_, test_file
 
 
 ANNEXES = [
-    Annex("go2", (".go",), go_source, select, lambda path: path.endswith("_test.go")),
-    Annex("ts2", TS_TYPESCRIPT + TS_TSX + TS_JAVASCRIPT, ts_source, ts_select, ts_test_file),
-    Annex("py1", (".py",), py_source, py_select, py_test_file),
+    Annex((".go",), go_source, select, lambda path: path.endswith("_test.go")),
+    Annex(TS_TYPESCRIPT + TS_TSX + TS_JAVASCRIPT, ts_source, ts_select, ts_test_file),
+    Annex((".py",), py_source, py_select, py_test_file),
 ]
 
 
@@ -1051,12 +805,12 @@ def merge_profile(vocabulary, profile):
         if name not in vocabulary["types"] and spec.get("kind") not in KINDS:
             raise ValueError("a new type declares its kind: statement, risk or verification")
         for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
-            mapping(declared, {"type", "values", "required", "meaning"})
+            mapping(declared, {"type", "values", "required"})
             if not ATTRIBUTE_NAME.fullmatch(attribute) or declared.get("type") not in {"string", "text", "number", "boolean", "list"}:
                 raise ValueError("attribute declaration")
             if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
                 raise ValueError("attribute values")
-            if any(not isinstance(declared.get(k, False), bool) for k in ("required", "meaning")):
+            if not isinstance(declared.get("required", False), bool):
                 raise ValueError("attribute flags")
         vocabulary["types"][name] = {**vocabulary["types"].get(name, {}), **spec}
     for name, spec in mapping(profile.get("links", {}), set(profile.get("links", {}))).items():
@@ -1146,7 +900,6 @@ class Analysis:
         self.links = {}          # identity -> link
         self.parsed = {}         # path -> go_source result or None
         self.risk = set()
-        self.hashes = {}
         try:
             self._build()
         except Stop:
@@ -1297,7 +1050,7 @@ class Analysis:
             self._tags()
         # step 6
         self._cycles()
-        self._freshness()
+        self._evaluate()
         self._unlinked()
 
     # step 4: items (section 4)
@@ -1463,7 +1216,7 @@ class Analysis:
                                "origin": "declared", "file": path, "anchor": True})
 
     def parse(self, path):
-        """The language annex parse of a file, once; PARSE_ERROR when it does not parse (OSTF-141)."""
+        """The language annex parse of a file, once; PARSE_ERROR when it does not parse (OSTF-132)."""
         if path not in self.parsed:
             self.parsed[path] = annex_for(path).parse(self.data(path), path)
             if self.parsed[path] is None:
@@ -1486,7 +1239,7 @@ class Analysis:
                         continue
                     anchors = [path]
                     if not match[1]:
-                        # A.5, K.5, L.5: the innermost definitions whose lines, from their comments above
+                        # A.4, K.4, L.4: the innermost definitions whose lines, from their comments above
                         # to their end, hold the tag.
                         row = comment["row"] + offset
                         found = [d for d in parsed["definitions"]
@@ -1558,37 +1311,31 @@ class Analysis:
                     self.report("LINK_CYCLE", self.links[key]["file"], self.links[key]["source"], key + " is part of a cycle")
                     del self.links[key]
 
-    # binding and fingerprints (OSTF-132, OSTF-141)
+    # binding (OSTF-132)
     def bind(self, anchor):
-        """('ok', fingerprints, binding) or (problem, None, None) for an anchor in this view."""
+        """('ok', binding) or (problem, None) for an anchor in this view."""
         parts = split_anchor(anchor)
         if parts is None:
-            return "invalid", None, None
+            return "invalid", None
         path, symbol = parts
         if path not in self.files:
-            return "missing", None, None
+            return "missing", None
         annex = annex_for(path)
-        if annex is None:
-            if symbol:
-                return "unsupported", None, None
-            return "ok", {"source.sig": fingerprint("lf1", self.data(path).replace(b"\r\n", b"\n"))}, ("file", path)
-        parsed = self.parse(path)
         if not symbol:
-            if parsed is None:
-                return "ok", {"source.sig": fingerprint("lf1", self.data(path).replace(b"\r\n", b"\n"))}, ("file", path)
-            return "ok", {"source.sig": fingerprint(annex.algorithm, parsed["whole"])}, ("file", path)
-        if parsed is None:
-            return "missing", None, None
-        found = annex.select(parsed["definitions"], symbol, path)
+            if annex is not None:
+                self.parse(path)  # an annexed file that an anchor names is parsed, for PARSE_ERROR (OSTF-132)
+            return "ok", ("file", path)
+        if annex is None:
+            return "unsupported", None
+        parsed = self.parse(path)
+        found = annex.select(parsed["definitions"], symbol, path) if parsed is not None else []
         if not found:
-            return "missing", None, None
-        return "ok", {"source.sig": fingerprint(annex.algorithm, b" ".join(d["sig"] for d in found)),
-                      "source.body": fingerprint(annex.algorithm, b" ".join(d["body"] for d in found))}, \
-            ("defs", path, frozenset((d["start"], d["name"]) for d in found))
+            return "missing", None
+        return "ok", ("defs", path, frozenset((d["start"], d["name"]) for d in found))
 
-    def _freshness(self):
+    def _evaluate(self):
+        """Step 7 for an Analyzer: risk relevance (OSTF-120), bindings and corroboration (OSTF-146)."""
         types = self.vocabulary["types"]
-        self.hashes = {ident: fingerprint("f1", item_projection(item, types)) for ident, item in self.items.items()}
         # OSTF-120: an item of kind statement that links to an item of kind risk is a control.
         kind = lambda ident: types[self.items[ident]["type"]]["kind"]
         controls = {l["source"] for l in self.links.values() if not l["anchor"] and kind(l["source"]) == "statement" and kind(l["target"]) == "risk"}
@@ -1599,20 +1346,13 @@ class Analysis:
                 break
             self.risk |= added
         for link in self.links.values():
-            current = {}
             status = "ok"
             if link["anchor"]:
-                status, code, link["binding"] = self.bind(link["source"])
-                if status == "ok":
-                    current.update(code)
-                elif status == "unsupported":
+                status, link["binding"] = self.bind(link["source"])
+                if status == "unsupported":
                     self.report("UNSUPPORTED_LANGUAGE", link["file"], link["source"])
-                else:
+                elif status != "ok":
                     self.report("BROKEN_LINK", link["file"], link["source"])
-            else:
-                current["source"] = self.hashes[link["source"]]
-            current["target"] = self.hashes[link["target"]]
-            link["fingerprints"] = current
             link["status"] = status
         self._corroboration()
 
@@ -1628,7 +1368,7 @@ class Analysis:
             observations, problems = parse_derived(self.data("trace.derived"))
             for code, line in problems:
                 self.report(code, "trace.derived", line)
-        bound = lambda anchor: (lambda found: found[2] if found[0] == "ok" else None)(self.bind(anchor))
+        bound = lambda anchor: self.bind(anchor)[1]
         covered = {(bound(test), bound(code)) for test, code in observations}
         for link in self.links.values():
             if link["type"] != "implements" or not link["anchor"] or link["status"] != "ok":
@@ -1654,8 +1394,7 @@ class Analysis:
     # Annex C.2
     def item_row(self, ident, detail=False):
         item = self.items[ident]
-        row = {"id": ident, "type": item["type"], "status": item["status"], "riskRelevant": ident in self.risk,
-               "fingerprint": self.hashes[ident]}
+        row = {"id": ident, "type": item["type"], "status": item["status"], "riskRelevant": ident in self.risk}
         if detail:
             for key in ("title", "text", "rationale", "external", "revision"):
                 if key in item:
@@ -1664,7 +1403,7 @@ class Analysis:
 
     def link_row(self, link, changes=False):
         """A link of the result; with `changes`, one that the result describes, with its change information (I.3)."""
-        row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin", "fingerprints")}
+        row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin")}
         if "corroboration" in link:
             row["corroboration"] = link["corroboration"]
         if changes:
@@ -1717,7 +1456,7 @@ def resolve(analysis, target, anchor=None):
         return "item", analysis.names[target]
     if anchor == "":  # an anchor whose file lies outside the root is in no file of the view
         return ("UNKNOWN_TARGET" if ITEM_ID.fullmatch(target) else "BROKEN_LINK"), None
-    status, _, binding = analysis.bind(target if anchor is None else anchor)
+    status, binding = analysis.bind(target if anchor is None else anchor)
     if status == "ok":
         path = binding[1]
         direct = []
@@ -1885,7 +1624,7 @@ def render(analysis, target, anchor=None):
 # --- impact (Annex C.3) -----------------------------------------------------
 
 def _parsed(view, path):
-    """The annex parse of a file in a view, without reporting PARSE_ERROR outside OSTF-141's scope."""
+    """The annex parse of a file in a view, without reporting PARSE_ERROR outside OSTF-132's scope."""
     return view.parsed[path] if path in view.parsed else annex_for(path).parse(view.data(path), path)
 
 
@@ -1941,14 +1680,6 @@ def moved_hint(base, current, link):
     if not found:
         return None
     return "moved? the same content is at " + ", ".join(found[:3]) + (f" and {len(found) - 3} more" if len(found) > 3 else "")
-
-
-def _file_sig(view, path):
-    if path not in view.files:
-        return None
-    annex = annex_for(path)
-    parsed = _parsed(view, path) if annex else None
-    return fingerprint(annex.algorithm, parsed["whole"]) if parsed else fingerprint("lf1", view.data(path).replace(b"\r\n", b"\n"))
 
 
 def _bound(view, anchor):

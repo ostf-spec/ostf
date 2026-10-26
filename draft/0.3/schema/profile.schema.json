@@ -50,8 +50,7 @@
       "properties": {
         "type": { "enum": ["string", "text", "number", "boolean", "list"] },
         "values": { "$ref": "#/$defs/values" },
-        "required": { "type": "boolean" },
-        "meaning": { "type": "boolean" }
+        "required": { "type": "boolean" }
       },
       "required": ["type"],
       "additionalProperties": false

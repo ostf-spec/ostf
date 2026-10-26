@@ -39,10 +39,10 @@ cd draft/0.3/example/deploy
 
 | Check | What it pins |
 | --- | --- |
-| [vectors/](vectors/) | The item and Go vectors published with 0.2: f1 is unchanged, and the Go vectors still pass under the superseded `go1`; the lock vectors of 0.2 stay published unchanged and are not run; and the `go2`, `ts2` and `py1` vectors of Annexes A, K and L, with those of the superseded `ts1` |
+| [vectors/](vectors/) | The span vectors of Annexes A, K and L: every definition of each source by full symbol and span text, and the definitions each symbol binds to, or no parse; the item, Go and lock vectors published with 0.2 stay byte for byte as history and are not run |
 | [example/expected/](../example/expected/) | `check` and `context` JSON and the Annex J text, byte for byte |
 | [fixtures/minimal/](../fixtures/minimal/) | Two links and no diagnostics |
-| [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes and origins, corroboration by link identity, risk relevance, context selections and Annex J text, and f1 projections; a file that a case names in `padTo` is extended with line feeds to that size in bytes, so that a case at the size limit need not carry it; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
+| [cases.json](cases.json) | Small trees with hand-written expected codes, links with attributes and origins, corroboration by link identity, risk relevance, context selections and Annex J text; a file that a case names in `padTo` is extended with line feeds to that size in bytes, so that a case at the size limit need not carry it; its schema cases run in [fixtures_test.go](../fixtures_test.go) |
 | `impacts` in cases.json | A base view and an evaluated view with the expected `impact`, and the evaluated view's codes, read after the impact so it cannot add a diagnostic; [fixtures_test.go](../fixtures_test.go) checks each expected `impact` against the result schema |
 | `histories` in cases.json | A scripted Git history, built with Git's plumbing, a merge and a shallow clone among them, run through the command line; every commit identifier in the output, whole or cut to 12 characters, is replaced by its commit's subject before the change information and the Annex J text are compared, so a case holds whatever object format, names and dates Git uses |
 | `sarif` in cases.json | Rules, levels, locations and messages of each diagnostic; every SARIF log the suite produces is also validated against the OASIS SARIF 2.1.0 schema |

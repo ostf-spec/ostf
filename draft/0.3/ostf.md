@@ -36,11 +36,8 @@ Each requirement has a permanent identifier of the form `OSTF-nnn`. Identifiers 
 - [RFC 5234] Crocker, D. and P. Overell, "Augmented BNF for Syntax Specifications: ABNF", 2008.
 - [RFC 7405] Kyzivat, P., "Case-Sensitive String Support in ABNF", 2014.
 - [RFC 3986] Berners-Lee, T. et al., "Uniform Resource Identifier (URI): Generic Syntax", 2005.
-- [RFC 4648] Josefsson, S., "The Base16, Base32, and Base64 Data Encodings", 2006. Section 5, base64url.
-- [RFC 8785] Rundgren, A. et al., "JSON Canonicalization Scheme (JCS)", 2020.
 - [YAML 1.2.2] "YAML Ain't Markup Language (YAML) Version 1.2", revision 1.2.2, 2021.
 - [JSON Schema] "JSON Schema: A Media Type for Describing JSON Documents", draft 2020-12.
-- [FIPS 180-4] NIST, "Secure Hash Standard (SHS)", 2015. SHA-256.
 - [SemVer] "Semantic Versioning 2.0.0".
 - [SARIF] OASIS, "Static Analysis Results Interchange Format (SARIF) Version 2.1.0", 2020. For Annex D.
 - [MCP] "Model Context Protocol Specification", revision 2025-06-18 or later, which defines structured tool output. For Annex I.4.
@@ -102,7 +99,7 @@ The [example](example/README.md) shows a need, a risk, a requirement that contro
 
 **OSTF-103 Wire version.**<a id="OSTF-103"></a> Every root, item and profile file MUST carry the string `ostf: "0.3"`; a value that is not two decimal numbers joined by a dot fails the schema. A reader MUST reject a file whose major version it does not implement, and, while the major version is 0, a file with any minor version it does not implement (`VERSION_UNSUPPORTED`). From 1.0 on, a reader MAY read a file with a newer minor version of a major version it implements; it MUST then report each key it does not know as `RESERVED_KEY_SKIPPED` and MUST NOT claim to have interpreted the skipped constructs.
 
-**OSTF-104 Keys and extensions.**<a id="OSTF-104"></a> A reader MUST reject a key that this specification, the selected profile or OSTF-103 does not define: `UNKNOWN_KEY`, or `PROFILE_INVALID` in a profile file (OSTF-121). The only exception is a key beginning with `x-` directly in a root, item file, item, source entry or profile file; anywhere else it is rejected like any other undefined key. Readers MUST preserve `x-` values when rewriting a file, MUST NOT give them OSTF meaning, and MUST NOT include them in any fingerprint.
+**OSTF-104 Keys and extensions.**<a id="OSTF-104"></a> A reader MUST reject a key that this specification, the selected profile or OSTF-103 does not define: `UNKNOWN_KEY`, or `PROFILE_INVALID` in a profile file (OSTF-121). The only exception is a key beginning with `x-` directly in a root, item file, item, source entry or profile file; anywhere else it is rejected like any other undefined key. Readers MUST preserve `x-` values when rewriting a file and MUST NOT give them OSTF meaning.
 
 **OSTF-105 Paths, limits and isolation.**<a id="OSTF-105"></a> A path is a slash-separated relative path with no empty, `.` or `..` component, no backslash, `#`, carriage return or line feed, and no leading slash; anything else is `PATH_INVALID`. An OSTF file or `trace.derived` larger than 8 MiB is `FILE_TOO_LARGE`. While reading, a tool MUST NOT fetch network resources and MUST NOT execute code from the repository.
 
@@ -128,7 +125,7 @@ The IDs and aliases of all items in a root share one namespace. Two names that a
 | `text` | string | The statement itself: what must hold, what can go wrong, or what was decided. |
 | `status` | string | `draft`, `accepted` (default) or `obsolete` (OSTF-112). |
 | `section` | string | A heading or clause this item belongs under in a generated document. |
-| `rationale` | string | Why the item exists. Never fingerprinted. |
+| `rationale` | string | Why the item exists. |
 | `aliases` | list of strings | Other names that resolve to this item. |
 | `attributes` | mapping | Typed descriptors (OSTF-114). |
 | `external` | string | Identity in another system (OSTF-113). |
@@ -146,9 +143,9 @@ source-alias = LOALPHA *31( LOALPHA / DIGIT / "-" )
 LOALPHA      = %x61-7A
 ```
 
-The other system owns an external item. `title` and `text`, when present, reproduce that system's content as observed at `revision`; they enter the fingerprint like any other item's, so a refreshed copy makes links to the item suspect. A tool MAY omit `text` for an external item it only names; the fingerprint then covers the remaining fields of OSTF-140, and content changes in the other system are not detected. A `url` template yields a display location by replacing `{id}` with the percent-encoded native ID [RFC 3986]; readers MUST NOT fetch it while reading. Synchronization with the other system is tool behavior.
+The other system owns an external item. `title` and `text`, when present, reproduce that system's content as observed at `revision`; they are fields like any other item's, so a refreshed copy changes the item (Annex I.3). A tool MAY omit `text` for an external item it only names; content changes in the other system then do not show. A `url` template yields a display location by replacing `{id}` with the percent-encoded native ID [RFC 3986]; readers MUST NOT fetch it while reading. Synchronization with the other system is tool behavior.
 
-**OSTF-114 Attributes.**<a id="OSTF-114"></a> `attributes` is a mapping from an attribute name matching `attr-name` to a string, a finite number, a boolean, or a list of strings. A profile MAY declare an attribute for a type with a value type, allowed values and a required flag; a declared attribute that is missing when required, has the wrong type or an unlisted value is `INVALID_ATTRIBUTE`. An undeclared attribute is permitted, has no OSTF meaning and never enters a fingerprint. Only attributes declared with `meaning: true` enter the item fingerprint (OSTF-140).
+**OSTF-114 Attributes.**<a id="OSTF-114"></a> `attributes` is a mapping from an attribute name matching `attr-name` to a string, a finite number, a boolean, or a list of strings. A profile MAY declare an attribute for a type with a value type, allowed values and a required flag; a declared attribute that is missing when required, has the wrong type or an unlisted value is `INVALID_ATTRIBUTE`. An undeclared attribute is permitted and has no OSTF meaning.
 
 ```abnf
 attr-name = ALPHA *47( ALPHA / DIGIT )
@@ -182,7 +179,7 @@ types:
   hazard: {kind: risk, description: A potential source of harm in the ISO 14971 sense.}
   requirement:
     attributes:
-      safetyClass: {type: string, values: [A, B, C], meaning: true}
+      safetyClass: {type: string, values: [A, B, C]}
 links:
   mitigates: {from: [requirement], to: [hazard]}
   verifies:
@@ -194,7 +191,7 @@ Under this profile a requirement that `mitigates` a hazard is a control, since `
 
 ## 6. Links
 
-**OSTF-130 Link model.**<a id="OSTF-130"></a> A link is a directed, typed relationship from a source, which is an item or an anchor, to a target item. Its direction runs from the more detailed element to what it serves: code to statement, test to statement, requirement to need, control to risk. Link identity is the tuple of source, link type, target and the link attributes sorted by name; fingerprints are not part of it. Inverse links are computed, never stored.
+**OSTF-130 Link model.**<a id="OSTF-130"></a> A link is a directed, typed relationship from a source, which is an item or an anchor, to a target item. Its direction runs from the more detailed element to what it serves: code to statement, test to statement, requirement to need, control to risk. Link identity is the tuple of source, link type, target and the link attributes sorted by name. Inverse links are computed, never stored.
 
 **OSTF-131 Declaring links in items.**<a id="OSTF-131"></a> An item declares a link under the link type's name as a list whose entries are target IDs or aliases, or mappings with `to` and the link attributes as string values. The item is the source. The `code` and `tests` fields invert the authoring direction: each anchor they list, as a string or as a mapping with `ref` and the link attributes, is the source of an `implements` or `verifies` link whose target is the item. An entry of another shape is `FORMAT_INVALID`. Several items MAY name the same anchor; each distinct target is its own link.
 
@@ -208,7 +205,7 @@ items:
     tests: [refund_test.go#TestRefundLimit]
 ```
 
-**OSTF-132 Anchors.**<a id="OSTF-132"></a> An anchor is a path (OSTF-105), optionally followed by `#` and a symbol. A path alone names the whole file. A symbol is interpreted by the language annex for the file's language, which also defines the identity of a test; without an annex for that language, a symbol anchor cannot be bound and an Analyzer MUST report `UNSUPPORTED_LANGUAGE` for it. A syntactically malformed anchor, one that names `trace.derived` in any ASCII case, which tools rewrite, and a whole-file anchor equal to an item ID, whose link identity would be that of a link from the item, are `ANCHOR_INVALID`. An anchor whose file or symbol does not exist in the evaluated source view is `BROKEN_LINK`; with a base view (Annex C.3), for a declared link, its hint names as anchors the definitions or files that the root covers whose text in the evaluated view is the anchor's text in the base view (Annex I.3), so that a moved definition is linked again in the same change. Anchors name a location and a symbol, never their contents or a line number.
+**OSTF-132 Anchors.**<a id="OSTF-132"></a> An anchor is a path (OSTF-105), optionally followed by `#` and a symbol. A path alone names the whole file. A symbol is interpreted by the language annex for the file's language, which also defines the identity of a test; without an annex for that language, a symbol anchor cannot be bound and an Analyzer MUST report `UNSUPPORTED_LANGUAGE` for it. An annexed file that an anchor names, or, while tags are on, a covered file whose text contains `@req`, is reported `PARSE_ERROR` when its annex cannot parse it, and a symbol anchor in such a file is `BROKEN_LINK`. A syntactically malformed anchor, one that names `trace.derived` in any ASCII case, which tools rewrite, and a whole-file anchor equal to an item ID, whose link identity would be that of a link from the item, are `ANCHOR_INVALID`. An anchor whose file or symbol does not exist in the evaluated source view is `BROKEN_LINK`; with a base view (Annex C.3), for a declared link, its hint names as anchors the definitions or files that the root covers whose text in the evaluated view is the anchor's text in the base view (Annex I.3), so that a moved definition is linked again in the same change. Anchors name a location and a symbol, never their contents or a line number.
 
 **OSTF-133 Tags.**<a id="OSTF-133"></a> Tags are on unless the root sets `tags: false`. While they are on, an Analyzer MUST read `@req` and `@req-file` tags in the comments of the files that the root covers (OSTF-102) and that a language annex it implements covers; it does not read comments in other files, and a link tagged there is absent from its graph. A tag is `@req` followed by a space or tab and one or more IDs or aliases separated by spaces, tabs or commas, ending at the end of the comment line. Lines, for tags and the definitions they bind to, are counted at line feeds. A `@req` tag binds to the definition that its comment documents, or to the innermost definition that encloses it, as the annex defines; `@req-file` binds to the whole file. In a test file, as the annex defines it, a tag declares a `verifies` link; elsewhere it declares an `implements` link. The bound anchor is the source and each named item is a target. An unknown ID is `TAG_UNKNOWN_ID`; a tag that binds to nothing is `TAG_UNBOUND`. Text inside a string literal is never a tag. Tags carry IDs only; a link that needs attributes is declared in an item. A Consumer that does not bind tags MUST report `TAGS_NOT_BOUND` while tags are on, because the file-declared links are then not the whole graph.
 
@@ -224,20 +221,7 @@ func CheckRefundLimit(r Refund, acct Account) error {
 
 ## 7. Freshness
 
-**OSTF-140 Item fingerprint f1.**<a id="OSTF-140"></a> The item fingerprint projects an item to a JSON object with `type`, with `title` and `text` when present and nonempty after normalization, and with `attributes` when it is not empty: the present attributes declared `meaning: true`, after the rules below. Text normalization replaces CRLF with LF, removes trailing spaces, tabs and carriage returns from each line, then removes trailing line feeds; it does not trim leading whitespace or apply Unicode normalization. `text` attributes are normalized the same way and string attributes are not; numbers, booleans and lists keep their JSON type and lists keep their order. An attribute whose value is then the empty string is omitted. `id`, `status`, `section`, `rationale`, `aliases`, `external`, `revision`, links, anchors and `x-` keys are excluded. The object is serialized with [RFC 8785], hashed with SHA-256 [FIPS 180-4], and written as `f1:` followed by the unpadded base64url digest [RFC 4648].
-
-```json
-{"text":"Add two values.","type":"requirement"}
-```
-
-yields `f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE`.
-
-**OSTF-141 Code fingerprints.**<a id="OSTF-141"></a> A fingerprint is an algorithm identifier matching `algorithm`, a colon and an unpadded base64url SHA-256 digest. For a symbol anchor, the language annex defines two token streams: `sig`, the definition's header, and `body`, the whole definition; each is hashed into `source.sig` and `source.body` under the annex's identifier. For a whole-file anchor in an annexed language, the file's token stream is hashed into `source.sig` alone. For a file without an annex, or a file the annex cannot parse, `lf1` hashes all file bytes after replacing CRLF with LF into `source.sig` alone, and an annexed file that an anchor names, or, while tags are on, a covered file whose text contains `@req`, is reported `PARSE_ERROR` when it cannot be parsed. A symbol anchor in a file that cannot be parsed is `BROKEN_LINK`. An item that is a link source is fingerprinted with f1 into `source`; a target item into `target`.
-
-```abnf
-algorithm   = LOALPHA *( LOALPHA / DIGIT )
-fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
-```
+<a id="OSTF-140"></a><a id="OSTF-141"></a>OSTF-140 Item fingerprint f1 and OSTF-141 Code fingerprints are retired with the lock, and their algorithms with them; the scope of `PARSE_ERROR` moved to OSTF-132.
 
 <a id="OSTF-142"></a><a id="OSTF-143"></a><a id="OSTF-144"></a><a id="OSTF-145"></a>OSTF-142 Lock files, OSTF-143 Link states, OSTF-144 Suspect rules and OSTF-145 Meaning of a valid link are retired with the lock; the rule of a control moved to OSTF-120.
 
@@ -253,7 +237,7 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 4. Register items, IDs, aliases and external identities (section 4). An item whose fields, other than its links, `code` and `tests`, fail the schema or section 4 is reported with the code of the failed rule, or `FORMAT_INVALID` when none is more specific; it is excluded and MUST NOT become a link endpoint.
 5. Resolve item links and validate anchors (section 6). An Analyzer additionally binds symbols and tags for the languages it implements. A defect in a link list or entry rejects only that link, reported with the code of the failed rule or `FORMAT_INVALID`.
 6. Check acyclic link types on the resulting graph.
-7. Parse `trace.derived`. A Consumer reports its syntax diagnostics. An Analyzer additionally computes fingerprints and corroboration (section 7).
+7. Parse `trace.derived`. A Consumer reports its syntax diagnostics. An Analyzer additionally reports corroboration (OSTF-146).
 
 **OSTF-151 Diagnostics.**<a id="OSTF-151"></a> A reader reports diagnostics using the codes and severities in Annex C. A value that breaks a rule with its own code gets that code whatever its type. An `error` means the construct is rejected and excluded, except that a link with `BROKEN_LINK` stays in the graph; a `warning` means it is accepted and the reader draws attention to it; an `info` is informational. A reader MAY emit additional codes for behavior outside OSTF; they MUST NOT collide with Annex C and SHOULD carry a tool prefix. The order of diagnostics and the complete set of secondary diagnostics on an input with several defects are not conformance targets; a conformance case specifies the codes required for its exact input.
 
@@ -265,7 +249,7 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 **OSTF-163 Claims.**<a id="OSTF-163"></a> A conformance claim names the class, this document's revision, the wire version, the schema identifiers, the language annexes and algorithms, and the version of the conformance suite it passes. Claims for the optional annexes, the SARIF mapping (Annex D) and the command profile (Annex I), are separate. Passing a schema alone supports no claim.
 
-**OSTF-164 Language annex requirements.**<a id="OSTF-164"></a> A language annex MUST define: which files it covers; which files are test files and how a test's identity is written after `#`; the symbol grammar and how a symbol binds to a definition; the definition span, the `sig` span and the `body` span; the token stream over a span and the algorithm identifier that names it; the comment syntax in which tags are recognized and the rule that binds a tag to a definition; and fixed vectors of source, token bytes and digests. An annex is normative only when it is published with its vectors. Annexes A (Go), K (TypeScript and JavaScript) and L (Python) are the language annexes of this revision.
+**OSTF-164 Language annex requirements.**<a id="OSTF-164"></a> A language annex MUST define: which files it covers; its grammar, by name and pinned version, a file the grammar does not read being one the annex cannot parse; which files are test files and how a test's identity is written after `#`; the symbol grammar and how a symbol binds to definitions; the span of a definition; the comment syntax in which tags are recognized and the rule that binds a tag to a definition; and fixed vectors of sources with the full symbol and span text of every definition in them and the definitions that each symbol binds to. An annex is normative only when it is published with its vectors. Annexes A (Go), K (TypeScript and JavaScript) and L (Python) are the language annexes of this revision.
 
 ## 10. Versioning
 
@@ -277,23 +261,21 @@ fingerprint = algorithm ":" 43( ALPHA / DIGIT / "-" / "_" )
 
 OSTF files are data. A reader never executes repository code and never fetches a URL while reading (OSTF-105, OSTF-113, OSTF-121); the YAML subset excludes anchors, aliases and tags, which removes expansion and type-coercion attacks (OSTF-101); the path rules exclude traversal (OSTF-105); and the size limit bounds memory (OSTF-105). A lock entry proves nothing about who rechecked a link or whether they were right, and a derived link nothing about whether its test passed: it detects accidental drift, not tampering, and a project that needs attribution signs its commits or wraps evidence in signed attestations (Annex E). Item text, like any repository content, can contain instructions aimed at a coding agent; a tool that passes OSTF content to a model MUST treat it as data, not as instructions, and MUST NOT let it widen the agent's permissions (Annex F). The command profile keeps `check` and `context` free of writes and limits `stamp` to named links in `trace.lock` (Annex I), so a tool can let an agent read freely while each recheck stays a deliberate act.
 
-## Annex A (normative): Go language annex, algorithm `go2`
+## Annex A (normative): Go language annex
 
-This annex satisfies OSTF-164 for Go. It references the lexical elements, function declarations and declarations of the Go 1.27 specification for syntax; the rules below define the trace projection. `go2` is the `go1` of draft 0.2 with the `;` rule of A.4.
+This annex satisfies OSTF-164 for Go. Its grammar is that of the Go 1.27 specification, as `go/parser` of Go 1.27 reads it; a file it refuses, or that is not UTF-8, is one the annex cannot parse (OSTF-132).
 
-**A.1 Files and tests.** The annex covers files whose name ends in `.go`. A file whose name ends in `_test.go` is a test file. A test function is a top-level function in a test file whose name is `Test` or `Fuzz`, alone or followed by a character that is not a lowercase letter (Unicode category Ll). A test's identity is the name the Go test runner reports: the test function's name, optionally followed by `/` and subtest components, as in `pump_test.go#TestLimit/over_max`. An anchor with subtest components binds to the test function before them for location and fingerprinting, and to no other definition; the annex does not infer that a dynamically named subtest executed.
+**A.1 Files and tests.** The annex covers files whose name ends in `.go`. A file whose name ends in `_test.go` is a test file. A test function is a top-level function in a test file whose name is `Test` or `Fuzz`, alone or followed by a character that is not a lowercase letter (Unicode category Ll). A test's identity is the name the Go test runner reports: the test function's name, optionally followed by `/` and subtest components, as in `pump_test.go#TestLimit/over_max`. An anchor with subtest components binds to the test function before them, and to no other definition; the annex does not infer that a dynamically named subtest executed.
 
-**A.2 Symbols.** A package-level function is `Name`. A method is `Receiver.Name`; strip pointer indirection and generic type arguments when forming `Receiver` and do not include the receiver variable. A top-level type, variable or constant is its declared name; each name of a multi-name value specification is a definition with the specification's span. Import declarations are not anchors. Match the full symbol first; if nothing matches and the symbol contains no dot, match the last component of method names. If several declarations match, preserve source order and join their token streams with one ASCII space before hashing.
+**A.2 Symbols.** A package-level function is `Name`. A method is `Receiver.Name`; strip pointer indirection and generic type arguments when forming `Receiver` and do not include the receiver variable. A top-level type, variable or constant is its declared name; each name of a multi-name value specification is a definition with the specification's span. Import declarations are not anchors. Match the full symbol first; if nothing matches and the symbol contains no dot, match the last component of method names. If several declarations match, the symbol binds to all of them, in source order.
 
-**A.3 Spans.** A function or method definition begins at `func` and ends immediately after the closing brace of its body, or after the declaration header for a bodyless function. Its `sig` span ends immediately before the opening body brace; braces inside parameter or result types belong to the header. Its `body` span is the whole definition. For an ungrouped type, variable or constant declaration, the span is the whole declaration including its keyword; for a grouped declaration, the span is the individual specification without the enclosing keyword and parentheses. For these declarations `sig` and `body` are identical. Trailing comments and the `;` that ends the declaration or specification, written or not, are not part of the span.
+**A.3 Spans.** A function or method definition begins at `func` and ends immediately after the closing brace of its body, or after the declaration header for a bodyless function. For an ungrouped type, variable or constant declaration, the span is the whole declaration including its keyword; for a grouped declaration, the span is the individual specification without the enclosing keyword and parentheses. Trailing comments and the `;` that ends the declaration or specification, written or not, are not part of the span.
 
-**A.4 Tokens.** Split the span with Go's lexical rules and drop comments and whitespace. Every statement, declaration, specification, struct field and interface element that the grammar ends with `;` ends with one `;` token, whether written, inserted at a line end or omitted before a closing `)` or `}`; an omitted `;` belongs to a span that holds the whole construct. Keep identifier and literal spelling exactly, including numeric bases, underscores and escape sequences; a raw string literal drops carriage returns as Go's scanner does. Do not fold Unicode or normalize escapes. Join the token spellings with exactly one ASCII space and no leading or trailing space. Hash the UTF-8 bytes with SHA-256 and write `go2:` followed by the unpadded base64url digest. A whole file uses the same token stream over the whole file for `source.sig` and has no `source.body`. A file that does not parse falls back to `lf1` under OSTF-141.
+**A.4 Tags.** Tags are recognized in `//` line comments and `/* */` block comments. A definition's lines run from the first line of the comments directly above it, each beginning its own line with no blank line between, to its last line. A `@req` tag binds to every definition whose lines include the tag's line, so a comment on a grouped declaration's keyword binds to none. A `@req-file` tag binds to the file from any comment. A tag inside a string literal is not a tag.
 
-**A.5 Tags.** Tags are recognized in `//` line comments and `/* */` block comments. A definition's lines run from the first line of the comments directly above it, each beginning its own line with no blank line between, to its last line. A `@req` tag binds to every definition whose lines include the tag's line, so a comment on a grouped declaration's keyword binds to none. A `@req-file` tag binds to the file from any comment. A tag inside a string literal is not a tag.
+**A.5 Vectors.** [conformance/vectors/go-spans.json](conformance/vectors/go-spans.json) fixes the full symbol and span text of every definition in its sources, and the definitions each symbol binds to: whole files, functions, pointer and generic receivers, interface and function literal types in signatures, grouped and ungrouped declarations, multi-name values, explicit semicolons, block comments, Unicode, raw strings and `new` with an expression, which Go reads since 1.26; `go/parser` of Go 1.27 and tree-sitter-go 0.25.0 produced them.
 
-**A.6 Vectors.** [conformance/vectors/go2-vectors.json](conformance/vectors/go2-vectors.json) fixes token bytes and digests for whole files, ordinary functions, pointer and generic receivers, interface and function literal types in signatures, grouped and ungrouped declarations, multi-name values, explicit semicolons, block comments, Unicode, raw strings and formatting changes, pairs that differ only where a line break ends a statement, and `new` with an expression, which Go reads since 1.26; `go/parser` of Go 1.27 and tree-sitter-go 0.25.0 produced them. `go1`, this annex without the `;` rule, let such a line break vanish and is superseded. Its 0.2 [vectors](conformance/vectors/code-vectors.json) stay published; Analyzers implement `go2` in its place.
-
-**A.7 Runtime names (informative).** OpenTelemetry's `code.function.name` for Go has the form `example.com/pkg.(*Service).Charge`. The corresponding anchor is the file that defines `Service.Charge` within that package, written `pkg/charge.go#Service.Charge`. The translation needs the package path to file mapping of the source view and is tool behavior.
+**A.6 Runtime names (informative).** OpenTelemetry's `code.function.name` for Go has the form `example.com/pkg.(*Service).Charge`. The corresponding anchor is the file that defines `Service.Charge` within that package, written `pkg/charge.go#Service.Charge`. The translation needs the package path to file mapping of the source view and is tool behavior.
 
 ## Annex B (normative): derived file grammar
 
@@ -346,9 +328,9 @@ Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, 
 | `LINK_DUPLICATE` | warning | OSTF-134 | The same link identity declared twice. |
 | `OBSOLETE_TARGET` | warning | OSTF-112 | Link to an obsolete item. |
 | `ANCHOR_INVALID` | error | OSTF-132 | Anchor syntax or path invalid, or the anchor names `trace.derived`. |
-| `BROKEN_LINK` | error | OSTF-132, OSTF-141 | Anchor file or symbol not found, or file unparseable for a symbol anchor. |
+| `BROKEN_LINK` | error | OSTF-132 | Anchor file or symbol not found, or file unparseable for a symbol anchor. |
 | `UNSUPPORTED_LANGUAGE` | warning | OSTF-132 | Symbol anchor in a language without an implemented annex. |
-| `PARSE_ERROR` | warning | OSTF-141 | An annexed file that an anchor or tag needs could not be parsed. |
+| `PARSE_ERROR` | warning | OSTF-132 | An annexed file that an anchor or tag needs could not be parsed. |
 | `TAG_UNKNOWN_ID` | error | OSTF-133 | A tag names an unknown ID. |
 | `TAG_UNBOUND` | error | OSTF-133 | A tag binds to no definition. |
 | `TAGS_NOT_BOUND` | info | OSTF-133 | Tags are on and this reader did not bind them. |
@@ -364,25 +346,18 @@ Semantic constraints: `safe-octet` excludes every octet of value 0x20 or below, 
      "message": "R-AD is not an item ID or alias", "hint": "nearest IDs: R-ADD"}
   ],
   "items": [
-    {"id": "R-ADD", "type": "requirement", "status": "accepted", "riskRelevant": false,
-     "fingerprint": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"}
+    {"id": "R-ADD", "type": "requirement", "status": "accepted", "riskRelevant": false}
   ],
   "links": [
     {"source": "math.go#Add", "type": "implements", "target": "R-ADD", "attributes": {},
-     "origin": "declared",
-     "fingerprints": {"source.sig": "go2:apWmINyA-fGDX0jyW6ti8Z9pILuo1107pC4EuoNYP_E",
-                      "source.body": "go2:uxQuznY2EnxetqA0V8blgT0TzHxpdVj15FYwabriwsc",
-                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"}},
+     "origin": "declared"},
     {"source": "math_test.go#TestAdd", "type": "verifies", "target": "R-ADD", "attributes": {},
-     "origin": "declared",
-     "fingerprints": {"source.sig": "go2:B1mhKIwrf0WxAP6DSzvT5lhBd61t4SGE5btMH84beSM",
-                      "source.body": "go2:3MpMX5cx7o0vECDFbiX3rWu6e9HgG4B25JCviXLLNVg",
-                      "target": "f1:eZtZ5F6MaEDpIxFBqsDHfbMflJ4dbGdPCSRZmx9AgOE"}}
+     "origin": "declared"}
   ]
 }
 ```
 
-`items` are sorted by ID and `links` by the bytes of their identity (Annex I.2). Every item carries `riskRelevant` under OSTF-120. `fingerprints` holds the values computed in the evaluated view and omits a key that cannot be computed, and a Consumer omits it; `corroboration` is present only as OSTF-146 says, and `sourceChangedIn` and `targetChangedIn` only as Annex I.3 says. `subject` is the first that applies of: the unknown name in a tag; the source, as written, of the link that the diagnostic concerns; the ID of the item that it concerns or whose entry it concerns; the line of a tag or of `trace.derived`. A diagnostic MAY carry `hint`, a short repair suggestion. A conformance case compares the set of codes, the item fingerprints and risk relevance, the link tuples with their origins and corroboration, `impact` when present, and the change information of a scripted history; `message`, `hint`, apart from the anchors of OSTF-132, and the order of `diagnostics` are not compared.
+`items` are sorted by ID and `links` by the bytes of their identity (Annex I.2). Every item carries `riskRelevant` under OSTF-120. `corroboration` is present only as OSTF-146 says, and `sourceChangedIn` and `targetChangedIn` only as Annex I.3 says. `subject` is the first that applies of: the unknown name in a tag; the source, as written, of the link that the diagnostic concerns; the ID of the item that it concerns or whose entry it concerns; the line of a tag or of `trace.derived`. A diagnostic MAY carry `hint`, a short repair suggestion. A conformance case compares the set of codes, the risk relevance of items, the link tuples with their origins and corroboration, `impact` when present, and the change information of a scripted history; `message`, `hint`, apart from the anchors of OSTF-132, and the order of `diagnostics` are not compared.
 
 **C.3 Impact.** A result computed against a base view carries `impact` (Annex I.1). For a change to the [example](example/README.md) that edits the body of `CheckRefundLimit` and adds a field to `Account`:
 
@@ -462,7 +437,7 @@ another principal rechecks it.
 | Specification | What it covers | How OSTF relates |
 | --- | --- | --- |
 | Agent Trace 0.1 (Cursor, Cognition) | Which conversation and contributor produced a line range, with an optional content hash and VCS revision | Attribution, not intent. Complementary: OSTF links carry no proposed state (F.6), so who wrote a link is Git's and Agent Trace's record; a tool may record the Agent Trace record ID of the conversation that proposed a link in an `x-` key. |
-| OpenTelemetry semantic conventions, `code.*` and `vcs.*` attributes | Runtime and VCS locations in telemetry | Runtime function names map to anchors through a language annex (A.7). OSTF defines no telemetry fields. |
+| OpenTelemetry semantic conventions, `code.*` and `vcs.*` attributes | Runtime and VCS locations in telemetry | Runtime function names map to anchors through a language annex (A.6). OSTF defines no telemetry fields. |
 | SARIF 2.1.0 (OASIS) | Static analysis results | OSTF diagnostics and link states can be emitted as SARIF (Annex D). |
 | Model Context Protocol | Tools that agents call | The command profile exposes `check` and `context` as MCP tools that return the JSON result (Annex I.4). |
 | in-toto attestation framework, Test Result predicate | Signed statements about artifacts | Execution evidence for OSTF test anchors (Annex E). |
@@ -558,44 +533,40 @@ refund.go#CheckRefundLimit
 ```
 
 1. The first line is TARGET as given. For an item, it is instead the item line of rule 2 without a link name.
-2. Each item that TARGET links to follows, risk-relevant items first, then by ID; an item linked more than once gets one item line per link, in identity order, and its details once. Its item line holds the link name, the ID, a colon and the title when there is one, its lines joined by one space, and the status in brackets unless it is `accepted`. Below it, one level deeper: `risk-relevant: ask before changing` for a risk-relevant item; its text, one output line per line after normalization (OSTF-140), each beginning with `| `; then, when present, the rationale the same way with `rationale: ` after the `| ` of its first line, and `external: ` with the external ID, `revision ` and the revision, and the display URL, joined by `, `.
+2. Each item that TARGET links to follows, risk-relevant items first, then by ID; an item linked more than once gets one item line per link, in identity order, and its details once. Its item line holds the link name, the ID, a colon and the title when there is one, its lines joined by one space, and the status in brackets unless it is `accepted`. Below it, one level deeper: `risk-relevant: ask before changing` for a risk-relevant item; its text, one output line per line after CRLF becomes LF, trailing spaces, tabs and carriage returns are removed from each line and trailing line feeds from the text, each beginning with `| `; then, when present, the rationale the same way with `rationale: ` after the `| ` of its first line, and `external: ` with the external ID, `revision ` and the revision, and the display URL, joined by `, `.
 3. Next, at the same depth, each item reached from it by item-to-item links, by link name, ID, then identity: the link name, the ID, a colon, the title or else the first line of the text, and the status unless `accepted`. An item reached through another sits one level deeper; an item already shown appears again with its link name and ID, without its title or text.
 4. Then each link to the item from another anchor or from an item, unless rule 3 showed it, by its inverse reading (`implemented_by`, `verified_by`, `refined_by`, `controlled_by`) and then by the bytes of its source; an item is written as in rule 3.
 5. A level is two spaces. Lines end with LF and carry no trailing spaces. A link line ends with the link's corroboration (OSTF-146) in parentheses, and when either side has change information (I.3), `changed` follows it after `; `, or stands alone in the parentheses, with the first 12 characters of `sourceChangedIn` and of `targetChangedIn`, `-` standing for an omitted one. Link attributes follow the link name as `name=value`.
 6. A tool MAY append lines that begin with `x-` after the standard lines.
 7. The text of `check --base` renders each context of `impact.contexts` (Annex C.3) in this form after the impact, so that one call shows what every changed definition serves.
 
-## Annex K (normative): TypeScript and JavaScript language annex, algorithm `ts2`
+## Annex K (normative): TypeScript and JavaScript language annex
 
-This annex satisfies OSTF-164 for TypeScript and JavaScript, whose syntax it takes from TypeScript 5.4, ECMAScript 2024 and JSX, except variance annotations, `export type *` and `static accessor` fields, which the grammars of its vectors (K.6) do not read; a file that uses them falls back to `lf1` (OSTF-141).
+This annex satisfies OSTF-164 for TypeScript and JavaScript, whose syntax it takes from TypeScript 5.4, ECMAScript 2024 and JSX, as tree-sitter-typescript 0.23.2 and tree-sitter-javascript 0.25.0 read them, except variance annotations, `export type *` and `static accessor` fields, which those grammars do not read; a file that uses them, or that is not UTF-8, is one the annex cannot parse (OSTF-132).
 
 **K.1 Files and tests.** The annex covers files ending in `.ts`, `.mts` or `.cts`, read as TypeScript, `.tsx`, as TypeScript with JSX, and `.js`, `.mjs`, `.cjs` or `.jsx`, as JavaScript with JSX. A test file's name ends in `.test` or `.spec` before the extension, or it lies beneath a directory named `__tests__`. A test is a call statement, at the top level of a test file or directly in a suite's function body, whose callee is `describe`, `suite`, `it` or `test`, alone or followed by `.` and a name, whose first argument is a nonempty single-line string literal or template literal without substitutions, and whose second argument is a function; `describe` and `suite` calls are suites. A test's identity is the contents, as written, of the first arguments of its enclosing suites and of its own, joined by ` > `.
 
-**K.2 Symbols.** A top-level function, class, interface, type alias, enum or namespace is its name, and so is each identifier that a top-level `const`, `let` or `var` declares, destructuring included, and a top-level assignment of a function to an identifier or member expression, named by its left side as written. `export`, `export default` and `declare` keep a declaration top level. In a namespace body the same declarations are `Namespace.name`, and in a class body each method, and each field whose value is a function, is `Class.name`, recursively. A function value may be parenthesized. Names are spelled as written, a private name with its `#`; a member named by a string, a number or a computed expression is not a definition. A test is its identity. Symbols match as in A.2, member assignments counting as members, and several matches join as in A.2.
+**K.2 Symbols.** A top-level function, class, interface, type alias, enum or namespace is its name, and so is each identifier that a top-level `const`, `let` or `var` declares, destructuring included, and a top-level assignment of a function to an identifier or member expression, named by its left side as written. `export`, `export default` and `declare` keep a declaration top level. In a namespace body the same declarations are `Namespace.name`, and in a class body each method, and each field whose value is a function, is `Class.name`, recursively. A function value may be parenthesized. Names are spelled as written, a private name with its `#`; a member named by a string, a number or a computed expression is not a definition. A test is its identity. Symbols match as in A.2, member assignments counting as members, and a symbol binds to several matches as in A.2.
 
-**K.3 Spans.** A definition's span runs from its first decorator or first token, `export` and `declare` included, to its last token, a terminating `;` included, past any comment. A `const`, `let` or `var` statement with one declarator is the span of what it declares; with several, each declarator is its own. A test's span is its call statement. The `sig` span ends immediately before the body of a function, method or test callback, whether a block or an expression, or before the opening brace of a class or namespace body; otherwise `sig` and `body` are identical. The `body` span is the whole definition.
+**K.3 Spans.** A definition's span runs from its first decorator or first token, `export` and `declare` included, to its last token, a terminating `;` included, past any comment. A `const`, `let` or `var` statement with one declarator is the span of what it declares; with several, each declarator is its own. A test's span is its call statement.
 
-**K.4 Tokens.** Split the span into the input elements of the grammar that reads the file; in a type argument or parameter list each `>` is one token, and in JSX `</` and `/>` are one token each. Drop comments, including a hashbang, white space and line terminators. Every statement, declaration, class field, member signature and type member that the grammar ends with `;` ends with one `;` token, whether written, left to automatic semicolon insertion or written as `,` after a type member; an omitted `;` follows the construct's last token and belongs to a span that holds the whole construct. Keep every other token spelled exactly as written, except that a template literal or template literal type, with its substitutions, is one token spelled as written; a character reference in JSX text is one token; JSX text between references is one token with each run of white space replaced by one space and leading and trailing white space removed, and is dropped when empty; and a `,` directly followed by `)`, `]`, `}` or `>` is dropped unless it follows `[` or another `,`, where it is an array elision. Join and hash the spellings as in A.4, writing `ts2:`. A whole file uses its whole token stream.
+**K.4 Tags.** Tags are recognized in `//` and `/* */` comments, those in JSX included. A definition's lines are defined as in A.4, its decorators included. A `@req` tag binds to the innermost definitions whose lines include the tag's line, those that contain no other such definition. A `@req-file` tag binds to the file from any comment. A tag inside a string or template literal is not a tag.
 
-**K.5 Tags.** Tags are recognized in `//` and `/* */` comments, those in JSX included. A definition's lines are defined as in A.5, its decorators included. A `@req` tag binds to the innermost definitions whose lines include the tag's line, those that contain no other such definition. A `@req-file` tag binds to the file from any comment. A tag inside a string or template literal is not a tag.
+**K.5 Vectors.** [conformance/vectors/ts-spans.json](conformance/vectors/ts-spans.json) fixes the full symbol and span text of every definition in its sources, and the definitions each symbol binds to; tree-sitter-typescript 0.23.2 and tree-sitter-javascript 0.25.0 produced them.
 
-**K.6 Vectors.** [conformance/vectors/ts2-vectors.json](conformance/vectors/ts2-vectors.json) fixes token bytes and digests for the rules above; tree-sitter-typescript 0.23.2 and tree-sitter-javascript 0.25.0 produced them. `ts1`, this annex without the `;` rule and the elision exception, is superseded and keeps its [vectors](conformance/vectors/ts1-vectors.json); Analyzers implement `ts2` in its place.
+## Annex L (normative): Python language annex
 
-## Annex L (normative): Python language annex, algorithm `py1`
-
-This annex satisfies OSTF-164 for Python. It references the Python 3.12 language reference for lexical analysis and syntax; the rules below define the trace projection. Syntax that only a later version reads, such as a template string, is outside the annex, so a file that uses it falls back to `lf1` (OSTF-141).
+This annex satisfies OSTF-164 for Python. Its grammar is that of the Python 3.12 language reference, as CPython's parser reads it at feature version 3.12. Syntax that only a later version reads, such as a template string, is outside the annex, so a file that uses it, or that is not UTF-8, is one the annex cannot parse (OSTF-132).
 
 **L.1 Files and tests.** The annex covers files whose names end in `.py`. A test file is one whose name begins with `test_` or ends in `_test.py`. A test function is a function whose name begins with `test`, defined at the top level of a test file or directly in the body of a top-level class whose name begins with `Test`. A test's identity is its symbol, optionally followed by a parametrization identifier in brackets, as in `test_cart.py#TestCart.test_add[2-3]`; such an anchor binds as the symbol before the bracket does under L.2, keeping only test functions. A runner's spelling such as pytest's `TestCart::test_add` maps to the symbol by replacing `::` with `.`.
 
-**L.2 Symbols.** A function or class defined at the top level is its name; one defined directly in a class body is `Class.name`, recursively. Each name that a top-level assignment or annotated assignment statement assigns, including each name of a target list, is a variable named by it. Names are spelled as written in the source, not normalized. Match the full symbol first; if nothing matches and the symbol contains no dot, match the last component of member names. If several definitions match, preserve source order and join their token streams with one ASCII space.
+**L.2 Symbols.** A function or class defined at the top level is its name; one defined directly in a class body is `Class.name`, recursively. Each name that a top-level assignment or annotated assignment statement assigns, including each name of a target list, is a variable named by it. Names are spelled as written in the source, not normalized. Match the full symbol first; if nothing matches and the symbol contains no dot, match the last component of member names. If several definitions match, the symbol binds to all of them, in source order.
 
-**L.3 Spans.** A function or class definition begins at its first decorator, or at `async`, `def` or `class`, and ends after the last token of its body. Its `sig` span ends immediately after the `:` that ends its header. A variable's span is its assignment statement, without a separating `;`, and its `sig` and `body` are identical. The `body` span is the whole definition.
+**L.3 Spans.** A function or class definition begins at its first decorator, or at `async`, `def` or `class`, and ends after the last token of its body. A variable's span is its assignment statement, without a separating `;`.
 
-**L.4 Tokens.** Split the span into Python tokens and group them into logical lines. Drop comments, blank lines and the line breaks within a logical line. Keep every other token spelled exactly as written, prefixes included, except that an f-string with its replacement fields is one token spelled as written. Write each logical line as its indentation depth relative to the span's first line in decimal, a space, and its tokens joined by one ASCII space, and join the lines with one LF; the depth counts indentation levels, not spaces. Hash the UTF-8 bytes with SHA-256 and write `py1:` followed by the unpadded base64url digest. A whole file uses the token stream of the whole file. A file that does not parse falls back to `lf1` under OSTF-141.
+**L.4 Tags.** Tags are recognized in `#` comments. A definition's lines run from the first line of the comments directly above it, each beginning its own line with no blank line between, to its last line; its decorators are part of it. A `@req` tag binds to the innermost definitions whose lines include the tag's line, those that contain no other such definition. A `@req-file` tag binds to the file from any comment. A tag inside a string, docstrings included, is not a tag.
 
-**L.5 Tags.** Tags are recognized in `#` comments. A definition's lines run from the first line of the comments directly above it, each beginning its own line with no blank line between, to its last line; its decorators are part of it. A `@req` tag binds to the innermost definitions whose lines include the tag's line, those that contain no other such definition. A `@req-file` tag binds to the file from any comment. A tag inside a string, docstrings included, is not a tag.
-
-**L.6 Vectors.** [conformance/vectors/py1-vectors.json](conformance/vectors/py1-vectors.json) fixes token bytes and digests for whole files, functions, async functions, decorators, classes and methods, nested classes, variables, one-line definitions, f-strings, continuation lines, re-indented code, test functions and parametrization identities, and line breaks that end a logical line; CPython's parser at feature version 3.12 and tree-sitter-python produced them.
+**L.5 Vectors.** [conformance/vectors/py-spans.json](conformance/vectors/py-spans.json) fixes the full symbol and span text of every definition in its sources, and the definitions each symbol binds to: whole files, functions, async functions, decorators, classes and methods, nested classes, variables, one-line definitions, f-strings, continuation lines, re-indented code, test functions and parametrization identities; CPython's parser at feature version 3.12 and tree-sitter-python produced them.
 
 ## Annex N (normative, optional): results for an index
 
@@ -609,9 +580,9 @@ N.1 is normative for a tool that writes `ndjson`. The rest of this annex is info
 
 | Table | Key | Columns | From |
 | --- | --- | --- | --- |
-| item | ID | type, status, riskRelevant, fingerprint, title, text, external | `items` of the result |
+| item | ID | type, status, riskRelevant, title, text, external | `items` of the result |
 | link | identity (Annex I.2) | source, type, target, attributes, origin, corroboration | `links` of the result |
-| anchor | anchor | path, symbol, `source.sig`, `source.body` | the source of each link from an anchor |
+| anchor | anchor | path, symbol | the source of each link from an anchor |
 | derived link | test anchor, code anchor | view, tool | `trace.derived` (OSTF-146) |
 | diagnostic | code, file, subject | severity, message, hint | `diagnostics` of the result |
 | impact | base | changed, contexts, items, links, tests | `impact` of the result |

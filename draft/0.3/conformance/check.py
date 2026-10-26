@@ -26,15 +26,17 @@ VECTORS = HERE / "vectors"
 # The OASIS SARIF 2.1.0 schema (Errata 01), which run.py fetches and pins (Annex D).
 SARIF_SCHEMA = HERE.parents[2] / ".venv" / "sarif-schema-2.1.0.json"
 SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e"
-# The 0.2 vectors, byte for byte as published with 0.2, and the 0.3 requirements they exercise (Annex H).
+# The 0.2 vectors, byte for byte as published with 0.2, kept as history and not run (plan, section 8).
 VECTORS_02 = {
-    "item-vectors.json": ("7ef4e294933e4757e913b7abe20ea1d8211f415ad31fa302a4c738959c779e27", ["OSTF-140", "OSTF-170"]),
-    "code-vectors.json": ("0b1fde1b4551cad0a5e60f6a78d2c27e23c9bc210f14fbdbc154bdb1493b199b", ["OSTF-141", "OSTF-170", "Annex A"]),
-    "lock-vectors.json": ("004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc", []),
+    "item-vectors.json": "7ef4e294933e4757e913b7abe20ea1d8211f415ad31fa302a4c738959c779e27",
+    "code-vectors.json": "0b1fde1b4551cad0a5e60f6a78d2c27e23c9bc210f14fbdbc154bdb1493b199b",
+    "lock-vectors.json": "004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc",
 }
+# The span vectors of Annexes A, K and L (OSTF-164).
+SPAN_VECTORS = ("go-spans.json", "ts-spans.json", "py-spans.json")
 # Requirements merged into others to stay within 35 (agent-first plan, section 7): Consumer and Analyzer into
 # OSTF-160, the release gate into OSTF-170; and the lock's, retired with it (plan, section 8).
-RETIRED = {"OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-161", "OSTF-162", "OSTF-171"}
+RETIRED = {"OSTF-140", "OSTF-141", "OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-161", "OSTF-162", "OSTF-171"}
 
 
 def load(path):
@@ -123,54 +125,27 @@ def check():
         assert importlib.metadata.version(name) == version, f"unexpected installed tool version: {name}"
     counts = {}
 
-    # Budget rule 5: the 0.2 hash and lock vectors pass unchanged.
-    for name, (digest, _) in VECTORS_02.items():
+    # The 0.2 vectors stay published byte for byte, as history; with the fingerprints gone they are not run.
+    for name, digest in VECTORS_02.items():
         assert hashlib.sha256((VECTORS / name).read_bytes()).hexdigest() == digest, f"{name} differs from the 0.2 vectors"
-    for case in load(VECTORS / "item-vectors.json"):
-        canonical = reader.item_projection(case["item"], case["types"])
-        assert canonical.decode() == case["canonical"], case["id"] + ": canonical bytes"
-        assert reader.fingerprint("f1", canonical) == case["fingerprint"], case["id"] + ": item hash"
-    for case in load(VECTORS / "code-vectors.json"):
-        parsed = reader.go1_source(case["source"].encode())
-        assert parsed is not None, case["id"] + ": parse"
-        if case["symbol"]:
-            found = reader.select(parsed["definitions"], case["symbol"])
-            sig, body = b" ".join(d["sig"] for d in found), b" ".join(d["body"] for d in found)
-            got = {"source.sig": reader.fingerprint("go1", sig), "source.body": reader.fingerprint("go1", body)}
-            assert body.decode() == case["bodyTokens"], case["id"] + ": body tokens"
-        else:
-            sig = parsed["whole"]
-            got = {"source.sig": reader.fingerprint("go1", sig)}
-        assert sig.decode() == case["sigTokens"], case["id"] + ": signature tokens"
-        assert got == case["expect"], case["id"] + f": {got} != {case['expect']}"
-    # The lock vectors stay published unchanged with the lock gone (plan, section 8); they are not run.
-    counts["vectors02"] = sum(len(load(VECTORS / n)) for n in ("item-vectors.json", "code-vectors.json"))
 
-    # Annexes A, K and L: the go2, ts2 and py1 vectors, token bytes and digests, and those of the superseded ts1.
-    superseded = {"ts1": ("ts2", reader.ts1_source)}
-    for name, algorithm in (("go2-vectors.json", "go2"), ("ts1-vectors.json", "ts1"), ("ts2-vectors.json", "ts2"), ("py1-vectors.json", "py1")):
+    # Annexes A, K and L (OSTF-164): every definition of each vector source, by full symbol and span text in
+    # source order, the span texts its symbol binds to, or no parse.
+    for name in SPAN_VECTORS:
         for case in load(VECTORS / name):
             annex = reader.annex_for(case["path"])
-            assert annex is not None and annex.algorithm == superseded.get(algorithm, (algorithm,))[0], case["id"] + ": annex"
-            parse = superseded[algorithm][1] if algorithm in superseded else annex.parse
-            parsed = parse(case["source"].encode(), case["path"])
-            if case.get("parses") is False:  # syntax outside the annex: the file falls back to lf1 (OSTF-141)
+            assert annex is not None, case["id"] + ": annex"
+            parsed = annex.parse(case["source"].encode(), case["path"])
+            if case.get("parses") is False:
                 assert parsed is None, case["id"] + ": parses"
-                got = {"source.sig": reader.fingerprint("lf1", case["source"].encode().replace(b"\r\n", b"\n"))}
-                assert got == case["expect"], case["id"] + f": {got} != {case['expect']}"
                 continue
             assert parsed is not None, case["id"] + ": parse"
-            if case["symbol"]:
-                found = annex.select(parsed["definitions"], case["symbol"], case["path"])
-                sig, body = b" ".join(d["sig"] for d in found), b" ".join(d["body"] for d in found)
-                assert body.decode() == case["bodyTokens"], case["id"] + f": body tokens {body!r}"
-                got = {"source.sig": reader.fingerprint(algorithm, sig), "source.body": reader.fingerprint(algorithm, body)}
-            else:
-                sig = parsed["whole"]
-                got = {"source.sig": reader.fingerprint(algorithm, sig)}
-            assert sig.decode() == case["sigTokens"], case["id"] + f": signature tokens {sig!r}"
-            assert got == case["expect"], case["id"] + f": {got} != {case['expect']}"
-        counts[algorithm + "Vectors"] = len(load(VECTORS / name))
+            got = [[d["name"], d["text"].decode()] for d in parsed["definitions"]]
+            assert got == case["definitions"], case["id"] + f": definitions {got}"
+            if "symbol" in case:
+                found = [d["text"].decode() for d in annex.select(parsed["definitions"], case["symbol"], case["path"])]
+                assert found == case["binds"], case["id"] + f": binds {found}"
+        counts[name.removesuffix("-spans.json") + "Spans"] = len(load(VECTORS / name))
 
     # The example's expected outputs (Annex C.2, Annex I.3, Annex J), byte for byte.
     example = reader.Analysis(reader.Tree(DRAFT / "example"))
@@ -204,7 +179,7 @@ def check():
     for retired in RETIRED:
         assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
-    every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["projections"] + cases["schemas"]
+    every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["schemas"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
     for case in every:
@@ -231,10 +206,6 @@ def check():
             assert len(result["links"]) == expect["linkCount"], f"{case['id']}: link count"
         if "risk" in expect:
             assert [i["id"] for i in result["items"] if i["riskRelevant"]] == expect["risk"], f"{case['id']}: risk relevance"
-        for ident, value in expect.get("itemFingerprints", {}).items():
-            assert next(i["fingerprint"] for i in result["items"] if i["id"] == ident) == value, f"{case['id']}: fingerprint of {ident}"
-        for ident, value in expect.get("linkFingerprints", {}).items():
-            assert [l["fingerprints"] for l in result["links"] if reader.identity(l) == ident] == [value], f"{case['id']}: fingerprints of {ident}"
         for key, anchors in expect.get("hints", {}).items():  # OSTF-132: the anchors a hint must name, or no hint
             code, subject = key.split(" ", 1)
             found = [d for d in result["diagnostics"] if d["code"] == code and d.get("subject") == subject]
@@ -302,9 +273,7 @@ def check():
         got["diagnostics"].sort()
         got["links"].sort()
         assert rules == sorted(rules, key=str.encode) and got == case["expect"], f"{case['id']}:\n got {got}\nwant {case['expect']}"
-    for case in cases["projections"]:
-        assert reader.item_projection(case["item"], case["types"]).decode() == case["canonical"], case["id"]
-    counts["checkCases"], counts["contextCases"], counts["projections"] = len(cases["checks"]), len(cases["contexts"]), len(cases["projections"])
+    counts["checkCases"], counts["contextCases"] = len(cases["checks"]), len(cases["contexts"])
     counts["impactCases"], counts["sarifCases"] = len(cases["impacts"]), len(cases["sarif"])
     counts["schemaCases"] = len(cases["schemas"])  # run by fixtures_test.go
 
@@ -338,7 +307,7 @@ def check():
 
     # Every requirement and Annex C code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
     covered = {r for case in every for r in case["requirements"]}
-    covered |= {r for _, requirements in VECTORS_02.values() for r in requirements}
+    covered |= {r for name in SPAN_VECTORS for case in load(VECTORS / name) for r in case["requirements"]}
     covered |= {code for case in cases["checks"] + cases["contexts"] + cases["impacts"] for code in case["expect"]["codes"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
     annex_c = set(re.findall(r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|", spec, re.MULTILINE))

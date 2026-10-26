@@ -21,7 +21,6 @@
       "type": "string",
       "pattern": "^[^/\\\\\\r\\n#][^\\\\\\r\\n#]*(#[^\\r\\n]+)?$"
     },
-    "fingerprint": { "type": "string", "pattern": "^[a-z][a-z0-9]*:[A-Za-z0-9_-]{43}$" },
     "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
     "identities": {
       "type": "array",
@@ -48,7 +47,6 @@
         "type": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,47}$" },
         "status": { "enum": ["draft", "accepted", "obsolete"] },
         "riskRelevant": { "type": "boolean" },
-        "fingerprint": { "$ref": "#/$defs/fingerprint" },
         "title": { "type": "string" },
         "text": { "type": "string" },
         "rationale": { "type": "string" },
@@ -67,16 +65,6 @@
         "target": { "$ref": "#/$defs/id" },
         "attributes": { "type": "object", "additionalProperties": { "type": "string" } },
         "origin": { "enum": ["declared", "tagged"] },
-        "fingerprints": {
-          "type": "object",
-          "properties": {
-            "source": { "$ref": "#/$defs/fingerprint" },
-            "source.sig": { "$ref": "#/$defs/fingerprint" },
-            "source.body": { "$ref": "#/$defs/fingerprint" },
-            "target": { "$ref": "#/$defs/fingerprint" }
-          },
-          "additionalProperties": false
-        },
         "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "OSTF-146: beside the link." },
         "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the source." },
         "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." }

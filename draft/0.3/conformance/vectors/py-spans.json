@@ -1,0 +1,704 @@
+[
+  {
+    "id": "py-function",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "a.py",
+    "source": "def add(a, b):\n    return a + b\n",
+    "symbol": "add",
+    "definitions": [
+      [
+        "add",
+        "def add(a, b):\n    return a + b"
+      ]
+    ],
+    "binds": [
+      "def add(a, b):\n    return a + b"
+    ]
+  },
+  {
+    "id": "py-whole-file",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "b.py",
+    "source": "# header\nimport os\n\nX = 1  # c\n",
+    "definitions": [
+      [
+        "X",
+        "X = 1"
+      ]
+    ]
+  },
+  {
+    "id": "py-async-decorated",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "c.py",
+    "source": "@app.get(\"/items\")\nasync def items(limit: int = 10) -> list:\n    \"\"\"Docstring.\"\"\"\n    return []\n",
+    "symbol": "items",
+    "definitions": [
+      [
+        "items",
+        "@app.get(\"/items\")\nasync def items(limit: int = 10) -> list:\n    \"\"\"Docstring.\"\"\"\n    return []"
+      ]
+    ],
+    "binds": [
+      "@app.get(\"/items\")\nasync def items(limit: int = 10) -> list:\n    \"\"\"Docstring.\"\"\"\n    return []"
+    ]
+  },
+  {
+    "id": "py-method",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "cart.py",
+    "source": "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)\n",
+    "symbol": "Cart.add",
+    "definitions": [
+      [
+        "Cart",
+        "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)"
+      ],
+      [
+        "Cart.add",
+        "def add(self, item):\n        if item:\n            self.items.append(item)"
+      ]
+    ],
+    "binds": [
+      "def add(self, item):\n        if item:\n            self.items.append(item)"
+    ]
+  },
+  {
+    "id": "py-reindented",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "cart.py",
+    "source": "class Cart:\n  def add(self, item):\n    if item:\n      self.items.append(item)\n",
+    "symbol": "Cart.add",
+    "definitions": [
+      [
+        "Cart",
+        "class Cart:\n  def add(self, item):\n    if item:\n      self.items.append(item)"
+      ],
+      [
+        "Cart.add",
+        "def add(self, item):\n    if item:\n      self.items.append(item)"
+      ]
+    ],
+    "binds": [
+      "def add(self, item):\n    if item:\n      self.items.append(item)"
+    ]
+  },
+  {
+    "id": "py-class",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "cart.py",
+    "source": "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)\n",
+    "symbol": "Cart",
+    "definitions": [
+      [
+        "Cart",
+        "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)"
+      ],
+      [
+        "Cart.add",
+        "def add(self, item):\n        if item:\n            self.items.append(item)"
+      ]
+    ],
+    "binds": [
+      "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)"
+    ]
+  },
+  {
+    "id": "py-member-last-component",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "cart.py",
+    "source": "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)\n",
+    "symbol": "add",
+    "definitions": [
+      [
+        "Cart",
+        "class Cart:\n    def add(self, item):\n        if item:\n            self.items.append(item)"
+      ],
+      [
+        "Cart.add",
+        "def add(self, item):\n        if item:\n            self.items.append(item)"
+      ]
+    ],
+    "binds": [
+      "def add(self, item):\n        if item:\n            self.items.append(item)"
+    ]
+  },
+  {
+    "id": "py-nested-class",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "n.py",
+    "source": "class Outer:\n    class Inner:\n        def go(self):\n            pass\n",
+    "symbol": "Outer.Inner.go",
+    "definitions": [
+      [
+        "Outer",
+        "class Outer:\n    class Inner:\n        def go(self):\n            pass"
+      ],
+      [
+        "Outer.Inner",
+        "class Inner:\n        def go(self):\n            pass"
+      ],
+      [
+        "Outer.Inner.go",
+        "def go(self):\n            pass"
+      ]
+    ],
+    "binds": [
+      "def go(self):\n            pass"
+    ]
+  },
+  {
+    "id": "py-target-list",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "v.py",
+    "source": "A, B = 1, 2\nLIMIT: int = 5\n",
+    "symbol": "B",
+    "definitions": [
+      [
+        "A",
+        "A, B = 1, 2"
+      ],
+      [
+        "B",
+        "A, B = 1, 2"
+      ],
+      [
+        "LIMIT",
+        "LIMIT: int = 5"
+      ]
+    ],
+    "binds": [
+      "A, B = 1, 2"
+    ]
+  },
+  {
+    "id": "py-annotated",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "v.py",
+    "source": "A, B = 1, 2\nLIMIT: int = 5\n",
+    "symbol": "LIMIT",
+    "definitions": [
+      [
+        "A",
+        "A, B = 1, 2"
+      ],
+      [
+        "B",
+        "A, B = 1, 2"
+      ],
+      [
+        "LIMIT",
+        "LIMIT: int = 5"
+      ]
+    ],
+    "binds": [
+      "LIMIT: int = 5"
+    ]
+  },
+  {
+    "id": "py-one-line",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "o.py",
+    "source": "def f(): return 1\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "def f(): return 1"
+      ]
+    ],
+    "binds": [
+      "def f(): return 1"
+    ]
+  },
+  {
+    "id": "py-fstring",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "f.py",
+    "source": "def greet(name):\n    return f\"Hello, {name!r:>{10}}\"  # c\n",
+    "symbol": "greet",
+    "definitions": [
+      [
+        "greet",
+        "def greet(name):\n    return f\"Hello, {name!r:>{10}}\""
+      ]
+    ],
+    "binds": [
+      "def greet(name):\n    return f\"Hello, {name!r:>{10}}\""
+    ]
+  },
+  {
+    "id": "py-continuation",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "t.py",
+    "source": "def total(a,\n          b):\n    return (a +\n            b) \\\n        * 2\n",
+    "symbol": "total",
+    "definitions": [
+      [
+        "total",
+        "def total(a,\n          b):\n    return (a +\n            b) \\\n        * 2"
+      ]
+    ],
+    "binds": [
+      "def total(a,\n          b):\n    return (a +\n            b) \\\n        * 2"
+    ]
+  },
+  {
+    "id": "py-semicolon",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "s.py",
+    "source": "X = 1; Y = 2\n",
+    "symbol": "Y",
+    "definitions": [
+      [
+        "X",
+        "X = 1"
+      ],
+      [
+        "Y",
+        "Y = 2"
+      ]
+    ],
+    "binds": [
+      "Y = 2"
+    ]
+  },
+  {
+    "id": "py-test-parametrized",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "test_cart.py",
+    "source": "import pytest\n\nclass TestCart:\n    @pytest.mark.parametrize(\"n\", [1, 2])\n    def test_add(self, n):\n        assert n\n",
+    "symbol": "TestCart.test_add[1]",
+    "definitions": [
+      [
+        "TestCart",
+        "class TestCart:\n    @pytest.mark.parametrize(\"n\", [1, 2])\n    def test_add(self, n):\n        assert n"
+      ],
+      [
+        "TestCart.test_add",
+        "@pytest.mark.parametrize(\"n\", [1, 2])\n    def test_add(self, n):\n        assert n"
+      ]
+    ],
+    "binds": [
+      "@pytest.mark.parametrize(\"n\", [1, 2])\n    def test_add(self, n):\n        assert n"
+    ]
+  },
+  {
+    "id": "py-string-prefixes",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "p.py",
+    "source": "S = r'\\d' \"a\" 'b'\nB = rb'\\x00' b\"c\"\n",
+    "symbol": "S",
+    "definitions": [
+      [
+        "S",
+        "S = r'\\d' \"a\" 'b'"
+      ],
+      [
+        "B",
+        "B = rb'\\x00' b\"c\""
+      ]
+    ],
+    "binds": [
+      "S = r'\\d' \"a\" 'b'"
+    ]
+  },
+  {
+    "id": "py-bytes-prefixes",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "p.py",
+    "source": "S = r'\\d' \"a\" 'b'\nB = rb'\\x00' b\"c\"\n",
+    "symbol": "B",
+    "definitions": [
+      [
+        "S",
+        "S = r'\\d' \"a\" 'b'"
+      ],
+      [
+        "B",
+        "B = rb'\\x00' b\"c\""
+      ]
+    ],
+    "binds": [
+      "B = rb'\\x00' b\"c\""
+    ]
+  },
+  {
+    "id": "py-numbers-operators",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "m.py",
+    "source": "X = 0x_1F + 1_000j ** -2 // 3 @ m\n",
+    "symbol": "X",
+    "definitions": [
+      [
+        "X",
+        "X = 0x_1F + 1_000j ** -2 // 3 @ m"
+      ]
+    ],
+    "binds": [
+      "X = 0x_1F + 1_000j ** -2 // 3 @ m"
+    ]
+  },
+  {
+    "id": "py-comments-blank-lines",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "c2.py",
+    "source": "def f(x):\n    # comment\n\n    y = x  # trailing\n\n    return y\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "def f(x):\n    # comment\n\n    y = x  # trailing\n\n    return y"
+      ]
+    ],
+    "binds": [
+      "def f(x):\n    # comment\n\n    y = x  # trailing\n\n    return y"
+    ]
+  },
+  {
+    "id": "py-dedent",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "g.py",
+    "source": "def g(a):\n    if a:\n        a = 1\n    return a\n",
+    "symbol": "g",
+    "definitions": [
+      [
+        "g",
+        "def g(a):\n    if a:\n        a = 1\n    return a"
+      ]
+    ],
+    "binds": [
+      "def g(a):\n    if a:\n        a = 1\n    return a"
+    ]
+  },
+  {
+    "id": "py-unicode",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "u.py",
+    "source": "def café(): return \"naïve\"\n",
+    "symbol": "café",
+    "definitions": [
+      [
+        "café",
+        "def café(): return \"naïve\""
+      ]
+    ],
+    "binds": [
+      "def café(): return \"naïve\""
+    ]
+  },
+  {
+    "id": "py-tabs-whole-file",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "w.py",
+    "source": "if True:\n\tx = 1\n",
+    "definitions": []
+  },
+  {
+    "id": "py-decorated-first-statement",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "c3.py",
+    "source": "class C:\n    @d(lambda x: x)\n    def f(self): pass\n",
+    "symbol": "C",
+    "definitions": [
+      [
+        "C",
+        "class C:\n    @d(lambda x: x)\n    def f(self): pass"
+      ],
+      [
+        "C.f",
+        "@d(lambda x: x)\n    def f(self): pass"
+      ]
+    ],
+    "binds": [
+      "class C:\n    @d(lambda x: x)\n    def f(self): pass"
+    ]
+  },
+  {
+    "id": "py-carriage-return-line-ends",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "r.py",
+    "source": "def f():\r    return 1\r",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "def f():\n    return 1"
+      ]
+    ],
+    "binds": [
+      "def f():\n    return 1"
+    ]
+  },
+  {
+    "id": "py-name-as-written",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "k.py",
+    "source": "def K(): pass\n",
+    "symbol": "K",
+    "definitions": [
+      [
+        "K",
+        "def K(): pass"
+      ]
+    ],
+    "binds": [
+      "def K(): pass"
+    ]
+  },
+  {
+    "id": "py-parametrized-member",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "test_a.py",
+    "source": "class TestC:\n    def test_f(self): pass\n",
+    "symbol": "test_f[p]",
+    "definitions": [
+      [
+        "TestC",
+        "class TestC:\n    def test_f(self): pass"
+      ],
+      [
+        "TestC.test_f",
+        "def test_f(self): pass"
+      ]
+    ],
+    "binds": [
+      "def test_f(self): pass"
+    ]
+  },
+  {
+    "id": "py-lambda-walrus",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "l.py",
+    "source": "F = lambda x: (y := x)\n",
+    "symbol": "F",
+    "definitions": [
+      [
+        "F",
+        "F = lambda x: (y := x)"
+      ]
+    ],
+    "binds": [
+      "F = lambda x: (y := x)"
+    ]
+  },
+  {
+    "id": "py-return-line-break",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "r.py",
+    "source": "def f():\n    return\n    (1)\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "def f():\n    return\n    (1)"
+      ]
+    ],
+    "binds": [
+      "def f():\n    return\n    (1)"
+    ]
+  },
+  {
+    "id": "py-return-value",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "r.py",
+    "source": "def f():\n    return (1)\n",
+    "symbol": "f",
+    "definitions": [
+      [
+        "f",
+        "def f():\n    return (1)"
+      ]
+    ],
+    "binds": [
+      "def f():\n    return (1)"
+    ]
+  },
+  {
+    "id": "py-backslash-continuation",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "k.py",
+    "source": "x = 1 \\\n    + 2\n",
+    "definitions": [
+      [
+        "x",
+        "x = 1 \\\n    + 2"
+      ]
+    ]
+  },
+  {
+    "id": "py-two-statements",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "k.py",
+    "source": "x = 1\n+2\n",
+    "definitions": [
+      [
+        "x",
+        "x = 1"
+      ]
+    ]
+  },
+  {
+    "id": "py-dedent-inner",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "d.py",
+    "source": "if a:\n    if b:\n        x\n    y\n",
+    "definitions": []
+  },
+  {
+    "id": "py-dedent-outer",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "d.py",
+    "source": "if a:\n    if b:\n        x\ny\n",
+    "definitions": []
+  },
+  {
+    "id": "py-except-parenthesized",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "e.py",
+    "source": "try:\n    pass\nexcept (A, B):\n    pass\n",
+    "definitions": []
+  },
+  {
+    "id": "py-except-without-parentheses",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "e.py",
+    "source": "try:\n    pass\nexcept A, B:\n    pass\n",
+    "parses": false
+  },
+  {
+    "id": "py-template-string",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "t.py",
+    "source": "x = t\"hello {name}\"\n",
+    "parses": false
+  },
+  {
+    "id": "py-lazy-import",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "l.py",
+    "source": "lazy import json\n",
+    "parses": false
+  },
+  {
+    "id": "py-type-parameter-default",
+    "requirements": [
+      "Annex L",
+      "OSTF-164"
+    ],
+    "path": "d.py",
+    "source": "def f[T = int](x: T) -> T:\n    return x\n",
+    "parses": false
+  }
+]
