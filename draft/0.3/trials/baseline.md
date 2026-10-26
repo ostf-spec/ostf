@@ -43,6 +43,8 @@ Task outcome is the part of each task's criteria that is the same in every arm; 
 
 The agents are the small model of each vendor, so these are small-model results. The difference between `full` and `none` is made on T3 Change a risk control, T6 Refuse an invented ID and T7 Impact of a diff, where the two arms differ by half the runs or more ([outcome by task](#outcome-by-task)). `intent` carries the paragraph's rules, which `none` lacks, so `intent` minus `none` measures the format together with those rules, not the format alone; Phase 5's `rules` arm separates the two. The tool's own share shows on T7, the impact listing, where 1, 4 and 11 of 12 runs in `none`, `intent` and `full` named what the change touched.
 
+Phase 5 separated them on revision 0.16 ([results-phase5.md](results-phase5.md)): `full` minus `rules`, the same rules on a plain requirements file, was -6 points (-14 to +1), so the format is not shown to improve task outcomes beyond those rules. What Phase 5 shows for the format is the record: 96 % of the `implements` links that agents added on tested code corroborated, 0 links broken in 69 merged changes of the longitudinal replay against 2 stale references in `none`, and 107 items that `check --base` listed in those 69 changes, 1.6 a change.
+
 ## Outcome by task
 
 | Task | `none` | `intent` | `full` |

@@ -185,7 +185,13 @@ def report(runs):
               "([outcome by task](#outcome-by-task)). `intent` carries the paragraph's rules, which `none` lacks, so `intent` minus "
               "`none` measures the format together with those rules, not the format alone; Phase 5's `rules` arm separates the two. "
               f"The tool's own share shows on T7, the impact listing, where {t7[0][0]}, {t7[1][0]} and {t7[2][0]} of {t7[0][1]} runs "
-              "in `none`, `intent` and `full` named what the change touched.", ""]
+              "in `none`, `intent` and `full` named what the change touched.", "",
+              # Phase 5's finding stands beside this figure wherever the repository cites it (plan, section 10).
+              "Phase 5 separated them on revision 0.16 ([results-phase5.md](results-phase5.md)): `full` minus `rules`, the same rules "
+              "on a plain requirements file, was -6 points (-14 to +1), so the format is not shown to improve task outcomes beyond "
+              "those rules. What Phase 5 shows for the format is the record: 96 % of the `implements` links that agents added on "
+              "tested code corroborated, 0 links broken in 69 merged changes of the longitudinal replay against 2 stale references "
+              "in `none`, and 107 items that `check --base` listed in those 69 changes, 1.6 a change.", ""]
     lines += ["## Outcome by task", "", "| Task | " + " | ".join(f"`{a}`" for a in ARMS) + " |", "| --- |" + " --- |" * len(ARMS)]
     for task, title in TASKS.items():
         cells = []
