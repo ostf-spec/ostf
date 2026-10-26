@@ -468,7 +468,7 @@ I.1 is normative for a tool that writes `ndjson`. The rest of this annex is info
 | link | identity (Annex F.2) | source, type, target, attributes, origin, corroboration, observedIn | `links` of the result |
 | anchor | anchor | path, symbol | the source of each link from an anchor |
 | source | alias | url, ostf | `sources` in the root's `trace.yaml` (OSTF-113) |
-| derived link | test anchor, code anchor | view, tool | `trace.derived` (Annex E) |
+| derived link | test anchor, code anchor, observed view, tool | none | `trace.derived` (Annex E) |
 | diagnostic | code, file, subject | severity, message, hint | `diagnostics` of the result |
 | impact | base | changed, contexts, items, links, tests | `impact` of the result |
 
