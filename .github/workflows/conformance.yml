@@ -19,6 +19,8 @@ jobs:
           python-version: '3.12'
       - name: Run the 0.3 reader checks
         run: python3 draft/0.3/conformance/run.py
+      - name: Run the reference reader through the differential corpus
+        run: .venv/bin/python draft/0.3/conformance/differential.py check
   schema-fixtures:
     runs-on: ubuntu-latest
     timeout-minutes: 15

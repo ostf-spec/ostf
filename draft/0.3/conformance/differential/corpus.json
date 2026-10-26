@@ -1,0 +1,3513 @@
+[
+ {
+  "id": "scalar-001-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: true\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-002-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: True\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-003-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 'true'\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-004-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 1\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-005-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 1.5\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-006-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 0x10\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-007-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: null\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-008-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: ~\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-009-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: ''\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-010-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: ' a '\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-011-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: []\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-012-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: {}\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-013-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: \"a\\nb\"\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-014-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: \u00e9\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-015-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 9007199254740993\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-016-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: 'R-B'\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-017-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R B\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-018-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: -R\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-019-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: r-a\n    text: A.\n"
+  }
+ },
+ {
+  "id": "scalar-020-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: true\n"
+  }
+ },
+ {
+  "id": "scalar-021-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: True\n"
+  }
+ },
+ {
+  "id": "scalar-022-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-023-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 1\n"
+  }
+ },
+ {
+  "id": "scalar-024-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-025-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-026-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: null\n"
+  }
+ },
+ {
+  "id": "scalar-027-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: ~\n"
+  }
+ },
+ {
+  "id": "scalar-028-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: ''\n"
+  }
+ },
+ {
+  "id": "scalar-029-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-030-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: []\n"
+  }
+ },
+ {
+  "id": "scalar-031-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: {}\n"
+  }
+ },
+ {
+  "id": "scalar-032-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-033-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-034-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-035-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-036-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: R B\n"
+  }
+ },
+ {
+  "id": "scalar-037-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: -R\n"
+  }
+ },
+ {
+  "id": "scalar-038-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    type: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-039-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: true\n"
+  }
+ },
+ {
+  "id": "scalar-040-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: True\n"
+  }
+ },
+ {
+  "id": "scalar-041-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-042-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 1\n"
+  }
+ },
+ {
+  "id": "scalar-043-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-044-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-045-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: null\n"
+  }
+ },
+ {
+  "id": "scalar-046-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: ~\n"
+  }
+ },
+ {
+  "id": "scalar-047-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: ''\n"
+  }
+ },
+ {
+  "id": "scalar-048-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-049-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: []\n"
+  }
+ },
+ {
+  "id": "scalar-050-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: {}\n"
+  }
+ },
+ {
+  "id": "scalar-051-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-052-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-053-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-054-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-055-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: R B\n"
+  }
+ },
+ {
+  "id": "scalar-056-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: -R\n"
+  }
+ },
+ {
+  "id": "scalar-057-status",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    status: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-058-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: true\n"
+  }
+ },
+ {
+  "id": "scalar-059-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: True\n"
+  }
+ },
+ {
+  "id": "scalar-060-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-061-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 1\n"
+  }
+ },
+ {
+  "id": "scalar-062-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-063-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-064-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: null\n"
+  }
+ },
+ {
+  "id": "scalar-065-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: ~\n"
+  }
+ },
+ {
+  "id": "scalar-066-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: ''\n"
+  }
+ },
+ {
+  "id": "scalar-067-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-068-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: []\n"
+  }
+ },
+ {
+  "id": "scalar-069-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: {}\n"
+  }
+ },
+ {
+  "id": "scalar-070-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-071-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-072-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-073-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-074-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: R B\n"
+  }
+ },
+ {
+  "id": "scalar-075-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: -R\n"
+  }
+ },
+ {
+  "id": "scalar-076-title",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    title: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-077-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: true\n"
+  }
+ },
+ {
+  "id": "scalar-078-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: True\n"
+  }
+ },
+ {
+  "id": "scalar-079-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-080-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 1\n"
+  }
+ },
+ {
+  "id": "scalar-081-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-082-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-083-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: null\n"
+  }
+ },
+ {
+  "id": "scalar-084-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: ~\n"
+  }
+ },
+ {
+  "id": "scalar-085-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: ''\n"
+  }
+ },
+ {
+  "id": "scalar-086-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-087-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: []\n"
+  }
+ },
+ {
+  "id": "scalar-088-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: {}\n"
+  }
+ },
+ {
+  "id": "scalar-089-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-090-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-091-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-092-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-093-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: R B\n"
+  }
+ },
+ {
+  "id": "scalar-094-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: -R\n"
+  }
+ },
+ {
+  "id": "scalar-095-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    text: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-096-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: true\n"
+  }
+ },
+ {
+  "id": "scalar-097-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: True\n"
+  }
+ },
+ {
+  "id": "scalar-098-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-099-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 1\n"
+  }
+ },
+ {
+  "id": "scalar-100-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-101-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-102-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: null\n"
+  }
+ },
+ {
+  "id": "scalar-103-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: ~\n"
+  }
+ },
+ {
+  "id": "scalar-104-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: ''\n"
+  }
+ },
+ {
+  "id": "scalar-105-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-106-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: []\n"
+  }
+ },
+ {
+  "id": "scalar-107-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: {}\n"
+  }
+ },
+ {
+  "id": "scalar-108-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-109-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-110-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-111-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-112-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: R B\n"
+  }
+ },
+ {
+  "id": "scalar-113-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: -R\n"
+  }
+ },
+ {
+  "id": "scalar-114-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    rationale: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-115-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: true\n"
+  }
+ },
+ {
+  "id": "scalar-116-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: True\n"
+  }
+ },
+ {
+  "id": "scalar-117-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-118-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 1\n"
+  }
+ },
+ {
+  "id": "scalar-119-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-120-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-121-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: null\n"
+  }
+ },
+ {
+  "id": "scalar-122-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: ~\n"
+  }
+ },
+ {
+  "id": "scalar-123-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: ''\n"
+  }
+ },
+ {
+  "id": "scalar-124-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-125-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: []\n"
+  }
+ },
+ {
+  "id": "scalar-126-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: {}\n"
+  }
+ },
+ {
+  "id": "scalar-127-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-128-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-129-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-130-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-131-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: R B\n"
+  }
+ },
+ {
+  "id": "scalar-132-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: -R\n"
+  }
+ },
+ {
+  "id": "scalar-133-section",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    section: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-134-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: true\n"
+  }
+ },
+ {
+  "id": "scalar-135-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: True\n"
+  }
+ },
+ {
+  "id": "scalar-136-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-137-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 1\n"
+  }
+ },
+ {
+  "id": "scalar-138-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-139-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-140-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: null\n"
+  }
+ },
+ {
+  "id": "scalar-141-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: ~\n"
+  }
+ },
+ {
+  "id": "scalar-142-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: ''\n"
+  }
+ },
+ {
+  "id": "scalar-143-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-144-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: []\n"
+  }
+ },
+ {
+  "id": "scalar-145-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: {}\n"
+  }
+ },
+ {
+  "id": "scalar-146-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-147-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-148-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-149-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-150-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: R B\n"
+  }
+ },
+ {
+  "id": "scalar-151-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: -R\n"
+  }
+ },
+ {
+  "id": "scalar-152-aliases",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-153-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: true\n"
+  }
+ },
+ {
+  "id": "scalar-154-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: True\n"
+  }
+ },
+ {
+  "id": "scalar-155-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-156-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 1\n"
+  }
+ },
+ {
+  "id": "scalar-157-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-158-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-159-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: null\n"
+  }
+ },
+ {
+  "id": "scalar-160-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: ~\n"
+  }
+ },
+ {
+  "id": "scalar-161-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: ''\n"
+  }
+ },
+ {
+  "id": "scalar-162-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-163-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: []\n"
+  }
+ },
+ {
+  "id": "scalar-164-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: {}\n"
+  }
+ },
+ {
+  "id": "scalar-165-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-166-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-167-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-168-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-169-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: R B\n"
+  }
+ },
+ {
+  "id": "scalar-170-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: -R\n"
+  }
+ },
+ {
+  "id": "scalar-171-revision",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: r-a\n"
+  }
+ },
+ {
+  "id": "scalar-172-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: true\n"
+  }
+ },
+ {
+  "id": "scalar-173-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: True\n"
+  }
+ },
+ {
+  "id": "scalar-174-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 'true'\n"
+  }
+ },
+ {
+  "id": "scalar-175-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 1\n"
+  }
+ },
+ {
+  "id": "scalar-176-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 1.5\n"
+  }
+ },
+ {
+  "id": "scalar-177-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 0x10\n"
+  }
+ },
+ {
+  "id": "scalar-178-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: null\n"
+  }
+ },
+ {
+  "id": "scalar-179-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: ~\n"
+  }
+ },
+ {
+  "id": "scalar-180-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: ''\n"
+  }
+ },
+ {
+  "id": "scalar-181-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: ' a '\n"
+  }
+ },
+ {
+  "id": "scalar-182-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: []\n"
+  }
+ },
+ {
+  "id": "scalar-183-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: {}\n"
+  }
+ },
+ {
+  "id": "scalar-184-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: \"a\\nb\"\n"
+  }
+ },
+ {
+  "id": "scalar-185-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: \u00e9\n"
+  }
+ },
+ {
+  "id": "scalar-186-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 9007199254740993\n"
+  }
+ },
+ {
+  "id": "scalar-187-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: 'R-B'\n"
+  }
+ },
+ {
+  "id": "scalar-188-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: R B\n"
+  }
+ },
+ {
+  "id": "scalar-189-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: -R\n"
+  }
+ },
+ {
+  "id": "scalar-190-external",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    external: r-a\n"
+  }
+ },
+ {
+  "id": "version-001-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-002-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-003-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\n"
+  }
+ },
+ {
+  "id": "version-004-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.3.0\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-005-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3.0\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-006-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3.0\"\n"
+  }
+ },
+ {
+  "id": "version-007-root",
+  "files": {
+   "trace.yaml": "ostf: 0.3\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-008-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: 0.3\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-009-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: 0.3\n"
+  }
+ },
+ {
+  "id": "version-010-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.4\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-011-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.4\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-012-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.4\"\n"
+  }
+ },
+ {
+  "id": "version-013-root",
+  "files": {
+   "trace.yaml": "ostf: \"1.0\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-014-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"1.0\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-015-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"1.0\"\n"
+  }
+ },
+ {
+  "id": "version-016-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-017-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-018-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.2\"\n"
+  }
+ },
+ {
+  "id": "version-019-root",
+  "files": {
+   "trace.yaml": "ostf: \"3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-020-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-021-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"3\"\n"
+  }
+ },
+ {
+  "id": "version-022-root",
+  "files": {
+   "trace.yaml": "ostf: \"\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-023-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-024-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"\"\n"
+  }
+ },
+ {
+  "id": "version-025-root",
+  "files": {
+   "trace.yaml": "ostf: \"v0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-026-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"v0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-027-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"v0.3\"\n"
+  }
+ },
+ {
+  "id": "version-028-root",
+  "files": {
+   "trace.yaml": "ostf: \" 0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-029-item-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \" 0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "version-030-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \" 0.3\"\n"
+  }
+ },
+ {
+  "id": "keys-001-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ncolour: red\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-002-root-x",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nx-colour: red\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-003-item",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    colour: red\n"
+  }
+ },
+ {
+  "id": "keys-004-item-x",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    x-colour: red\n"
+  }
+ },
+ {
+  "id": "keys-005-item-x-nested",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    attributes: {x-colour: red}\n"
+  }
+ },
+ {
+  "id": "keys-006-item-file-profile",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-007-item-file-tags",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\ntags: false\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-008-item-file-no-items",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\n"
+  }
+ },
+ {
+  "id": "keys-009-source-key",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: 'https://x/{id}', colour: red}\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-010-source-x",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: 'https://x/{id}', x-colour: red}\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-011-profile-key",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\ncolour: red\n"
+  }
+ },
+ {
+  "id": "keys-012-profile-x",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\nx-colour: red\n"
+  }
+ },
+ {
+  "id": "keys-013-yaml-anchor",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - &a {id: R-A, text: A.}\n  - *a\n"
+  }
+ },
+ {
+  "id": "keys-014-yaml-tag",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: !!str R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-015-yaml-duplicate-key",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    id: R-B\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-016-yaml-two-documents",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n---\nostf: \"0.3\"\n"
+  }
+ },
+ {
+  "id": "keys-017-bom",
+  "files": {
+   "trace.yaml": "\ufeffostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "keys-018-nel",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: \"a\\u0085b\"\n"
+  }
+ },
+ {
+  "id": "keys-019-crlf",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\r\nitems:\r\n  - id: R-A\r\n    text: A.\r\n"
+  }
+ },
+ {
+  "id": "anchor-001-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-002-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-003-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"./a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-004-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"../a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-005-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"/a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-006-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a\\\\b.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-007-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-008-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-009-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#F#G\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-010-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"dir/\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-011-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#Missing\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-012-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"missing.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-013-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#f\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-014-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"A.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-015-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"trace.derived\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-016-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"TRACE.DERIVED\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-017-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"R-A\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-018-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a b.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-019-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go #F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-020-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#F/sub\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-021-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a_test.go#TestF/sub\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-022-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a_test.go#TestF\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-023-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a_test.go#TestF/\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-024-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"x.rs#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-025-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"x.rs\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-026-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"deploy/x.tf\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-027-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#S.M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-028-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-029-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#S\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-030-code",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.go#(*S).M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-031-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-032-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-033-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"./a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-034-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"../a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-035-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"/a.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-036-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a\\\\b.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-037-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-038-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-039-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#F#G\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-040-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"dir/\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-041-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#Missing\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-042-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"missing.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-043-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#f\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-044-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"A.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-045-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"trace.derived\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-046-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"TRACE.DERIVED\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-047-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"R-A\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-048-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a b.go#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-049-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go #F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-050-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#F/sub\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-051-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a_test.go#TestF/sub\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-052-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a_test.go#TestF\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-053-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a_test.go#TestF/\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-054-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"x.rs#F\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-055-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"x.rs\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-056-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"deploy/x.tf\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-057-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#S.M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-058-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-059-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#S\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "anchor-060-tests",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.go#(*S).M\"]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "x.rs": "fn f() {}\n",
+   "deploy/x.tf": "x = 1\n",
+   "dir/b.go": "package dir\n"
+  }
+ },
+ {
+  "id": "link-001-string",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-B]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-002-mapping",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [{to: R-B}]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-003-ref-key",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [{ref: R-B}]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-004-attribute",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [{to: R-B, role: x}]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-005-number",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [1]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-006-nested",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [[R-B]]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-007-scalar",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: R-B\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-008-self",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-A]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-009-unknown",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-MISSING]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-010-case",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [r-b]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-011-alias",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [B-ALIAS]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-012-twice",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-B, R-B]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-013-controls-statement",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    controls: [R-B]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-014-verifies-statement",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    verifies: [R-B]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-015-unknown-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    mitigates: [R-B]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-016-empty",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: []\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-017-null",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: null\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-018-to-and-ref",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [{to: R-B, ref: R-B}]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-019-to-number",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [{to: 1}]\n  - id: R-B\n    text: B.\n    aliases: [B-ALIAS]\n"
+  }
+ },
+ {
+  "id": "link-020-cycle",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-B]\n  - id: R-B\n    text: B.\n    refines: [R-A]\n  - id: R-C\n    text: C.\n    refines: [R-A]\n"
+  }
+ },
+ {
+  "id": "link-021-obsolete",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    refines: [R-B]\n  - id: R-B\n    text: B.\n    status: obsolete\n"
+  }
+ },
+ {
+  "id": "link-022-risk",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: RISK-A\n    type: risk\n    text: A.\n  - id: R-A\n    text: B.\n    controls: [RISK-A]\n    code: [a.go#F]\n  - id: R-B\n    text: C.\n    refines: [R-A]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n"
+  }
+ },
+ {
+  "id": "link-023-threat",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: T-A\n    type: threat\n    text: A.\n  - id: C-A\n    type: control\n    text: B.\n    controls: [T-A]\n"
+  }
+ },
+ {
+  "id": "link-024-verification",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: V-A\n    type: verification\n    text: V.\n    verifies: [R-A]\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "link-025-duplicate-id",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n  - id: r-a\n    text: B.\n"
+  }
+ },
+ {
+  "id": "link-026-alias-collides",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n  - id: R-B\n    text: B.\n    aliases: [r-a]\n"
+  }
+ },
+ {
+  "id": "go-tag-001-line",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-002-no-space",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n//@req R-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-003-commas",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A,R-B\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-004-spaces",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req   R-A  R-B\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-005-tab",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req\tR-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-006-unknown",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A R-MISSING\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-007-block",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n/* @req R-A */\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-008-block-lines",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n/*\n@req R-A\n*/\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-009-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req-file R-A\n"
+  }
+ },
+ {
+  "id": "go-tag-010-bare",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-011-glued",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @reqR-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-012-mid-line",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// see @req R-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-013-trailing",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\nfunc F() {} // @req R-A\n"
+  }
+ },
+ {
+  "id": "go-tag-014-blank-line",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\n\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-015-inside",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\nfunc F() {\n\t// @req R-A\n}\n"
+  }
+ },
+ {
+  "id": "go-tag-016-grouped-keyword",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\nconst (\n\tX = 1\n\tY = 2\n)\n"
+  }
+ },
+ {
+  "id": "go-tag-017-grouped-spec",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\nconst (\n\t// @req R-A\n\tX = 1\n\tY = 2\n)\n"
+  }
+ },
+ {
+  "id": "go-tag-018-multi-name",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\nvar X, Y = 1, 2\n"
+  }
+ },
+ {
+  "id": "go-tag-019-method",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\ntype S struct{}\n\n// @req R-A\nfunc (s *S) M() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-020-generic",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\ntype L[T any] struct{}\n\n// @req R-A\nfunc (l *L[T]) M() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-021-string",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\nvar s = \"// @req R-A\"\n"
+  }
+ },
+ {
+  "id": "go-tag-022-raw-string",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\nvar s = `\n// @req R-A\n`\n"
+  }
+ },
+ {
+  "id": "go-tag-023-crlf",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\r\nfunc F() {}\r\n"
+  }
+ },
+ {
+  "id": "go-tag-024-alias",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req A-ALIAS\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-025-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\ntype T struct{}\n"
+  }
+ },
+ {
+  "id": "go-tag-026-unparseable",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\nfunc F( {\n"
+  }
+ },
+ {
+  "id": "go-tag-027-doc-and-tag",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// F does.\n// @req R-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-028-two-tags",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// @req R-A\n// @req R-B\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-029-backticks",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    aliases: [A-ALIAS]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// `@req` R-A\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-030-test-file-test",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\n// @req R-A\nfunc TestF(t *testing.T) {}\n"
+  }
+ },
+ {
+  "id": "go-tag-031-test-file-helper",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a_test.go": "package a\n\n// @req R-A\nfunc helper() {}\n"
+  }
+ },
+ {
+  "id": "go-tag-032-test-file-benchmark",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\n// @req R-A\nfunc BenchmarkF(b *testing.B) {}\n"
+  }
+ },
+ {
+  "id": "go-tag-033-test-file-lowercase",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\n// @req R-A\nfunc Testf(t *testing.T) {}\n"
+  }
+ },
+ {
+  "id": "go-tag-034-test-file-fuzz",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\n// @req R-A\nfunc FuzzF(f *testing.F) {}\n"
+  }
+ },
+ {
+  "id": "go-tag-035-tags-off",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ntags: false\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.go": "package a\n\n// @req R-MISSING\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "ts-tag-001-function",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nexport function f() {}\n"
+  }
+ },
+ {
+  "id": "ts-tag-002-class-method",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "export class C {\n  // @req R-A\n  m() {}\n}\n"
+  }
+ },
+ {
+  "id": "ts-tag-003-arrow",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nexport const f = () => 1;\n"
+  }
+ },
+ {
+  "id": "ts-tag-004-namespace",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "namespace N {\n  // @req R-A\n  export function f() {}\n}\n"
+  }
+ },
+ {
+  "id": "ts-tag-005-interface",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\ninterface I { x: number }\n"
+  }
+ },
+ {
+  "id": "ts-tag-006-enum",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nenum E { A }\n"
+  }
+ },
+ {
+  "id": "ts-tag-007-default",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nexport default function f() {}\n"
+  }
+ },
+ {
+  "id": "ts-tag-008-jsx",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.tsx": "const x = <div>{/* @req R-A */}</div>;\n"
+  }
+ },
+ {
+  "id": "ts-tag-009-template",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "const s = `\n// @req R-A\n`;\n"
+  }
+ },
+ {
+  "id": "ts-tag-010-block",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.js": "/** @req R-A */\nfunction f() {}\n"
+  }
+ },
+ {
+  "id": "ts-tag-011-member-assign",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.js": "const o = {};\n// @req R-A\no.f = function () {};\n"
+  }
+ },
+ {
+  "id": "ts-tag-012-destructure",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nconst { a, b } = o;\n"
+  }
+ },
+ {
+  "id": "ts-tag-013-private",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "class C {\n  // @req R-A\n  #m() {}\n}\n"
+  }
+ },
+ {
+  "id": "ts-tag-014-computed",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "class C {\n  // @req R-A\n  ['m']() {}\n}\n"
+  }
+ },
+ {
+  "id": "ts-tag-015-decorated",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "class C {\n  // @req R-A\n  @d m() {}\n}\n"
+  }
+ },
+ {
+  "id": "ts-tag-016-unparseable",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.ts": "// @req R-A\nfunction f( {\n"
+  }
+ },
+ {
+  "id": "ts-tag-017-jest",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.test.ts": "describe('suite', () => {\n  // @req R-A\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-tag-018-vitest-each",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.test.ts": "// @req R-A\ntest.each([1])('case %s', () => {});\n"
+  }
+ },
+ {
+  "id": "ts-tag-019-tests-dir",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "__tests__/a.ts": "// @req R-A\ntest('works', () => {});\n"
+  }
+ },
+ {
+  "id": "ts-tag-020-mjs",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.mjs": "// @req R-A\nexport function f() {}\n"
+  }
+ },
+ {
+  "id": "ts-anchor-001-f",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#f\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-002-c-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#C.m\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-003-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#m\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-004-n-f",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#N.f\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-005-c",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#C\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-006-i",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#I\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-007-suite-works",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.test.ts#suite > works\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-008-suite",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.test.ts#suite\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "ts-anchor-009-missing",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"a.ts#missing\"]\n",
+   "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
+   "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"
+  }
+ },
+ {
+  "id": "py-tag-001-def",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\ndef f():\n    pass\n"
+  }
+ },
+ {
+  "id": "py-tag-002-method",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "class C:\n    # @req R-A\n    def m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-tag-003-decorator",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\n@d\ndef f():\n    pass\n"
+  }
+ },
+ {
+  "id": "py-tag-004-async",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\nasync def f():\n    pass\n"
+  }
+ },
+ {
+  "id": "py-tag-005-nested-class",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "class C:\n    class D:\n        # @req R-A\n        def m(self):\n            pass\n"
+  }
+ },
+ {
+  "id": "py-tag-006-variable",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\nX = 1\n"
+  }
+ },
+ {
+  "id": "py-tag-007-docstring",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "def f():\n    \"\"\"@req R-A\"\"\"\n"
+  }
+ },
+ {
+  "id": "py-tag-008-test",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "test_a.py": "# @req R-A\ndef test_f():\n    pass\n"
+  }
+ },
+ {
+  "id": "py-tag-009-test-class",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "test_a.py": "class TestC:\n    # @req R-A\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-tag-010-tabs",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "def f():\n\t# @req R-A\n\tpass\n"
+  }
+ },
+ {
+  "id": "py-tag-011-unparseable",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\ndef f(:\n"
+  }
+ },
+ {
+  "id": "py-tag-012-template-string",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\nx = t'{y}'\n"
+  }
+ },
+ {
+  "id": "py-tag-013-one-line",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "a.py": "# @req R-A\ndef f(): pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-001-f",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.py#f\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-002-c-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.py#C.m\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-003-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.py#m\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-004-test-f-1-2",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"test_a.py#test_f[1-2]\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-005-testc-test-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"test_a.py#TestC.test_m\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-006-testc-test-m",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"test_a.py#TestC::test_m\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "py-anchor-007-x",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    tests: [\"a.py#X\"]\n",
+   "a.py": "def f():\n    pass\n\nclass C:\n    def m(self):\n        pass\n\nX = 1\n",
+   "test_a.py": "def test_f():\n    pass\n\nclass TestC:\n    def test_m(self):\n        pass\n"
+  }
+ },
+ {
+  "id": "profile-001-type-kind",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: H-A\n    type: hazard\n    text: H.\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {kind: risk}\n"
+  }
+ },
+ {
+  "id": "profile-002-type-no-kind",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: H-A\n    type: hazard\n    text: H.\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {}\n"
+  }
+ },
+ {
+  "id": "profile-003-type-bad-kind",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {kind: danger}\n"
+  }
+ },
+ {
+  "id": "profile-004-link-new",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: H-A\n    type: hazard\n    text: H.\n  - id: R-A\n    text: A.\n    mitigates: [H-A]\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {kind: risk}\nlinks:\n  mitigates: {from: [requirement], to: [hazard]}\n"
+  }
+ },
+ {
+  "id": "profile-005-link-no-to",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\nlinks:\n  mitigates: {from: [requirement]}\n"
+  }
+ },
+ {
+  "id": "profile-006-link-anchor-from",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\nlinks:\n  covers: {from: [code], to: [requirement]}\n"
+  }
+ },
+ {
+  "id": "profile-007-attribute-values",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n    attributes: {level: c}\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      level: {type: string, values: [a, b]}\n"
+  }
+ },
+ {
+  "id": "profile-008-attribute-required",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      level: {type: string, required: true}\n"
+  }
+ },
+ {
+  "id": "profile-009-attribute-type",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n    attributes: {n: '1'}\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      n: {type: number}\n"
+  }
+ },
+ {
+  "id": "profile-010-link-attribute",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n    refines: [{to: R-B, role: y}]\n  - id: R-B\n    text: B.\n",
+   "p.yaml": "ostf: \"0.3\"\nlinks:\n  refines:\n    attributes:\n      role: {values: [x]}\n"
+  }
+ },
+ {
+  "id": "profile-011-reserved-to",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\nlinks:\n  refines:\n    attributes:\n      to: {}\n"
+  }
+ },
+ {
+  "id": "profile-012-not-mapping",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "[]\n"
+  }
+ },
+ {
+  "id": "profile-013-meaning",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      a: {type: string, meaning: true}\n"
+  }
+ },
+ {
+  "id": "profile-014-fingerprints",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+   "p.yaml": "ostf: \"0.3\"\nfingerprints: {bodyChange: all}\n"
+  }
+ },
+ {
+  "id": "profile-015-missing",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "external-001-plain",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: 'https://x/{id}'}\nitems:\n  - id: R-A\n    external: jira:X-1\n"
+  }
+ },
+ {
+  "id": "external-002-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: R-A\n    external: jira:X-1\n    revision: '3'\n    text: A.\n"
+  }
+ },
+ {
+  "id": "external-003-undeclared",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    external: jira:X-1\n"
+  }
+ },
+ {
+  "id": "external-004-bad-alias",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  Jira: {}\nitems:\n  - id: R-A\n    external: Jira:X-1\n"
+  }
+ },
+ {
+  "id": "external-005-no-native",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: R-A\n    external: 'jira:'\n"
+  }
+ },
+ {
+  "id": "external-006-space",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: R-A\n    external: jira:X 1\n"
+  }
+ },
+ {
+  "id": "external-007-duplicate",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\nitems:\n  - id: R-A\n    external: jira:X-1\n  - id: R-B\n    external: jira:X-1\n"
+  }
+ },
+ {
+  "id": "external-008-revision-alone",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    revision: '3'\n"
+  }
+ },
+ {
+  "id": "external-009-root-same-repo",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  cat: {ostf: services/catalog}\nitems:\n  - id: R-A\n    external: cat:C-1\n"
+  }
+ },
+ {
+  "id": "external-010-root-other-repo",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  cat: {ostf: 'ostf://github.com/acme/controls#security/'}\nitems:\n  - id: R-A\n    external: cat:C-1\n"
+  }
+ },
+ {
+  "id": "external-011-root-invalid",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nsources:\n  cat: {ostf: '../up'}\nitems:\n  - id: R-A\n    external: cat:C-1\n"
+  }
+ },
+ {
+  "id": "include-001-glob-star",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "reqs/sub/b.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: B.\n"
+  }
+ },
+ {
+  "id": "include-002-glob-double-star",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/**/*.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "reqs/sub/b.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: B.\n"
+  }
+ },
+ {
+  "id": "include-003-glob-empty",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"none/*.yaml\"]\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-004-glob-class",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/[ab].yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-005-glob-order",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"b/*.yaml\", \"a/*.yaml\"]\n",
+   "a/x.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "b/x.yaml": "ostf: \"0.3\"\nitems:\n  - id: r-a\n    text: B.\n"
+  }
+ },
+ {
+  "id": "include-006-glob-twice",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\", \"reqs/a.yaml\"]\n",
+   "reqs/a.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-007-nested",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n",
+   "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: B.\n",
+   "sub/a.go": "package sub\n\n// @req R-B\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "include-008-nested-include",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"**/*.yaml\"]\n",
+   "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: B.\n",
+   "sub/x.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-009-nested-anchor",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"sub/a.go#F\"]\n",
+   "sub/trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-B\n    text: B.\n",
+   "sub/a.go": "package sub\n\nfunc F() {}\n"
+  }
+ },
+ {
+  "id": "include-010-include-root",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"trace.yaml\"]\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-011-include-path",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\ninclude: [\"../x/*.yaml\"]\nitems:\n  - id: R-A\n    text: A.\n"
+  }
+ },
+ {
+  "id": "include-012-leftover-lock",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"trace.lock\"]\n",
+   "trace.lock": "trace.lock 1\n"
+  }
+ },
+ {
+  "id": "derived-001-covers",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-002-none",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\n"
+  }
+ },
+ {
+  "id": "derived-003-header",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 2\na_test.go#TestF covers a.go#F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-004-no-tool",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=1\n"
+  }
+ },
+ {
+  "id": "derived-005-pair-twice",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=1 view=2\n"
+  }
+ },
+ {
+  "id": "derived-006-escape",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go%23F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-007-bad-escape",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=%zz tool=t\n"
+  }
+ },
+ {
+  "id": "derived-008-crlf",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\r\na_test.go#TestF covers a.go#F view=1 tool=t\r\n"
+  }
+ },
+ {
+  "id": "derived-009-not-anchor",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\n../x covers a.go#F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-010-word",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF calls a.go#F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-011-unsorted",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#G view=1 tool=t\na_test.go#TestF covers a.go#F view=1 tool=t\n"
+  }
+ },
+ {
+  "id": "derived-012-lowercase-hex",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=%2a tool=t\n"
+  }
+ },
+ {
+  "id": "context-001-targets",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: N-A\n    type: need\n    text: Need.\n  - id: RISK-A\n    type: risk\n    title: Risk\n    text: |\n      Line one.\n      Line two.\n  - id: R-A\n    title: Req\n    text: A.\n    rationale: Because.\n    aliases: [A-ALIAS]\n    refines: [N-A]\n    controls: [RISK-A]\n    code: [a.go#F, deploy/x.tf]\n    tests: [a_test.go#TestF]\n  - id: V-A\n    type: verification\n    text: Review.\n    verifies: [R-A]\n  - id: R-B\n    text: B.\n    status: draft\n    code: [a.go#S.M]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "deploy/x.tf": "x = 1\n",
+   "x.rs": "fn f() {}\n"
+  },
+  "contexts": [
+   "R-A",
+   "A-ALIAS",
+   "r-a",
+   "N-A",
+   "RISK-A",
+   "V-A",
+   "R-B",
+   "R-MISSING",
+   "a.go#F",
+   "a.go#G",
+   "a.go",
+   "a.go#M",
+   "a.go#S.M",
+   "a_test.go#TestF",
+   "deploy/x.tf",
+   "x.rs#f",
+   "missing.go#F",
+   "a.go#Missing",
+   "../a.go",
+   "a.go#",
+   "trace.yaml"
+  ]
+ },
+ {
+  "id": "impact-001-none",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-002-body",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 3 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-003-comment-inside",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { /* c */ return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-004-comment-above",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles x.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-005-crlf",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\r\n\r\n// F doubles.\r\nfunc F(x int) int { return 2 * x }\r\n\r\nfunc G() int { return 3 }\r\n\r\ntype S struct{}\r\n\r\nfunc (s *S) M() {}\r\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-006-rename",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc H(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-007-move",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "b.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-008-delete-file",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-009-item-text",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A2.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-010-item-rationale",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n    rationale: R.\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-011-item-added",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n  - id: R-B\n    text: B.\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-012-link-added",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M, a.go#G]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-013-test-body",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(2) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-014-method",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() { _ = s }\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-015-type-field",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{ n int }\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-016-new-test",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n",
+   "b_test.go": "package a\n\nimport \"testing\"\n\nfunc TestG(t *testing.T) { G() }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-017-root-removed",
+  "files": {
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ },
+ {
+  "id": "impact-018-adopt",
+  "files": {
+   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n",
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  },
+  "base": {
+   "a.go": "package a\n\n// F doubles.\nfunc F(x int) int { return 2 * x }\n\nfunc G() int { return 3 }\n\ntype S struct{}\n\nfunc (s *S) M() {}\n",
+   "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F(1) }\n"
+  }
+ }
+]
