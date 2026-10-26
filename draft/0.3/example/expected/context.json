@@ -47,7 +47,10 @@
       "target": "R-REFUND-LIMIT",
       "attributes": {},
       "origin": "declared",
-      "corroboration": "corroborated"
+      "corroboration": "corroborated",
+      "observedIn": [
+        "unknown"
+      ]
     },
     {
       "source": "refund_test.go#TestRefundLimit",

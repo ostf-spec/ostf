@@ -1,7 +1,7 @@
 {
  "suite": {
   "version": 2,
-  "sha256": "0730a03325edc8c13e206086d17ad21e741dc6fcb86be4c61d2ca225aeb88ad4"
+  "sha256": "6c1c295d88175af191b628d2b007477e0ba31d55736cfb16a29ca02363fb6c47"
  },
  "checks": [
   {
@@ -4487,6 +4487,74 @@
      "a.go#H implements R-B": "unobserved",
      "a.go#Service.Run implements R-A": "corroborated",
      "b.go implements R-A": "uncorroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0"
+     ],
+     "a.go#Service.Run implements R-A": [
+      "5d1e2f0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "derived-observed-in",
+   "requirements": [
+    "Annex E.3",
+    "Annex D.2"
+   ],
+   "note": "A corroborated link carries the distinct views of the lines that cover it, percent-decoded and in byte order: main twice and 5d1e2f0 for F, through either test, and nightly run for G.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
+    "a.go": "package a\n\nfunc F() {}\n\nfunc G() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestG(t *testing.T) { F(); G() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=main tool=go-cover\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestG covers a.go#F view=main tool=go-cover\na_test.go#TestG covers a.go#G view=nightly%20run tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestG",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "corroborated",
+     "a.go#G implements R-A": "corroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0",
+      "main"
+     ],
+     "a.go#G implements R-A": [
+      "nightly run"
+     ]
     }
    }
   },
@@ -4707,6 +4775,11 @@
      "a.go#H implements R-B": "unobserved",
      "a.go#Service.Run implements R-A": "uncorroborated",
      "b.go implements R-A": "uncorroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0"
+     ]
     }
    }
   },
@@ -5604,7 +5677,7 @@
      "a_test.go#TestRun/fast verifies R-A",
      "b.go implements R-A"
     ],
-    "text": "R-A\n  | A.\n  implemented_by a.go#F (corroborated)\n  implemented_by a.go#G (uncorroborated)\n  implemented_by a.go#Service.Run (corroborated)\n  implemented_by b.go (uncorroborated)\n  verified_by a_test.go#TestF\n  verified_by a_test.go#TestRun/fast\n"
+    "text": "R-A\n  | A.\n  implemented_by a.go#F (corroborated in 5d1e2f0)\n  implemented_by a.go#G (uncorroborated)\n  implemented_by a.go#Service.Run (corroborated in 5d1e2f0)\n  implemented_by b.go (uncorroborated)\n  verified_by a_test.go#TestF\n  verified_by a_test.go#TestRun/fast\n"
    }
   },
   {
@@ -5636,7 +5709,36 @@
      "a_test.go#TestRun/fast verifies R-A",
      "b.go implements R-A"
     ],
-    "text": "a.go#F\n  implements R-A (corroborated)\n    | A.\n    implemented_by a.go#G (uncorroborated)\n    implemented_by a.go#Service.Run (corroborated)\n    implemented_by b.go (uncorroborated)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestRun/fast\n"
+    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0)\n    | A.\n    implemented_by a.go#G (uncorroborated)\n    implemented_by a.go#Service.Run (corroborated in 5d1e2f0)\n    implemented_by b.go (uncorroborated)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestRun/fast\n"
+   }
+  },
+  {
+   "id": "context-corroboration-views",
+   "requirements": [
+    "Annex G",
+    "Annex E.3"
+   ],
+   "note": "Rule 5: a corroborated link line names the views it was observed in, joined by a comma and a space.",
+   "context": "a.go#F",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
+    "a.go": "package a\n\nfunc F() {}\n\nfunc G() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestG(t *testing.T) { F(); G() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=main tool=go-cover\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestG covers a.go#F view=main tool=go-cover\na_test.go#TestG covers a.go#G view=nightly%20run tool=go-cover\n"
+   },
+   "expect": {
+    "resolved": true,
+    "codes": [],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a.go#G implements R-A",
+     "a_test.go#TestF verifies R-A",
+     "a_test.go#TestG verifies R-A"
+    ],
+    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0, main)\n    | A.\n    implemented_by a.go#G (corroborated in nightly run)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestG\n"
    }
   },
   {
@@ -8070,6 +8172,85 @@
     "items": []
    },
    "valid": false
+  },
+  {
+   "id": "schema-result-corroborated-without-views",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "corroborated"
+     }
+    ]
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-result-views-beside-uncorroborated",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "uncorroborated",
+      "observedIn": [
+       "main"
+      ]
+     }
+    ]
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-result-corroborated-with-views",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "corroborated",
+      "observedIn": [
+       "5d1e2f0",
+       "main"
+      ]
+     }
+    ]
+   },
+   "valid": true
   }
  ],
  "notCovered": {

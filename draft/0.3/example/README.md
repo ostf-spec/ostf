@@ -6,7 +6,7 @@ A small Go package that shows the constructs most teams need:
 - a need, a risk, and the requirement that controls the risk (`N-REFUNDS`, `RISK-REFUND-ABUSE`, `R-REFUND-LIMIT`), with links declared in [trace.yaml](trace.yaml);
 - a requirement owned by an issue tracker (`PAY-123`, declared `external: jira:PAY-123` with the observed text and revision), linked from [charge.go](charge.go) and [charge_test.go](charge_test.go) by `@req` comments, which are read unless the root sets `tags: false`;
 - a requirement that no function carries (`R-DATA-AT-REST`, encryption at rest): it links the whole infrastructure file [deploy/database.tf](deploy/database.tf), which no language annex covers, and is verified by a review procedure, `V-ENCRYPTION-REVIEW`, an item of type `verification` rather than an automated test;
-- [trace.derived](trace.derived), the coverage a test tool records under Annex E, an optional annex: `TestRefundLimit` covers `CheckRefundLimit` and `TestChargeRetry` covers `Service.Charge`, so both `implements` links are `corroborated`, while `deploy/database.tf`, whose item no test verifies, is `unobserved`. Its lines carry `view=unknown` because they were written for this example, not observed in a commit.
+- [trace.derived](trace.derived), the coverage a test tool records under Annex E, an optional annex: `TestRefundLimit` covers `CheckRefundLimit` and `TestChargeRetry` covers `Service.Charge`, so both `implements` links are `corroborated`, while `deploy/database.tf`, whose item no test verifies, is `unobserved`. Its lines carry `view=unknown` because they were written for this example, not observed in a commit, so each corroboration says it was observed in `unknown`, and `context` shows `(corroborated in unknown)`.
 
 Run the tests from this directory:
 
@@ -26,7 +26,7 @@ The tree has eight links: three between items, four from Go code and tests, and 
 
 ## Expected outputs
 
-[expected/](expected/) holds what a tool that claims the command profile (Annex F) returns for this tree: [check.json](expected/check.json) for `check --format json`, and [context.json](expected/context.json) and [context.txt](expected/context.txt) for `context refund.go#CheckRefundLimit` in both formats. The outputs follow the specification text and the result schema; the [0.3 reader](../conformance/README.md) reproduces every file byte for byte. Their corroborations are Annex E's: a tool that does not implement that annex reads no `trace.derived` and gives the same outputs without them, so this tree is also the annex's worked example.
+[expected/](expected/) holds what a tool that claims the command profile (Annex F) returns for this tree: [check.json](expected/check.json) for `check --format json`, and [context.json](expected/context.json) and [context.txt](expected/context.txt) for `context refund.go#CheckRefundLimit` in both formats. The outputs follow the specification text and the result schema; the [0.3 reader](../conformance/README.md) reproduces every file byte for byte. Their corroborations, and the views each was observed in, are Annex E's: a tool that does not implement that annex reads no `trace.derived` and gives the same outputs without them, so this tree is also the annex's worked example.
 
 ## Status
 

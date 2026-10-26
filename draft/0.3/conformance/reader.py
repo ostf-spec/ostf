@@ -674,7 +674,7 @@ def _unescape(value):
 
 
 def parse_derived(data):
-    """Annex E.1: the (test anchor, code anchor) of each observation, and (code, line) problems."""
+    """Annex E.1: the (test anchor, code anchor, view) of each observation, and (code, line) problems."""
     observations = []
     lines, problems = _lines(data, "DERIVED_INVALID")
     if lines[0] != "trace.derived 1":
@@ -689,12 +689,11 @@ def parse_derived(data):
             pairs = dict(part.split("=", 1) for part in parts[3:])
             if sorted(pairs) != ["tool", "view"] or not all(pairs.values()):
                 raise ValueError("view and tool, once each")
-            for value in pairs.values():
-                _unescape(value)
+            view, _ = _unescape(pairs["view"]), _unescape(pairs["tool"])
             test, code = _unescape(parts[0]), _unescape(parts[2])
             if split_anchor(test) is None or split_anchor(code) is None:
                 raise ValueError("not an anchor")
-            observations.append((test, code))
+            observations.append((test, code, view))
         except (ValueError, UnicodeError):
             problems.append(("DERIVED_INVALID", line))
     return observations, problems
@@ -1393,7 +1392,8 @@ class Analysis:
 
     def _corroboration(self):
         """Annex E.3: beside each implements link whose anchor binds, whether a test anchor that
-        verifies its item covers it, by the definitions each anchor binds to in this view."""
+        verifies its item covers it, by the definitions each anchor binds to in this view, and for a
+        corroborated link the views that the lines covering it name, in byte order."""
         if "trace.derived" not in self.files:
             return
         if self.size("trace.derived") > MAX_FILE_BYTES:
@@ -1404,14 +1404,18 @@ class Analysis:
             for code, line in problems:
                 self.report(code, "trace.derived", line)
         bound = lambda anchor: self.bind(anchor)[1]
-        covered = {(bound(test), bound(code)) for test, code in observations}
+        covered = {}  # (test binding, code binding) -> the views its lines name
+        for test, code, view in observations:
+            covered.setdefault((bound(test), bound(code)), set()).add(view)
         for link in self.links.values():
             if link["type"] != "implements" or not link["anchor"] or link["status"] != "ok":
                 continue
             tests = [l["binding"] for l in self.links.values()
                      if l["type"] == "verifies" and l["anchor"] and l["target"] == link["target"] and l["status"] == "ok"]
-            link["corroboration"] = "unobserved" if not tests else \
-                "corroborated" if any((test, link["binding"]) in covered for test in tests) else "uncorroborated"
+            views = set().union(*(covered.get((test, link["binding"]), set()) for test in tests))
+            link["corroboration"] = "unobserved" if not tests else "corroborated" if views else "uncorroborated"
+            if views:
+                link["observedIn"] = sorted(views, key=str.encode)
 
     def _unlinked(self):
         """One info for the statements, other than obsolete ones, that no link targets: check
@@ -1441,6 +1445,8 @@ class Analysis:
         row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin")}
         if "corroboration" in link:
             row["corroboration"] = link["corroboration"]
+        if "observedIn" in link:  # Annex E.3: only beside corroborated
+            row["observedIn"] = link["observedIn"]
         if changes:
             for key, value in zip(("sourceChangedIn", "targetChangedIn"), self.changed_in(link)):
                 if value is not None:
@@ -1578,8 +1584,11 @@ def render(analysis, target, anchor=None):
         return text
 
     def annotation(link):
-        """Rule 5: the corroboration (Annex E.3), then the change information (F.3), in parentheses."""
+        """Rule 5: the corroboration (Annex E.3), with the views a corroborated link was observed in, then
+        the change information (F.3), in parentheses."""
         shown = link.get("corroboration", "")
+        if "observedIn" in link:
+            shown += " in " + ", ".join(link["observedIn"])
         changes = analysis.changed_in(link)
         if any(changes):
             changed = "changed " + " ".join(value[:12] if value else "-" for value in changes)

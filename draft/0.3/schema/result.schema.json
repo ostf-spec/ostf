@@ -66,10 +66,14 @@
         "attributes": { "type": "object", "additionalProperties": { "type": "string" } },
         "origin": { "enum": ["declared", "tagged"] },
         "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "Annex E.3, optional: beside the link." },
+        "observedIn": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 }, "$comment": "Annex E.3: the views of the trace.derived lines that corroborate the link, in byte order, beside corroborated only." },
         "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex F.3: the view identifier of the last commit that changed the source." },
         "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex F.3: the view identifier of the last commit that changed the target." }
       },
       "required": ["source", "type", "target", "attributes", "origin"],
+      "dependentSchemas": { "observedIn": { "required": ["corroboration"], "properties": { "corroboration": { "const": "corroborated" } } } },
+      "if": { "required": ["corroboration"], "properties": { "corroboration": { "const": "corroborated" } } },
+      "then": { "required": ["observedIn"] },
       "patternProperties": { "^x-": {} },
       "additionalProperties": false
     },
