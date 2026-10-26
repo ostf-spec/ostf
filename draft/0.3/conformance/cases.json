@@ -1,7 +1,7 @@
 {
  "suite": {
   "version": 2,
-  "sha256": "6c1c295d88175af191b628d2b007477e0ba31d55736cfb16a29ca02363fb6c47"
+  "sha256": "cec8decc2136b9401046484e228e9981c96c85cecb7f663264e4a03f91ed6f33"
  },
  "checks": [
   {
@@ -4559,6 +4559,66 @@
    }
   },
   {
+   "id": "derived-observed-in-escaped",
+   "requirements": [
+    "Annex E.3",
+    "Annex E.2"
+   ],
+   "note": "observedIn holds each view percent-decoded: a line break in one view, and a comma and a space in another.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
+    "a.go": "package a\n\nfunc F() {}\n\nfunc G() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestG(t *testing.T) { G() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=nightly%0arun tool=go-cover\na_test.go#TestG covers a.go#G view=main tool=go-cover\na_test.go#TestG covers a.go#G view=release,%20v2 tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestG",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "corroborated",
+     "a.go#G implements R-A": "corroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "nightly\nrun"
+     ],
+     "a.go#G implements R-A": [
+      "main",
+      "release, v2"
+     ]
+    }
+   }
+  },
+  {
    "id": "derived-absent",
    "requirements": [
     "Annex E.3"
@@ -5718,7 +5778,7 @@
     "Annex G",
     "Annex E.3"
    ],
-   "note": "Rule 5: a corroborated link line names the views it was observed in, joined by a comma and a space.",
+   "note": "Rule 5: a corroborated link line names the views it was observed in, joined by a comma and a space, each as Annex E.2 writes it.",
    "context": "a.go#F",
    "files": {
     "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
@@ -5738,7 +5798,61 @@
      "a_test.go#TestF verifies R-A",
      "a_test.go#TestG verifies R-A"
     ],
-    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0, main)\n    | A.\n    implemented_by a.go#G (corroborated in nightly run)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestG\n"
+    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0, main)\n    | A.\n    implemented_by a.go#G (corroborated in nightly%20run)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestG\n"
+   }
+  },
+  {
+   "id": "context-corroboration-view-line-break",
+   "requirements": [
+    "Annex G",
+    "Annex E.2"
+   ],
+   "note": "Rule 5: a view is written as Annex E.2 writes a value, so an escaped line break, which the line spells in lowercase, stays %0A on the one link line.",
+   "context": "a.go#F",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n    tests: [a_test.go#TestF]\n",
+    "a.go": "package a\n\nfunc F() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=nightly%0arun tool=go-cover\n"
+   },
+   "expect": {
+    "resolved": true,
+    "codes": [],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a_test.go#TestF verifies R-A"
+    ],
+    "text": "a.go#F\n  implements R-A (corroborated in nightly%0Arun)\n    | A.\n    verified_by a_test.go#TestF\n"
+   }
+  },
+  {
+   "id": "context-corroboration-view-comma",
+   "requirements": [
+    "Annex G",
+    "Annex E.2"
+   ],
+   "note": "Rule 5: a view's own comma and space are written as Annex E.2 writes them, a space escaped, so the separator between two views is the only comma followed by a space.",
+   "context": "a.go#F",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F]\n    tests: [a_test.go#TestF]\n",
+    "a.go": "package a\n\nfunc F() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=release,%20v2 tool=go-cover\na_test.go#TestF covers a.go#F view=main tool=go-cover\n"
+   },
+   "expect": {
+    "resolved": true,
+    "codes": [],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a_test.go#TestF verifies R-A"
+    ],
+    "text": "a.go#F\n  implements R-A (corroborated in main, release,%20v2)\n    | A.\n    verified_by a_test.go#TestF\n"
    }
   },
   {

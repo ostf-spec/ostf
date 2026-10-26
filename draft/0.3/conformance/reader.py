@@ -1587,8 +1587,8 @@ def render(analysis, target, anchor=None):
         """Rule 5: the corroboration (Annex E.3), with the views a corroborated link was observed in, then
         the change information (F.3), in parentheses."""
         shown = link.get("corroboration", "")
-        if "observedIn" in link:
-            shown += " in " + ", ".join(link["observedIn"])
+        if "observedIn" in link:  # each view as Annex E.2 writes it, so it holds no space or line break
+            shown += " in " + ", ".join(escape(view) for view in link["observedIn"])
         changes = analysis.changed_in(link)
         if any(changes):
             changed = "changed " + " ".join(value[:12] if value else "-" for value in changes)
