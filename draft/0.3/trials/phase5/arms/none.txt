@@ -1,0 +1,1 @@
+REQUIREMENTS.md lists this project's requirements with stable IDs: read it, and run the tests of anything you touch.
