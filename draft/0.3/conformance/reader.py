@@ -786,8 +786,22 @@ def resolve_kinds(vocabulary):
     return vocabulary
 
 
+# OSTF-114: the value types of a declared attribute, and those that MAY declare allowed values.
+VALUE_TYPES = ("string", "number", "boolean", "list")
+VALUES_TYPES = ("string", "list")
+
+
+class ProfileError(ValueError):
+    """PROFILE_INVALID, with the name of the type or link whose entry it concerns as its subject (Annex D.2)."""
+
+    def __init__(self, message, subject):
+        super().__init__(message)
+        self.subject = subject
+
+
 def merge_profile(vocabulary, profile):
-    """Merge a profile over the default vocabulary, or raise ValueError (PROFILE_INVALID)."""
+    """Merge a profile over the default vocabulary, or raise ValueError (PROFILE_INVALID), a ProfileError
+    when the defect is in the entry of a type or link."""
     def mapping(value, keys):
         if not isinstance(value, dict) or any(k not in keys for k in value):
             raise ValueError("unexpected profile shape")
@@ -795,52 +809,59 @@ def merge_profile(vocabulary, profile):
 
     mapping(profile, {"ostf", "types", "links"} | {k for k in profile if k.startswith("x-")})
     for name, spec in mapping(profile.get("types", {}), set(profile.get("types", {}))).items():
-        if not TYPE_NAME.fullmatch(name):
-            raise ValueError("type name")
-        mapping(spec, {"description", "attributes", "kind"})
-        if not isinstance(spec.get("description", ""), str):
-            raise ValueError("description")
-        if name in vocabulary["types"] and spec.get("kind", vocabulary["types"][name]["kind"]) != vocabulary["types"][name]["kind"]:
-            raise ValueError("a default type keeps its kind")
-        if name not in vocabulary["types"] and spec.get("kind") not in KINDS:
-            raise ValueError("a new type declares its kind: statement, risk or verification")
-        for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
-            mapping(declared, {"type", "values", "required"})
-            if not ATTRIBUTE_NAME.fullmatch(attribute) or declared.get("type") not in {"string", "text", "number", "boolean", "list"}:
-                raise ValueError("attribute declaration")
-            if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
-                raise ValueError("attribute values")
-            if not isinstance(declared.get("required", False), bool):
-                raise ValueError("attribute flags")
+        try:
+            if not TYPE_NAME.fullmatch(name):
+                raise ValueError("type name")
+            mapping(spec, {"description", "attributes", "kind"})
+            if not isinstance(spec.get("description", ""), str):
+                raise ValueError("description")
+            if name in vocabulary["types"] and spec.get("kind", vocabulary["types"][name]["kind"]) != vocabulary["types"][name]["kind"]:
+                raise ValueError("a default type keeps its kind")
+            if name not in vocabulary["types"] and spec.get("kind") not in KINDS:
+                raise ValueError("a new type declares its kind: statement, risk or verification")
+            for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
+                mapping(declared, {"type", "values", "required"})
+                if not ATTRIBUTE_NAME.fullmatch(attribute) or declared.get("type") not in VALUE_TYPES:
+                    raise ValueError("attribute declaration: the value types are " + ", ".join(VALUE_TYPES))
+                if "values" in declared and (declared["type"] not in VALUES_TYPES or not isinstance(declared["values"], list)
+                                             or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
+                    raise ValueError("attribute values: strings, for a string or list attribute")
+                if not isinstance(declared.get("required", False), bool):
+                    raise ValueError("attribute flags")
+        except (ValueError, TypeError, KeyError) as error:
+            raise ProfileError(str(error), name) from None
         vocabulary["types"][name] = {**vocabulary["types"].get(name, {}), **spec}
     for name, spec in mapping(profile.get("links", {}), set(profile.get("links", {}))).items():
-        if not LINK_NAME.fullmatch(name):
-            raise ValueError("link name")
-        mapping(spec, {"description", "from", "to", "acyclic", "inverse", "attributes"})
-        if not isinstance(spec.get("description", ""), str):
-            raise ValueError("description")
-        if name not in vocabulary["links"] and not {"from", "to"} <= set(spec):
-            raise ValueError("a new link needs from and to")
-        for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
-            mapping(declared, {"values", "required"})
-            if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"to", "ref"} or not isinstance(declared.get("required", False), bool):
-                raise ValueError("link attribute")
-            if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
-                raise ValueError("link attribute values")
-        if not isinstance(spec.get("acyclic", False), bool) or ("inverse" in spec and not (isinstance(spec["inverse"], str) and LINK_NAME.fullmatch(spec["inverse"]))):
-            raise ValueError("link flags")
+        try:
+            if not LINK_NAME.fullmatch(name):
+                raise ValueError("link name")
+            mapping(spec, {"description", "from", "to", "acyclic", "inverse", "attributes"})
+            if not isinstance(spec.get("description", ""), str):
+                raise ValueError("description")
+            if name not in vocabulary["links"] and not {"from", "to"} <= set(spec):
+                raise ValueError("a new link needs from and to")
+            for attribute, declared in mapping(spec.get("attributes", {}), set(spec.get("attributes", {}))).items():
+                mapping(declared, {"values", "required"})
+                if not ATTRIBUTE_NAME.fullmatch(attribute) or attribute in {"to", "ref"} or not isinstance(declared.get("required", False), bool):
+                    raise ValueError("link attribute")
+                if "values" in declared and (not isinstance(declared["values"], list) or not declared["values"] or not all(isinstance(v, str) for v in declared["values"])):
+                    raise ValueError("link attribute values")
+            if not isinstance(spec.get("acyclic", False), bool) or ("inverse" in spec and not (isinstance(spec["inverse"], str) and LINK_NAME.fullmatch(spec["inverse"]))):
+                raise ValueError("link flags")
+        except (ValueError, TypeError, KeyError) as error:
+            raise ProfileError(str(error), name) from None
         vocabulary["links"][name] = {**vocabulary["links"].get(name, {}), **spec}
     for name, spec in vocabulary["links"].items():
         for end in ("from", "to"):
             ends = spec[end]
             if not isinstance(ends, list) or not ends or not all(isinstance(e, str) for e in ends):
-                raise ValueError("link endpoints")
+                raise ProfileError("link endpoints", name)
             for e in ends:
                 anchor = e in {"code", "tests"}
                 if anchor and (end == "to" or name not in {"implements", "verifies"}):
-                    raise ValueError("anchor kinds only in from of implements and verifies")
+                    raise ProfileError("anchor kinds only in from of implements and verifies", name)
                 if not anchor and not e.startswith("kind:") and e not in vocabulary["types"]:
-                    raise ValueError("unknown endpoint type " + e)
+                    raise ProfileError("unknown endpoint type " + e, name)
     return vocabulary
 
 
@@ -853,13 +874,15 @@ def attribute_value_ok(value):
 
 
 def declared_attributes_ok(specs, values):
+    """OSTF-114: a string, line breaks included; a finite number, which a boolean is not; true or false;
+    a list of strings. Allowed values hold for a string and for each string of a list."""
     for name, spec in specs.items():
         if spec.get("required") and name not in values:
             return False
         if name not in values:
             continue
-        value, kind = values[name], spec.get("type", "string")
-        good = {"string": isinstance(value, str), "text": isinstance(value, str),
+        value, kind = values[name], spec["type"]
+        good = {"string": isinstance(value, str),
                 "number": isinstance(value, (int, float)) and not isinstance(value, bool),
                 "boolean": isinstance(value, bool),
                 "list": isinstance(value, list)}[kind]
@@ -980,15 +1003,18 @@ class Analysis:
             self.report("FORMAT_INVALID", "trace.yaml", "tags", "tags must be true or false")
             raise Stop
         sources = root.get("sources", {})
-        if not isinstance(sources, dict) or any(not SOURCE_ALIAS.fullmatch(a) or not isinstance(s, dict)
-                                                or not isinstance(s.get("url", "x"), str) or s.get("url") == ""
-                                                for a, s in sources.items()):
-            self.report("FORMAT_INVALID", "trace.yaml", "sources", "sources must map aliases to entries with a url")
+        if not isinstance(sources, dict):
+            self.report("FORMAT_INVALID", "trace.yaml", "sources", "sources must map aliases to entries")
             raise Stop
+        # Annex D.2: the subject of a diagnostic on a source entry is its alias, as written.
+        for alias, source in sources.items():
+            if not SOURCE_ALIAS.fullmatch(alias) or not isinstance(source, dict) or not isinstance(source.get("url", "x"), str) or source.get("url") == "":
+                self.report("FORMAT_INVALID", "trace.yaml", alias, f"source {alias}: an alias maps to an entry with an optional url")
+                raise Stop
         for alias, source in sources.items():
             for key in source:
                 if key not in ("url", "ostf") and not key.startswith("x-"):
-                    self.report("UNKNOWN_KEY", "trace.yaml", key, f"source {alias} has no key {key}")
+                    self.report("UNKNOWN_KEY", "trace.yaml", alias, f"source {alias} has no key {key}")
                     raise Stop
             # OSTF-113: the root of the same repository that owns the source's items, never resolved.
             if "ostf" in source and not isinstance(source["ostf"], str):
@@ -1010,7 +1036,8 @@ class Analysis:
             try:
                 self.vocabulary = merge_profile(self.vocabulary, profile)
             except (ValueError, TypeError, KeyError) as error:
-                self.report("PROFILE_INVALID", name, message=str(error))
+                # Annex D.2: the name of the type or link whose entry it concerns, when it concerns one.
+                self.report("PROFILE_INVALID", name, getattr(error, "subject", None), message=str(error))
                 raise Stop
         resolve_kinds(self.vocabulary)
         documents = [("trace.yaml", root)]
@@ -1238,9 +1265,13 @@ class Analysis:
             source = parsed.get("source", self.data(path))
             for comment in parsed["comments"]:
                 for offset, line in enumerate(comment["lines"]):
-                    match = re.search(r"@req(-file)?[ \t]+(.*?)(?:\*/)?$", line.rstrip("\r"))
+                    line = line.rstrip("\r")
+                    match = re.search(r"@req(-file)?[ \t]+(.*?)(?:\*/)?$", line)
                     if not match:
                         continue
+                    # Annex D.2: the tag, from @req to the end of its comment line, without the comment's
+                    # delimiters or trailing spaces, tabs and carriage returns.
+                    tag = line[match.start():match.end(2)].rstrip(" \t\r")
                     anchors = [path]
                     if not match[1]:
                         # A.4, B.4, C.4: the innermost definitions whose lines, from their comments above
@@ -1251,7 +1282,7 @@ class Analysis:
                         found = [d for d in found if not any(e is not d and d["docStart"] <= e["docStart"] and e["end"] <= d["end"]
                                                              and (e["docStart"], e["end"]) != (d["docStart"], d["end"]) for e in found)]
                         if not found:
-                            self.report("TAG_UNBOUND", path, line.strip(), "the tag binds to no definition")
+                            self.report("TAG_UNBOUND", path, tag, "the tag binds to no definition")
                             continue
                         anchors = list(dict.fromkeys(path + "#" + d["name"] for d in found))
                     kind = "verifies" if annex.test_file(path) else "implements"

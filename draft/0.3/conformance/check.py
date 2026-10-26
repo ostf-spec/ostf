@@ -220,6 +220,9 @@ def check():
                 f"{case['id']}: hint of {key}: {found[0].get('hint')!r}, want {anchors}"
         for code, files in expect.get("diagnosticFiles", {}).items():
             assert sorted({d.get("file") for d in result["diagnostics"] if d["code"] == code}) == files, f"{case['id']}: files of {code}"
+        for code, subjects in expect.get("diagnosticSubjects", {}).items():  # Annex D.2, by bytes, null for none
+            got = sorted({d.get("subject") for d in result["diagnostics"] if d["code"] == code}, key=lambda s: (s is not None, (s or "").encode()))
+            assert got == subjects, f"{case['id']}: subjects of {code}\n got {got}\nwant {subjects}"
     for case in cases["contexts"]:
         analysis = reader.Analysis(case["files"])
         result, resolved = reader.context(analysis, case["context"])
