@@ -6,7 +6,7 @@ type: software
 authors:
   - name: "Medoya LLC"
 version: "0.3"
-date-released: "2026-10-26"
+date-released: "2026-10-27"
 url: "https://github.com/ostf-spec/ostf"
 preferred-citation:
   type: standard

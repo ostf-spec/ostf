@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-**Working draft 0.3, 2026-10-26.** Wire version `ostf: "0.3"`. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other.
+**Working draft 0.3, 2026-10-27.** Wire version `ostf: "0.3"`. It is candidate text for OSTF 1.0; it is not 1.0 (see OSTF-170). The draft conformance cases in [conformance/](conformance/README.md) are passed by two readers, one in Python and one in Go, each written from this text without reference to the other.
 
 ## Abstract
 

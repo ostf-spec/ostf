@@ -3,7 +3,7 @@
 
 [reader.py](reader.py) reads wire 0.3: an Analyzer for Go, TypeScript, JavaScript and Python (Annexes A, B and C) with the `check` and `context` commands of [Annex F](../ostf.md#Annex-F), `impact` for `check --base` (Annex D.3) and SARIF output (Annex H). It is independent code; it does not import the second reader, zztrace, or touch the network, and the reader itself starts no subprocess: only the command line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV, and for `context` and `check --base` to read change information (Annex F.3). It reads Python with CPython's own tokenizer and parser, and Go, TypeScript and JavaScript with tree-sitter. It is a development probe, not a hardened service: Go syntax comes from tree-sitter-go plus UTF-8 and escape checks, so some files the Go compiler rejects still parse, and reads are not protected against a tree that changes during a run.
 
-**Claim (OSTF-163).** An Analyzer for Annexes A, B and C, of working draft 0.3 of 2026-10-26, wire version 0.3 and the schema identifiers under `https://ostf.dev/draft/0.3/`, that passes suite version 2, `suite.sha256` `de3a5b5039eebf99d9efe97eb97d1614dcf211ec7123d48b46905ceb43b385d7`; and, as separate claims, Annexes E, F, H and I.
+**Claim (OSTF-163).** An Analyzer for Annexes A, B and C, of working draft 0.3 of 2026-10-27, wire version 0.3 and the schema identifiers under `https://ostf.dev/draft/0.3/`, that passes suite version 2, `suite.sha256` `de3a5b5039eebf99d9efe97eb97d1614dcf211ec7123d48b46905ceb43b385d7`; and, as separate claims, Annexes E, F, H and I.
 
 From the repository root, with Python 3.12 or newer:
 
