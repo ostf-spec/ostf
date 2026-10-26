@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """The Corroborated row of the agent-first plan (section 2) on 0.3, which has no derived record:
-the share of declared `implements` links on tested code that a coverage run confirms.
+the share of declared `implements` links on tested code that a coverage run confirms; and, for
+revision 0.16, the derived record itself.
 
     python3 corroborate.py root DIR
     python3 corroborate.py trials RESULTS
+    python3 corroborate.py derive DIR [--view VIEW]
 
 An `implements` link from a function to an item is on tested code when a test verifies the same
 item; it is confirmed when one of those tests, run alone with coverage, executes a statement of
@@ -12,7 +14,9 @@ the function. Go runs `go test -run` with `-coverpkg=./...`, TypeScript `node --
 test's name as its pattern and an lcov report. `root` measures the declared links of one root;
 `trials` measures the links that agents declared in the T2, T4 and T5 runs of the intent and full
 arms, from their final repositories in the work directory, and writes
-results/phase1/corroboration.json.
+results/phase1/corroboration.json. `derive` writes DIR/trace.derived (OSTF-146, Annex B) as a test
+tool would: each test anchor that verifies an item, run alone with coverage, covers every function
+and method of the root whose body it executes, recorded with the view given, `unknown` by default.
 """
 import argparse
 import json
@@ -154,6 +158,44 @@ def measure(root, only=None):
     return out
 
 
+TOOLS = {".go": "go-test-cover", ".ts": "node-test-coverage", ".js": "node-test-coverage"}
+
+
+def derive(root, tests=None, view="unknown"):
+    """Write root/trace.derived from coverage and return its text. `tests` limits the test anchors
+    run to a set; every other observation of the file is then left out, not kept."""
+    module = reader_module()
+    result = result_of(root)
+    ids = {i["id"] for i in result["items"]}
+    anchors = sorted({l["source"] for l in result["links"] if l["type"] == "verifies" and l["source"] not in ids and "#" in l["source"]
+                      and (tests is None or l["source"] in tests)}, key=str.encode)
+    functions = []
+    for file in sorted(root.rglob("*")):
+        path = file.relative_to(root).as_posix()
+        if not file.is_file() or any(part.startswith(".") or part == "node_modules" for part in pathlib.PurePosixPath(path).parts):
+            continue
+        annex = module.annex_for(path)
+        data = file.read_bytes()
+        parsed = annex.parse(data, path) if annex else None
+        for d in parsed["definitions"] if parsed else []:
+            if d.get("test") or not callable_(path, data, d):
+                continue
+            first, last = data[:d["start"]].count(b"\n") + 1, data[:d["end"]].count(b"\n") + 1
+            # As in measure: only a line of the body shows that a TypeScript test called the function.
+            functions.append((path, d["name"], first if path.endswith(".go") else first + 1, last))
+    lines = set()
+    for test in anchors:
+        covered = covered_lines(root, test)
+        tool = TOOLS[pathlib.PurePosixPath(test.partition("#")[0]).suffix]
+        for path, name, first, last in functions if covered else ():
+            if covered.get(path, set()) & set(range(first, last + 1)):
+                lines.add(" ".join([module.escape(test), "covers", module.escape(f"{path}#{name}"), "view=" + module.escape(view),
+                                    "tool=" + module.escape(tool)]))
+    text = "".join(line + "\n" for line in ["trace.derived 1", *sorted(lines, key=str.encode)])
+    (root / "trace.derived").write_text(text)
+    return text
+
+
 def tally(rows):
     tested = [r for r in rows if r["tested"]]
     return {"implementsLinks": len(rows), "toTypesOrConstants": sum(1 for r in rows if not r["function"]), "onTestedCode": len(tested), "ran": sum(1 for r in tested if r["ran"]),
@@ -197,7 +239,14 @@ def main(argv=None):
     one.add_argument("dir", type=pathlib.Path)
     many = commands.add_parser("trials")
     many.add_argument("results", type=pathlib.Path)
+    derived = commands.add_parser("derive")
+    derived.add_argument("dir", type=pathlib.Path)
+    derived.add_argument("--view", default="unknown")
     args = parser.parse_args(argv)
+    if args.command == "derive":
+        text = derive(args.dir.resolve(), view=args.view)
+        print(f"{text.count(chr(10)) - 1} observations")
+        return 0
     if args.command == "root":
         rows = measure(args.dir.resolve())
         print(json.dumps({**tally(rows), "unconfirmed": [r["link"] for r in rows if r["tested"] and not r["confirmed"]]}, indent=1))
