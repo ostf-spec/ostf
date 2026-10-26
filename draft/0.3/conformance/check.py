@@ -205,9 +205,11 @@ def check():
             assert links(result) == expect["links"], f"{case['id']}: links\n got {links(result)}\nwant {expect['links']}"
         if "items" in expect:
             assert [i["id"] for i in result["items"]] == expect["items"], f"{case['id']}: items"
-        if "corroboration" in expect:  # Annex E.3: by link identity, for every link that has one
+        if "corroboration" in expect:  # Annex E.3: by link identity, for every link that has one, with observedIn beside it
             got = {reader.identity(l): l["corroboration"] for l in result["links"] if "corroboration" in l}
             assert got == expect["corroboration"], f"{case['id']}: corroboration\n got {got}\nwant {expect['corroboration']}"
+            got = {reader.identity(l): l["observedIn"] for l in result["links"] if "observedIn" in l}
+            assert got == expect.get("observedIn", {}), f"{case['id']}: observedIn\n got {got}\nwant {expect.get('observedIn', {})}"
         if "linkCount" in expect:
             assert len(result["links"]) == expect["linkCount"], f"{case['id']}: link count"
         if "risk" in expect:
@@ -220,6 +222,9 @@ def check():
                 f"{case['id']}: hint of {key}: {found[0].get('hint')!r}, want {anchors}"
         for code, files in expect.get("diagnosticFiles", {}).items():
             assert sorted({d.get("file") for d in result["diagnostics"] if d["code"] == code}) == files, f"{case['id']}: files of {code}"
+        for code, subjects in expect.get("diagnosticSubjects", {}).items():  # Annex D.2, by bytes, null for none
+            got = sorted({d.get("subject") for d in result["diagnostics"] if d["code"] == code}, key=lambda s: (s is not None, (s or "").encode()))
+            assert got == subjects, f"{case['id']}: subjects of {code}\n got {got}\nwant {subjects}"
     for case in cases["contexts"]:
         analysis = reader.Analysis(case["files"])
         result, resolved = reader.context(analysis, case["context"])
@@ -381,7 +386,7 @@ def check():
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "json")
         assert code == 0 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example lists the change and passes"
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"))
-        assert code == 0 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (corroborated)\n" in out, \
+        assert code == 0 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (corroborated in unknown)\n" in out, \
             "the text of check --base renders each context (Annex G)"
         # Annex I.1: ndjson is the json result, one record per line, after the version line.
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "ndjson")

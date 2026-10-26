@@ -67,7 +67,7 @@ A changed definition fails nothing: `check` fails on errors and broken links, an
 | [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived`, the file of the optional Annex E |
 | [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with derived links and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
-| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases, conformance suite version 1 |
+| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases, conformance suite version 2 |
 | [Converters](draft/0.3/tools/README.md) | Doorstop to OSTF and back, and StrictDoc to OSTF, with what each loses |
 
 The trials and the records behind this draft are under [project/](project/).

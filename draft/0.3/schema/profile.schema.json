@@ -48,12 +48,15 @@
     "attribute": {
       "type": "object",
       "properties": {
-        "type": { "enum": ["string", "text", "number", "boolean", "list"] },
+        "type": { "enum": ["string", "number", "boolean", "list"] },
         "values": { "$ref": "#/$defs/values" },
         "required": { "type": "boolean" }
       },
       "required": ["type"],
-      "additionalProperties": false
+      "additionalProperties": false,
+      "if": { "properties": { "type": { "enum": ["number", "boolean"] } } },
+      "then": { "not": { "required": ["values"] } },
+      "$comment": "OSTF-114: allowed values hold for a string and for each string of a list; a number or boolean declaration lists none."
     },
     "endpoints": {
       "type": "array",

@@ -1,7 +1,7 @@
 {
  "suite": {
-  "version": 1,
-  "sha256": "74682eb64087646c6ade2330cb00d8ffeba844108a4ab8fc7878dfaf84257825"
+  "version": 2,
+  "sha256": "6c1c295d88175af191b628d2b007477e0ba31d55736cfb16a29ca02363fb6c47"
  },
  "checks": [
   {
@@ -1310,6 +1310,48 @@
    }
   },
   {
+   "id": "tag-unbound-subject",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-133",
+    "Annex A.4",
+    "Annex B.4",
+    "Annex C.4"
+   ],
+   "note": "The subject of an unbound tag is the tag from @req to the end of its comment line, without the comment's delimiters, the text before @req or trailing spaces, tabs and carriage returns, whatever the language's comment marker.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - {id: R-A, text: A.}\n  - {id: R-B, text: B.}\n  - {id: R-C, text: C.}\n  - {id: R-D, text: D.}\n  - {id: R-E, text: E.}\n  - {id: R-F, text: F.}\n",
+    "a.go": "// @req R-A   \n\n/* @req R-B */\n\n// see @req R-C\n\npackage a\n",
+    "b.ts": "/**\n * @req R-D\n */\n\nexport const x = 1;\n",
+    "c.py": "# @req R-E\t\r\n\r\nx = 1\r\n",
+    "d.go": "package d\n\n/*\n\t@req R-F\n*/\n"
+   },
+   "expect": {
+    "codes": [
+     "TAG_UNBOUND"
+    ],
+    "links": [],
+    "diagnosticFiles": {
+     "TAG_UNBOUND": [
+      "a.go",
+      "b.ts",
+      "c.py",
+      "d.go"
+     ]
+    },
+    "diagnosticSubjects": {
+     "TAG_UNBOUND": [
+      "@req R-A",
+      "@req R-B",
+      "@req R-C",
+      "@req R-D",
+      "@req R-E",
+      "@req R-F"
+     ]
+    }
+   }
+  },
+  {
    "id": "x-keys-ignored",
    "requirements": [
     "OSTF-100",
@@ -1492,6 +1534,28 @@
     ],
     "items": [],
     "links": []
+   }
+  },
+  {
+   "id": "root-key-subject-undefined",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-104"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\ncolour: red\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "UNKNOWN_KEY"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "UNKNOWN_KEY": [
+      "colour"
+     ]
+    }
    }
   },
   {
@@ -2116,6 +2180,103 @@
    }
   },
   {
+   "id": "attribute-value-types",
+   "requirements": [
+    "OSTF-114"
+   ],
+   "note": "Each value type accepts one value and rejects another: string takes a string over two lines, there being no separate type for text, and rejects a number; number takes -2.5 and rejects a string and a boolean; boolean takes false and rejects 1; list takes a list of strings and rejects a string. Each rejected item is INVALID_ATTRIBUTE, by its ID.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - {id: R-S1, text: S1., attributes: {label: \"two\\nlines\"}}\n  - {id: R-S2, text: S2., attributes: {label: 3}}\n  - {id: R-N1, text: N1., attributes: {limit: -2.5}}\n  - {id: R-N2, text: N2., attributes: {limit: \"4\"}}\n  - {id: R-N3, text: N3., attributes: {limit: true}}\n  - {id: R-B1, text: B1., attributes: {enabled: false}}\n  - {id: R-B2, text: B2., attributes: {enabled: 1}}\n  - {id: R-L1, text: L1., attributes: {tags: [a, b]}}\n  - {id: R-L2, text: L2., attributes: {tags: a}}\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      label: {type: string}\n      limit: {type: number}\n      enabled: {type: boolean}\n      tags: {type: list}\n"
+   },
+   "expect": {
+    "codes": [
+     "INVALID_ATTRIBUTE"
+    ],
+    "items": [
+     "R-B1",
+     "R-L1",
+     "R-N1",
+     "R-S1"
+    ],
+    "links": [],
+    "diagnosticSubjects": {
+     "INVALID_ATTRIBUTE": [
+      "R-B2",
+      "R-L2",
+      "R-N2",
+      "R-N3",
+      "R-S2"
+     ]
+    }
+   }
+  },
+  {
+   "id": "attribute-allowed-values",
+   "requirements": [
+    "OSTF-114"
+   ],
+   "note": "Allowed values hold for a string and for each string of a list.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - {id: R-A, text: A., attributes: {level: a}}\n  - {id: R-B, text: B., attributes: {level: c}}\n  - {id: R-C, text: C., attributes: {roles: [x, y]}}\n  - {id: R-D, text: D., attributes: {roles: [x, z]}}\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      level: {type: string, values: [a, b]}\n      roles: {type: list, values: [x, y]}\n"
+   },
+   "expect": {
+    "codes": [
+     "INVALID_ATTRIBUTE"
+    ],
+    "items": [
+     "R-A",
+     "R-C"
+    ],
+    "links": [],
+    "diagnosticSubjects": {
+     "INVALID_ATTRIBUTE": [
+      "R-B",
+      "R-D"
+     ]
+    }
+   }
+  },
+  {
+   "id": "attribute-type-text-rejected",
+   "requirements": [
+    "OSTF-114",
+    "OSTF-121"
+   ],
+   "note": "text is not a value type; string takes a string with line breaks.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      note: {type: text}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": []
+   }
+  },
+  {
+   "id": "attribute-number-values-rejected",
+   "requirements": [
+    "OSTF-114",
+    "OSTF-121"
+   ],
+   "note": "A number or boolean declaration lists no allowed values.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: profile.yaml\nitems:\n  - id: R-A\n    text: A.\n",
+    "profile.yaml": "ostf: \"0.3\"\ntypes:\n  requirement:\n    attributes:\n      limit: {type: number, values: [\"1\", \"2\"]}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": []
+   }
+  },
+  {
    "id": "go-subtest-anchor",
    "requirements": [
     "OSTF-132",
@@ -2525,6 +2686,80 @@
     ],
     "items": [],
     "links": []
+   }
+  },
+  {
+   "id": "profile-key-subject-undefined",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-104",
+    "OSTF-121"
+   ],
+   "note": "A key that a profile does not define, outside any type or link entry, is the subject as written.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
+    "p.yaml": "ostf: \"0.3\"\ncolour: red\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "PROFILE_INVALID": [
+      "colour"
+     ]
+    }
+   }
+  },
+  {
+   "id": "profile-key-subject-type-entry",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-104",
+    "OSTF-121"
+   ],
+   "note": "In a type entry, the subject is the type's name, not the key it does not define.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
+    "p.yaml": "ostf: \"0.3\"\ntypes:\n  hazard: {kind: risk, colour: red}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "PROFILE_INVALID": [
+      "hazard"
+     ]
+    }
+   }
+  },
+  {
+   "id": "profile-key-subject-link-entry",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-121"
+   ],
+   "note": "A new link without to: the subject is the link's name.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems: [{id: R-A, text: A}]\n",
+    "p.yaml": "ostf: \"0.3\"\nlinks:\n  mitigates: {from: [requirement]}\n"
+   },
+   "expect": {
+    "codes": [
+     "PROFILE_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "PROFILE_INVALID": [
+      "mitigates"
+     ]
+    }
    }
   },
   {
@@ -2939,6 +3174,97 @@
     "codes": [
      "UNKNOWN_KEY"
     ]
+   }
+  },
+  {
+   "id": "source-entry-subject-unknown-key",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-104",
+    "OSTF-113"
+   ],
+   "note": "A diagnostic on a source entry has the entry's alias as its subject, not the key it does not define.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: \"https://x/{id}\", colour: red}\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "UNKNOWN_KEY"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "UNKNOWN_KEY": [
+      "jira"
+     ]
+    }
+   }
+  },
+  {
+   "id": "source-entry-subject-alias",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-113"
+   ],
+   "note": "An alias that is not source-alias is the subject as written.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {}\n  Jira: {}\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "FORMAT_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "FORMAT_INVALID": [
+      "Jira"
+     ]
+    }
+   }
+  },
+  {
+   "id": "source-entry-subject-url",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-113"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  jira: {url: 3}\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "FORMAT_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "FORMAT_INVALID": [
+      "jira"
+     ]
+    }
+   }
+  },
+  {
+   "id": "source-entry-subject-root",
+   "requirements": [
+    "Annex D.2",
+    "OSTF-113"
+   ],
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nsources:\n  cat: {ostf: \"../up\"}\nitems: []\n"
+   },
+   "expect": {
+    "codes": [
+     "PATH_INVALID"
+    ],
+    "items": [],
+    "links": [],
+    "diagnosticSubjects": {
+     "PATH_INVALID": [
+      "cat"
+     ]
+    }
    }
   },
   {
@@ -4161,6 +4487,74 @@
      "a.go#H implements R-B": "unobserved",
      "a.go#Service.Run implements R-A": "corroborated",
      "b.go implements R-A": "uncorroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0"
+     ],
+     "a.go#Service.Run implements R-A": [
+      "5d1e2f0"
+     ]
+    }
+   }
+  },
+  {
+   "id": "derived-observed-in",
+   "requirements": [
+    "Annex E.3",
+    "Annex D.2"
+   ],
+   "note": "A corroborated link carries the distinct views of the lines that cover it, percent-decoded and in byte order: main twice and 5d1e2f0 for F, through either test, and nightly run for G.",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
+    "a.go": "package a\n\nfunc F() {}\n\nfunc G() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestG(t *testing.T) { F(); G() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=main tool=go-cover\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestG covers a.go#F view=main tool=go-cover\na_test.go#TestG covers a.go#G view=nightly%20run tool=go-cover\n"
+   },
+   "expect": {
+    "codes": [],
+    "links": [
+     [
+      "a.go#F",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a.go#G",
+      "implements",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestF",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ],
+     [
+      "a_test.go#TestG",
+      "verifies",
+      "R-A",
+      {},
+      "declared"
+     ]
+    ],
+    "corroboration": {
+     "a.go#F implements R-A": "corroborated",
+     "a.go#G implements R-A": "corroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0",
+      "main"
+     ],
+     "a.go#G implements R-A": [
+      "nightly run"
+     ]
     }
    }
   },
@@ -4381,6 +4775,11 @@
      "a.go#H implements R-B": "unobserved",
      "a.go#Service.Run implements R-A": "uncorroborated",
      "b.go implements R-A": "uncorroborated"
+    },
+    "observedIn": {
+     "a.go#F implements R-A": [
+      "5d1e2f0"
+     ]
     }
    }
   },
@@ -5278,7 +5677,7 @@
      "a_test.go#TestRun/fast verifies R-A",
      "b.go implements R-A"
     ],
-    "text": "R-A\n  | A.\n  implemented_by a.go#F (corroborated)\n  implemented_by a.go#G (uncorroborated)\n  implemented_by a.go#Service.Run (corroborated)\n  implemented_by b.go (uncorroborated)\n  verified_by a_test.go#TestF\n  verified_by a_test.go#TestRun/fast\n"
+    "text": "R-A\n  | A.\n  implemented_by a.go#F (corroborated in 5d1e2f0)\n  implemented_by a.go#G (uncorroborated)\n  implemented_by a.go#Service.Run (corroborated in 5d1e2f0)\n  implemented_by b.go (uncorroborated)\n  verified_by a_test.go#TestF\n  verified_by a_test.go#TestRun/fast\n"
    }
   },
   {
@@ -5310,7 +5709,36 @@
      "a_test.go#TestRun/fast verifies R-A",
      "b.go implements R-A"
     ],
-    "text": "a.go#F\n  implements R-A (corroborated)\n    | A.\n    implemented_by a.go#G (uncorroborated)\n    implemented_by a.go#Service.Run (corroborated)\n    implemented_by b.go (uncorroborated)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestRun/fast\n"
+    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0)\n    | A.\n    implemented_by a.go#G (uncorroborated)\n    implemented_by a.go#Service.Run (corroborated in 5d1e2f0)\n    implemented_by b.go (uncorroborated)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestRun/fast\n"
+   }
+  },
+  {
+   "id": "context-corroboration-views",
+   "requirements": [
+    "Annex G",
+    "Annex E.3"
+   ],
+   "note": "Rule 5: a corroborated link line names the views it was observed in, joined by a comma and a space.",
+   "context": "a.go#F",
+   "files": {
+    "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF, a_test.go#TestG]\n",
+    "a.go": "package a\n\nfunc F() {}\n\nfunc G() {}\n",
+    "a_test.go": "package a\n\nimport \"testing\"\n\nfunc TestF(t *testing.T) { F() }\n\nfunc TestG(t *testing.T) { F(); G() }\n",
+    "trace.derived": "trace.derived 1\na_test.go#TestF covers a.go#F view=main tool=go-cover\na_test.go#TestF covers a.go#F view=5d1e2f0 tool=go-cover\na_test.go#TestG covers a.go#F view=main tool=go-cover\na_test.go#TestG covers a.go#G view=nightly%20run tool=go-cover\n"
+   },
+   "expect": {
+    "resolved": true,
+    "codes": [],
+    "items": [
+     "R-A"
+    ],
+    "links": [
+     "a.go#F implements R-A",
+     "a.go#G implements R-A",
+     "a_test.go#TestF verifies R-A",
+     "a_test.go#TestG verifies R-A"
+    ],
+    "text": "a.go#F\n  implements R-A (corroborated in 5d1e2f0, main)\n    | A.\n    implemented_by a.go#G (corroborated in nightly run)\n    verified_by a_test.go#TestF\n    verified_by a_test.go#TestG\n"
    }
   },
   {
@@ -7300,6 +7728,81 @@
    "valid": false
   },
   {
+   "id": "schema-profile-attribute-type-text",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-114"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "types": {
+     "requirement": {
+      "attributes": {
+       "note": {
+        "type": "text"
+       }
+      }
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-profile-boolean-values",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-114"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "types": {
+     "requirement": {
+      "attributes": {
+       "enabled": {
+        "type": "boolean",
+        "values": [
+         "true"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-profile-string-and-list-values",
+   "requirements": [
+    "OSTF-106",
+    "OSTF-114"
+   ],
+   "schema": "profile.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "types": {
+     "requirement": {
+      "attributes": {
+       "level": {
+        "type": "string",
+        "values": [
+         "a"
+        ]
+       },
+       "roles": {
+        "type": "list",
+        "values": [
+         "x"
+        ]
+       }
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
    "id": "schema-profile-unknown",
    "requirements": [
     "OSTF-106",
@@ -7669,6 +8172,85 @@
     "items": []
    },
    "valid": false
+  },
+  {
+   "id": "schema-result-corroborated-without-views",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "corroborated"
+     }
+    ]
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-result-views-beside-uncorroborated",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "uncorroborated",
+      "observedIn": [
+       "main"
+      ]
+     }
+    ]
+   },
+   "valid": false
+  },
+  {
+   "id": "schema-result-corroborated-with-views",
+   "requirements": [
+    "OSTF-106",
+    "Annex E.3"
+   ],
+   "schema": "result.schema.json",
+   "input": {
+    "ostf": "0.3",
+    "diagnostics": [],
+    "items": [],
+    "links": [
+     {
+      "source": "a.go#F",
+      "type": "implements",
+      "target": "R-A",
+      "attributes": {},
+      "origin": "declared",
+      "corroboration": "corroborated",
+      "observedIn": [
+       "5d1e2f0",
+       "main"
+      ]
+     }
+    ]
+   },
+   "valid": true
   }
  ],
  "notCovered": {
