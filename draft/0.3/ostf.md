@@ -5,7 +5,7 @@
 
 ## Abstract
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it. A person, tool or coding agent can answer three questions from the repository alone, for the items the repository declares and the links a reader of its languages binds: why does this code exist, which tests verify this requirement, and which items a change touches. OSTF specifies files, not tools. A four-line file is a complete, valid start.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links each item to the functions that implement it and the tests that verify it. A person, tool or coding agent can answer three questions from the repository alone, for the intent the repository records and the links a reader of its languages binds: why does this code exist, which tests verify this requirement, and which items a change touches. OSTF specifies files, not tools. A four-line file is a complete, valid start.
 
 ## 1. Introduction
 

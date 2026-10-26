@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # OSTF: Open Software Traceability Format
 
-OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them. A person, tool or coding agent can then answer three questions from the repository alone, for the items the repository declares and the links a reader of its languages binds: why does this code exist, which tests verify this requirement, and which items a change touches.
+OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them. A person, tool or coding agent can then answer three questions from the repository alone, for the intent the repository records and the links a reader of its languages binds: why does this code exist, which tests verify this requirement, and which items a change touches.
 
 **Status:** working draft 0.3, wire version `ostf: "0.3"`. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
 
@@ -18,7 +18,7 @@ items:
 
 `math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. When a change edits `Add`, `ostf check --base` lists the function beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
-A changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. A passing check can still leave things unknown, among them a symbol in a file of a language the reader does not bind, which is a warning, not an error, and an item that no code or test links, which is not an error either.
+A changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. A passing check can still leave things unknown, among them a link to a symbol in a file of a language the reader does not bind, which is a warning, not an error, and an item that no code or test links, which is not an error either.
 
 ## Start in ten minutes
 
@@ -30,7 +30,7 @@ A changed definition fails nothing: `check` fails on errors and broken links, an
    ```
 
 3. Run `ostf check`. It reports any error, such as an unknown ID or a function that does not exist, and counts your items and links; `ostf check --base main` also lists what your branch changed and the items each change serves.
-4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`, and after it your policy for agents, or the [recommended one](draft/0.3/fixtures/agent-policy.txt). The paragraph asks coding agents to run `ostf check --base` before they finish and to name in their summary the items it lists, so the pull request shows whether they did; the check lists what each changed definition the reader binds serves.
+4. Paste the [agent paragraph](draft/0.3/fixtures/agent-paragraph.txt) into your `AGENTS.md`, replacing each `<tool>` with `ostf`, and after it your policy for agents, or the [recommended one](draft/0.3/fixtures/agent-policy.txt). The paragraph asks coding agents to run `ostf check --base` before they finish and to name in their summary the items it lists, so the pull request carries the items it listed and what the agent said of each; the check lists what each changed definition the reader binds serves.
 5. Check every push and pull request with `.github/workflows/ostf.yml`; the action fails on an error or a broken link, prints in a pull request's log what the change touches, which never fails it, and uploads the findings to code scanning:
 
    ```yaml
