@@ -147,14 +147,16 @@ def phase5_scorecard(runs, longitudinal):
     from baseline import newcombe, pct, wilson
     order = lambda t: int(t[1:])
     by = lambda arm: [r for r in runs if r["arm"] == arm]
-    shared = sorted({r["task"] for r in by("none")} & {r["task"] for r in by("full")}, key=order)
+    # T12 is reported on its own row: its merges conflict in the item files that only the arms with a record write
+    # (phase5.md, The verdict, amended before any T12 cell ran).
+    shared = sorted(({r["task"] for r in by("none")} & {r["task"] for r in by("full")}) - {"T12"}, key=order)
 
-    def outcome(arm):
-        rows = [r for r in by(arm) if r["task"] in shared]
+    def outcome(arm, tasks=None):
+        rows = [r for r in by(arm) if r["task"] in (tasks or shared)]
         return sum(1 for r in rows if r["outcome"]), len(rows)
 
-    def difference(a, b):
-        (x1, n1), (x2, n2) = outcome(a), outcome(b)
+    def difference(a, b, tasks=None):
+        (x1, n1), (x2, n2) = outcome(a, tasks), outcome(b, tasks)
         if not n1 or not n2:
             return None, "n/a"
         d, low, high = newcombe(x1, n1, x2, n2)
@@ -162,10 +164,18 @@ def phase5_scorecard(runs, longitudinal):
 
     rows = []
     over, text = difference("full", "none")
-    rows.append(("Over baseline", "positive, interval above zero", f"`full` minus `none`, task outcome on {', '.join(shared) or 'no task'}: {text}",
+    with_t12 = difference("full", "none", shared + ["T12"])[1]
+    rows.append(("Over baseline", "positive, interval above zero", f"`full` minus `none`, task outcome on {', '.join(shared) or 'no task'}: {text}; "
+                 f"with T12, not gated: {with_t12}",
                  over is not None and over[1] > 0, None if over is None else f"lower bound {100 * over[1]:+.1f} points"))
     rules, text = difference("full", "rules")
     rows.append(("Full against rules", "reported, not gated", f"`full` minus `rules`: {text}", None, None))
+    parallel = []
+    for arm in PHASE5_ARMS:
+        cells = [r for r in by(arm) if r["task"] == "T12"]
+        if cells:
+            parallel.append(f"`{arm}` {sum(r['outcome'] for r in cells)}/{len(cells)} cells, {sum(r['conflicts'] for r in cells)} conflicting merges")
+    rows.append(("Parallel (T12)", "reported, not gated", "; ".join(parallel) or "not run", None, None))
     full = by("full")
     c = [r["corroboration"] for r in full if r.get("corroboration")]
     tested, confirmed = sum(x["onTestedCode"] for x in c), sum(x["corroborated"] for x in c)
@@ -241,7 +251,7 @@ def phase5(results, out):
                     cells.append(f"{sum(r['pass'] for r in cell)}/{len(cell)} ({sum(r['outcome'] for r in cell)})" if cell else "")
             lines.append(f"| {task} {PHASE5_TASKS.get(task, '')} | {fixture} | " + " | ".join(cells) + " |")
     lines += ["", "## Arms", "", "| Arm | Cells | Outcome, tasks every arm runs | Pass, every task |", "| --- | --- | --- | --- |"]
-    shared = {r["task"] for r in runs if r["arm"] == "none"} & {r["task"] for r in runs if r["arm"] == "full"}
+    shared = ({r["task"] for r in runs if r["arm"] == "none"} & {r["task"] for r in runs if r["arm"] == "full"}) - {"T12"}
     for a in PHASE5_ARMS:
         rows = [r for r in runs if r["arm"] == a]
         if rows:

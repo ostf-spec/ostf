@@ -9,8 +9,9 @@ Each row against the target written before measurement; a shortfall by any margi
 
 | Row | Target | Result | Verdict | Margin |
 | --- | --- | --- | --- | --- |
-| Over baseline | positive, interval above zero | `full` minus `none`, task outcome on T1, T2, T3, T4, T5, T6, T7, T9, T10, T11, T12, T13, T14: +8 points (-7 to +22) | missed | lower bound -6.5 points |
-| Full against rules | reported, not gated | `full` minus `rules`: +15 points (+0 to +30) | reported |  |
+| Over baseline | positive, interval above zero | `full` minus `none`, task outcome on T1, T2, T3, T4, T5, T6, T7, T9, T10, T11, T13, T14: +17 points (+3 to +30); with T12, not gated: +8 points (-7 to +22) | met | lower bound +3.3 points |
+| Full against rules | reported, not gated | `full` minus `rules`: +17 points (+3 to +30) | reported |  |
+| Parallel (T12) | reported, not gated | `none` 4/4 cells, 0 conflicting merges; `rules` 0/4 cells, 36 conflicting merges; `intent` 0/4 cells, 36 conflicting merges; `full` 0/4 cells, 36 conflicting merges | reported |  |
 | Corroborated | 80 % | `full` 21/26 (81 %, 62 to 91) of agent-declared `implements` links on tested code; `intent` 21/26 (81 %, 62 to 91) | met | +0.8 points |
 | Link churn | 0 per 100 merged changes | `full` 0 links broken in 12 merged changes, 0.0 per 100; `none` 0 stale references in 72 merged changes | met | +0.0 per 100 |
 | Breadth | 95 % | `full` T9 to T11 pass 12/12 (100 %, 76 to 100); outcome in `none` 12/12 (100 %, 76 to 100) | met | +5.0 points |
@@ -56,10 +57,10 @@ Passes of the arm's criteria per cell, task outcome in parentheses, over the rep
 
 | Arm | Cells | Outcome, tasks every arm runs | Pass, every task |
 | --- | --- | --- | --- |
-| `none` | 52 | 42/52 (81 %, 68 to 89) | 42/52 (81 %, 68 to 89) |
-| `rules` | 52 | 38/52 (73 %, 60 to 83) | 38/52 (73 %, 60 to 83) |
-| `intent` | 52 | 38/52 (73 %, 60 to 83) | 38/52 (73 %, 60 to 83) |
-| `full` | 56 | 46/52 (88 %, 77 to 95) | 50/56 (89 %, 79 to 95) |
+| `none` | 52 | 38/48 (79 %, 66 to 88) | 42/52 (81 %, 68 to 89) |
+| `rules` | 52 | 38/48 (79 %, 66 to 88) | 38/52 (73 %, 60 to 83) |
+| `intent` | 52 | 38/48 (79 %, 66 to 88) | 38/52 (73 %, 60 to 83) |
+| `full` | 56 | 46/48 (96 %, 86 to 99) | 50/56 (89 %, 79 to 95) |
 
 ## Failures
 
