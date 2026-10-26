@@ -407,7 +407,7 @@ def sections(corroboration, recheck, parallel, replay):
         s = f["sweep"]
         lines += [f"## Scale: generated tree, {f['items']} items", "",
                   f"{f['links']} links, {f['functions']} linked functions; items link one, ten or a hundred functions, {f['itemsPerFanout']} "
-                  f"of each, spread across 40 packages ([generate_fanout.py](../conformance/generate_fanout.py), [fanout.py](fanout.py)). "
+                  f"of each, spread across 40 packages ([generate_fanout.py](../../draft/0.3/conformance/generate_fanout.py), [fanout.py](fanout.py)). "
                   f"The lock holds {f['lockLines']} lines, {f['lockBytes'] // 1024} KiB. With the reference reader: stamping every link "
                   f"{f['stampAllSeconds']} s, `check` {f['checkSeconds']} s, `check --base` {f['checkBaseSeconds']} s. `context` of an "
                   "item linking one, ten and a hundred functions: " + ", ".join(

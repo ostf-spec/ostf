@@ -1,7 +1,7 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Converters
 
-Two converters let a repository that keeps requirements in Doorstop or StrictDoc switch to OSTF without retyping them (plan, Phase 4). They need only Python 3.12 and PyYAML, which the [reader's environment](../conformance/README.md) already has. [check_tools.py](check_tools.py) runs both on the [samples](samples/) in CI: the Doorstop sample was written and validated with Doorstop 3.2, the StrictDoc sample with StrictDoc 0.30.4.
+Two converters let a repository that keeps requirements in Doorstop or StrictDoc switch to OSTF without retyping them. They need only Python 3.12 and PyYAML, which the [reader's environment](../conformance/README.md) already has. [check_tools.py](check_tools.py) runs both on the [samples](samples/) in CI: the Doorstop sample was written and validated with Doorstop 3.2, the StrictDoc sample with StrictDoc 0.30.4.
 
 ## Doorstop, both ways
 

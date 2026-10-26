@@ -7,7 +7,7 @@ Describe the problem and the proposed resolution. Link an issue when one exists.
 
 - Affected `OSTF-` IDs, schemas, annexes and fixtures:
 - Wire compatibility and claim boundary:
-- Documentation or migration impact:
+- Documentation impact:
 
 ## Checks
 

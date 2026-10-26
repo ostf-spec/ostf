@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
 """OSTF wire 0.3 reader: an independent-code Analyzer for Go, TypeScript, JavaScript and
-Python (Annexes A, K and L) with the check and context commands of Annex I. Does not
-import or execute zztrace.
+Python (Annexes A, B and C) with the check and context commands of Annex F. Does not
+import or execute the second reader, zztrace.
 
-It is a development probe ported from the 0.2 Python prototype, not a hardened service. The
+It is a development probe, not a hardened service. The
 reader reads one root from a local tree with no subprocess and no network; only the command
 line runs Git's plumbing commands, for `check --base REV` without `--base-tree` to read REV,
-and for `context` and `check --base` to read change information (Annex I.3).
+and for `context` and `check --base` to read change information (Annex F.3).
 """
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ SOURCE_ALIAS = re.compile(r"[a-z][a-z0-9-]{0,31}\Z")
 EXTERNAL = re.compile(r"([a-z][a-z0-9-]{0,31}):([^\s\x00-\x1f\x7f]+)\Z")
 ITEM_FIELDS = {"id", "type", "title", "text", "status", "section", "rationale", "aliases",
                "attributes", "external", "revision", "code", "tests"}
-# Annex C.3, Annex I.3: the fields whose change changes an item, all but its ID, links, code, tests and x- keys.
+# Annex D.3, Annex F.3: the fields whose change changes an item, all but its ID, links, code, tests and x- keys.
 CHANGE_FIELDS = ("type", "title", "text", "status", "section", "rationale", "aliases", "attributes", "external", "revision")
 # OSTF-120: the default types and their kinds. A default link names kinds, written "kind:" and the kind,
 # each standing for every type of that kind once the profile is merged.
@@ -63,7 +63,7 @@ SEVERITY = {
     "TAG_UNBOUND": "error", "TAGS_NOT_BOUND": "info",
     "NESTED_ROOT": "info", "DERIVED_INVALID": "error", "NESTED_ROOT_FAILED": "error",
 }
-# This reader's own codes, outside Annex C (OSTF-151); the prefix is its SARIF driver name.
+# This reader's own codes, outside Annex D (OSTF-151); the prefix is its SARIF driver name.
 OWN_PREFIX = "ostf-reader."
 UNLINKED = OWN_PREFIX + "UNLINKED"
 SEVERITY[UNLINKED] = "info"
@@ -139,10 +139,10 @@ def parse_yaml(data):
     return documents[0]
 
 
-# --- spans (Annexes A, K and L) --------------------------------------------
+# --- spans (Annexes A, B and C) --------------------------------------------
 
 def _span_text(source, start, end):
-    """The text of a definition's span, compared after CRLF becomes LF (Annex C.3, Annex I.3)."""
+    """The text of a definition's span, compared after CRLF becomes LF (Annex D.3, Annex F.3)."""
     return source[start:end].replace(b"\r\n", b"\n")
 
 
@@ -168,7 +168,7 @@ def _escapes_ok(root, source):
 
 
 def _doc_start(source, comments, start):
-    """A.4, K.4, L.4: the first byte of the comments directly above `start`, each beginning its own
+    """A.4, B.4, C.4: the first byte of the comments directly above `start`, each beginning its own
     line with no blank line between; `start` itself when there are none."""
     doc_start = start
     for comment in reversed(comments):
@@ -311,7 +311,7 @@ def is_test(definition, path):
 
 
 def _select_members(definitions, symbol):
-    """A.2, K.2, L.2: the full symbol first; for a symbol without a dot, the last component of member names."""
+    """A.2, B.2, C.2: the full symbol first; for a symbol without a dot, the last component of member names."""
     found = [d for d in definitions if d["name"] == symbol]
     if not found and "." not in symbol:
         found = [d for d in definitions if d["member"] and d["name"].rsplit(".", 1)[-1] == symbol]
@@ -327,7 +327,7 @@ def select(definitions, symbol, path=""):
     return _select_members(definitions, symbol)
 
 
-# --- Annex K: TypeScript and JavaScript -------------------------------------
+# --- Annex B: TypeScript and JavaScript -------------------------------------
 
 TS_TYPESCRIPT, TS_TSX = (".ts", ".mts", ".cts"), (".tsx",)
 TS_JAVASCRIPT = (".js", ".mjs", ".cjs", ".jsx")
@@ -336,7 +336,7 @@ TS_COMMENTS = {"comment", "hash_bang_line", "html_comment"}
 TS_FUNCTIONS = {"arrow_function", "function_expression", "function", "generator_function"}
 TS_NAMES = {"identifier", "type_identifier", "property_identifier", "private_property_identifier", "nested_identifier"}
 _DIGITS = r"[0-9](?:_?[0-9])*"
-# ECMAScript 2024 NumericLiteral: a separator stands between two digits (Annex K). Legacy octal and
+# ECMAScript 2024 NumericLiteral: a separator stands between two digits (Annex B). Legacy octal and
 # octal-like integers take none.
 JS_NUMBER = re.compile(rf"""(?:(?:0|[1-9](?:_?[0-9])*|0[0-7]*[89][0-9]*)(?:\.(?:{_DIGITS})?)?(?:[eE][+-]?{_DIGITS})?
                           |\.{_DIGITS}(?:[eE][+-]?{_DIGITS})?
@@ -361,14 +361,14 @@ def _js_numbers_ok(root):
 
 
 def ts_test_file(path):
-    """K.1: a name ending in .test or .spec before the extension, or a file beneath __tests__."""
+    """B.1: a name ending in .test or .spec before the extension, or a file beneath __tests__."""
     name = path.rsplit("/", 1)[-1]
     stem = name.rsplit(".", 1)[0]
     return stem.endswith((".test", ".spec")) or "__tests__" in path.split("/")[:-1]
 
 
 def ts_source(source, path=""):
-    """Annex K: definitions and comments, or None when the file does not parse."""
+    """Annex B: definitions and comments, or None when the file does not parse."""
     try:
         source.decode("utf-8")
     except UnicodeError:
@@ -398,14 +398,14 @@ def ts_source(source, path=""):
             return
         start, end = outer.start_byte, outer.end_byte
         previous = outer.prev_sibling
-        while previous is not None and previous.type in ("decorator", "comment"):  # K.3, K.4: decorators, past comments
+        while previous is not None and previous.type in ("decorator", "comment"):  # B.3, B.4: decorators, past comments
             if previous.type == "decorator":
                 start = previous.start_byte
             previous = previous.prev_sibling
         following = outer.next_sibling
         while member and following is not None and following.type == "comment":
             following = following.next_sibling
-        if member and following is not None and following.type == ";":  # K.3: a class member's terminating ;
+        if member and following is not None and following.type == ";":  # B.3: a class member's terminating ;
             end = following.end_byte
         definitions.append({"name": name, "start": start, "docStart": _doc_start(source, comments, start), "end": end,
                             "member": member, "test": test, "text": _span_text(source, start, end)})
@@ -427,7 +427,7 @@ def ts_source(source, path=""):
                 definition(outer, inner, prefix)
 
     def bound_names(pattern):
-        """Identifiers a binding pattern declares, destructuring included (K.2)."""
+        """Identifiers a binding pattern declares, destructuring included (B.2)."""
         if pattern is None:
             return []
         if pattern.type in ("identifier", "shorthand_property_identifier_pattern"):
@@ -497,7 +497,7 @@ def ts_source(source, path=""):
         first, second = values[0], values[1]
         literal = first.type == "string" or (first.type == "template_string" and not any(c.type == "template_substitution" for c in first.children))
         contents = first.text[1:-1].decode()
-        if not literal or not contents or "\n" in contents or "\r" in contents or not function(second):  # K.1
+        if not literal or not contents or "\n" in contents or "\r" in contents or not function(second):  # B.1
             return
         name = prefix + contents
         body = body_of(second)
@@ -512,26 +512,26 @@ def ts_source(source, path=""):
 
 
 def ts_select(definitions, symbol, path=""):
-    """K.2: a test is its identity; otherwise the full symbol, then member names."""
+    """B.2: a test is its identity; otherwise the full symbol, then member names."""
     return _select_members(definitions, symbol)
 
 
-# --- Annex L: Python ---------------------------------------------------------
+# --- Annex C: Python ---------------------------------------------------------
 
 def py_test_file(path):
-    """L.1: a name beginning with test_ or ending in _test.py."""
+    """C.1: a name beginning with test_ or ending in _test.py."""
     name = path.rsplit("/", 1)[-1]
     return name.startswith("test_") or name.endswith("_test.py")
 
 
 def py_source(source, path=""):
-    """Annex L with CPython's own tokenizer and parser: definitions and comments, or None when the
+    """Annex C with CPython's own tokenizer and parser: definitions and comments, or None when the
     file does not parse."""
     try:
         # Python reads CRLF and CR as line ends; positions below are in the normalized source.
         text = source.decode("utf-8").replace("\r\n", "\n").replace("\r", "\n")
         source = text.encode()
-        tree = ast.parse(text, feature_version=(3, 12))  # Annex L: the Python 3.12 grammar
+        tree = ast.parse(text, feature_version=(3, 12))  # Annex C: the Python 3.12 grammar
         if any(getattr(node, "is_lazy", 0) for node in ast.walk(tree)):
             return None  # lazy imports are Python 3.15 syntax, which feature_version does not refuse
         lines = io.StringIO(text).readlines()
@@ -579,7 +579,7 @@ def py_source(source, path=""):
                             "member": member, "test": test, "text": _span_text(source, start, end)})
 
     def names(target):
-        if isinstance(target, ast.Name):  # as written, not as the parser normalizes it (L.2)
+        if isinstance(target, ast.Name):  # as written, not as the parser normalizes it (C.2)
             return [source[offset(target.lineno, target.col_offset, chars=False):offset(target.end_lineno, target.end_col_offset, chars=False)].decode()]
         if isinstance(target, (ast.Tuple, ast.List)):
             return [n for element in target.elts for n in names(element)]
@@ -588,7 +588,7 @@ def py_source(source, path=""):
         return []
 
     def spelled(start):
-        """The name token at or after start, as written (L.2)."""
+        """The name token at or after start, as written (C.2)."""
         return next(t[0].decode() for t in tokens if t[1] >= start and t[0] not in (b"async", b"def", b"class"))
 
     def visit(body, prefix, top, test_class):
@@ -618,7 +618,7 @@ def py_source(source, path=""):
 
 
 def py_select(definitions, symbol, path=""):
-    """L.1, L.2: a parametrization identifier in brackets binds only the test function before it."""
+    """C.1, C.2: a parametrization identifier in brackets binds only the test function before it."""
     if "[" in symbol and symbol.endswith("]"):
         return [d for d in _select_members(definitions, symbol[:symbol.index("[")]) if d["test"]]
     return _select_members(definitions, symbol)
@@ -641,7 +641,7 @@ def annex_for(path):
     return next((a for a in ANNEXES if path.endswith(a.extensions)), None)
 
 
-# --- link identity (Annex I.2) and trace.derived (Annex B) ------------------
+# --- link identity (Annex F.2) and trace.derived (Annex E) ------------------
 
 def escape(value):
     return "".join(f"%{b:02X}" if b <= 32 or b in {37, 61, 127} else bytes([b]).decode("latin1") for b in value.encode()).encode("latin1").decode()
@@ -667,14 +667,14 @@ def _lines(data, code):
 
 
 def _unescape(value):
-    """Annex B: a percent-escaped value, or ValueError."""
+    """Annex E: a percent-escaped value, or ValueError."""
     if re.search(r"%(?![0-9a-fA-F]{2})", value) or any(ord(c) <= 32 or c in "=\x7f" for c in value):
         raise ValueError("bad escape")
     return urllib.parse.unquote(value, errors="strict")
 
 
 def parse_derived(data):
-    """Annex B.1: the (test anchor, code anchor) of each observation, and (code, line) problems."""
+    """Annex E.1: the (test anchor, code anchor) of each observation, and (code, line) problems."""
     observations = []
     lines, problems = _lines(data, "DERIVED_INVALID")
     if lines[0] != "trace.derived 1":
@@ -885,8 +885,8 @@ class Analysis:
 
     def __init__(self, files, items_only=False):
         self.files = files
-        self.items_only = items_only  # stop after step 4, for an item's fields in a commit (Annex I.3)
-        self.history = None      # the evaluated view's History, for change information (Annex I.3)
+        self.items_only = items_only  # stop after step 4, for an item's fields in a commit (Annex F.3)
+        self.history = None      # the evaluated view's History, for change information (Annex F.3)
         self.texts = None        # (kind, text) -> anchors of this view, for broken links under a base (OSTF-132)
         self.diagnostics = []
         self.stopped = False
@@ -968,7 +968,7 @@ class Analysis:
 
     def _build(self):
         if "trace.yaml" not in self.files:
-            return  # Annex C.3: a base view without the root's trace.yaml has an empty graph.
+            return  # Annex D.3: a base view without the root's trace.yaml has an empty graph.
         # OSTF-102: every other trace.yaml beneath the root is a nested root that this result does not cover.
         for path in sorted((p for p in self.files if p.endswith("/trace.yaml")), key=str.encode):
             directory = path[:-len("/trace.yaml")]
@@ -1243,7 +1243,7 @@ class Analysis:
                         continue
                     anchors = [path]
                     if not match[1]:
-                        # A.4, K.4, L.4: the innermost definitions whose lines, from their comments above
+                        # A.4, B.4, C.4: the innermost definitions whose lines, from their comments above
                         # to their end, hold the tag.
                         row = comment["row"] + offset
                         found = [d for d in parsed["definitions"]
@@ -1338,7 +1338,7 @@ class Analysis:
         return "ok", ("defs", path, frozenset((d["start"], d["name"]) for d in found))
 
     def _evaluate(self):
-        """After step 6, for an Analyzer: risk relevance (OSTF-120), bindings and corroboration (Annex B.3)."""
+        """After step 6, for an Analyzer: risk relevance (OSTF-120), bindings and corroboration (Annex E.3)."""
         types = self.vocabulary["types"]
         # OSTF-120: an item of kind statement that links to an item of kind risk is a control.
         kind = lambda ident: types[self.items[ident]["type"]]["kind"]
@@ -1361,7 +1361,7 @@ class Analysis:
         self._corroboration()
 
     def _corroboration(self):
-        """Annex B.3: beside each implements link whose anchor binds, whether a test anchor that
+        """Annex E.3: beside each implements link whose anchor binds, whether a test anchor that
         verifies its item covers it, by the definitions each anchor binds to in this view."""
         if "trace.derived" not in self.files:
             return
@@ -1395,7 +1395,7 @@ class Analysis:
             self.report(UNLINKED, "trace.yaml", message=f"{len(found)} {'statement' if len(found) == 1 else 'statements'} that no link targets: {shown}",
                         hint="link the code, tests or verification item that carry each; check tracks links, not coverage")
 
-    # Annex C.2
+    # Annex D.2
     def item_row(self, ident, detail=False):
         item = self.items[ident]
         row = {"id": ident, "type": item["type"], "status": item["status"], "riskRelevant": ident in self.risk}
@@ -1406,7 +1406,7 @@ class Analysis:
         return row
 
     def link_row(self, link, changes=False):
-        """A link of the result; with `changes`, one that the result describes, with its change information (I.3)."""
+        """A link of the result; with `changes`, one that the result describes, with its change information (F.3)."""
         row = {k: link[k] for k in ("source", "type", "target", "attributes", "origin")}
         if "corroboration" in link:
             row["corroboration"] = link["corroboration"]
@@ -1417,7 +1417,7 @@ class Analysis:
         return row
 
     def changed_in(self, link):
-        """Annex I.3: the view identifiers of the last commits that changed a link's source and its target."""
+        """Annex F.3: the view identifiers of the last commits that changed a link's source and its target."""
         if self.history is None:
             return None, None
         return (self.history.changed_in("anchor" if link["anchor"] else "item", link["source"]),
@@ -1432,14 +1432,14 @@ class Analysis:
         }
 
     def failed(self):
-        """Annex I.1: whether check exits 1, on an error diagnostic, a broken link's BROKEN_LINK among them."""
+        """Annex F.1: whether check exits 1, on an error diagnostic, a broken link's BROKEN_LINK among them."""
         return any(d["severity"] == "error" for d in self.diagnostics)
 
 
-# --- context (Annex I.3, Annex J) -------------------------------------------
+# --- context (Annex F.3, Annex G) -------------------------------------------
 
 def item_context(analysis, ident):
-    """Annex I.3: the items reached from ident by item-to-item links in their direction and the links
+    """Annex F.3: the items reached from ident by item-to-item links in their direction and the links
     from them, and every link to ident with its source when that is an item, one level deep."""
     reached, frontier = {ident}, [ident]
     while frontier:
@@ -1455,7 +1455,7 @@ def item_context(analysis, ident):
 
 def resolve(analysis, target, anchor=None):
     """('item', ID), ('anchor', direct link keys) or (code, None). TARGET names an item
-    first; otherwise `anchor`, its root-relative form, is bound (Annex I.3)."""
+    first; otherwise `anchor`, its root-relative form, is bound (Annex F.3)."""
     if target in analysis.names:
         return "item", analysis.names[target]
     if anchor == "":  # an anchor whose file lies outside the root is in no file of the view
@@ -1482,7 +1482,7 @@ def resolve(analysis, target, anchor=None):
 
 def path_hint(analysis, target, anchor, spell, guess=False):
     """For a TARGET whose file is not in the view: the covered files whose path ends with the
-    path given, spelled from the working directory by `spell`, since I.3 reads TARGET from there.
+    path given, spelled from the working directory by `spell`, since F.3 reads TARGET from there.
     With `guess`, TARGET may be a mistyped ID, so a hint needs such a file."""
     given, mark, symbol = target.partition("#")
     looked = (target if anchor is None else anchor).partition("#")[0]
@@ -1498,7 +1498,7 @@ def path_hint(analysis, target, anchor, spell, guess=False):
 
 
 def context(analysis, target, anchor=None, spell=lambda path: path):
-    """Annex I.3: the json context result and whether TARGET resolved. `spell` writes a
+    """Annex F.3: the json context result and whether TARGET resolved. `spell` writes a
     root-relative path as TARGET would need it, for hints."""
     result = {"ostf": "0.3", "context": target, "diagnostics": [], "items": [], "links": []}
     if analysis.stopped:
@@ -1531,7 +1531,7 @@ def context(analysis, target, anchor=None, spell=lambda path: path):
 
 
 def render(analysis, target, anchor=None):
-    """Annex J text for a resolved TARGET."""
+    """Annex G text for a resolved TARGET."""
     kind, value = resolve(analysis, target, anchor)
     vocabulary = analysis.vocabulary["links"]
 
@@ -1546,8 +1546,8 @@ def render(analysis, target, anchor=None):
             text += f" [{item['status']}]"
         return text
 
-    def state(link):
-        """Rule 5: the corroboration (Annex B.3), then the change information (I.3), in parentheses."""
+    def annotation(link):
+        """Rule 5: the corroboration (Annex E.3), then the change information (F.3), in parentheses."""
         shown = link.get("corroboration", "")
         changes = analysis.changed_in(link)
         if any(changes):
@@ -1595,17 +1595,17 @@ def render(analysis, target, anchor=None):
             level = "  " * work[-1][1]
             drawn.add(link["identity"])
             if link["target"] in shown:
-                lines.append(level + f"{name(link)} {link['target']}{state(link)}")
+                lines.append(level + f"{name(link)} {link['target']}{annotation(link)}")
                 continue
             shown.add(link["target"])
-            lines.append(level + f"{name(link)} {label(link['target'], True)}{state(link)}")
+            lines.append(level + f"{name(link)} {label(link['target'], True)}{annotation(link)}")
             work.append((children(link["target"]), work[-1][1] + 1))
         # Rule 4: links to the item from another anchor or from an item, unless rule 3 showed them.
         incoming = sorted((l for l in analysis.links.values() if l["target"] == ident and l["identity"] not in skip | drawn),
                           key=lambda l: (name(l, True).encode(), l["source"].encode()))
         for link in incoming:
             source = link["source"] if link["anchor"] or link["source"] in shown else label(link["source"], True)
-            lines.append(pad + f"{name(link, True)} {source}{state(link)}")
+            lines.append(pad + f"{name(link, True)} {source}{annotation(link)}")
 
     if kind == "item":
         shown.add(value)
@@ -1620,12 +1620,12 @@ def render(analysis, target, anchor=None):
             shown.add(ident)
             for key in direct[ident]:
                 link = analysis.links[key]
-                lines.append(f"  {name(link)} {label(ident)}{state(link)}")
+                lines.append(f"  {name(link)} {label(ident)}{annotation(link)}")
             tree(ident, 2, set(direct[ident]))
     return "\n".join(lines) + "\n"
 
 
-# --- impact (Annex C.3) -----------------------------------------------------
+# --- impact (Annex D.3) -----------------------------------------------------
 
 def _parsed(view, path):
     """The annex parse of a file in a view, without reporting PARSE_ERROR outside OSTF-132's scope."""
@@ -1633,7 +1633,7 @@ def _parsed(view, path):
 
 
 def _definitions(view, path):
-    """Span texts by full symbol, same-named definitions in source order; a file that does not parse has none (C.3)."""
+    """Span texts by full symbol, same-named definitions in source order; a file that does not parse has none (D.3)."""
     parsed = _parsed(view, path) if path in view.files else None
     groups = {}
     for d in parsed["definitions"] if parsed else []:
@@ -1646,12 +1646,12 @@ def _file_text(view, path):
 
 
 def item_fields(item):
-    """Annex C.3, Annex I.3: what is compared when an item changes."""
+    """Annex D.3, Annex F.3: what is compared when an item changes."""
     return {key: item[key] for key in CHANGE_FIELDS if key in item}
 
 
 def anchor_text(path, symbol, data):
-    """Annex I.3: an anchor's text in its file's bytes, after CRLF becomes LF: the file's for a whole-file
+    """Annex F.3: an anchor's text in its file's bytes, after CRLF becomes LF: the file's for a whole-file
     anchor, else the span texts of the definitions it binds to, joined as A.2 joins them; None when it
     binds to nothing."""
     if data is None:
@@ -1697,7 +1697,7 @@ def _bound(view, anchor):
 
 
 def impact(base, current, rev):
-    """Annex C.3: what changed from the base view to the evaluated view, or None when either graph failed."""
+    """Annex D.3: what changed from the base view to the evaluated view, or None when either graph failed."""
     if base.stopped or current.stopped:
         return None
     views = (base, current)
@@ -1735,7 +1735,7 @@ def impact(base, current, rev):
         parsed = _parsed(current, path) if symbol and path in current.files else None
         if parsed and any(d["name"] == symbol and d["test"] for d in parsed["definitions"]):
             tests.add(anchor)
-    # The context (I.3) of each changed anchor that resolves in the evaluated view and names an item.
+    # The context (F.3) of each changed anchor that resolves in the evaluated view and names an item.
     contexts = []
     for anchor in sorted((a for a in changed if changed[a]), key=str.encode):
         found, resolved = context(current, anchor)
@@ -1762,7 +1762,7 @@ def nested_view(files, directory):
 
 
 def check_base(base, current, rev):
-    """Annex I.1: the result of check --base, with impact (C.3), and each nested root evaluated on its own
+    """Annex F.1: the result of check --base, with impact (D.3), and each nested root evaluated on its own
     with the same options, one whose check would exit 1 being NESTED_ROOT_FAILED (OSTF-102)."""
     found = impact(base, current, rev)
     if found is not None:
@@ -1781,22 +1781,22 @@ def check_base(base, current, rev):
     result = current.result()
     if found is not None:
         result["impact"] = found
-        # C.3: the items that a context names carry the fields a context adds (I.3).
+        # D.3: the items that a context names carry the fields a context adds (F.3).
         named = {i for c in found["contexts"] for i in c["items"]}
         result["items"] = [current.item_row(row["id"], row["id"] in named) for row in result["items"]]
-        # I.3: so do the links that a context names, with their change information.
+        # F.3: so do the links that a context names, with their change information.
         described = {key for c in found["contexts"] for key in c["links"]}
         result["links"] = [current.link_row(current.links[key], key in described) for key in sorted(current.links, key=str.encode)]
     return result
 
 
-# --- SARIF (Annex D) --------------------------------------------------------
+# --- SARIF (Annex H) --------------------------------------------------------
 
 LEVEL = {"error": "error", "warning": "warning", "info": "note"}
 
 
 def sarif(analysis, result):
-    """Annex D: a check result as one SARIF 2.1.0 run."""
+    """Annex H: a check result as one SARIF 2.1.0 run."""
     def locations(file, name):
         location = {}
         if file is not None:
@@ -1820,7 +1820,7 @@ def sarif(analysis, result):
                                           "results": results}]}
 
 
-# --- command line (Annex I) -------------------------------------------------
+# --- command line (Annex F) -------------------------------------------------
 
 class Tree(dict):
     """Regular files of a local root, read on demand and not kept. Symbolic links are
@@ -1858,7 +1858,7 @@ def find_root(start):
 
 
 def ndjson(result):
-    """Annex N.1: the json result as lines, the version first, then one record per line."""
+    """Annex I.1: the json result as lines, the version first, then one record per line."""
     rows = [{"ostf": result["ostf"]}] + [{"diagnostic": d} for d in result["diagnostics"]] + \
         [{"item": i} for i in result["items"]] + [{"link": l} for l in result["links"]] + \
         ([{"impact": result["impact"]}] if "impact" in result else [])
@@ -1875,7 +1875,7 @@ def text_diagnostics(result):
 
 
 def text_check(result, analysis=None):
-    """I.1 and Annex J: check's text; with impact, each context of impact.contexts rendered after it."""
+    """F.1 and Annex G: check's text; with impact, each context of impact.contexts rendered after it."""
     lines = text_diagnostics(result)
     lines.append(f"{len(result['items'])} items, {len(result['links'])} links")
     if "impact" in result:
@@ -1891,7 +1891,7 @@ def text_check(result, analysis=None):
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="OSTF 0.3 reader (Annex I check and context).")
+    parser = argparse.ArgumentParser(description="OSTF 0.3 reader (Annex F check and context).")
     commands = parser.add_subparsers(dest="command", required=True)
     for command in ("check", "context"):
         sub = commands.add_parser(command)
@@ -1899,7 +1899,7 @@ def main(argv=None):
         sub.add_argument("--format", choices=["json", "text", "sarif", "ndjson"] if command == "check" else ["json", "text"], default="text")
         if command == "check":
             sub.add_argument("--base", metavar="REV")
-            # Added option (Annex I.5): read the base view from a checkout of REV, given as the
+            # Added option (Annex F.5): read the base view from a checkout of REV, given as the
             # directory that holds this root there, instead of from Git.
             sub.add_argument("--base-tree", metavar="DIR", type=pathlib.Path)
         if command == "context":
@@ -1907,7 +1907,7 @@ def main(argv=None):
     args = parser.parse_args(argv)
     cwd = pathlib.Path(os.path.realpath(os.getcwd()))
     target = getattr(args, "target", None)
-    # I.3: an anchor TARGET is a path relative to the working directory and selects the
+    # F.3: an anchor TARGET is a path relative to the working directory and selects the
     # root that covers its file; TARGET itself is kept as given for item lookup and output.
     path = target.partition("#")[0] if target is not None else None
     full = pathlib.Path(os.path.normpath(cwd / path)) if path else None
@@ -1950,7 +1950,7 @@ def _git(root, *args, stdin=None):
 
 
 class History:
-    """Annex I.3: change information from the first-parent history of the evaluated view, newest first,
+    """Annex F.3: change information from the first-parent history of the evaluated view, newest first,
     read with Git's plumbing. A side changed in the first commit in which it differs from that side in
     the commit's first parent, or in an empty view for a commit without one. There is no history
     outside a Git checkout or before its first commit, and the walk gives up at a commit whose parents
@@ -2056,7 +2056,7 @@ class GitFiles(dict):
 def git_view(root, rev):
     """The files under `root` at Git revision `rev`, by path relative to root, read with Git's
     plumbing commands, which run no hooks, filters or repository code. A revision without the
-    root's directory gives an empty view (Annex C.3)."""
+    root's directory gives an empty view (Annex D.3)."""
     import subprocess
 
     def git(*args, stdin=None):

@@ -1,6 +1,8 @@
 <!-- SPDX-License-Identifier: CC-BY-4.0 -->
 # Phase 5 pre-registration
 
+The agent paragraph published with working draft 0.3 is agent paragraph 1 (its Annex F.1); these trials ran it under the name agent paragraph 5, with the same words otherwise.
+
 Frozen on 2026-10-25, before any scored run, as section 10 of the [agent-first plan](../plan-agent-first.md) requires. It fixes the arms, the tasks, the fixtures, the judge, the verdict, the fallback, the budget and the harness of Phase 5, the trials of document revision 0.16, the graph without the lock. Rule 8 bound its preparation: no agent, model or judge was called, not even as a smoke test; the harness was exercised with a scripted fake agent and a fake judge only. A change to anything below after the first scored run is recorded in the results with its reason, and the cells it affects run again with both results reported. The [protocol](protocol.md) of Phase 1 and of the rounds before it stays as they ran; its records are reproducible at the tag `doc-0.15`.
 
 ## What is measured

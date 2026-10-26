@@ -2,7 +2,7 @@
   {
     "id": "py-function",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "a.py",
@@ -21,7 +21,7 @@
   {
     "id": "py-whole-file",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "b.py",
@@ -36,7 +36,7 @@
   {
     "id": "py-async-decorated",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "c.py",
@@ -55,7 +55,7 @@
   {
     "id": "py-method",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "cart.py",
@@ -78,7 +78,7 @@
   {
     "id": "py-reindented",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "cart.py",
@@ -101,7 +101,7 @@
   {
     "id": "py-class",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "cart.py",
@@ -124,7 +124,7 @@
   {
     "id": "py-member-last-component",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "cart.py",
@@ -147,7 +147,7 @@
   {
     "id": "py-nested-class",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "n.py",
@@ -174,7 +174,7 @@
   {
     "id": "py-target-list",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "v.py",
@@ -201,7 +201,7 @@
   {
     "id": "py-annotated",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "v.py",
@@ -228,7 +228,7 @@
   {
     "id": "py-one-line",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "o.py",
@@ -247,7 +247,7 @@
   {
     "id": "py-fstring",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "f.py",
@@ -266,7 +266,7 @@
   {
     "id": "py-continuation",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "t.py",
@@ -285,7 +285,7 @@
   {
     "id": "py-semicolon",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "s.py",
@@ -308,7 +308,7 @@
   {
     "id": "py-test-parametrized",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "test_cart.py",
@@ -331,7 +331,7 @@
   {
     "id": "py-string-prefixes",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "p.py",
@@ -354,7 +354,7 @@
   {
     "id": "py-bytes-prefixes",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "p.py",
@@ -377,7 +377,7 @@
   {
     "id": "py-numbers-operators",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "m.py",
@@ -396,7 +396,7 @@
   {
     "id": "py-comments-blank-lines",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "c2.py",
@@ -415,7 +415,7 @@
   {
     "id": "py-dedent",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "g.py",
@@ -434,7 +434,7 @@
   {
     "id": "py-unicode",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "u.py",
@@ -453,7 +453,7 @@
   {
     "id": "py-tabs-whole-file",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "w.py",
@@ -463,7 +463,7 @@
   {
     "id": "py-decorated-first-statement",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "c3.py",
@@ -486,7 +486,7 @@
   {
     "id": "py-carriage-return-line-ends",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "r.py",
@@ -505,7 +505,7 @@
   {
     "id": "py-name-as-written",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "k.py",
@@ -524,7 +524,7 @@
   {
     "id": "py-parametrized-member",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "test_a.py",
@@ -547,7 +547,7 @@
   {
     "id": "py-lambda-walrus",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "l.py",
@@ -566,7 +566,7 @@
   {
     "id": "py-return-line-break",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "r.py",
@@ -585,7 +585,7 @@
   {
     "id": "py-return-value",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "r.py",
@@ -604,7 +604,7 @@
   {
     "id": "py-backslash-continuation",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "k.py",
@@ -619,7 +619,7 @@
   {
     "id": "py-two-statements",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "k.py",
@@ -634,7 +634,7 @@
   {
     "id": "py-dedent-inner",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "d.py",
@@ -644,7 +644,7 @@
   {
     "id": "py-dedent-outer",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "d.py",
@@ -654,7 +654,7 @@
   {
     "id": "py-except-parenthesized",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "e.py",
@@ -664,7 +664,7 @@
   {
     "id": "py-except-without-parentheses",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "e.py",
@@ -674,7 +674,7 @@
   {
     "id": "py-template-string",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "t.py",
@@ -684,7 +684,7 @@
   {
     "id": "py-lazy-import",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "l.py",
@@ -694,7 +694,7 @@
   {
     "id": "py-type-parameter-default",
     "requirements": [
-      "Annex L",
+      "Annex C",
       "OSTF-164"
     ],
     "path": "d.py",

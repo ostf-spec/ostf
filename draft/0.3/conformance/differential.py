@@ -10,12 +10,12 @@
 The corpus is a deterministic list of small trees at the edges of the text: scalar types, versions,
 keys, paths and anchors, link entries, tags in Go, TypeScript and Python, profiles, external items,
 includes and nested roots, derived lines, contexts and impacts. `run` drives a reader only through
-the command line of Annex I, so any tool that claims it can take part: for each tree, `check` as
+the command line of Annex F, so any tool that claims it can take part: for each tree, `check` as
 json and as sarif, `context` as json and text for its targets, and, when the tree has a base, `check
 --base HEAD` in a Git repository whose one commit is the base. CMD is the command, split as a shell
 would, that runs the reader, such as `ostf` or `zztrace-ostf`; by default it is this directory's
-reader.py. A summary keeps what Annex C.2 compares, the codes, items, link tuples and impact, with
-the files of the diagnostics, the SARIF rules, levels and files, the exit codes and the Annex J text
+reader.py. A summary keeps what Annex D.2 compares, the codes, items, link tuples and impact, with
+the files of the diagnostics, the SARIF rules, levels and files, the exit codes and the Annex G text
 of a context that resolves, and leaves out what it does not compare: the order of diagnostics,
 messages, hints and subjects, SARIF logical locations among them, codes of a tool's own, and the
 change information of a history.
@@ -73,7 +73,7 @@ def corpus():
             item = f"  - id: R-A\n    text: A.\n    {field}: {value}\n" if field != "id" else f"  - id: {value}\n    text: A.\n"
             add("scalar", field, {"trace.yaml": root(item)})
     # Wire versions in each kind of file (OSTF-103).
-    for version in ['"0.3"', '"0.3.0"', "0.3", '"0.4"', '"1.0"', '"0.2"', '"3"', '""', '"v0.3"', '" 0.3"']:
+    for version in ['"0.3"', '"0.3.0"', "0.3", '"0.4"', '"1.0"', '"0.1"', '"3"', '""', '"v0.3"', '" 0.3"']:
         add("version", "root", {"trace.yaml": f"ostf: {version}\nitems:\n{ITEM_A}"})
         add("version", "item-file", {"trace.yaml": root(head='include: ["reqs/*.yaml"]\n'), "reqs/a.yaml": f"ostf: {version}\nitems:\n{ITEM_A}"})
         add("version", "profile", {"trace.yaml": root(ITEM_A, "profile: p.yaml\n"), "p.yaml": f"ostf: {version}\n"})
@@ -148,7 +148,7 @@ def corpus():
                           ("fuzz", 'import "testing"\n\n// @req R-A\nfunc FuzzF(f *testing.F) {}\n')]:
         add("go-tag", f"test-file-{label}", {"trace.yaml": root(ITEM_A), "a_test.go": "package a\n\n" + source})
     add("go-tag", "tags-off", {"trace.yaml": root(ITEM_A, "tags: false\n"), "a.go": "package a\n\n// @req R-MISSING\nfunc F() {}\n"})
-    # Tags and definitions in TypeScript and JavaScript (Annex K).
+    # Tags and definitions in TypeScript and JavaScript (Annex B).
     for label, path, source in [
         ("function", "a.ts", "// @req R-A\nexport function f() {}\n"), ("class-method", "a.ts", "export class C {\n  // @req R-A\n  m() {}\n}\n"),
         ("arrow", "a.ts", "// @req R-A\nexport const f = () => 1;\n"), ("namespace", "a.ts", "namespace N {\n  // @req R-A\n  export function f() {}\n}\n"),
@@ -168,7 +168,7 @@ def corpus():
             {"trace.yaml": root(f'  - id: R-A\n    text: A.\n    code: ["{anchor}"]\n'),
              "a.ts": "export function f() {}\nexport class C {\n  m() {}\n}\nnamespace N {\n  export function f() {}\n}\ninterface I { x: number }\n",
              "a.test.ts": "describe('suite', () => {\n  it('works', () => {});\n});\n"})
-    # Tags and definitions in Python (Annex L).
+    # Tags and definitions in Python (Annex C).
     for label, path, source in [
         ("def", "a.py", "# @req R-A\ndef f():\n    pass\n"), ("method", "a.py", "class C:\n    # @req R-A\n    def m(self):\n        pass\n"),
         ("decorator", "a.py", "# @req R-A\n@d\ndef f():\n    pass\n"), ("async", "a.py", "# @req R-A\nasync def f():\n    pass\n"),
@@ -198,7 +198,6 @@ def corpus():
         ("link-attribute", "links:\n  refines:\n    attributes:\n      role: {values: [x]}\n", "  - id: R-A\n    text: A.\n    refines: [{to: R-B, role: y}]\n" + ITEM_B),
         ("reserved-to", "links:\n  refines:\n    attributes:\n      to: {}\n", ITEM_A),
         ("not-mapping", "[]\n", ITEM_A), ("meaning", "types:\n  requirement:\n    attributes:\n      a: {type: string, meaning: true}\n", ITEM_A),
-        ("fingerprints", "fingerprints: {bodyChange: all}\n", ITEM_A),
     ]:
         add("profile", label, {"trace.yaml": root(item, "profile: p.yaml\n"), "p.yaml": 'ostf: "0.3"\n' + profile if not profile.startswith("[") else profile})
     add("profile", "missing", {"trace.yaml": root(ITEM_A, "profile: p.yaml\n")})
@@ -228,10 +227,9 @@ def corpus():
         ("nested-anchor", {"trace.yaml": root('  - id: R-A\n    text: A.\n    code: ["sub/a.go#F"]\n'), "sub/trace.yaml": root(ITEM_B), "sub/a.go": "package sub\n\nfunc F() {}\n"}),
         ("include-root", {"trace.yaml": root(ITEM_A, 'include: ["trace.yaml"]\n')}),
         ("include-path", {"trace.yaml": root(ITEM_A, 'include: ["../x/*.yaml"]\n')}),
-        ("leftover-lock", {"trace.yaml": root('  - id: R-A\n    text: A.\n    code: ["trace.lock"]\n'), "trace.lock": "trace.lock 1\n"}),
     ]:
         add("include", label, files)
-    # Derived lines (Annex B).
+    # Derived lines (Annex E).
     derived = {"trace.yaml": root('  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#G]\n    tests: [a_test.go#TestF]\n'), "a.go": GO, "a_test.go": GO_TEST}
     for label, text in [
         ("covers", "trace.derived 1\na_test.go#TestF covers a.go#F view=1 tool=t\n"), ("none", "trace.derived 1\n"),
@@ -243,7 +241,7 @@ def corpus():
         ("lowercase-hex", "trace.derived 1\na_test.go#TestF covers a.go#F view=%2a tool=t\n"),
     ]:
         add("derived", label, {**derived, "trace.derived": text})
-    # Contexts (Annex I.3, Annex J).
+    # Contexts (Annex F.3, Annex G).
     tree = {"trace.yaml": root("  - id: N-A\n    type: need\n    text: Need.\n  - id: RISK-A\n    type: risk\n    title: Risk\n    text: |\n      Line one.\n      Line two.\n"
                                "  - id: R-A\n    title: Req\n    text: A.\n    rationale: Because.\n    aliases: [A-ALIAS]\n    refines: [N-A]\n    controls: [RISK-A]\n"
                                "    code: [a.go#F, deploy/x.tf]\n    tests: [a_test.go#TestF]\n  - id: V-A\n    type: verification\n    text: Review.\n    verifies: [R-A]\n"
@@ -252,7 +250,7 @@ def corpus():
     add("context", "targets", tree, contexts=["R-A", "A-ALIAS", "r-a", "N-A", "RISK-A", "V-A", "R-B", "R-MISSING", "a.go#F", "a.go#G", "a.go",
                                               "a.go#M", "a.go#S.M", "a_test.go#TestF", "deploy/x.tf", "x.rs#f", "missing.go#F", "a.go#Missing",
                                               "../a.go", "a.go#", "trace.yaml"])
-    # Impacts (Annex C.3).
+    # Impacts (Annex D.3).
     item = '  - id: R-A\n    text: A.\n    code: [a.go#F, a.go#S.M]\n    tests: [a_test.go#TestF]\n'
     base = {"trace.yaml": root(item), "a.go": GO, "a_test.go": GO_TEST}
     for label, files in [
@@ -321,7 +319,7 @@ def summarize(reader, entry):
             results = []
             for row in run_["results"]:
                 location = (row.get("locations") or [{}])[0]
-                # The logical location is the subject (Annex D), which Annex C.2 does not compare.
+                # The logical location is the subject (Annex H), which Annex D.2 does not compare.
                 results.append([row["ruleId"], row["level"], ((location.get("physicalLocation") or {}).get("artifactLocation") or {}).get("uri", "")])
             summary["sarif"] = {"exit": code, "rules": sorted(r["id"] for r in run_["tool"]["driver"]["rules"] if ANNEX_CODE.fullmatch(r["id"])),
                                 "results": sorted(r for r in results if ANNEX_CODE.fullmatch(r[0]))}
@@ -333,7 +331,7 @@ def summarize(reader, entry):
                 result = json.loads(out)
                 context.update({"codes": sorted({d["code"] for d in annex(result["diagnostics"])}), "items": sorted(i["id"] for i in result["items"]),
                                 "links": tuples(result["links"])})
-                if code == 0:  # Annex J renders a context that resolves; the text of a failure is a message
+                if code == 0:  # Annex G renders a context that resolves; the text of a failure is a message
                     context["text"] = call(reader, tree, "context", target, "--root", ".", "--format", "text")[1]
             contexts[target] = context
         if contexts:

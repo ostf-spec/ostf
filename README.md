@@ -3,7 +3,7 @@
 
 OSTF is a plain-text format that records why code exists. A repository declares its requirements, risks, threats, controls, design decisions and verifications as items with stable IDs, links them to the functions that implement them and the tests that verify them. Any tool, person or coding agent that can read YAML can then answer three questions from the repository alone: why does this code exist, which tests verify this requirement, and which items a change touches.
 
-**Status:** working draft, wire version `ostf: "0.3"`, document revision 0.18. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
+**Status:** working draft 0.3, wire version `ostf: "0.3"`. It is candidate text for OSTF 1.0, not 1.0: the release gate needs a second, independently maintained implementation and use by two organizations. It is not a certification program.
 
 ## What it looks like
 
@@ -18,7 +18,7 @@ items:
 
 `math.go#Add` implements `R-ADD` and `math_test.go#TestAdd` verifies it. Code can also link itself with a `// @req R-ADD` comment. When a change edits `Add`, `ostf check --base` lists the function beside the text of `R-ADD`, the test to run, and the last commits that changed each side; the pull request that shows them is where someone confirms that the two still match. A link says that the code serves the item, not that the test passed or the code is correct.
 
-Nothing in the repository records that confirmation, and a changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review. Revision 0.16 removed the lock file and the stamps of earlier revisions after the [agent-first plan](draft/0.3/plan-agent-first.md) measured them (section 8), and revision 0.17 moved derived links, the `trace.derived` file of observed coverage, out of Core into an optional annex after the plan's trials found agents editing it by hand (section 10).
+A changed definition fails nothing: `check` fails on errors and broken links, and what a change touches is information for the review.
 
 ## Start in ten minutes
 
@@ -64,15 +64,13 @@ Nothing in the repository records that confirmation, and a changed definition fa
 | Document | Purpose |
 | --- | --- |
 | [Specification](draft/0.3/ostf.md) | The format in 26 numbered requirements, the Go, TypeScript and Python annexes and the diagnostics, and optional annexes for derived links, SARIF output, the command profile for coding agents, context rendering and results for an index |
-| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived`, the file of the optional Annex B |
+| [Schemas](draft/0.3/schema/) and [derived-link grammar](draft/0.3/trace-derived.abnf) | JSON Schema 2020-12 for trace, profile and result files, and ABNF for `trace.derived`, the file of the optional Annex E |
 | [Example](draft/0.3/example/README.md) | A refund limit that controls a risk, a payment retry owned by an issue tracker, and an encryption rule carried by an infrastructure file and verified by a review, with derived links and the expected tool output |
 | [Fixtures](draft/0.3/fixtures/README.md) | Files that pin the specification's examples and its size budget |
-| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases, conformance suite version 2 |
+| [Reader and cases](draft/0.3/conformance/README.md) | The reference reader, installed as `ostf`, with the `check` and `context` commands, and hand-written cases, conformance suite version 1 |
 | [Converters](draft/0.3/tools/README.md) | Doorstop to OSTF and back, and StrictDoc to OSTF, with what each loses |
-| [Agent-readiness plan](draft/0.3/plan-agent-readiness.md) | Five phases that made OSTF work for coding agents without growing its core, all done, with each phase's outcome and the two scorecard rows lowered |
-| [Agent-first plan](draft/0.3/plan-agent-first.md) | Seven phases toward wire 0.4 drawn from two independent reviews of 0.3, from fixing the defects they found to trials against a baseline without OSTF; Phase 0, the fixes, is done in revision 0.13, Phase 1, the [baseline](draft/0.3/trials/baseline.md) against a plain requirements file, is published, Phase 2, with the [replay under candidate defaults](draft/0.3/trials/baseline-defaults.md), is done in revisions 0.14 and 0.15, Phase 3 missed its pre-registered gate, so its fallback, the graph without the lock, is revision 0.16, and [Phase 5](draft/0.3/trials/results-phase5.md) met Over baseline, Corroborated and Link churn and missed Guarded, Breadth and Tokens, with the format not shown to improve task outcomes beyond the same rules on a plain requirements file |
-| [Agent trials](draft/0.3/trials/protocol.md) | The protocol, fixtures, harness and every result of coding agents from two vendors, and a small model, doing eight tasks with only the agent paragraph to go on |
-| [Decision record](draft/0.3/decisions.md) | The rulings taken while carrying out the plan: each ambiguity or defect, the rule that settled it and the requirement it touched |
+
+The trials and the records behind this draft are under [project/](project/).
 
 Schemas use the `https://ostf.dev/draft/0.3/` identifier namespace and resolve from this repository; validation never fetches them. zztrace, the project's own tool, reads wire 0.3 with separately written code; both implementations pass the same cases.
 
@@ -90,7 +88,7 @@ The Python script creates an ignored virtual environment, installs hash-pinned d
 
 ## Participate
 
-Review the [specification](draft/0.3/ostf.md) and try the example with another implementation. Use the [contribution guide](CONTRIBUTING.md) and [issue templates](https://github.com/ostf-spec/ostf/issues/new/choose) for feedback; [draft governance](GOVERNANCE.md) explains how changes are decided. The draft remains 0.x until the [release gate](draft/0.3/ostf.md#10-versioning) is met. `ostf.dev` is reserved for the standard; this repository is the draft's public home. A preliminary trademark search remains separate work; publication is not a claim of name clearance.
+Review the [specification](draft/0.3/ostf.md) and try the example with another implementation. Use the [contribution guide](CONTRIBUTING.md) and [issue templates](https://github.com/ostf-spec/ostf/issues/new/choose) for feedback; [draft governance](GOVERNANCE.md) explains how changes are decided. The draft remains 0.x until the [release gate](draft/0.3/ostf.md#9-versioning) is met. `ostf.dev` is reserved for the standard; this repository is the draft's public home. A preliminary trademark search remains separate work; publication is not a claim of name clearance.
 
 For a vulnerability, use the [private security reporting path](SECURITY.md). Community participation follows the [Code of Conduct](CODE_OF_CONDUCT.md).
 

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Write a generated tree whose items link one, ten and a hundred anchors (agent-first plan, section 6).
+"""Write a generated tree whose items link one, ten and a hundred anchors.
 
     python3 generate_fanout.py DIR [--fanout 1,10,100] [--items 60] [--packages 40]
 
 The tree is deterministic: the same arguments write the same bytes. It holds one root with
 `--items` requirements for each fan-out, each linking that many distinct Go functions and one test,
 the functions of an item spread across the packages as one requirement spreads across the modules
-of a large code base. One item in ten controls one of six risks, so `bodyChange: risk` has links
-to count. There is no lock; trials/fanout.py stamps one and times the commands on the tree.
+of a large code base. One item in ten controls one of six risks, so that risk relevance has links
+to mark.
 """
 import argparse
 import pathlib

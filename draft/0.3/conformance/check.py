@@ -23,22 +23,11 @@ import reader
 HERE = pathlib.Path(__file__).resolve().parent
 DRAFT = HERE.parent
 VECTORS = HERE / "vectors"
-# The OASIS SARIF 2.1.0 schema (Errata 01), which run.py fetches and pins (Annex D).
+# The OASIS SARIF 2.1.0 schema (Errata 01), which run.py fetches and pins (Annex H).
 SARIF_SCHEMA = HERE.parents[2] / ".venv" / "sarif-schema-2.1.0.json"
 SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e"
-# The 0.2 vectors, byte for byte as published with 0.2, kept as history and not run (plan, section 8).
-VECTORS_02 = {
-    "item-vectors.json": "7ef4e294933e4757e913b7abe20ea1d8211f415ad31fa302a4c738959c779e27",
-    "code-vectors.json": "0b1fde1b4551cad0a5e60f6a78d2c27e23c9bc210f14fbdbc154bdb1493b199b",
-    "lock-vectors.json": "004db07d6e4763e27297c87e78907df11ea2d3919077e0e2561ae00235b827bc",
-}
-# The span vectors of Annexes A, K and L (OSTF-164).
+# The span vectors of Annexes A, B and C (OSTF-164).
 SPAN_VECTORS = ("go-spans.json", "ts-spans.json", "py-spans.json")
-# Requirements merged into others to stay within 35 (agent-first plan, section 7): Consumer and Analyzer into
-# OSTF-160, the release gate into OSTF-170; the lock's, retired with it (plan, section 8); and derived links,
-# which left Core for the optional Annex B (plan, section 10).
-RETIRED = {"OSTF-140", "OSTF-141", "OSTF-142", "OSTF-143", "OSTF-144", "OSTF-145", "OSTF-146", "OSTF-161", "OSTF-162",
-           "OSTF-171"}
 
 
 def load(path):
@@ -71,12 +60,12 @@ def links(result):
 
 
 def codes(result):
-    """The Annex C codes of a result; the reader's own codes (OSTF-151) are no conformance target."""
+    """The Annex D codes of a result; the reader's own codes (OSTF-151) are no conformance target."""
     return sorted({d["code"] for d in result["diagnostics"] if not d["code"].startswith(reader.OWN_PREFIX)})
 
 
 def sarif_validator():
-    """Annex D: a validator for the OASIS SARIF 2.1.0 schema, which is JSON Schema draft-04."""
+    """Annex H: a validator for the OASIS SARIF 2.1.0 schema, which is JSON Schema draft-04."""
     assert SARIF_SCHEMA.is_file(), f"no {SARIF_SCHEMA}: run run.py, which fetches it"
     data = SARIF_SCHEMA.read_bytes()
     assert hashlib.sha256(data).hexdigest() == SARIF_SHA256, "the SARIF schema is not the pinned one"
@@ -91,7 +80,7 @@ def sarif_validator():
 
 
 def scripted_history(case, directory):
-    """Annex I.3: a Git repository for a history case, and its commit identifiers by subject. Each commit applies
+    """Annex F.3: a Git repository for a history case, and its commit identifiers by subject. Each commit applies
     `files` to the tree of its first parent, by default the commit before it, a null deleting a file; HEAD is the
     last commit; `depth` clones it shallow; `worktree` edits the checkout. Without commits, a plain directory."""
     checkout = directory / "repo"
@@ -139,11 +128,8 @@ def check():
         assert importlib.metadata.version(name) == version, f"unexpected installed tool version: {name}"
     counts = {}
 
-    # The 0.2 vectors stay published byte for byte, as history; with the fingerprints gone they are not run.
-    for name, digest in VECTORS_02.items():
-        assert hashlib.sha256((VECTORS / name).read_bytes()).hexdigest() == digest, f"{name} differs from the 0.2 vectors"
 
-    # Annexes A, K and L (OSTF-164): every definition of each vector source, by full symbol and span text in
+    # Annexes A, B and C (OSTF-164): every definition of each vector source, by full symbol and span text in
     # source order, the span texts its symbol binds to, or no parse.
     for name in SPAN_VECTORS:
         for case in load(VECTORS / name):
@@ -161,7 +147,7 @@ def check():
                 assert found == case["binds"], case["id"] + f": binds {found}"
         counts[name.removesuffix("-spans.json") + "Spans"] = len(load(VECTORS / name))
 
-    # The example's expected outputs (Annex C.2, Annex I.3, Annex J), byte for byte.
+    # The example's expected outputs (Annex D.2, Annex F.3, Annex G), byte for byte.
     example = reader.Analysis(reader.Tree(DRAFT / "example"))
     expected = DRAFT / "example" / "expected"
     dump = lambda value: json.dumps(value, indent=2, ensure_ascii=False) + "\n"
@@ -176,22 +162,19 @@ def check():
     counts["minimalFixture"] = 1
 
     spec = (DRAFT / "ostf.md").read_text()
-    # Annex B reproduces the rules of trace-derived.abnf.
+    # Annex E reproduces the rules of trace-derived.abnf.
     rules = [line.split(";")[0].rstrip() for line in (DRAFT / "trace-derived.abnf").read_text().splitlines()]
-    assert [r for r in rules if r] == re.search(r"## Annex B .*?```abnf\n(.*?)```", spec, re.S)[1].splitlines(), "Annex B differs from trace-derived.abnf"
+    assert [r for r in rules if r] == re.search(r"## Annex E .*?```abnf\n(.*?)```", spec, re.S)[1].splitlines(), "Annex E differs from trace-derived.abnf"
 
-    # The Annex C.3 example: edit the body of CheckRefundLimit and add a field to Account.
+    # The Annex D.3 example: edit the body of CheckRefundLimit and add a field to Account.
     edited = {path: example.files[path] for path in example.files}
     edited["refund.go"] = edited["refund.go"].replace(b"\tDailyLimit    int\n}", b"\tDailyLimit    int\n\tFrozen        bool\n}").replace(
         b"if acct.RefundedToday+r.Amount > acct.DailyLimit && !r.Approved", b"if (acct.Frozen || acct.RefundedToday+r.Amount > acct.DailyLimit) && !r.Approved")
-    spec_impact = json.loads(re.search(r"\*\*C\.3 Impact\.\*\*.*?```json\n(.*?)```", spec, re.S)[1])
-    assert reader.impact(example, reader.Analysis(edited), "main") == spec_impact, "Annex C.3 example"
+    spec_impact = json.loads(re.search(r"\*\*D\.3 Impact\.\*\*.*?```json\n(.*?)```", spec, re.S)[1])
+    assert reader.impact(example, reader.Analysis(edited), "main") == spec_impact, "Annex D.3 example"
     counts["exampleOutputs"] = 4
 
     defined = set(re.findall(r"\*\*(OSTF-\d{3}) ", spec))
-    # Section 1.3: a retired requirement keeps its identifier and its anchor, is no longer defined, and no case names it.
-    for retired in RETIRED:
-        assert retired not in defined and f'<a id="{retired}"></a>' in spec, f"{retired} is not retired in the text"
     cases = load(HERE / "cases.json")
     # The suite's version (OSTF-163): any change to what it asks of a reader gives it the next one, so the digest
     # recorded beside the version must be that of the suite as it is, and the README states the same version.
@@ -203,9 +186,11 @@ def check():
     every = cases["checks"] + cases["contexts"] + cases["impacts"] + cases["histories"] + cases["sarif"] + cases["schemas"]
     ids = [c["id"] for c in every]
     assert len(ids) == len(set(ids)), "duplicate case ID"
-    for case in every:
+    # Each case and span vector names requirements the text defines, or annexes and sections it anchors.
+    named = lambda r: r in defined or (re.fullmatch(r"Annex [A-L](\.\d+)?", r) and f'<a id="{r.replace(" ", "-")}"></a>' in spec)
+    for case in every + [c for name in SPAN_VECTORS for c in load(VECTORS / name)]:
         for requirement in case["requirements"]:
-            assert requirement in defined or re.fullmatch(r"Annex [A-N](\.\d+)?", requirement), f"{case['id']}: unknown requirement {requirement}"
+            assert named(requirement), f"{case['id']}: unknown requirement {requirement}"
     # The official profiles (OSTF-121) are published files, and the cases that use one carry it byte for byte.
     profiles = {path.name: path.read_text() for path in (DRAFT / "profiles").glob("*.yaml")}
     assert sorted(profiles) == ["security.yaml"], "official profiles"
@@ -220,7 +205,7 @@ def check():
             assert links(result) == expect["links"], f"{case['id']}: links\n got {links(result)}\nwant {expect['links']}"
         if "items" in expect:
             assert [i["id"] for i in result["items"]] == expect["items"], f"{case['id']}: items"
-        if "corroboration" in expect:  # Annex B.3: by link identity, for every link that has one
+        if "corroboration" in expect:  # Annex E.3: by link identity, for every link that has one
             got = {reader.identity(l): l["corroboration"] for l in result["links"] if "corroboration" in l}
             assert got == expect["corroboration"], f"{case['id']}: corroboration\n got {got}\nwant {expect['corroboration']}"
         if "linkCount" in expect:
@@ -255,7 +240,7 @@ def check():
             found = [d for d in result["diagnostics"] if d["code"] == code and d.get("subject") == subject]
             assert len(found) == 1 and ("hint" in found[0]) == bool(anchors) and all(a in found[0].get("hint", "") for a in anchors), \
                 f"{case['id']}: hint of {key}: {[d.get('hint') for d in found]}, want {anchors}"
-        # C.3: exactly the items that a context names carry their text in the result.
+        # D.3: exactly the items that a context names carry their text in the result.
         named = {i for c in (got or {}).get("contexts", []) for i in c["items"]}
         assert {i["id"] for i in result["items"] if "text" in i} == {i for i in named if "text" in reader.Analysis(case["files"]).items[i]}, \
             f"{case['id']}: items with their text"
@@ -320,23 +305,23 @@ def check():
         [r["level"] for r in run_["results"] if r["ruleId"] == reader.UNLINKED] == ["note"], "unlinked statements in SARIF"
     counts["directChecks"] = 7
 
-    # Every requirement and Annex C code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
+    # Every requirement and Annex D code has a case, or cases.json says why not, so removing a case cannot go unnoticed.
     covered = {r for case in every for r in case["requirements"]}
     covered |= {r for name in SPAN_VECTORS for case in load(VECTORS / name) for r in case["requirements"]}
     covered |= {code for case in cases["checks"] + cases["contexts"] + cases["impacts"] for code in case["expect"]["codes"]}
     covered |= {"PARSE_ERROR", "FILE_TOO_LARGE"}
-    # The codes of Annex C.1 and the one of the optional Annex B, each a table row of the same form.
+    # The codes of Annex D.1 and the one of the optional Annex E, each a table row of the same form.
     code_row = r"^\| `([A-Z_]+)` \| (?:error|warning|info) \|"
-    annex_b = set(re.findall(code_row, re.search(r"\n## Annex B .*?\n## Annex C ", spec, re.S)[0], re.MULTILINE))
-    annex_c = set(re.findall(code_row, re.search(r"\n## Annex C .*?\n## Annex D ", spec, re.S)[0], re.MULTILINE))
-    assert len(annex_c) == 34 and annex_b == {"DERIVED_INVALID"}, "Annex C.1 and Annex B.4 codes"
-    annex_c |= annex_b
+    annex_e = set(re.findall(code_row, re.search(r"\n## Annex E .*?\n## Annex F ", spec, re.S)[0], re.MULTILINE))
+    annex_d = set(re.findall(code_row, re.search(r"\n## Annex D .*?\n## Annex E ", spec, re.S)[0], re.MULTILINE))
+    assert len(annex_d) == 34 and annex_e == {"DERIVED_INVALID"}, "Annex D.1 and Annex E.4 codes"
+    annex_d |= annex_e
     for name, reason in cases["notCovered"].items():
-        assert name in defined | annex_c and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
-    for name in sorted(defined | annex_c):
+        assert name in defined | annex_d and reason.strip(), f"notCovered {name}: not a requirement or code, or no reason"
+    for name in sorted(defined | annex_d):
         assert (name in covered) != (name in cases["notCovered"]), f"{name}: needs a case or a reason in notCovered, not both"
 
-    # Annex I command line: exit codes, root selection and TARGET kept as given.
+    # Annex F command line: exit codes, root selection and TARGET kept as given.
     script = str(HERE / "reader.py")
 
     def run(cwd, *args):
@@ -348,7 +333,7 @@ def check():
     assert code == 0 and json.loads(out)["context"] == "example/refund.go#CheckRefundLimit", "TARGET kept as given"
     assert [i["id"] for i in json.loads(out)["items"]] == ["N-REFUNDS", "R-REFUND-LIMIT", "RISK-REFUND-ABUSE"], "root from TARGET"
     assert run(DRAFT / "example", "context", "R-NOPE")[0] == 1, "context exit 1"
-    # A path that does not resolve gets a hint spelled from the working directory, which I.3 reads it from.
+    # A path that does not resolve gets a hint spelled from the working directory, which F.3 reads it from.
     code, out = run(DRAFT / "example" / "deploy", "context", "deploy/database.tf", "--format", "json")
     assert code == 1 and json.loads(out)["diagnostics"][0].get("hint", "").endswith("try database.tf"), "context hint from a subdirectory"
     code, out = run(DRAFT / "example", "context", "database.tf", "--format", "json")
@@ -372,7 +357,7 @@ def check():
             (tree / name).write_bytes(data)
         code, out = run(tree, "check")
         assert code == 0 and out == "1 items, 2 links\n", "text check counts items and links"
-        # OSTF-102 and I.1: a nested root shows in the text of check, which still passes.
+        # OSTF-102 and F.1: a nested root shows in the text of check, which still passes.
         (tree / "svc").mkdir()
         (tree / "svc" / "trace.yaml").write_text('ostf: "0.3"\nitems: []\n')
         code, out = run(tree, "check")
@@ -382,7 +367,7 @@ def check():
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(tree))
         assert code == 1 and "NESTED_ROOT_FAILED svc/trace.yaml" in out and run(tree, "check")[0] == 0, "check --base fails on a failing nested root"
         os.remove(tree / "svc" / "trace.yaml")
-        # With --root, an anchor outside the root is in no file of the view (Annex I.3).
+        # With --root, an anchor outside the root is in no file of the view (Annex F.3).
         (tree / "elsewhere").mkdir()
         code, out = run(tree / "elsewhere", "context", "math.go#Add", "--root", "..", "--format", "json")
         assert code == 1 and json.loads(out)["items"] == [], "context TARGET outside --root does not resolve"
@@ -397,8 +382,8 @@ def check():
         assert code == 0 and json.loads(out)["impact"] == spec_impact, "check --base on the edited example lists the change and passes"
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"))
         assert code == 0 and "\nrefund.go#CheckRefundLimit\n  implements R-REFUND-LIMIT: Refund limit (corroborated)\n" in out, \
-            "the text of check --base renders each context (Annex J)"
-        # Annex N.1: ndjson is the json result, one record per line, after the version line.
+            "the text of check --base renders each context (Annex G)"
+        # Annex I.1: ndjson is the json result, one record per line, after the version line.
         code, out = run(tree, "check", "--base", "main", "--base-tree", str(DRAFT / "example"), "--format", "ndjson")
         rows = [json.loads(line) for line in out.splitlines()]
         rebuilt = {"ostf": rows[0]["ostf"], "diagnostics": [], "items": [], "links": []}
@@ -432,7 +417,7 @@ def check():
             assert run(repo / "svc", "check", "--base", "--nope")[0] == 2, "an option-like revision exits 2"
     counts["commandLine"] = 22
 
-    # Annex I.3: change information, from scripted Git histories run through the command line. Each commit has
+    # Annex F.3: change information, from scripted Git histories run through the command line. Each commit has
     # its own subject, and every commit identifier in the output, whole or cut to 12 characters, is replaced by
     # its subject before comparing, so that a case holds whatever object format, names and dates Git uses.
     for case in cases["histories"]:

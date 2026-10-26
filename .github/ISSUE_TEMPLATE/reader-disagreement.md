@@ -10,11 +10,11 @@ Give the document, wire, suite and reader versions or commit identifiers.
 
 **Minimal input**
 
-Attach or paste the smallest `trace.yaml`, source file and `trace.lock` that reproduce the difference.
+Attach or paste the smallest `trace.yaml` and source file that reproduce the difference.
 
 **Actual results**
 
-Include each reader's error codes, link states or fingerprint bytes.
+Include each reader's error codes, links and output.
 
 **Expected result and rule**
 

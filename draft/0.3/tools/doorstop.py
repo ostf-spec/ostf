@@ -105,7 +105,7 @@ def import_tree(source, target, types):
             item["x-doorstop"] = keep
             out.append(item)
             if data.get("reviewed"):
-                losses.append(f"{uid}: the review stamp is kept but not checked; OSTF rechecks links with trace.lock")
+                losses.append(f"{uid}: the review stamp is kept but not checked; in OSTF the pull request rechecks a link")
         document = {"ostf": "0.3", "x-doorstop": {"path": directory.as_posix(), **settings}, "items": out}
         (target / "doorstop" / f"{prefix}.yaml").write_text(dump(document), encoding="utf-8")
     root = target / "trace.yaml"

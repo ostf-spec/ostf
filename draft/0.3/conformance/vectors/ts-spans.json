@@ -2,7 +2,7 @@
   {
     "id": "ts-function",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "a.ts",
@@ -21,7 +21,7 @@
   {
     "id": "ts-whole-file",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "b.ts",
@@ -36,7 +36,7 @@
   {
     "id": "ts-overloads",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "o.ts",
@@ -65,7 +65,7 @@
   {
     "id": "ts-class-method",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cart.ts",
@@ -88,7 +88,7 @@
   {
     "id": "ts-member-last-component",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cart.ts",
@@ -111,7 +111,7 @@
   {
     "id": "ts-class-decorated",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cart.ts",
@@ -134,7 +134,7 @@
   {
     "id": "ts-arrow-const",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "d.ts",
@@ -153,7 +153,7 @@
   {
     "id": "ts-several-declarators",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.ts",
@@ -176,7 +176,7 @@
   {
     "id": "ts-template-regex",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "g.ts",
@@ -195,7 +195,7 @@
   {
     "id": "ts-test",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cart.test.ts",
@@ -218,7 +218,7 @@
   {
     "id": "ts-suite",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cart.test.ts",
@@ -241,7 +241,7 @@
   {
     "id": "ts-jsx",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "view.tsx",
@@ -260,7 +260,7 @@
   {
     "id": "ts-generics",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "t.ts",
@@ -279,7 +279,7 @@
   {
     "id": "ts-namespace-member",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.ts",
@@ -302,7 +302,7 @@
   {
     "id": "ts-exports-assignment",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "lib.js",
@@ -321,7 +321,7 @@
   {
     "id": "ts-trailing-commas",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "c.ts",
@@ -340,7 +340,7 @@
   {
     "id": "ts-unicode",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "u.ts",
@@ -359,7 +359,7 @@
   {
     "id": "ts-hashbang-whole-file",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "cli.js",
@@ -369,7 +369,7 @@
   {
     "id": "ts-getter-setter",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "gs.ts",
@@ -397,7 +397,7 @@
   {
     "id": "ts-decorated-method",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "s.ts",
@@ -420,7 +420,7 @@
   {
     "id": "ts-template-literal-type",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "t2.ts",
@@ -439,7 +439,7 @@
   {
     "id": "ts-jsx-character-reference",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "p.tsx",
@@ -458,7 +458,7 @@
   {
     "id": "ts-parenthesized-member-assignment",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "m.js",
@@ -477,7 +477,7 @@
   {
     "id": "ts-destructuring",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "d2.ts",
@@ -504,7 +504,7 @@
   {
     "id": "ts-export-declare",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e2.ts",
@@ -523,7 +523,7 @@
   {
     "id": "ts-comment-between-test-arguments",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "a.test.ts",
@@ -542,7 +542,7 @@
   {
     "id": "ts-comment-after-decorator",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "c2.ts",
@@ -565,7 +565,7 @@
   {
     "id": "ts-interface",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "i.ts",
@@ -582,9 +582,9 @@
     ]
   },
   {
-    "id": "ts2-return-line-break",
+    "id": "ts-return-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "r.js",
@@ -601,9 +601,9 @@
     ]
   },
   {
-    "id": "ts2-return-same-line",
+    "id": "ts-return-same-line",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "r.js",
@@ -620,9 +620,9 @@
     ]
   },
   {
-    "id": "ts2-postfix-line-break",
+    "id": "ts-postfix-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "p.js",
@@ -639,9 +639,9 @@
     ]
   },
   {
-    "id": "ts2-postfix-same-line",
+    "id": "ts-postfix-same-line",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "p.js",
@@ -658,9 +658,9 @@
     ]
   },
   {
-    "id": "ts2-async-line-break",
+    "id": "ts-async-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "a.js",
@@ -673,9 +673,9 @@
     ]
   },
   {
-    "id": "ts2-async-function",
+    "id": "ts-async-function",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "a.js",
@@ -688,9 +688,9 @@
     ]
   },
   {
-    "id": "ts2-break-line-break",
+    "id": "ts-break-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "l.js",
@@ -698,9 +698,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-break-label",
+    "id": "ts-break-label",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "l.js",
@@ -708,9 +708,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-not-line-break",
+    "id": "ts-not-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.ts",
@@ -718,9 +718,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-non-null",
+    "id": "ts-non-null",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.ts",
@@ -728,9 +728,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-type-member-line-break",
+    "id": "ts-type-member-line-break",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "m.ts",
@@ -747,9 +747,9 @@
     ]
   },
   {
-    "id": "ts2-indexed-access-type",
+    "id": "ts-indexed-access-type",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "m.ts",
@@ -766,9 +766,9 @@
     ]
   },
   {
-    "id": "ts2-type-members-lines",
+    "id": "ts-type-members-lines",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "i.ts",
@@ -785,9 +785,9 @@
     ]
   },
   {
-    "id": "ts2-type-members-commas",
+    "id": "ts-type-members-commas",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "i.ts",
@@ -804,9 +804,9 @@
     ]
   },
   {
-    "id": "ts2-type-members-semicolons",
+    "id": "ts-type-members-semicolons",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "i.ts",
@@ -823,9 +823,9 @@
     ]
   },
   {
-    "id": "ts2-class-fields",
+    "id": "ts-class-fields",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "k.ts",
@@ -846,9 +846,9 @@
     ]
   },
   {
-    "id": "ts2-class-field-member",
+    "id": "ts-class-field-member",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "k.ts",
@@ -869,9 +869,9 @@
     ]
   },
   {
-    "id": "ts2-export-default-function",
+    "id": "ts-export-default-function",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "x.js",
@@ -879,9 +879,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-export-arrow",
+    "id": "ts-export-arrow",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "x.js",
@@ -898,9 +898,9 @@
     ]
   },
   {
-    "id": "ts2-do-while",
+    "id": "ts-do-while",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "w.js",
@@ -908,9 +908,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-no-insertion",
+    "id": "ts-no-insertion",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "c.js",
@@ -927,9 +927,9 @@
     ]
   },
   {
-    "id": "ts2-several-declarators",
+    "id": "ts-several-declarators-without-semicolon",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.ts",
@@ -950,9 +950,9 @@
     ]
   },
   {
-    "id": "ts2-ambient-module",
+    "id": "ts-ambient-module",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "d.ts",
@@ -960,9 +960,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-ambient-module-semicolon",
+    "id": "ts-ambient-module-semicolon",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "d.ts",
@@ -970,9 +970,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-elision",
+    "id": "ts-elision",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.js",
@@ -989,9 +989,9 @@
     ]
   },
   {
-    "id": "ts2-empty-array",
+    "id": "ts-empty-array",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.js",
@@ -1008,9 +1008,9 @@
     ]
   },
   {
-    "id": "ts2-elision-pattern",
+    "id": "ts-elision-pattern",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.js",
@@ -1018,9 +1018,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-trailing-elision",
+    "id": "ts-trailing-elision",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.js",
@@ -1037,9 +1037,9 @@
     ]
   },
   {
-    "id": "ts2-trailing-comma-array",
+    "id": "ts-trailing-comma-array",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "e.js",
@@ -1056,9 +1056,9 @@
     ]
   },
   {
-    "id": "ts2-if-else",
+    "id": "ts-if-else",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "f.js",
@@ -1066,9 +1066,9 @@
     "definitions": []
   },
   {
-    "id": "ts2-test-without-semicolons",
+    "id": "ts-test-without-semicolons",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "s.test.ts",
@@ -1085,9 +1085,9 @@
     ]
   },
   {
-    "id": "ts2-async-generator-method",
+    "id": "ts-async-generator-method",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "k.ts",
@@ -1108,9 +1108,9 @@
     ]
   },
   {
-    "id": "ts2-numeric-separators",
+    "id": "ts-numeric-separators",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.js",
@@ -1127,9 +1127,9 @@
     ]
   },
   {
-    "id": "ts2-separator-after-prefix",
+    "id": "ts-separator-after-prefix",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.js",
@@ -1137,9 +1137,9 @@
     "parses": false
   },
   {
-    "id": "ts2-separator-after-zero",
+    "id": "ts-separator-after-zero",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.js",
@@ -1147,9 +1147,9 @@
     "parses": false
   },
   {
-    "id": "ts2-double-separator",
+    "id": "ts-double-separator",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "n.js",
@@ -1157,9 +1157,9 @@
     "parses": false
   },
   {
-    "id": "ts2-variance-annotation",
+    "id": "ts-variance-annotation",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "v.ts",
@@ -1167,9 +1167,9 @@
     "parses": false
   },
   {
-    "id": "ts2-export-type-star",
+    "id": "ts-export-type-star",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "x.ts",
@@ -1177,9 +1177,9 @@
     "parses": false
   },
   {
-    "id": "ts2-static-accessor",
+    "id": "ts-static-accessor",
     "requirements": [
-      "Annex K",
+      "Annex B",
       "OSTF-164"
     ],
     "path": "a.ts",

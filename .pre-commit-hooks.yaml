@@ -2,7 +2,7 @@
 # A pre-commit hook that runs the OSTF check of the repository's top-level root.
 - id: ostf-check
   name: OSTF check
-  description: Fails on an OSTF error or a broken link (Annex I).
+  description: Fails on an OSTF error or a broken link (Annex F).
   entry: ostf check
   language: python
   pass_filenames: false

@@ -11,7 +11,7 @@ import venv
 HERE = pathlib.Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 ENVIRONMENT = ROOT / ".venv"
-# The OASIS SARIF 2.1.0 schema (Errata 01) that check.py validates SARIF output against (Annex D),
+# The OASIS SARIF 2.1.0 schema (Errata 01) that check.py validates SARIF output against (Annex H),
 # fetched once and pinned by digest like the Python dependencies.
 SARIF_SCHEMA = "https://docs.oasis-open.org/sarif/sarif/v2.1.0/errata01/os/schemas/sarif-schema-2.1.0.json"
 SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e"
@@ -19,7 +19,7 @@ SARIF_SHA256 = "c3b4bb2d6093897483348925aaa73af03b3e3f4bd4ca38cef26dcb4212a2682e
 
 def main():
     if sys.version_info < (3, 12):
-        raise SystemExit("OSTF conformance needs Python 3.12 or newer, whose parser reads the syntax of Annex L")
+        raise SystemExit("OSTF conformance needs Python 3.12 or newer, whose parser reads the syntax of Annex C")
     python = ENVIRONMENT / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
     digest = hashlib.sha256((HERE / "requirements.txt").read_bytes()).hexdigest()
     marker = ENVIRONMENT / "ostf-requirements.sha256"
@@ -37,7 +37,6 @@ def main():
         schema.write_bytes(data)
     subprocess.run([str(python), str(HERE / "check.py")], cwd=ROOT, check=True)
     subprocess.run([str(python), str(HERE.parent / "tools" / "check_tools.py")], cwd=ROOT, check=True)
-    # The trials, which need the lock, stay as they ran: reproducible at the tag doc-0.15 (plan, section 8), not run here.
 
 
 if __name__ == "__main__":

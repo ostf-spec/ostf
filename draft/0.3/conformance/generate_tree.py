@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: Apache-2.0
-"""Write the generated tree that both implementations time `check` on (plan, section 5.4).
+"""Write the generated tree that both implementations time `check` on.
 
     python3 generate_tree.py DIR [--files 10000]
 
 The tree is deterministic: the same arguments write the same bytes. It holds one root with
 500 requirements, 40 percent Go source files (one in four tags an item), 20 percent Go test
-files and 40 percent other files, and a lock that records no link, so every link is evaluated
-and reported `unstamped`.
+files and 40 percent other files.
 """
 import argparse
 import pathlib
@@ -21,7 +20,7 @@ def main():
     root = pathlib.Path(args.dir)
     root.mkdir(parents=True, exist_ok=True)
     sources, tests = args.files * 4 // 10, args.files * 2 // 10
-    others = args.files - sources - tests - 2  # trace.yaml and trace.lock count as files
+    others = args.files - sources - tests - 1  # trace.yaml counts as a file
     items = ['ostf: "0.3"', "items:"]
     for n in range(500):
         package = n % 50
@@ -30,7 +29,6 @@ def main():
         if n % 10 == 1:
             items.append(f"    refines: [R-{n - 1:04d}]")
     (root / "trace.yaml").write_text("\n".join(items) + "\n")
-    (root / "trace.lock").write_text("trace.lock 1\n")
     for n in range(sources):
         package = n % 50
         tag = f"// @req R-{n % 500:04d}\n" if n % 4 == 0 and n >= 500 else ""

@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ostf.dev/draft/0.3/result.schema.json",
-  "$comment": "SPDX-License-Identifier: Apache-2.0. OSTF 0.3 working draft, Annex C.2 and C.3. Shape of a result: a conformance result, or the json output of check, context and stamp (Annex I). Sort orders, omission rules and comparison rules are in ostf.md.",
+  "$comment": "SPDX-License-Identifier: Apache-2.0. OSTF 0.3 working draft, Annex D.2 and D.3. Shape of a result: a conformance result, or the json output of check and context (Annex F). Sort orders, omission rules and comparison rules are in ostf.md.",
   "title": "OSTF result",
   "type": "object",
   "properties": {
     "ostf": { "const": "0.3" },
-    "context": { "type": "string", "minLength": 1, "$comment": "Present only in a context result: TARGET as given (Annex I.3)." },
+    "context": { "type": "string", "minLength": 1, "$comment": "Present only in a context result: TARGET as given (Annex F.3)." },
     "diagnostics": { "type": "array", "items": { "$ref": "#/$defs/diagnostic" } },
     "items": { "type": "array", "items": { "$ref": "#/$defs/item" } },
     "links": { "type": "array", "items": { "$ref": "#/$defs/link" } },
@@ -24,7 +24,7 @@
     "ids": { "type": "array", "items": { "$ref": "#/$defs/id" } },
     "identities": {
       "type": "array",
-      "items": { "type": "string", "minLength": 1, "$comment": "Link identity: source, link type, target and attribute pairs, escaped (Annex I.2)." }
+      "items": { "type": "string", "minLength": 1, "$comment": "Link identity: source, link type, target and attribute pairs, escaped (Annex F.2)." }
     },
     "diagnostic": {
       "type": "object",
@@ -65,9 +65,9 @@
         "target": { "$ref": "#/$defs/id" },
         "attributes": { "type": "object", "additionalProperties": { "type": "string" } },
         "origin": { "enum": ["declared", "tagged"] },
-        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "Annex B.3, optional: beside the link." },
-        "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the source." },
-        "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex I.3: the view identifier of the last commit that changed the target." }
+        "corroboration": { "enum": ["corroborated", "uncorroborated", "unobserved"], "$comment": "Annex E.3, optional: beside the link." },
+        "sourceChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex F.3: the view identifier of the last commit that changed the source." },
+        "targetChangedIn": { "type": "string", "minLength": 1, "$comment": "Annex F.3: the view identifier of the last commit that changed the target." }
       },
       "required": ["source", "type", "target", "attributes", "origin"],
       "patternProperties": { "^x-": {} },
@@ -101,7 +101,7 @@
             },
             "required": ["context", "items", "links"],
             "additionalProperties": false,
-            "$comment": "The context (Annex I.3) of a changed anchor; its items carry their details in the result's items (C.3)."
+            "$comment": "The context (Annex F.3) of a changed anchor; its items carry their details in the result's items (D.3)."
           }
         },
         "items": {

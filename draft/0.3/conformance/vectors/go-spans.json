@@ -440,7 +440,7 @@
     ]
   },
   {
-    "id": "go2-return-line-break",
+    "id": "go-return-line-break",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -459,7 +459,7 @@
     ]
   },
   {
-    "id": "go2-return-call",
+    "id": "go-return-call",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -478,7 +478,7 @@
     ]
   },
   {
-    "id": "go2-parenthesized-call-line-break",
+    "id": "go-parenthesized-call-line-break",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -497,7 +497,7 @@
     ]
   },
   {
-    "id": "go2-call",
+    "id": "go-call",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -516,7 +516,7 @@
     ]
   },
   {
-    "id": "go2-receive-line-break",
+    "id": "go-receive-line-break",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -535,7 +535,7 @@
     ]
   },
   {
-    "id": "go2-return-receive",
+    "id": "go-return-receive",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -554,7 +554,7 @@
     ]
   },
   {
-    "id": "go2-one-line-body",
+    "id": "go-one-line-body",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -573,7 +573,7 @@
     ]
   },
   {
-    "id": "go2-three-line-body",
+    "id": "go-three-line-body",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -592,7 +592,7 @@
     ]
   },
   {
-    "id": "go2-struct-one-line",
+    "id": "go-struct-one-line",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -611,7 +611,7 @@
     ]
   },
   {
-    "id": "go2-struct-lines",
+    "id": "go-struct-lines",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -630,7 +630,7 @@
     ]
   },
   {
-    "id": "go2-interface",
+    "id": "go-interface",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -649,7 +649,7 @@
     ]
   },
   {
-    "id": "go2-grouped-spec",
+    "id": "go-grouped-spec",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -672,7 +672,7 @@
     ]
   },
   {
-    "id": "go2-switch-one-line",
+    "id": "go-switch-one-line",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -691,7 +691,7 @@
     ]
   },
   {
-    "id": "go2-label-at-end",
+    "id": "go-label-at-end",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -710,7 +710,7 @@
     ]
   },
   {
-    "id": "go2-empty-statement",
+    "id": "go-empty-statement",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -729,7 +729,7 @@
     ]
   },
   {
-    "id": "go2-whole-imports",
+    "id": "go-whole-imports",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -739,7 +739,7 @@
     "definitions": []
   },
   {
-    "id": "go2-whole-no-newline",
+    "id": "go-whole-no-newline",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -754,7 +754,7 @@
     ]
   },
   {
-    "id": "go2-empty-statement-between",
+    "id": "go-empty-statement-between",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -773,7 +773,7 @@
     ]
   },
   {
-    "id": "go2-empty-statements",
+    "id": "go-empty-statements",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -792,7 +792,7 @@
     ]
   },
   {
-    "id": "go2-new-with-call",
+    "id": "go-new-with-call",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -811,7 +811,7 @@
     ]
   },
   {
-    "id": "go2-new-with-literal",
+    "id": "go-new-with-literal",
     "requirements": [
       "Annex A",
       "OSTF-164"
@@ -830,7 +830,7 @@
     ]
   },
   {
-    "id": "go2-new-with-expression-beside-make",
+    "id": "go-new-with-expression-beside-make",
     "requirements": [
       "Annex A",
       "OSTF-164"

@@ -1242,21 +1242,21 @@
  {
   "id": "version-016-root",
   "files": {
-   "trace.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A.\n"
+   "trace.yaml": "ostf: \"0.1\"\nitems:\n  - id: R-A\n    text: A.\n"
   }
  },
  {
   "id": "version-017-item-file",
   "files": {
    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"reqs/*.yaml\"]\n",
-   "reqs/a.yaml": "ostf: \"0.2\"\nitems:\n  - id: R-A\n    text: A.\n"
+   "reqs/a.yaml": "ostf: \"0.1\"\nitems:\n  - id: R-A\n    text: A.\n"
   }
  },
  {
   "id": "version-018-profile",
   "files": {
    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
-   "p.yaml": "ostf: \"0.2\"\n"
+   "p.yaml": "ostf: \"0.1\"\n"
   }
  },
  {
@@ -2971,14 +2971,7 @@
   }
  },
  {
-  "id": "profile-014-fingerprints",
-  "files": {
-   "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n",
-   "p.yaml": "ostf: \"0.3\"\nfingerprints: {bodyChange: all}\n"
-  }
- },
- {
-  "id": "profile-015-missing",
+  "id": "profile-014-missing",
   "files": {
    "trace.yaml": "ostf: \"0.3\"\nprofile: p.yaml\nitems:\n  - id: R-A\n    text: A.\n"
   }
@@ -3127,13 +3120,6 @@
   "id": "include-011-include-path",
   "files": {
    "trace.yaml": "ostf: \"0.3\"\ninclude: [\"../x/*.yaml\"]\nitems:\n  - id: R-A\n    text: A.\n"
-  }
- },
- {
-  "id": "include-012-leftover-lock",
-  "files": {
-   "trace.yaml": "ostf: \"0.3\"\nitems:\n  - id: R-A\n    text: A.\n    code: [\"trace.lock\"]\n",
-   "trace.lock": "trace.lock 1\n"
   }
  },
  {

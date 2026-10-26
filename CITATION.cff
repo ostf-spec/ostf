@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: CC-BY-4.0
 cff-version: 1.2.0
-message: "Cite the document revision and the OSTF requirement IDs you use."
+message: "Cite the working draft and the OSTF requirement IDs you use."
 title: "Open Software Traceability Format"
 type: software
 authors:
   - name: "Medoya LLC"
-version: "0.18"
+version: "0.3"
 date-released: "2026-10-26"
 url: "https://github.com/ostf-spec/ostf"
 preferred-citation:
@@ -14,5 +14,5 @@ preferred-citation:
   authors:
     - name: "Medoya LLC"
   year: 2026
-  version: "0.18"
+  version: "0.3"
   url: "https://github.com/ostf-spec/ostf"

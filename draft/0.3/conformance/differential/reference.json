@@ -6774,36 +6774,6 @@
    ]
   }
  },
- "include-012-leftover-lock": {
-  "check": {
-   "codes": [],
-   "diagnosticFiles": [],
-   "exit": 0,
-   "items": [
-    [
-     "R-A",
-     "requirement",
-     "accepted",
-     false
-    ]
-   ],
-   "links": [
-    [
-     "trace.lock",
-     "implements",
-     "R-A",
-     {},
-     "declared",
-     null
-    ]
-   ]
-  },
-  "sarif": {
-   "exit": 0,
-   "results": [],
-   "rules": []
-  }
- },
  "keys-001-root": {
   "check": {
    "codes": [
@@ -8796,36 +8766,7 @@
    ]
   }
  },
- "profile-014-fingerprints": {
-  "check": {
-   "codes": [
-    "PROFILE_INVALID"
-   ],
-   "diagnosticFiles": [
-    [
-     "PROFILE_INVALID",
-     "p.yaml"
-    ]
-   ],
-   "exit": 1,
-   "items": [],
-   "links": []
-  },
-  "sarif": {
-   "exit": 1,
-   "results": [
-    [
-     "PROFILE_INVALID",
-     "error",
-     "p.yaml"
-    ]
-   ],
-   "rules": [
-    "PROFILE_INVALID"
-   ]
-  }
- },
- "profile-015-missing": {
+ "profile-014-missing": {
   "check": {
    "codes": [
     "PROFILE_INVALID"

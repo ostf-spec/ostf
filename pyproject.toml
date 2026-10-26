@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # Installs the OSTF 0.3 reference reader as the `ostf` command, which implements the command
-# profile of Annex I: `pipx install git+https://github.com/ostf-spec/ostf`.
+# profile of Annex F: `pipx install git+https://github.com/ostf-spec/ostf`.
 [build-system]
 requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"

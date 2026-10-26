@@ -4,7 +4,7 @@ about: Report unclear or conflicting OSTF text, schema, or fixtures
 title: "Ambiguity: "
 ---
 
-**Affected document and revision**
+**Affected document and date**
 
 Link to the exact section, schema field or `OSTF-` ID.
 
@@ -14,7 +14,7 @@ Describe what independent readers could do differently.
 
 **Smallest example**
 
-Provide the relevant YAML, lock line or source snippet if applicable.
+Provide the relevant YAML or source snippet if applicable.
 
 **Suggested resolution**
 

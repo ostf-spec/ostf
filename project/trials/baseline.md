@@ -118,13 +118,13 @@ Ten agents, Claude Code and Codex alternating, each refactoring one linked funct
 
 ## Scale: generated tree, 186 items
 
-6858 links, 6660 linked functions; items link one, ten or a hundred functions, 60 of each, spread across 40 packages ([generate_fanout.py](../conformance/generate_fanout.py), [fanout.py](fanout.py)). The lock holds 6859 lines, 1424 KiB. With the reference reader: stamping every link 16.87 s, `check` 1.212 s, `check --base` 2.73 s. `context` of an item linking one, ten and a hundred functions: 57 tokens in 1.172 s, 150 tokens in 1.26 s, 1099 tokens in 1.176 s; of a function, 58 tokens.
+6858 links, 6660 linked functions; items link one, ten or a hundred functions, 60 of each, spread across 40 packages ([generate_fanout.py](../../draft/0.3/conformance/generate_fanout.py), [fanout.py](fanout.py)). The lock holds 6859 lines, 1424 KiB. With the reference reader: stamping every link 16.87 s, `check` 1.212 s, `check --base` 2.73 s. `context` of an item linking one, ten and a hundred functions: 57 tokens in 1.172 s, 150 tokens in 1.26 s, 1099 tokens in 1.176 s; of a function, 58 tokens.
 
 A sweep that edits the body of 333 functions, 5 %, makes 333 links suspect on 89 items under `bodyChange: all`, of them 59 of the 60 items that link a hundred functions; under `bodyChange: risk`, 30 links on 9 items.
 
 ## Scale: generated tree, 906 items
 
-34290 links, 33300 linked functions; items link one, ten or a hundred functions, 300 of each, spread across 40 packages ([generate_fanout.py](../conformance/generate_fanout.py), [fanout.py](fanout.py)). The lock holds 34291 lines, 7148 KiB. With the reference reader: stamping every link 426.67 s, `check` 6.512 s, `check --base` 19.489 s. `context` of an item linking one, ten and a hundred functions: 57 tokens in 6.295 s, 153 tokens in 5.935 s, 1124 tokens in 5.83 s; of a function, 58 tokens.
+34290 links, 33300 linked functions; items link one, ten or a hundred functions, 300 of each, spread across 40 packages ([generate_fanout.py](../../draft/0.3/conformance/generate_fanout.py), [fanout.py](fanout.py)). The lock holds 34291 lines, 7148 KiB. With the reference reader: stamping every link 426.67 s, `check` 6.512 s, `check --base` 19.489 s. `context` of an item linking one, ten and a hundred functions: 57 tokens in 6.295 s, 153 tokens in 5.935 s, 1124 tokens in 5.83 s; of a function, 58 tokens.
 
 A sweep that edits the body of 1665 functions, 5 %, makes 1665 links suspect on 428 items under `bodyChange: all`, of them 298 of the 300 items that link a hundred functions; under `bodyChange: risk`, 184 links on 47 items.
 

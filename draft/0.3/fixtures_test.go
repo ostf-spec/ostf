@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: Apache-2.0
 
-// Package draft_test pins the 0.3 draft to its fixtures and to the simplicity
-// budget of plan-agent-readiness.md, section 2.
+// Package draft_test pins the 0.3 draft to its fixtures and to its simplicity
+// budget: at most 35 Core requirements and a minimal file that does not grow.
 package draft_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/fs"
 	"net/url"
 	"os"
 	"path"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
@@ -57,9 +59,9 @@ func blocks(t *testing.T, start, lang string) []string {
 func TestSpecMatchesFixtures(t *testing.T) {
 	for _, c := range []struct{ start, lang, file string }{
 		{"## 2. Overview", "yaml", "fixtures/minimal/trace.yaml"},
-		{"**F.1 Agent paragraph", "text", "fixtures/agent-paragraph.txt"},
-		{"**F.2 Policy paragraph", "text", "fixtures/agent-policy.txt"},
-		{"## Annex J", "text", "example/expected/context.txt"},
+		{"**K.1 Agent paragraph", "text", "fixtures/agent-paragraph.txt"},
+		{"**K.2 Policy paragraph", "text", "fixtures/agent-policy.txt"},
+		{"## Annex G", "text", "example/expected/context.txt"},
 	} {
 		if got, want := blocks(t, c.start, c.lang)[0], read(t, c.file); got != want {
 			t.Errorf("%s block under %q differs from %s:\n%s", c.lang, c.start, c.file, got)
@@ -83,10 +85,10 @@ func TestSimplicityBudget(t *testing.T) {
 	if lines := strings.Count(read(t, "fixtures/minimal/trace.yaml"), "\n"); lines > 6 {
 		t.Errorf("the minimal file has %d lines; it must not grow", lines)
 	}
-	if p := read(t, "fixtures/agent-paragraph.txt"); !strings.HasPrefix(p, "OSTF agent paragraph 5. ") || !strings.Contains(p, "<tool> check") {
+	if p := read(t, "fixtures/agent-paragraph.txt"); !strings.HasPrefix(p, "OSTF agent paragraph 1. ") || !strings.Contains(p, "<tool> check") {
 		t.Error("the agent paragraph lost its version line or its check command")
 	}
-	// Plan section 7: the normative paragraph stays under 120 words; policy goes in the paragraph after it.
+	// The normative paragraph stays under 120 words; policy goes in the paragraph after it.
 	if words := len(strings.Fields(read(t, "fixtures/agent-paragraph.txt"))); words >= 120 {
 		t.Errorf("the agent paragraph has %d words; it must stay under 120", words)
 	}
@@ -149,27 +151,19 @@ func instance(t *testing.T, text string) any {
 }
 
 func TestSchemas(t *testing.T) {
-	impact := blocks(t, "**C.3 Impact", "json")[0]
+	impact := blocks(t, "**D.3 Impact", "json")[0]
 	for _, c := range []struct {
 		id, schema, text string
 		valid            bool
 	}{
 		{"minimal fixture", "trace.schema.json", read(t, "fixtures/minimal/trace.yaml"), true},
 		{"example", "trace.schema.json", read(t, "example/trace.yaml"), true},
-		{"trial fixture go-shop", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace.yaml"), true},
-		{"trial fixture go-shop requirements", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace/requirements.yaml"), true},
-		{"trial fixture go-shop design", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace/design.yaml"), true},
-		{"trial fixture go-shop threats", "trace.schema.json", read(t, "trials/fixtures/go-shop/trace/threats.yaml"), true},
-		{"trial fixture ts-shop", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace.yaml"), true},
-		{"trial fixture ts-shop requirements", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace/requirements.yaml"), true},
-		{"trial fixture ts-shop design", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace/design.yaml"), true},
-		{"trial fixture ts-shop threats", "trace.schema.json", read(t, "trials/fixtures/ts-shop/trace/threats.yaml"), true},
 		{"tags opt-out", "trace.schema.json", "ostf: \"0.3\"\ntags: false\nitems: []\n", true},
 		{"tags not boolean", "trace.schema.json", "ostf: \"0.3\"\ntags: \"yes\"\nitems: []\n", false},
 		{"OSTF-121 profile example", "profile.schema.json", blocks(t, "**OSTF-121 Profiles", "yaml")[0], true},
 		{"security profile", "profile.schema.json", read(t, "profiles/security.yaml"), true},
-		{"C.2 result example", "result.schema.json", blocks(t, "**C.2 Result format", "json")[0], true},
-		{"C.3 impact example", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": ` + impact + `}`, true},
+		{"D.2 result example", "result.schema.json", blocks(t, "**D.2 Result format", "json")[0], true},
+		{"D.3 impact example", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "impact": ` + impact + `}`, true},
 		{"expected check", "result.schema.json", read(t, "example/expected/check.json"), true},
 		{"expected context", "result.schema.json", read(t, "example/expected/context.json"), true},
 		{"result with unknown key", "result.schema.json", `{"ostf": "0.3", "diagnostics": [], "items": [], "links": [], "proposed": []}`, false},
@@ -348,62 +342,51 @@ func matchComponent(g, n []rune) bool {
 	return gi == len(g)
 }
 
-// lockTokens are the tokens of the lock that revision 0.16 removed (plan,
-// section 8): its header, its reasons and codes, a state written as a
-// result value, and an algorithm prefix. They match tokens, never the words
-// valid or suspect, which the text uses in other senses.
-var lockTokens = regexp.MustCompile(`trace\.lock 1|\b(?:LINK_BROKEN|LINK_UNSTAMPED|UNKNOWN_ALGORITHM|ITEM_CHANGED|FILE_CHANGED|` +
-	`DEFINITION_CHANGED|SIGNATURE_CHANGED|BODY_CHANGED|LOCK_MISSING|LOCK_INVALID|LOCK_DUPLICATE|STAMP_REFUSED)\b|` +
-	`"state"\s*:|ostf\.state|\((?:valid|suspect|unstamped|broken)[,)]|\b(?:f1|go1|go2|ts1|ts2|py1|lf1):[A-Za-z0-9_-]`)
-
-// TestNoLockTokens is the exit gate of the plan's section 8: no token of the
-// lock is left where the format is defined or used, in ostf.md, the schemas,
-// the conformance cases, the fixtures and the example, the reader's command,
-// the Action and the READMEs. What keeps the lock as history is left out:
-// Annex H, the retired markers, the conversion notes of the conformance
-// README, the three vector files of 0.2, trials/, reviews/, the decision
-// record and the plan.
-func TestNoLockTokens(t *testing.T) {
-	texts := map[string]string{}
-	spec := read(t, "ostf.md")
-	annexH, annexI := strings.Index(spec, "\n## Annex H "), strings.Index(spec, "\n## Annex I ")
-	if annexH < 0 || annexI < annexH {
-		t.Fatal("ostf.md has no Annex H before Annex I")
-	}
-	var kept []string
-	for _, line := range strings.Split(spec[:annexH]+spec[annexI:], "\n") {
-		if !strings.HasPrefix(line, `<a id="OSTF-`) { // a retired requirement's marker
-			kept = append(kept, line)
+// TestNoForeignTokens: no token of a construct that OSTF does not have
+// appears in any file of the repository outside project/. The tokens are
+// listed in project/foreign-tokens.txt, one regular expression per line.
+func TestNoForeignTokens(t *testing.T) {
+	var patterns []string
+	for _, line := range strings.Split(read(t, "../../project/foreign-tokens.txt"), "\n") {
+		if line = strings.TrimSpace(line); line != "" && !strings.HasPrefix(line, "#") {
+			patterns = append(patterns, line)
 		}
 	}
-	texts["ostf.md"] = strings.Join(kept, "\n")
-	readme := read(t, "conformance/README.md")
-	if i := strings.Index(readme, "\n## From "); i >= 0 { // the conversion notes, to the end
-		readme = readme[:i]
+	if len(patterns) == 0 {
+		t.Fatal("no token to look for")
 	}
-	texts["conformance/README.md"] = readme
-	for _, name := range []string{"../../README.md", "../../action.yml", "conformance/cases.json", "conformance/reader.py",
-		"example/README.md", "fixtures/README.md", "tools/README.md"} {
-		texts[name] = read(t, name)
-	}
-	for _, dir := range []string{"schema", "fixtures", "example"} {
-		if err := fs.WalkDir(os.DirFS(dir), ".", func(name string, entry fs.DirEntry, err error) error {
-			if err == nil && !entry.IsDir() {
-				texts[dir+"/"+name] = read(t, dir+"/"+name)
-			}
+	tokens := regexp.MustCompile(strings.Join(patterns, "|"))
+	// What the repository ignores (.gitignore) is no part of it, and project/ holds the record.
+	skip := map[string]bool{".git": true, ".venv": true, "build": true, "__pycache__": true, "project": true}
+	files := 0
+	if err := fs.WalkDir(os.DirFS("../.."), ".", func(name string, entry fs.DirEntry, err error) error {
+		if err != nil {
 			return err
-		}); err != nil {
-			t.Fatal(err)
 		}
-	}
-	for name, text := range texts {
-		for n, line := range strings.Split(text, "\n") {
-			if found := lockTokens.FindString(line); found != "" {
-				t.Errorf("%s:%d holds %q, a token of the lock", name, n+1, found)
+		if entry.IsDir() {
+			if skip[entry.Name()] || strings.HasSuffix(entry.Name(), ".egg-info") {
+				return fs.SkipDir
+			}
+			return nil
+		}
+		if entry.Name() == ".DS_Store" || strings.HasSuffix(name, ".pyc") {
+			return nil
+		}
+		data, err := os.ReadFile(filepath.Join("../..", name))
+		if err != nil || bytes.IndexByte(data, 0) >= 0 {
+			return err // a binary file holds no text to check
+		}
+		files++
+		for n, line := range strings.Split(string(data), "\n") {
+			if found := tokens.FindString(line); found != "" {
+				t.Errorf("%s:%d holds %q", name, n+1, found)
 			}
 		}
+		return nil
+	}); err != nil {
+		t.Fatal(err)
 	}
-	if len(texts) < 20 {
-		t.Errorf("only %d files read", len(texts))
+	if files < 60 {
+		t.Errorf("only %d files read", files)
 	}
 }
