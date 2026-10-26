@@ -238,6 +238,14 @@ OSTF-170 asks for a second, independently maintained implementation and two orga
 
 **Design review: a write path.** A proposal from the maintainer's design review after Phase 5, not a response to a missed row, so rule 9 neither applies to it nor changes: `add` and `link` commands in Annex I that allocate an item's ID and write one file per item, so that adding an item or a link needs no hand edit of an item file. It is decided on the count of hand edits after zztrace's first month: in, as revision 0.18, with a small trial pre-registered before any claim about it is made; or out, with the reason stated here.
 
+**What the first repository found before its first commit, 2026-10-26.** Probed on copies of zztrace, with no format change now, as findings for design review beside the write path:
+
+1. Nested roots of an earlier wire version make `check --base` fail under a top-level root. zztrace tracks four `trace.yaml` files of its own format, `ostf: "0.1"`, a test fixture and three frozen acceptance reports; a top-level 0.3 root reports each as `NESTED_ROOT` and, under `--base`, as `NESTED_ROOT_FAILED`, an error even with `tags: false`, so every pull request would fail and agent paragraph 5's "fix every error" would steer agents at frozen fixtures.
+2. Prose that documents the tag syntax is read as tags: the doc comments of zztrace's two tag readers gave 13 `TAG_UNKNOWN_ID` each. They now write the keyword in backticks, which no rule needed.
+3. The reference reader walks git-ignored files, so locally it reads zztrace's ignored copies of its own sources: agents see diagnostics, and a check of about 7 seconds, that CI never sees.
+
+By the maintainer's choice the root is therefore `go/ostf/`, the package that implements OSTF, which holds no other `trace.yaml` and about 200 definitions, with one item per file under `go/ostf/trace/`, tags on, and the agent paragraph and the policy scoped to it in `AGENTS.md`. That departs from OSTF-102's SHOULD of a root at the top level, because of finding 1, and the gate's numbers for zztrace come from that sub-root. Whether a root-level exclusion, a version-aware rule for nested roots or a walk that respects the ignore file goes into a revision is decided with the write path after the first month, each as a new identifier under rule 3 if it does.
+
 ## 12. What stays out, on purpose
 
 - Dependency analysis beyond what a test tool observed. `trace.derived` records observations; `coverage: "direct"` still names the boundary of `impact`.
